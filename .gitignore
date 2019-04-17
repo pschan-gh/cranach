@@ -1,0 +1,8 @@
+*~
+.DS_Store
+backup
+attic
+images
+graveyard.js
+content/**
+sync.sh
