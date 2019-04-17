@@ -1,0 +1,393 @@
+<html xml:lang="en" lang="en" xmlns="http:/www.w3.org/1999/xhtml">
+
+<title>
+    Cranach
+</title>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="js/bootstrap.min.css" />
+    <link rel="shortcut icon" href="#"/>
+
+    <script src="js/jquery.min.js" ></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script> -->
+    <script src="js/tether.min.js" ></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.scrollTo.min.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="weaver_core.js"></script>
+    <script type="text/javascript" src="weaver.js"></script>
+    <script type="text/javascript" src="cranach.js"></script>
+
+    <link href="js/knowlstyle.css" rel="stylesheet" type="text/css" />
+    <script src="js/Base64.js" type="text/javascript"></script>
+    <script src="js/knowl.js" type="text/javascript" ></script>
+
+    <script src="js/ie8.polyfils.min.js" type="text/javascript"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.contentWindow.min.js" integrity="sha256-36C1/Kln8nS9OWK0+tTRIYQyhdp+eY117441VyJaj+o=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.min.js" integrity="sha256-uHN1/UDJzJX8BIapjeOIyykot3SXC8YDG38tH+rM718=" crossorigin="anonymous"></script>
+
+    <script src="js/ace-builds-master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script type="text/javascript" src="slideshow_client.js"></script>
+    <script type="text/javascript" src="postprocess.js" ></script>
+
+    <link rel="stylesheet" href="styles.css" media="all">
+
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+      skipStartupTypeset: true,
+      tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEnvironments: true,
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore"
+      },
+      MathML: {
+      extensions: ["content-mathml.js"]
+      },
+      TeX: {
+      equationNumbers: {autoNumber: "ams"}
+      }
+     });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
+<script>
+var editMode = false;
+var slideIndex = 1;
+var slideCount = 0;
+var slideLine = [];
+var mode = 'dual';
+var Range = ace.require('ace/range').Range; // get reference to ace/range
+
+var rootURL = window.location.href.match(/^(.*?)\/*(?:\?|$)/)[1];
+var params = window.location.href.match(/\?(.*?)(#|$)/);
+
+var cranach = new Cranach(rootURL + '/', params);
+cranach.setup();
+console.log('CONTENTURL: ' + cranach.contentURL);
+</script>
+
+<style type="text/css">
+.ace_highlight-marker {
+    position: absolute; /* without this positions will be erong */
+    background: #ddf; /* color */
+    z-index: 1000; /* in front of all other markers */
+}
+.ace_slide-marker {
+    position: absolute; /* without this positions will be erong */
+    background: #ffc; /* color */
+    z-index: 1000; /* in front of all other markers */
+}
+
+</style>
+
+</head>
+
+<body>
+    <div id="print">
+        <button id="back_icon" style="position:fixed;top:0;left:1%;font-size:2.5em" class="plain_button icon" onclick="$('#print').hide();$('#container').show();$('#print_content').html('');$('html').css('position', 'fixed');">&#8617;</button>
+        <div id="print_content" style="width:auto">
+        </div>
+    </div>
+    <div id="container">
+        <div id="left_half" class="left info_half">
+            <div id="info_half">
+                <strong>Table of Contents</strong>
+                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">►
+                </a>
+                <div class="collapse" id="toc"></div>
+                <hr/>
+                <div id="info_title" class="title_box">
+                    <h2>
+                        <div class="current_course"></div>
+                    </h2>
+                    <strong>Keywords</strong>
+                    <a class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">►</a>
+                    <div id="info_keywords_course" class="collapse"></div>
+                    <br/><br/>
+                    <h3>
+                        <div class="current_chapter"></div>
+                        <div class="current_chapter_title"></div>
+                        <div class="current_topics"></div>
+                    </h3>
+                    <strong>Chapter Keywords</strong>
+                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">►</a>
+                    <div id="info_keywords_chapter" class="collapse"></div>
+                </div>
+                <div id="info_statements"></div>
+                <br/>
+                <strong>Index</strong>
+                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">►</a>
+                <div class="collapse" id="index"></div>
+                <p/>
+                <hr>
+                <div id="slide_info" class=".slide_info" style="display:none">
+                    <h4 class="current_section"></h4>
+                    <h5 class="current_slide"></h5>
+                    <br/>
+                    <div id="slide_keywords"></div>
+                    <br/>
+                    <strong onclick='$(".slide_info.share").show();'>Share</strong>
+                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">►
+                    </a>
+                    <div class="slide_info share collapse" id="slide_info_share" style="">
+                        <a style="text-decoration:none;color:LightBlue" target="_blank" id="url_open"><span>URL</span></a>
+                        <br><textarea class="url share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
+                        <p><br></p>
+                        <span>HTML Hyperlink</span><br/>
+                        <textarea class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
+                        <p><br></p>
+                        <span>$\LaTeX$ Hyperref</span><br>
+                        <textarea class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
+                        <span id='modal_keywords'>
+                        </span>
+                    </div>
+                </div>
+                <div id="info_menu_container">
+                    <input type="image" src="icons/Edit_Notepad_Icon.svg" id="compose_icon" onclick="$('#compose_button').click();">
+                    <button class="plain_button icon hide" onclick="$('#left_half').hide();$('#dual_button').show();$('#right_half').removeClass('right').removeClass('dual_half').addClass('wide');$('.slide_container').addClass('wide')" data-toggle="tooltip" data-placement="right" title="Hide Side Panel">&times;</button>
+                </div>
+            </div>
+            <div id="input_container" style="width:100%;height:100%;border:0;display:none">
+                <div id="input" style="margin-right:50px;height:100%;font-size:1.2em;">
+                </div>
+                <div id="edit_menu_container">
+                    <input type="image" id="maximize_icon" src="icons/Maximize_Icon.svg" class="plain_button icon" onclick="$('#right_half').hide();$('#left_half').css('width', '100%');editor.resize();$('#normalize_icon').show();$(this).hide();" data-toggle="tooltip" data-placement="right" title="Maximize composer"/>
+
+                    <input type="image" id="normalize_icon"  src="icons/Normalize_Icon.svg" class="plain_button icon" onclick="$('#right_half').show();$('#left_half').css('width', '');editor.resize();$('#maximize_icon').show();$(this).hide();" data-toggle="tooltip" data-placement="right" title="Normal size"/>
+                    <br/>
+                    <button id="close_icon" class="plain_button icon hide" onclick="$('#normalize_icon').click();$('#dual_button').click();$('#container').css('overflow-y', '');" data-toggle="tooltip" data-placement="right" title="Close composer">&times;</button>
+                    <br/>
+                    <label for="fileInput">
+                        <img id="open_icon" class="exempt icon" src="icons/File_Open.svg" data-toggle="tooltip" data-placement="right" title="Open file"/>
+                        <!-- <button id="open_icon" class="plain_button icon"/> -->
+                        <input id="fileInput" type="file" onchange="openWb(this);" style="display:none">
+                    </label>
+                    <br/>
+                    <button id="save_icon" class="plain_button icon" style="font-weight:normal;font-size:1.5em;text-align:center;" onclick="cranach.saveWb();" data-toggle="tooltip" data-placement="right" title="Save">⬇︎</button>
+                    <br/>
+                    <button id="render_icon" class="plain_button icon" style="font-weight:normal;font-size:2.5em;text-align:center;" onclick="$('#render_button').click();" data-toggle="tooltip" data-placement="right" title="Render Slides">↻</button>
+                    <br/>
+                    <div style="position:absolute;left:0;bottom:2%;width:100%;text-align:center;">
+                        <button id="latex_icon" class="plain_button icon latex" onclick="$('#wb_modal').modal('toggle');cranach.showLatex();" style="font-size:small;text-align:center;width:100%" data-toggle="tooltip" data-placement="right" title="LaTex source">LaTeX</button>
+                        <br/>
+                        <button id="xml_icon" class="plain_button icon xml" onclick="$('#wb_modal').modal('toggle');cranach.showXML();" style="text-align:center" data-toggle="tooltip" data-placement="right" title="XML source">xml</button>
+                    </div>
+                </div>
+            </div>
+            <script>
+            var editor = ace.edit("input");
+            editor.setTheme("ace/theme/cranach");
+            editor.session.setMode("ace/mode/cranach");
+            editor.getSession().setUseWrapMode(true);
+            // editor.setValue($('#wb').html(), 1);
+            editor.setShowPrintMargin(false);
+            editor.commands.addCommand({
+                name: 'saveFile',
+                bindKey: {
+                    win: 'Ctrl-S',
+                    mac: 'Command-S',
+                    sender: 'editor|cli'
+                },
+                exec: function(env, args, request) {
+                    var dummyLink = document.createElement('a');
+                    uriContent = "data:application/octet-stream," + encodeURIComponent(editor.session.getValue());
+                    dummyLink.setAttribute('href', uriContent);
+                    console.log($("base").attr('wb-src'));
+                    dummyLink.setAttribute('download', $("base").attr('wb-src').match(/(((?!\/).)*?\.wb)$/)[0]);
+                    dummyLink.click();
+                }
+            });
+            </script>
+        </div>
+        <div id="right_half" class='right dual_half'>
+            <div id="loading_icon" style="display:table;height:100%;width:100%;background-color:hsla(0, 0%, 100%, 0.8);z-index:999;">
+                <div style="display:table-cell; vertical-align:middle; width:100%;height:5em;margin:0 auto;text-align:center">
+                    <h1 style="color:SteelBlue">Loading</h1>
+                    <img class="exempt" style="max-width:100%;height:auto;margin:auto" src="icons/Loading_icon.gif"/>
+                </div>
+            </div>
+            <div id="output_icon_container">
+                <input type="image" src="icons/Edit_Notepad_Icon.svg" id="edit_icon" class="plain_button icon" onclick="$('#edit_button').click();"/>
+                <input type="image" src="icons/Maximize_Icon.svg" id="full_screen_icon" class="icon" onclick="$('#present_button').click();"/>
+                <input type="image" src="icons/Normalize_Icon.svg" id="dual_icon" class="plain_button icon" onclick="$('#dual_button').click();$('#full_screen_icon').show();$(this).hide();"/>
+            </div>
+            <div id="menu_container" class="dropdown" >
+                <button id="test_button" class="btn btn-outline-info btn-xs dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#9776;</button>
+                <div id="main_menu" class="dropdown-menu" aria-labelledby="test_button" >
+                    <button id="present_button" class="btn btn-outline-info btn-sm menu_button" type="present" onclick="$('#left_half').animate({marginLeft:'-25%'}, 200, 'linear', function() {$('#right_half').removeClass('compose_half').removeClass('dual_half');$('#right_half').addClass('page');$('#left_half').hide();$(this).css('margin-left','0');});$('#output').removeClass('dual');$('#full_screen_icon').hide();$('#output').addClass('text');$('.separator').hide();$(this).hide();$('#dual_button').show();$('#render_button').hide();$('.menu_button[type!=\'render\']').show();$(this).hide();$('.present').css('display','');$('#dual_icon').show();$('.slide_number').show();mode='present';showDivs(slideIndex);$('#container').css('overflow-y', 'auto');$('.controls').show();">Full Screen</button>
+
+                    <button id="dual_button" type="button" style="width:100%;display:none" class="btn btn-outline-info btn-sm menu_button" type="dual" onclick="$('#left_half').show();$('#info_half').show();$('#left_half').removeClass('compose_half');$('#left_half').addClass('info_half');$('#input_container').hide();$('#right_half').removeClass('page').removeClass('wide').addClass('dual_half right').show();$('.slide').show();$('.slide').removeAttr('style');$('#output').removeClass('text').addClass('dual');$('.slide_container').removeClass('wide');$('.separator').show();$('#output_icon_container').show();$('#present_button').show();console.log('SLIDEINDEX: ' + slideIndex);$('#output').scrollTo($('#s' + slideIndex));$('#s' + slideIndex).click();$('.slide').css('height', 'auto');$('.slide_number').hide();$('#render_button').show();$('#render_button').hide();$('.menu_button').show();$(this).hide();$('.present').hide();$('.controls').hide();$('#container').css('overflow-y', 'hidden');mode='dual'">Dual</button>
+
+                    <button id="compose_button" type="button" style="width:100%;" class="btn btn-outline-info btn-sm menu_button"  type="compose" onclick="$('#left_half').removeClass('info_half').addClass('compose_half');$('#info_half').hide();$('#left_half').show();$('#input_container').show();$('#right_half').removeClass('page');$('#right_half').removeClass('dual_half');$('#right_half').addClass('right').addClass('compose_half');$('.slide').show();$('.slide').removeAttr('style');$('#output').removeClass('text');$('.separator').show();$('#output_icon_container').show();$('#present_button').show();$('#output').scrollTo($('#s' + slideIndex));$('.slide').css('height', 'auto');$('.slide_number').hide();$('#render_button').show();$('.menu_button[type!=\'compose\']').show();$(this).hide();$('.present').hide();mode='compose'">Compose</button>
+
+                    <button id="render_button" class="btn btn-outline-info btn-sm submenu_button" type="render" onclick="$('#loading_icon').show(); cranach.renderWb(editor.getValue());"  style="display:none">Render</button>
+
+                    <button id="print_button" class="btn btn-outline-info btn-sm submenu_button" type="print" onclick="print();">Print</button>
+
+                    <button id='hide' class="btn btn-outline-info btn-sm menu_button" data-toggle="button" aria-pressed="true" onclick="hide(!$(this).hasClass('active'));">Half</button>
+
+                    <a class="dropdown-item" onclick="resizeFont(1);">
+                        <button class="btn btn-outline-info btn-sm menu_button" >Font &#xff0b;</button>
+                    </a>
+
+                    <a class="dropdown-item"  onclick="resizeFont(-1);">
+                        <button class="btn btn-outline-info btn-sm menu_button" >Font &#xff0d;</button>
+                    </a>
+
+                    <button id="uncollapse_button" class="btn btn-outline-info btn-sm menu_button" onclick="collapseToggle(slideIndex);">Uncollapse</button>
+
+                    <button class="btn btn-outline-info btn-sm menu_button" onclick="$('#xmlInput').click()">Open XML</button>
+                    <input id="xmlInput" type="file" onchange="cranach.openXml(this);" style="display:none">
+                    <button id="wb_button" class="btn btn-outline-info btn-sm submenu_button" onclick="commitWb();$('#compose_button').click();">Export to Wb</button>
+                    <a class="dropdown-item">
+                        <input id="edit_box" type="checkbox" style="display:none" />
+                        <button type="button" id="edit_button" style="width:100%" class="btn btn-outline-info btn-sm submenu_button"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked);">Edit</button>
+                        <input id="source_box" type="checkbox" style="display:none;" onchange="" />
+                        <!-- <button id="wb_button" style="display:none;" class="btn btn-outline-info btn-sm submenu_button" onclick="commitWb();$('#compose_button').click();$('#edit_button').click();">Commit Wb</button> -->
+                    </a>
+                </div>
+                <br/>
+            </div>
+            <div id='output' class="dual"></div>
+        </div>
+        <div class="present title_box" style="display:none"></div>
+        <button class="btn plain_button controls" style='font-size:2em;left:5%;width:auto;color:SteelBlue' id='left_button' onclick='plusDivs(-1)'>
+            &#x276e;
+        </button>
+        <button class="btn plain_button controls" style='font-size:2em;right:5%;width:auto;color:SteelBlue' id='right_button' onclick='plusDivs(1)'>
+            &#x276f;
+        </button>
+        <script type="text/javascript">
+        $('.controls').on('mouseover', function() {
+            $('#progress_container').show();
+        });
+        $('.controls').on('mouseout', function() {
+            $('#progress_container').hide();
+        });
+        </script>
+        <div id="progress_container" style='position:fixed;top:1em;height:1em;width:100%;margin:auto;background-color:hsla(0,0%,100%,0.75);display:none'>
+            <table id="slide_progress" style="width:75%;margin:auto;">
+                <tbody>
+                    <tr>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <a href='javascript:void(0)' id='unhide' style='position:fixed;top:5em;right:2%;color:#428bc1;display:none' onclick='unhide()'>Full Screen</a>
+        <div id="cover_half" onclick="unhide();$('#hide').button('toggle')"></div>
+    </div>
+
+    <!-- Wb item modal -->
+    <div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
+        <div class="modal-dialog" role="document" >
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <a id="item_modal_link" href="" target="_blank">
+                        <h5 class="modal-title notkw"  id="share_item">
+                            <span class="current_course"></span> <span class="current_chapter"></span>
+                            <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
+                        </h5>
+                    </a>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" >&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <b>URL</b>
+                    <br><textarea id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"></textarea>
+                    <p><br></p>
+                    <b class=notkw>HTML Hyperlink</b><br>
+                    <textarea id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
+                    <p><br></p>
+                    <b class=notkw>$\LaTeX$ Hyperref</b><br>
+                    <textarea id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly"></textarea>
+                    <br/><br/>
+                    <span>MD5</span><br/>
+                    <textarea class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly"></textarea>
+                    <span id='modal_keywords'>
+                    </span>
+                </div>
+                <div class="modal-footer">
+                    <div id="logo-box" class="pull-left">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wb code window -->
+    <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"  >
+                    <textarea id="source_text"  name="content" ></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="cranach.attr['doc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');cranach.displayCranachDocToHtml(cranach.attr['doc'], 'output');">Render</button>
+                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), cranach, $(this).attr('ext'));">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    $('.icon.latex, .icon.xml').hide();
+    cranach.render();
+    </script>
+
+<script type="text/javascript">
+$('#menu_container .dropdown-item').on({
+    "click":function(e){
+        e.stopPropagation();
+    }
+});
+
+$(function() {
+
+    $('.dropdown-submenu button').on('click', function(e) {
+        $(this).next('div').toggle();
+        $(this).next('div').css('max-height', 0.9*$(window).height());
+        $(this).next('div').css('width', 0.75*$(window).width());
+        e.stopPropagation();
+        e.preventDefault();
+
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+            $(this).addClass('btn-outline-info');
+            $(this).removeClass('btn-primary');
+        }  else  {
+            $(this).addClass('active');
+            $(this).addClass('btn-primary');
+            $(this).removeClass('btn-outline-info');
+        }
+    });
+
+    $('#edit_box').change(function() {
+        if ($(this).is(':checked')) {
+            $('#edit_button').removeClass('btn-outline-info');
+            $('#edit_button').addClass('btn-danger');
+            $('#edit_icon').attr('src', 'icons/Editting_Icon.svg');
+        } else {
+            $('#edit_button').removeClass('btn-danger');
+            $('#edit_button').addClass('btn-outline-info');
+            $('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>
