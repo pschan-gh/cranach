@@ -13,7 +13,7 @@ The project aims to develop a scientific document system with the following comp
    * Each wb file has no preamble, so multiple files may be concatenated seamlessly to form a larger wb file.
    * Each theorem-like statement is assigned an MD5 key generated from its content to facilitate labelling and referencing.
 
-3. A frontend web-browser-oriented presentational system.  
+3. A frontend web-browser-oriented presentation system.  
    * It supports keyword/theorem/section hyper-referencing. 
    * It features an Ace editor so users may directly render wb code to cranach and simultaneously to the browser frontend.
    * Users may export cranach file to LaTeX with a click on a button.
