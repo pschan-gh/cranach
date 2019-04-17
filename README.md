@@ -23,10 +23,10 @@ The project currently works on browsers with XSLTProcessor support, such as Chro
 
 ## Musings
 
-The author of this project is not a professional programmer.  The published code is at best an amateur effort.  This project to initiated partly to reflect the author's views on the features of a proper scientific document system.  Namely:
+The author of this project is not a professional programmer.  The published code is at best an amateur effort.  This project is initiated partly to reflect the author's views on the features of a proper scientific document system.  Namely:
    
    * A proper delineation between semantics and representation.
-   * Ease of use while retaining semantic support. For example, each new section in the document may be indicated with      "@section{SECTIONAME}" but also with <h3>SECTIONNAME</h3>.
+   * Ease of use while retaining semantic support. For example, each new section in the document may be indicated with      "@section{SECTIONAME}" but also with <h3>    SECTIONNAME</h3>.
    * The document should be stored in both human-readable format.  It should be also be readable by machine in a way that semantic information may be easily extracted.
    * In the author's view there is a down side to having *too many* features in a typesetting system.  If possible user-defined macros should be kept to a minimum.
    * XML is a powerful language, but its demand on well-formedness may prove too uncomfortable for most casual document preparers.  A "middle-man" language like Wb is meant to ensure that the resulting XML document is well-formed, that no open tag is left unclosed.  Machines should serve humans, not the other way round.
