@@ -5,7 +5,7 @@
         xmlns:lv="http://www.math.cuhk.edu.hk/~pschan/cranach"
 >
     <xsl:output method="text" encoding="UTF-8"/>
-    <xsl:param name="contenturl"></xsl:param>
+    <xsl:param name="contenturldir"></xsl:param>
 
     <xsl:template match="/">
         <xsl:apply-templates select="lv:document" />
@@ -254,7 +254,7 @@
                 <xsl:value-of select="concat('\cref{', @label, '}')"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="concat('\href{', $contenturl, '/' , @filename, '&amp;slide=', @src-slide, '\#item', @num, '}{', @name, '}')"/>
+                <xsl:value-of select="concat('\href{', $contenturldir, '/' , @filename, '&amp;slide=', @src-slide, '\#item', @num, '}{', @name, '}')"/>
            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

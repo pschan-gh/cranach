@@ -7,42 +7,6 @@ function nsResolver(prefix) {
     return ns[prefix] || null;
 }
 
-function showLatex(docCranach) {
-
-    var xsltProcessor = new XSLTProcessor();
-
-    $('#wb_modal').find('button.save').attr('ext', 'tex');
-    $('#wb_modal').find('.modal-title').html('LaTeX');
-
-
-    $.ajax({
-        url: 'xsl/cranach2latex.xsl',
-        success: function(xsl) {
-            var oParser = new DOMParser();
-            var xml = new XMLSerializer().serializeToString(docCranach);
-            xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
-            xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
-            xml = xml.replace(/#/g, '\#');
-            console.log(xml);
-            var xmlDOM = oParser.parseFromString(xml, "application/xml");
-            xsltProcessor.importStylesheet(xsl);
-            xsltProcessor.setParameter('', 'contenturl', $('base').attr('root') + '?xml=' + $('base').attr('dir'));
-            fragment = xsltProcessor.transformToFragment(xmlDOM, document);
-            console.log(fragment);
-            fragmentStr = new XMLSerializer().serializeToString(fragment);
-            $('#source_text').val('');
-            var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n");
-            latex = latex.replace(/\n(\ )*/g, "\n");
-            latex = latex.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-            latex = latex.replace(/\<!--.*?--\>/g, '');
-            latex = latex.replace(/&amp;/g, "&");
-            latex = latex.replace(/\\class{.*?}/g, '');
-            latex = latex.replace(/&ocirc/g, '\\^o');
-            $('#source_text').val(latex);
-        }
-    });
-}
-
 function openWb(filePath) {
 
     var file    = filePath.files[0];
@@ -109,7 +73,7 @@ function Cranach(rootURL, params) {
     this.postprocess = postprocess;
     this.preprocess = function() {$('.icon.latex, .icon.xml').hide();};
     this.rootURL = rootURL;
-    this.contentURL = rootURL + '?wb=default.wb';
+    this.contentURL = rootURL + '?wb=content/default.wb';
     this.contentURLDir = rootURL;
     this.macros = null;
 
