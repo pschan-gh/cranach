@@ -264,11 +264,11 @@ function Cranach(rootURL, params) {
                 .replace(/&amp;/g, '&')
                 .replace(/\<\/*root\>/g, '')
                 .replace(/@((course|week|lecture|chapter|section|subsection|subsubsection)(?:{.*?}))\n*@slide/g, "@$1")
-                .replace(/^\n*/, '')
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>')
-                .replace(/&amp;/g, '&')
-                .replace(/&apos;/g, "'")
+		.replace(/&amp;/g, '&')
+		.replace(/&apos;/g, "'")
+		.replace(/^\n*/, '')
                 , 1);
                 resetHighlight();
                 showTexSource(false);

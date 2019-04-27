@@ -9,7 +9,7 @@
     <xsl:output method="html"/>
 
     <xsl:template match="lv:document|lml:document">
-        <xsl:apply-templates select="lv:*" />
+        <xsl:apply-templates select="*" />
     </xsl:template>
 
     <xsl:template match="lv:slides">

@@ -6,8 +6,9 @@
 	xmlns:ltx="http://dlmf.nist.gov/LaTeXML"
 	xmlns:idx = "elephas_index"
 	xmlns:m = "http://www.w3.org/1998/Math/MathML"
+    exclude-result-prefixes="xh"
 	>
-<!-- exclude-result-prefixes="xh" -->
+
 
 <!-- <xsl:strip-space elements="*"/> -->
  <xsl:preserve-space elements="xh:pre"/>
@@ -673,7 +674,8 @@
     <xsl:variable name="id">
       <xsl:value-of select="concat('c', $timestamp, $col)" />
     </xsl:variable>
-    <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml">
+    <!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
+    <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore">
       <xsl:attribute name="aria-controls">
           <xsl:value-of select="$id"/>
       </xsl:attribute>
@@ -681,7 +683,7 @@
           <xsl:value-of select="concat('#', $id)" />
       </xsl:attribute>
       ►
-    </a>
+  </a>
     <div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
         <xsl:attribute name="id">
             <xsl:value-of select="$id"/>

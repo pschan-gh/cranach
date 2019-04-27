@@ -468,9 +468,9 @@ display: none;
     /* position:absolute;
     top:50px;
     right:10px; */
-    width:24px;
-    height:24px;
-    font-size:1.5em;
+    width:1.5rem;
+    height:1.5rem;
+    font-size:1.5rem;
     color:#888;
     border:none;
     margin: auto;
@@ -521,7 +521,8 @@ display: none;
 }
 
 .icon.hide {
-    font-size:2.5em;
+    font-size:2.5rem;
+    line-height:2rem;
     width:auto;
     margin:auto;
     text-align:center;
@@ -932,7 +933,10 @@ and (orientation : portrait) {
 	left:10%;
 	overflow:auto;
     }
-
+    
+    .slide_container.wide {
+	width:80%;
+    }
 }
 
 #title {
@@ -966,6 +970,7 @@ padding:0;
 }
 
 #test_button, #left_button, #right_button {
+line-height:1.5rem;
 background-color:transparent !important;
 color:hsl(211, 0%, 43%, 0.25) !important;
 border:none !important;

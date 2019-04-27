@@ -165,7 +165,7 @@
         <xsl:value-of select="concat('@', text())"/>
     </xsl:template>
 
-    <xsl:template match="xh:br[@wbtag='newline']">
+    <xsl:template match="xh:br[@wbtag='newline']|lv:newline">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@newline</xsl:text>
         <xsl:text>&#xa;</xsl:text>

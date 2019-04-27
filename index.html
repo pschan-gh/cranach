@@ -142,7 +142,7 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                         <span>HTML Hyperlink</span><br/>
                         <textarea class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
                         <p><br></p>
-                        <span>$\LaTeX$ Hyperref</span><br>
+                        <span class="latex_href">$\LaTeX$ Hyperref</span><br>
                         <textarea class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
                         <span id='modal_keywords'>
                         </span>
@@ -299,13 +299,13 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                     </button>
                 </div>
                 <div class="modal-body">
-                    <b>URL</b>
+                    <strong>URL</strong>
                     <br><textarea id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"></textarea>
                     <p><br></p>
-                    <b class=notkw>HTML Hyperlink</b><br>
+                    <stong>HTML Hyperlink</strong><br/>
                     <textarea id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
                     <p><br></p>
-                    <b class=notkw>$\LaTeX$ Hyperref</b><br>
+                    <strong class="latex_href">$\LaTeX$ Hyperref</strong><br>
                     <textarea id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly"></textarea>
                     <br/><br/>
                     <span>MD5</span><br/>

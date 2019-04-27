@@ -24,7 +24,7 @@
     </xsl:template>
 
     <xsl:template match="lv:root[not(@query)]">
-        <xsl:apply-templates select="lv:*">
+        <xsl:apply-templates select="*">
             <xsl:with-param name="environ" select="." />
         </xsl:apply-templates>
     </xsl:template>
@@ -105,7 +105,7 @@
                 <xsl:with-param name="chapter" select="@num"/>
             </xsl:call-template>
 
-            <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|text()">
+            <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|lv:topic|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="@num"/>
                 <xsl:with-param name="chapter_type" select="@chapter_type"/>

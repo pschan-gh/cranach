@@ -62,6 +62,9 @@
 \newcommand{\ora}{\overrightarrow}
 \newcommand{\ve}{\varepsilon}
 \newcommand{\phib}{\ol{\phi}}
+
+\newcommand{\class}[2]{#2}
+
 \renewcommand{\ord}{\mathrm{ord}\,}
 
 \newcounter{statement}
@@ -81,9 +84,12 @@
 \newtheorem*{sol}{\bf Solution}
 \newtheorem*{remark}{\bf Remark}
 \numberwithin{equation}{chapter}
+\numberwithin{section}{chapter}
+\numberwithin{subsection}{section}
 <!-- \renewcommand{\thesubsection}{} -->
-\renewcommand{\thesubsection}{\thechapter.\arabic{subsection}}
-\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
 <!-- \renewcommand{\thesection}{} -->
 </xsl:template>
 
@@ -95,21 +101,23 @@
 <xsl:template match="lv:week|lv:lecture|lv:chapter">
     <!-- <xsl:text>&#xa;</xsl:text> -->
     <xsl:value-of select="concat('\setcounter{chapter}{', ./@num, '}')"/>
-    <xsl:text>&#xa;</xsl:text>
+    <xsl:text>\setcounter{section}{0}&#xa;\setcounter{subsection}{0}&#xa;\setcounter{statement}{0}&#xa;
+</xsl:text>
     <xsl:text>\chapter*{</xsl:text>
     <xsl:value-of select="concat(ancestor::lv:course/@title, ' ', @chapter_type, ' ', @num)"/>
     <xsl:text>}</xsl:text>
     <xsl:text>&#xa;</xsl:text>
     <xsl:text>{\bf Topics: }</xsl:text>
-    <xsl:apply-templates select="topic" />
+    <xsl:apply-templates select="lv:topic" />
+    <xsl:text>&#xa;\hrule&#xa;</xsl:text>
     <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides" />
 </xsl:template>
 
-<xsl:template match="topic">
-  <xsl:if test="position() != first()">
+<xsl:template match="lv:topic" >
+  <xsl:apply-templates select="*|text()" />
+  <xsl:if test="position() != last()">
     <xsl:text>, </xsl:text>
   </xsl:if>
-  <xsl:apply-templates select="*|text()" />
 </xsl:template>
 
 <xsl:template match="lv:section|lv:subsection|lv:subsubsection">
@@ -124,13 +132,13 @@
 </xsl:template>
 
 <xsl:template match="lv:slide">
-    <xsl:apply-templates select="*|text()" />
+    <xsl:apply-templates select="*[not(self::lv:topic)]|text()" />
 </xsl:template>
 
 <xsl:template match="lv:keywords|lv:keyword|lv:hc_keyword|lv:title"/>
 
     <xsl:template match="xh:a">
-        <xsl:value-of select="."/>
+        <xsl:apply-templates select="*|text()|comment()" />
     </xsl:template>
 
     <xsl:template match="lv:paragraphs" >
@@ -241,11 +249,20 @@
         <xsl:text>} </xsl:text>
     </xsl:template>
 
-    <xsl:template match="xh:b|xh:strong|xh:em">
-        <!-- <xsl:text> </xsl:text> -->
+    <xsl:template match="xh:b|xh:strong">
+      <xsl:if test="not(contains(@style, 'display:none'))">
         <xsl:text> {\bf </xsl:text>
         <xsl:apply-templates select="*|text()" />
         <xsl:text>} </xsl:text>
+      </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="xh:em">
+      <xsl:if test="not(contains(@style, 'display:none'))">
+        <xsl:text> {\it </xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>} </xsl:text>
+      </xsl:if>
     </xsl:template>
 
     <xsl:template match="lv:ref">
@@ -279,7 +296,7 @@
 
     <xsl:template match="lv:div"/>
 
-    <xsl:template match="xh:table">
+    <xsl:template match="xh:table[not(./xh:tbody)]|xh:tbody">
         <xsl:text>\begin{center}&#10;</xsl:text>
         <xsl:text>\begin{tabular}{|</xsl:text>
 
@@ -288,15 +305,16 @@
                 <xsl:when test="@colspan">
                     <xsl:for-each select="(//*)[position()&lt;=current()/@colspan]">|c|</xsl:for-each>
                 </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="position() = 1">c</xsl:when>
-                        <xsl:otherwise>|c</xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
+                <xsl:otherwise>c|</xsl:otherwise>
+                <!-- <xsl:otherwise> -->
+                <!--     <xsl:choose> -->
+                <!--         <xsl:when test="position() != last()">c|</xsl:when> -->
+                <!--         <xsl:otherwise>|c</xsl:otherwise> -->
+                <!--     </xsl:choose> -->
+                <!-- </xsl:otherwise> -->
             </xsl:choose>
         </xsl:for-each>
-        <xsl:text>|}&#10;</xsl:text>
+        <xsl:text>}&#10;</xsl:text>
 
 
         <xsl:for-each select="xh:thead/xh:tr">
@@ -337,6 +355,10 @@
         <xsl:text>\end{tabular}&#10;</xsl:text>
         <xsl:text>\end{center}</xsl:text>
 
+    </xsl:template>
+
+    <xsl:template match="xh:table[./xh:tbody]">
+      <xsl:apply-templates select="xh:tbody"/>
     </xsl:template>
 
 </xsl:stylesheet>

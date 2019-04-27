@@ -89,7 +89,7 @@ function Cranach(baseURL, id) {
 
             var queryDom = document.implementation.createDocument("http://www.math.cuhk.edu.hk/~pschan/cranach", "", null);
             var bare = queryDom.createElementNS("http://www.math.cuhk.edu.hk/~pschan/cranach", "lv:root");
-            //bare.setAttribute('query', 1);
+            // bare.setAttribute('query', 1);
 
             for ( var i = 0 ; i < queries.snapshotLength; i++ ) {
                 // console.log('QUERY RESULT: ' + queries.snapshotItem(i).textContent);

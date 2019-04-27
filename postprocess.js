@@ -326,6 +326,12 @@ function postprocess() {
 
     $(function() {
 
+	$('.latex_href').each(function() {
+	    MathJax.Hub.Queue(
+                ["Typeset", MathJax.Hub,this],
+            );
+	});
+
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
             $(this).attr('text', text.replace(/[^a-zA-Z0-9]/g, ''));

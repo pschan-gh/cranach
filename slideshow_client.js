@@ -431,14 +431,14 @@ function commitWb() {
                     console.log(fragmentStr);
                     var processedStr = fragmentStr
                         .replace(/\n(\s|\n|\r)*/g, "\n")
-                        .replace(/(\s*@newline\s*)+/g, "\n\n")
+                        //.replace(/(\s*@newline\s*)+/g, "\n\n")
                         .replace(/&amp;/g, '&')
                         .replace(/@((course|lecture|week|chapter|section|subsection|subsubsection|topic){.*?})(\s|\n)*@slide/g, "@$1")
                         .replace(/&lt;/g, '<')
                         .replace(/&gt;/g, '>')
                         .replace(/&amp;/g, '&')
                         .replace(/&apos;/g, "'")
-                        .replace(/^\n*/, '');
+		    	.replace(/^\n*/, '');
                     editor.setValue(processedStr, 1);
                     resetHighlight();
                     showTexSource(false);
