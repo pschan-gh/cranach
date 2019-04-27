@@ -144,7 +144,7 @@ function Cranach(rootURL, params) {
         })
         .done(function(xslFile) {
             console.log('PRECRANACHTOCRANACH');
-            console.log(docPreCranach);
+            // console.log(docPreCranach);
             xsltProcessor.importStylesheet(xslFile);
 
             /* FIREFOX WORK-AROUND */
@@ -152,6 +152,7 @@ function Cranach(rootURL, params) {
             var preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
             /* END FIREFOX WORK-AROUND */
 
+	    console.log(preCranachDOM);
             var docCranach = xsltProcessor.transformToDocument(preCranachDOM);
             console.log(docCranach);
             el.attr['doc'] = docCranach;

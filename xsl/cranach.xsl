@@ -5,12 +5,11 @@
     xmlns:lv = "http://www.math.cuhk.edu.hk/~pschan/cranach"
     xmlns:idx = "elephas_index"
     xmlns:m = "http://www.w3.org/1998/Math/MathML"
-    exclude-result-prefixes="lv"
     >
 
+  <!-- exclude-result-prefixes="lv" -->
     <!-- xmlns:xh="https://www.w3.org/TR/html51/" -->
     <!-- xmlns:xh="http://www.w3.org/1999/xhtml" -->
-    <xsl:strip-space elements="xsl:*"/>
     <xsl:preserve-space elements="xh:pre"/>
     <xsl:output method="xml" indent="yes"/>
 
@@ -527,7 +526,7 @@
         <xsl:param name="section" select="@section"/>
         <xsl:param name="subsection" select="@subsection"/>
         <xsl:param name="subsubsection" select="@subsubsection"/>
-        <xsl:element name="{name()}">
+        <xsl:element name="{name()}" namespace="{$xh}">
             <xsl:copy-of select="@*[not(@environment) and not(@chapter_type)]"/>
             <!-- <xsl:copy-of select="@wbtag"/> -->
             <xsl:apply-templates select="*|text()|comment()">

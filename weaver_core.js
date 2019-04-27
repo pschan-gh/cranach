@@ -213,7 +213,7 @@ function Stack(node, doc) {
     this.weave = function() {
         var originalWord = this.words.shift();
 
-        // console.log('WEAVING: ' + originalWord);
+        console.log('WEAVING: ' + originalWord);
         var word = originalWord;
         var child = this;
 
