@@ -1,8 +1,13 @@
-# cranach
+# Cranach
 
-The project aims to develop a scientific document system with the following components:
+The project aims to develop a scientific document system
+which works out-of-the-box for rapid slideshow preparation and presentation.
+  
+It's designed mainly for Math and Science educators already well-versed in LaTeX.
 
-1. An XML-based document format (referred to as "cranach"), which stores both presentational *and* semantic information.  
+It has the following components:
+
+1. An lightweight XML-based document format (referred to as "cranach"), which aims to store both presentational and semantic information.  
     * Actual presentation is controlled by a separate XML stylesheet which is included in Item 3 (see below) or may be custom-provided.
     * It aims to support direct inclusion of HTML5 elements.
     * It aims to support direct inclusion of MathML elements, both presentational and semantic.
@@ -18,5 +23,6 @@ The project aims to develop a scientific document system with the following comp
    * It features an Ace editor so users may directly render wb code to cranach and simultaneously to the browser frontend.
    * Users may export cranach file to LaTeX with a click on a button.
    * It has preliminary support for rendering latexml documents.
+   * A significant portion of the frontend is devoted to presenting slideshows.
 
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
