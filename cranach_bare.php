@@ -9,6 +9,24 @@ $id = uniqid();
     <script type="text/javascript" src="weaver_core.js"></script>
     <script type="text/javascript" src="weaver.js"></script>
     <script type="text/javascript" src="cranach_bare.js"></script>
+        <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+      skipStartupTypeset: false,
+      tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEnvironments: true,
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore"
+      },
+      MathML: {
+      extensions: ["content-mathml.js"]
+      },
+      TeX: {
+      equationNumbers: {autoNumber: "ams"}
+      }
+     });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
 </head>
 <body>
     <div id="query_container_<?php echo $id; ?>">
@@ -50,5 +68,10 @@ if(urlParams.has('wb') || urlParams.has('xml')) {
     }
 }
 cranach_bare.render();
+$(function() {
+    MathJax.Hub.Queue(
+        ["Typeset", MathJax.Hub, document]
+    );
+});
 </script>
 </html>

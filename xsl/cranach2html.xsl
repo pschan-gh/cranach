@@ -412,12 +412,12 @@
                 <xsl:when test="not(@typerefnum)">
                     <xsl:value-of select="@type"/>
                     <span style="padding-left:0.5em; padding-right:0.5em" wbtag="ignore">
-                        <xsl:value-of select="concat($item, '.')"/>
+                        <xsl:value-of select="concat($item, '')"/>
                     </span>
                 </xsl:when>
                 <xsl:otherwise>
                     <span style="padding-right:0.5em" wbtag="ignore">
-                        <xsl:value-of select="concat(@typerefnum, '.')"/>
+                        <xsl:value-of select="concat(@typerefnum, '')"/>
                     </span>
                 </xsl:otherwise>
             </xsl:choose>
@@ -433,6 +433,7 @@
   <xsl:template match="lv:statement/lv:title[text()!='.']">
     <div style="display:inline-block" wbtag='ignore'>
       <xsl:copy-of select="@*"/>
+      <strong> - </strong>
       <xsl:element name="h5">
           <xsl:apply-templates select="*|text()"/>
       </xsl:element>
