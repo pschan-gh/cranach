@@ -2,7 +2,7 @@ var domParser = new DOMParser();
 
 const htmlElements = /pre|table|tbody|thead|th|tr|td|i|em|p|a|b|strong|u|h\d|div|img|center|script|iframe|blockquote|ol|ul|li|sup|code|hr|span|iframe|br|hr/;
 
-const htmlRe = new RegExp('\\<(?:' + htmlElements.source + ')(?:\\s+.*?|)\\/*\\>', 'i');
+const htmlRe = new RegExp('\\<(?:' + htmlElements.source + ')(?:\\s+(?:.|\n)*?|)\\/*\\>', 'i');
 const htmlCloseRe = new RegExp('\\<\\/(?:' + htmlElements.source +')(?:\\s+.*?|)\\>', 'i');
 
 // var mainTokensRe = new RegExp('(\\n+|\\s+)|(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z]+)(?:{.*?})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|(((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).)*?)', 'g');
@@ -241,7 +241,7 @@ function Stack(node, doc) {
         }
 
         // var htmlMatches = word.match(/\<([a-z0-9]+)(.*?)/i);
-        var htmlTagRe = new RegExp('\\<(' + htmlElements.source + ')(\\s+.*|)\\/*\\>', 'i');
+        var htmlTagRe = new RegExp('\\<(' + htmlElements.source + ')(\\s+(?:.|\n)*|)\\/*\\>', 'i');
         var htmlMatches = word.match(htmlTagRe);
         if (htmlMatches) {
             // console.log('WORD: ' + word);
