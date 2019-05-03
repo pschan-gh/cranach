@@ -26,6 +26,10 @@
         <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
+    <xsl:template match="lv:slide[not(@wbtag)]">
+      <xsl:apply-templates select="*[not(self::lv:topic)]|text()" />
+    </xsl:template>
+
     <xsl:template match="lv:slide[@wbtag]" >
         <xsl:value-of select="concat('&#xa;', '@', name(), '&#xa;')" />
         <xsl:apply-templates select="*|text()" />
@@ -89,7 +93,7 @@
       <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
-    
+
     <xsl:template match="lv:webwork">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', name(), '{', @pg_file , '}')"/>
@@ -169,6 +173,12 @@
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@newline</xsl:text>
         <xsl:text>&#xa;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="lv:center|lv:left|lv:right" >
+        <xsl:value-of select="concat('&#xa;', '@', @wbtag)"/>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:value-of select="concat('&#xa;', '@end', @wbtag)"/>
     </xsl:template>
 
     <xsl:template match="text()" >

@@ -111,9 +111,11 @@
                 </h5>
             <xsl:apply-templates select="@title"/>
 	    </a>
-            <blockquote wbtag="skip">
-                <xsl:apply-templates select="*|text()"/>
-            </blockquote>
+	    <br/>
+	    <xsl:apply-templates select="*|text()"/>
+            <!-- <blockquote wbtag="skip"> -->
+            <!--     <xsl:apply-templates select="*|text()"/> -->
+            <!-- </blockquote> -->
         </div>
     </xsl:template>
 
@@ -163,16 +165,24 @@
                 <xsl:value-of select="@type"/>
             </xsl:attribute>
             <xsl:copy-of select="@*"/>
-            <blockquote wbtag="skip">
-                <h5 wbtag="ignore">
-                    <xsl:value-of select="@type"/>
-                    <span style="margin-left:0.5em">
-                        <xsl:value-of select="@title"/>
-                    </span>
-                </h5>
-                <xsl:apply-templates select="title"/>
-                <xsl:apply-templates select="*[not(self::title)]|text()"/>
-            </blockquote>
+            <h5 wbtag="ignore">
+              <xsl:value-of select="@type"/>
+              <span style="margin-left:0.5em">
+                <xsl:value-of select="@title"/>
+              </span>
+            </h5>
+            <xsl:apply-templates select="title"/>
+            <xsl:apply-templates select="*[not(self::title)]|text()"/>
+            <!-- <blockquote wbtag="skip"> -->
+            <!--     <h5 wbtag="ignore"> -->
+            <!--         <xsl:value-of select="@type"/> -->
+            <!--         <span style="margin-left:0.5em"> -->
+            <!--             <xsl:value-of select="@title"/> -->
+            <!--         </span> -->
+            <!--     </h5> -->
+            <!--     <xsl:apply-templates select="title"/> -->
+            <!--     <xsl:apply-templates select="*[not(self::title)]|text()"/> -->
+            <!-- </blockquote> -->
         </div>
     </xsl:template>
 

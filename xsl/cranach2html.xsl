@@ -733,9 +733,31 @@
 
   <xsl:template match="lv:framebox">
     <div style="width:100%;text-align:center">
+      <xsl:copy-of select="@wbtag"/>
       <div style="display:inline-block;border: 5px solid #428bc1;padding:10px">
 	<xsl:apply-templates select="text()|comment()|*"/>
       </div>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="lv:center">
+    <div style="display:table;width:100%;text-align:center;margin:auto;padding:1em" class="center">
+      <xsl:copy-of select="@wbtag"/>
+      <xsl:apply-templates select="text()|comment()|*"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="lv:left">
+    <div style="display:table-cell;vertical-align:middle;padding:10px;width:50%;text-align:center" class="dual-left">
+      <xsl:copy-of select="@wbtag"/>
+      <xsl:apply-templates select="text()|comment()|*"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="lv:right">
+    <div style="display:table-cell;vertical-align:middle;padding:10px;width:50%;text-align:center" class="dual-right">
+      <xsl:copy-of select="@wbtag"/>
+      <xsl:apply-templates select="text()|comment()|*"/>
     </div>
   </xsl:template>
 

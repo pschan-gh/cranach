@@ -109,6 +109,13 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="xh:div[@wbtag='center' or @wbtag='left' or @wbtag='right']" >
+        <xsl:element name="{@wbtag}">
+            <xsl:copy-of select="@wbtag"/>
+            <xsl:apply-templates select="text()|comment()|*"/>
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="xh:div[@wbname='statement' or @wbname='substatement']">
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="{@wbname}">

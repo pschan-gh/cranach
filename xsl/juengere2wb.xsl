@@ -6,7 +6,8 @@
     <!-- xmlns:xh="https://www.w3.org/TR/html51/" -->
     <!-- xmlns:xh="http://www.w3.org/1999/xhtml" -->
 
-    <xsl:strip-space elements="lv:*"/>
+    <!-- <xsl:strip-space elements="lv:*"/> -->
+
     <xsl:preserve-space elements="xh:pre"/>
 
     <xsl:output method="xml" />
@@ -26,6 +27,12 @@
     <xsl:template match="paragraphs" >
         <xsl:apply-templates select="*|text()" />
         <!-- <xsl:text>&#xa;</xsl:text> -->
+    </xsl:template>
+
+    <xsl:template match="center|left|right" >
+        <xsl:value-of select="concat('&#xa;', '@', @wbtag)"/>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:value-of select="concat('&#xa;', '@end', @wbtag)"/>
     </xsl:template>
 
     <xsl:template match="col|newcol" >

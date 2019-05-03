@@ -156,7 +156,6 @@ function Cranach(rootURL, params) {
             var docCranach = xsltProcessor.transformToDocument(preCranachDOM);
             console.log(docCranach);
             el.attr['doc'] = docCranach;
-            // el.xmlDocQuery(el.attr['query'], docCranach);
             if(!el.hasWb) {
                 el.convertCranachDocToWb(docCranach);
             }
@@ -165,12 +164,9 @@ function Cranach(rootURL, params) {
     }
     this.displayPreCranachDocToHtml = function(docPreCranach) {
         $('#loading_icon').show();
-        // this.preCranachDocToCranachDoc(docPreCranach, this.displayCranachDocToHtml);
         this.preCranachDocToCranachDoc(docPreCranach, this.displayCranachDocToHtml);
     }
     this.displayIndexDocToHtml = function(docIndex, target) {
-        // var contentURL = this.rootURL + '/?xml=' + this.setup().attr['dir'];
-        // console.log('DISPLAYINDEX: ' + contentURLDir);
         var contentURLDir = this.attr['contentURLDir'];
         $.ajax({
             url: 'xsl/index2html.xsl',
@@ -227,7 +223,6 @@ function Cranach(rootURL, params) {
             bare.setAttribute('query', 1);
 
             for ( var i = 0 ; i < queries.snapshotLength; i++ ) {
-                // console.log('QUERY RESULT: ' + queries.snapshotItem(i).textContent);
                 bare.appendChild(queries.snapshotItem(i));
             }
             queryDom.appendChild(bare);
@@ -239,7 +234,6 @@ function Cranach(rootURL, params) {
             this.attr['doc'] = queryDom;
 
             this.preCranachDocToCranachDoc(queryDom, this.displayCranachDocToHtml);
-            // this.preCranachDocToCranachDoc(queryDom);
         } else {
             this.attr['doc'] = docCranach;
             this.displayCranachDocToHtml(docCranach);

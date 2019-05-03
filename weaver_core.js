@@ -32,7 +32,7 @@ var dictionary = {
     "@newcol": "newcol"
 };
 
-var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox"];
+var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox", "center", "left", "right"];
 var chapterType = "Chapter";
 var course='';
 var topic='';
@@ -234,7 +234,6 @@ function Stack(node, doc) {
             child.is_comment = false;
             return child;
         } else if (child.is_comment) {
-            // var comments = word.match(/(?:\<\!\-\-)*(.*?)(?:\-\-\>)*/);
             // console.log('APPENDING TO COMMENT: ' + originalWord);
             child.node.textContent += originalWord;
             return child;
@@ -278,16 +277,10 @@ function Stack(node, doc) {
         }
 
         var argument = '';
-        // (@\w+({(([^{}]*)|({[^{}]*}))+})?)
-        // var matches = word.match(/^(@\w+)({(.*)})*/);
-        // var matches = word.match(/^(@\w+)({((([^{}]*)|({[^{}]*}))+)})*/);
         var matches = word.match(/^(@\w+)(?:{(.*?)}$)*/);
         if (matches) {
             word = matches[1];
             var tagname = word.substr(1);
-            // var re = new RegExp(word + '{(.*?)}');
-            // var re = new RegExp(word + '{(.*?)}$');
-            // var matches = originalWord.trim().match(re);
             if (matches[2]) {
                 argument = matches[2];
             }
@@ -443,7 +436,40 @@ function Stack(node, doc) {
                 break;
             }
             // var re = new RegExp(child.getEnvironment(), 'i');
-            child = child.closeTo(/statement|substatement|slide/i).close();
+            child = child.closeTo(/statement|substatement|enumerate|itemize|center|slide/i).close();
+            break;
+	    case "@center":
+	    child = child.addChild("center");
+	    child.node.setAttribute("wbtag", "center");
+	    break;
+	    case "@endcenter":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            child = child.closeTo(/center|slide/i).close();
+            break;
+	    case "@left":
+	    child = child.addChild("left");
+	    child.node.setAttribute("wbtag", "left");
+	    break;
+	    case "@endleft":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            child = child.closeTo(/left|slide/i).close();
+            break;
+	    case "@right":
+        if (child.getEnvironment().match(/left/i)) {
+            child = child.closeTo(/left/i).close();
+        }
+	    child = child.addChild("right");
+	    child.node.setAttribute("wbtag", "right");
+	    break;
+	    case "@endright":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            child = child.closeTo(/right|slide/i).close();
             break;
             case "@image":
             child = child.addChild("image");

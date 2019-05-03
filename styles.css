@@ -249,29 +249,11 @@ display:none;
 }
 
 #container {
-    /* position:relative; */
-/* position:absolute;
-top:0;
-left:0; */
 width:100%;
 height:100%;
 margin:auto auto;
 background-color:#fff;
 overflow-y:hidden;
-overflow-x:hidden;
-page-break-after: always;
-}
-
-#container {
-    /* position:relative; */
-/* position:absolute;
-top:0;
-left:0; */
-width:100%;
-height:100%;
-margin:auto auto;
-background-color:#fff;
-overflow-y:auto;
 overflow-x:hidden;
 page-break-after: always;
 }
@@ -675,11 +657,9 @@ padding:0;
 
 
 .timeline {
-position:absolute;
-width:5cm;
-text-align:right;
-right:0;
-/* color:blue; */
+/* position:absolute; */
+width:100%;
+text-align:left;
 }
 
 @page
@@ -699,6 +679,11 @@ max-width:600px;
 }
 
 .image > a:after {
+    content:"\a";
+    white-space: pre;
+}
+
+.center > a:after {
     content:"\a";
     white-space: pre;
 }
@@ -933,7 +918,7 @@ and (orientation : portrait) {
 	left:10%;
 	overflow:auto;
     }
-    
+
     .slide_container.wide {
 	width:80%;
     }

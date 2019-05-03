@@ -410,8 +410,9 @@ function commitWb() {
             console.log(body);
             fragment = xsltProcessor.transformToFragment(body,document);
             console.log('HTML2PRELOVU');
-            console.log(fragment);
             fragmentStr = new XMLSerializer().serializeToString(fragment);
+	    console.log(fragmentStr);
+
             $('#source_text').val('');
             var xml = fragmentStr;
 
@@ -431,9 +432,9 @@ function commitWb() {
                     console.log(fragmentStr);
                     var processedStr = fragmentStr
                         .replace(/\n(\s|\n|\r)*/g, "\n")
-                        //.replace(/(\s*@newline\s*)+/g, "\n\n")
+                        .replace(/(\s*@newline\s*)+/g, "\n\n")
                         .replace(/&amp;/g, '&')
-                        .replace(/@((course|lecture|week|chapter|section|subsection|subsubsection|topic){.*?})(\s|\n)*@slide/g, "@$1")
+                        .replace(/(?:\s|\n)*@slide(?:\s|\n)*@((course|lecture|week|chapter|section|subsection|subsubsection|topic){.*?})/g, "@$1")
                         .replace(/&lt;/g, '<')
                         .replace(/&gt;/g, '>')
                         .replace(/&amp;/g, '&')
