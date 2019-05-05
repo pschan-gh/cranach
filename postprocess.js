@@ -365,20 +365,30 @@ function postprocess() {
         });
 
         MathJax.Hub.Queue(["resetEquationNumbers", MathJax.InputJax.TeX]);
+
+	if (cranach.selectedItem) {
+	    console.log('SELECTED ITEM: ' + cranach.selectedItem);
+	    var $selectedSlide = $('.statement[item="' + cranach.selectedItem + '"]').closest('.slide');
+	    $('#output').scrollTo($selectedSlide);
+	    $selectedSlide.click();
+	    $('#output').find('div.statement[item="' + cranach.selectedItem + '"]').find('.item_title').addClass('highlighted');
+	} else {
+	    var $selectedSlide = $('.slide[slide="' + cranach.selectedSlide  + '"]');
+	    $('#output').scrollTo($selectedSlide);
+	    $selectedSlide.click();
+	}
+
+	if (cranach.selectedKeyword) {
+            console.log('SELECTED KEYWORD: ' + cranach.selectedKeyword);
+	    // var re = new RegExp(cranach.selectedKeyword.replace(/\s/g, ''), 'i');
+	    // console.log(re);
+            // var $selectedSlide = $('*[text]').filter(function() {
+	    // 	return $(this).attr('text').match(re);
+	    // }).closest('.slide');
+	    focusOn($selectedSlide.attr('slide'), cranach.selectedKeyword.replace(/\s/g, ''));
+	}
+	
     });
-
-    if (!cranach.selectedItem) {
-        var $selectedSlide = $('.slide[slide="' + cranach.selectedSlide  + '"]');
-    } else {
-        console.log('SELECTED ITEM: ' + cranach.selectedItem);
-        var $selectedSlide = $('.statement[item="' + cranach.selectedItem + '"]').closest('.slide');
-    }
-
-    $('#output').scrollTo($selectedSlide);
-    $selectedSlide.click();
-    if (cranach.selectedItem) {
-        $('#output').find('div.statement[item="' + cranach.selectedItem + '"]').find('.item_title').addClass('highlighted');
-    }
 
     if (cranach.present) {
         $('#present_button').click();

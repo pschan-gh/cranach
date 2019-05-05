@@ -93,8 +93,11 @@
             </xsl:attribute>
             <xsl:copy-of select="@*"/>
 	    <a target="_blank">
+	      <!-- <xsl:attribute name="href"> -->
+	      <!-- 	<xsl:value-of select="concat($contenturl, '&amp;', 'slide=', @slide)"/> -->
+	      <!-- </xsl:attribute> -->
 	      <xsl:attribute name="href">
-		<xsl:value-of select="concat($contenturl, '&amp;', 'slide=', @slide)"/>
+		<xsl:value-of select="concat($contenturl, '&amp;', 'item=', @item)"/>
 	      </xsl:attribute>
               <xsl:copy-of select="@*"/>
                 <xsl:attribute name="wbtag">
