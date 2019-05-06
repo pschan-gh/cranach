@@ -78,6 +78,9 @@ function updateModal() {
         $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + item_type + ' ' + item + '</a>');
         $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + item_type + ' ' + item + '}');
         $('#item_modal').find('.md5').first().html(md5String);
+
+        updateModalRefby(md5String);
+
     });
 }
 
@@ -387,7 +390,7 @@ function postprocess() {
 	    // }).closest('.slide');
 	    focusOn($selectedSlide.attr('slide'), cranach.selectedKeyword.replace(/\s/g, ''));
 	}
-	
+
     });
 
     if (cranach.present) {

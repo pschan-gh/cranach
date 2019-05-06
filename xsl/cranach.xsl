@@ -542,11 +542,23 @@
     </xsl:template>
 
     <xsl:template match="lv:ref">
-        <xsl:choose>
-            <xsl:when test="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]">
-                <xsl:variable name="statement" select="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]"/>
-                <xsl:element name="ref" namespace="{$lv}">
-                    <xsl:copy-of select="@*"/>
+        <xsl:param name="course"/>
+        <xsl:param name="chapter"/>
+        <xsl:param name="slide"/>
+        <xsl:element name="ref" namespace="{$lv}">
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="course">
+                <xsl:value-of select="$course"/>
+            </xsl:attribute>
+            <xsl:attribute name="chapter">
+                <xsl:value-of select="$chapter"/>
+            </xsl:attribute>
+            <xsl:attribute name="slide">
+                <xsl:value-of select="$slide"/>
+            </xsl:attribute>
+            <xsl:choose>
+                <xsl:when test="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]">
+                    <xsl:variable name="statement" select="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-slide">
                         <xsl:value-of select="$statement/@slide"/>
                     </xsl:attribute>
@@ -584,19 +596,37 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                </xsl:element>
-            </xsl:when>
-            <xsl:when test="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]">
-                <xsl:variable name="statement" select="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]"/>
-                <xsl:element name="ref" namespace="{$lv}">
-                    <xsl:copy-of select="@*"/>
-                    <xsl:copy-of select="$statement/@*"/>
-                    <xsl:attribute name="class">
-                        <xsl:text>knowl</xsl:text>
+                </xsl:when>
+                <xsl:when test="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]">
+                    <xsl:variable name="statement" select="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]"/>
+                    <xsl:attribute name="src-course">
+                        <xsl:value-of select="$statement/@course"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="src-chapter">
+                        <xsl:value-of select="$statement/@chapter"/>
                     </xsl:attribute>
                     <xsl:attribute name="src-slide">
                         <xsl:value-of select="$statement/@slide"/>
                     </xsl:attribute>
+                    <xsl:attribute name="type">
+                        <xsl:value-of select="$statement/@type"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="item">
+                        <xsl:value-of select="$statement/@item"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:value-of select="$statement/title"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="filename">
+                        <xsl:value-of select="$statement/@filename"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="md5">
+                        <xsl:value-of select="$statement/@md5"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="class">
+                        <xsl:text>knowl</xsl:text>
+                    </xsl:attribute>
+
                     <xsl:attribute name="name">
                         <xsl:choose>
                             <xsl:when test="@name">
@@ -610,14 +640,12 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                </xsl:element>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:element name="ref" namespace="{$lv}">
+                </xsl:when>
+                <xsl:otherwise>
                     <xsl:text>UNDEFINED</xsl:text>
-                </xsl:element>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="lv:keywords" />

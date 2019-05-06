@@ -572,8 +572,8 @@
   <xsl:template match="lv:ref">
       <xsl:element name="a">
           <xsl:copy-of select="@*"/>
-          <xsl:attribute name="chapter">
-              <xsl:value-of select="@chapter"/>
+          <xsl:attribute name="src-chapter">
+              <xsl:value-of select="@src-chapter"/>
           </xsl:attribute>
           <xsl:attribute name="item">
               <xsl:value-of select="@item"/>
@@ -585,7 +585,7 @@
               <xsl:when test="@name and not(@name='')">
                   <xsl:value-of select="@name"/>
               </xsl:when>
-              <xsl:when test="@title">
+              <xsl:when test="@title and not(@title='')">
                   <xsl:value-of select="@title"/>
               </xsl:when>
               <xsl:otherwise>

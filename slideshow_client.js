@@ -439,7 +439,7 @@ function commitWb() {
                         .replace(/&gt;/g, '>')
                         .replace(/&amp;/g, '&')
                         .replace(/&apos;/g, "'")
-		    	.replace(/^\n*/, '');
+                        .replace(/^\n*/, '');
                     editor.setValue(processedStr, 1);
                     resetHighlight();
                     showTexSource(false);
@@ -657,4 +657,32 @@ function updateSlideProgress(slideIndex, refresh) {
     // $('#slide_progress td').css('background-color', '#eee');
     // $('#slide_progress').find('td[num="' + slideIndex + '"]').css('background-color', '#ccc');
 
+}
+
+function updateModalRefby(md5String) {
+    var contentURLDir = cranach.attr['contentURLDir'];
+    $.ajax({
+        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
+        dataType: "xml"
+    })
+    .done(function(index) {
+        $.ajax({
+            url: 'xsl/refby2html.xsl'
+        })
+        .done(function(xsl) {
+            var xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xsl);
+            xsltProcessor.setParameter('', 'md5', md5String);
+            xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+            fragment = xsltProcessor.transformToFragment(index,document);
+            console.log('REFBY2HTML');
+            fragmentStr = new XMLSerializer().serializeToString(fragment);
+            console.log(fragmentStr);
+            $('.modal_refby').html(fragmentStr);
+        })
+    })
+    .fail(function() {
+        console.log("INDEX FILE DOESN'T EXIST");
+        return 0;
+    });
 }
