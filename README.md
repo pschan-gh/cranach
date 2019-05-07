@@ -27,4 +27,4 @@ It has the following components:
 
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
 
-For a demonstration of Cranach in action, see: https://www.math.cuhk.edu.hk/~pschan/cranach/?xml=content/math2070/201819t2/weeks1-13.xml
+For a demonstration of Cranach in action, see: https://www.math.cuhk.edu.hk/~pschan/cranach/?xml=content/test/weeks1-5.xml
