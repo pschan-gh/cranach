@@ -460,6 +460,7 @@
       <blockquote wbtag="skip">
         <xsl:element name="h5">
             <xsl:attribute name="wbtag">ignore</xsl:attribute>
+            <xsl:attribute name="class">item_title</xsl:attribute>
           <xsl:value-of select="concat(@type, '.')"/>
           <span style="margin-left:0.5em">
             <xsl:value-of select="@title"/>

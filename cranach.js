@@ -1,6 +1,7 @@
 function nsResolver(prefix) {
     var ns = {
         'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
+        'idx' : "elephas_index",
         'xh' : 'http://www.w3.org/1999/xhtml',
         'm': 'http://www.w3.org/1998/Math/MathML'
     };

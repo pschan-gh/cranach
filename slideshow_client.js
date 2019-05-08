@@ -678,8 +678,51 @@ function updateModalRefby(md5String) {
             console.log('REFBY2HTML');
             fragmentStr = new XMLSerializer().serializeToString(fragment);
             console.log(fragmentStr);
-            $('.modal_refby').html(fragmentStr);
+            $('.modal_refby').html(fragmentStr).show();
         })
+    })
+    .fail(function() {
+        console.log("INDEX FILE DOESN'T EXIST");
+        return 0;
+    });
+}
+
+function updateModalProofs(md5String) {
+    var contentURLDir = cranach.attr['contentURLDir'];
+    $.ajax({
+        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
+        dataType: "xml"
+    })
+    .done(function(index) {
+        var queryString = '//idx:branch[@type="Proof"][@ofmd5="' + md5String + '"]';
+        console.log(queryString);
+        var iterator = index.evaluate(queryString, index, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+        console.log(iterator);
+        try {
+            var thisNode = iterator.iterateNext();
+
+            var html = '';
+            var index = 1;
+            while (thisNode) {
+                console.log('SUBSTATEMENT: ' + thisNode.getAttribute('md5') );
+                // html += '<li><a target="_blank" knowl="' + cranach.rootURL + '/cranach_bare.php?xml=' + cranach.attr['dir'] + '/'+ thisNode.getAttribute('filename') + '&query=//lv:substatement[@of=\'' + md5String + '\']"><strong>Proof</strong></a></li>';
+                // html += '<li><a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&query=//lv:substatement[@of=\'' + md5String + '\']"><strong>Proof</strong></a></li>';
+                if (html != '') {
+                    html += ', ';
+                }
+                html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
+                index++;
+                thisNode = iterator.iterateNext();
+            }
+            if (html != '') {
+                $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
+            } else {
+                $('.modal_proofs').html(html).hide();
+            }
+        }
+        catch (e) {
+            alert( 'Error: Document tree modified during iteration ' + e );
+        }
     })
     .fail(function() {
         console.log("INDEX FILE DOESN'T EXIST");

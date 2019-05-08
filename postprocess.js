@@ -25,11 +25,20 @@ function updateModal() {
         var chapterType = $(this).closest('.slide').attr('chapter_type');
         var chapter = $(this).closest('.slide').attr('chapter');
 
-	if (cranach.attr['query']) {
+        $('.modal-title > span').hide();
+        $('.md5.share_text').text('');
+        $('.modal_refby').hide();
+
+        $('.current_course').text(course).show();
+        $('.current_chapter').text(chapter).show();
+        $('.current_chapter').text(chapterType + ' ' + chapter).show();
+        $('.current_slide').text(slide).show();
+
+        if (cranach.attr['query']) {
             var url = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&present&slide=' + slide;
-	} else {
-	    var url = cranach.contentURL + '&present&slide=' + slide;
-	}
+        } else {
+            var url = cranach.contentURL + '&present&slide=' + slide;
+        }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
         $('#item_modal').find('#modal_keywords').html('');
@@ -80,6 +89,7 @@ function updateModal() {
         $('#item_modal').find('.md5').first().html(md5String);
 
         updateModalRefby(md5String);
+        updateModalProofs(md5String);
 
     });
 }
@@ -197,9 +207,9 @@ function updateKnowl() {
                 }
             } else {
                 if (cranach.hasXML) {
-                    var knowl = rootURL + "cranach_bare.php?xml=" + contentDir + '/' + $(this).attr('filename') + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@label='" + label + "']";
                 } else {
-                    var knowl = rootURL + "cranach_bare.php?wb=" + contentDir + '/' + $(this).attr('filename') + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@label='" + label + "']";
                 }
             }
 
@@ -371,10 +381,11 @@ function postprocess() {
 
 	if (cranach.selectedItem) {
 	    console.log('SELECTED ITEM: ' + cranach.selectedItem);
-	    var $selectedSlide = $('.statement[item="' + cranach.selectedItem + '"]').closest('.slide');
+        var $item = $('.statement[item="' + cranach.selectedItem + '"], .statement[md5="' + cranach.selectedItem + '"], .substatement[item="' + cranach.selectedItem + '"], .substatement[md5="' + cranach.selectedItem + '"]').first();
+        var $selectedSlide = $item.closest('.slide');
 	    $('#output').scrollTo($selectedSlide);
 	    $selectedSlide.click();
-	    $('#output').find('div.statement[item="' + cranach.selectedItem + '"]').find('.item_title').addClass('highlighted');
+	    $item.find('.item_title').addClass('highlighted');
 	} else {
 	    var $selectedSlide = $('.slide[slide="' + cranach.selectedSlide  + '"]');
 	    $('#output').scrollTo($selectedSlide);
