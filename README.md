@@ -7,7 +7,7 @@ It's designed mainly for Math and Science educators already well-versed in LaTeX
 
 It has the following components:
 
-1. A lightweight XML-based document format (referred to as "cranach"), which aims to store both presentational and semantic information.  
+1. An lightweight XML-based document format (referred to as "cranach"), which aims to store both presentational and semantic information.  
     * Actual presentation is controlled by a separate XML stylesheet which is included in Item 3 (see below) or may be custom-provided.
     * It aims to support direct inclusion of HTML5 elements.
     * It aims to support direct inclusion of MathML elements, both presentational and semantic.
@@ -26,5 +26,3 @@ It has the following components:
    * A significant portion of the frontend is devoted to presenting slideshows.
 
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
-
-For a demonstration of Cranach in action, see: https://www.math.cuhk.edu.hk/~pschan/cranach/?xml=content/test/weeks1-5.xml

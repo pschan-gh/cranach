@@ -190,6 +190,7 @@ function updateKnowl() {
             var num = $(this).attr('num');
             var num = $(this).attr('item');
             var label = $(this).attr('label');
+            var md5 = $(this).attr('md5');
             var contentDir = ''
 
             var rootURL = cranach.rootURL;
@@ -201,15 +202,15 @@ function updateKnowl() {
 
             if ($(this).attr('filename') == 'self') {
                 if (cranach.hasXML) {
-                    var knowl = rootURL + "cranach_bare.php?xml=" + cranach.attr['xmlPath'] + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?xml=" + cranach.attr['xmlPath'] + "&query=//lv:statement[@md5='" + md5 + "']";
                 } else {
-                    var knowl = rootURL + "cranach_bare.php?wb=" + cranach.attr['wbPath'] + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?wb=" + cranach.attr['wbPath'] + "&query=//lv:statement[@md5='" + md5 + "']";
                 }
             } else {
                 if (cranach.hasXML) {
-                    var knowl = rootURL + "cranach_bare.php?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@md5='" + md5 + "']";
                 } else {
-                    var knowl = rootURL + "cranach_bare.php?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@label='" + label + "']";
+                    var knowl = rootURL + "cranach_bare.php?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@md5='" + md5 + "']";
                 }
             }
 

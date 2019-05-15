@@ -127,7 +127,7 @@
 
   <xsl:template match="lv:chapter">
       <xsl:param name="course" select="@course"/>
-    <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords">
+      <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords">
       <xsl:with-param name="course" select="$course"/>
       <xsl:with-param name="chapter" select="@num"/>
       <xsl:with-param name="chapter_type" select="@chapter_type"/>
@@ -476,6 +476,9 @@
           <xsl:attribute name="wbtag">
               <xsl:value-of select="'course'"/>
           </xsl:attribute>
+          <xsl:attribute name="type">
+              <xsl:value-of select="'Course'"/>
+          </xsl:attribute>
           <xsl:attribute name="course">
               <xsl:value-of select="@title"/>
           </xsl:attribute>
@@ -487,8 +490,17 @@
 
   <xsl:template match="lv:title[@scope='chapter']">
     <h2 class="chapter_title">
+        <xsl:variable name="serial">
+            <xsl:value-of select="ancestor::lv:chapter/@num"/>
+        </xsl:variable>
+        <xsl:attribute name="serial">
+            <xsl:value-of select="$serial"/>
+        </xsl:attribute>
       <xsl:attribute name="wbtag">
           <xsl:value-of select="@wbtag"/>
+      </xsl:attribute>
+      <xsl:attribute name="type">
+          <xsl:value-of select="ancestor::lv:chapter/@chapter_type"/>
       </xsl:attribute>
       <xsl:attribute name="chapter">
         <xsl:value-of select="@chapter"/>
@@ -530,13 +542,24 @@
     <xsl:param name="subsection"/>
     <xsl:param name="subsection_title"/>
     <h3 wbtag="section">
-      <xsl:value-of select="$chapter"/>
-      <xsl:text>.</xsl:text>
-      <xsl:value-of select="$section"/>
-      <xsl:text> </xsl:text>
-      <span class="title">
-          <xsl:apply-templates select="*|text()"/>
-      </span>
+        <xsl:variable name="serial">
+            <xsl:value-of select="$chapter"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$section"/>
+        </xsl:variable>
+        <xsl:attribute name="serial">
+            <xsl:value-of select="$serial"/>
+        </xsl:attribute>
+        <xsl:attribute name="type">
+            <xsl:value-of select="'Section'"/>
+        </xsl:attribute>
+        <xsl:value-of select="$chapter"/>
+        <xsl:text>.</xsl:text>
+        <xsl:value-of select="$section"/>
+        <xsl:text> </xsl:text>
+        <span class="title">
+            <xsl:apply-templates select="*|text()"/>
+        </span>
     </h3>
   </xsl:template>
   <xsl:template match="lv:title[@scope='subsection']">
@@ -549,11 +572,17 @@
     <xsl:param name="subsection"/>
     <xsl:param name="subsection_title"/>
     <h4 wbtag="subsection">
-      <xsl:value-of select="$chapter"/>
-      <xsl:text>.</xsl:text>
-      <xsl:value-of select="$section"/>
-      <xsl:text>.</xsl:text>
-      <xsl:value-of select="$subsection"/>
+        <xsl:variable name="serial">
+            <xsl:value-of select="$chapter"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$section"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$subsection"/>
+        </xsl:variable>
+        <xsl:attribute name="serial">
+            <xsl:value-of select="$serial"/>
+        </xsl:attribute>
+      <xsl:value-of select="$serial"/>
       <xsl:text> </xsl:text>
       <span class="title">
           <xsl:apply-templates select="text()"/>
@@ -563,6 +592,18 @@
 
   <xsl:template match="lv:title[@scope='subsubsection']">
     <h5 wbtag="subsubsection">
+        <xsl:variable name="serial">
+            <xsl:value-of select="$chapter"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$section"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$subsection"/>
+            <xsl:text>.</xsl:text>
+            <xsl:value-of select="$subsubsection"/>
+        </xsl:variable>
+        <xsl:attribute name="serial">
+            <xsl:value-of select="$serial"/>
+        </xsl:attribute>
         <span class="title">
             <xsl:apply-templates select="text()"/>
         </span>
@@ -579,10 +620,21 @@
           <xsl:attribute name="item">
               <xsl:value-of select="@item"/>
           </xsl:attribute>
-          <xsl:attribute name="class">
-              <xsl:text>knowl</xsl:text>
+          <xsl:attribute name="type">
+              <xsl:value-of select="@type"/>
           </xsl:attribute>
-          <xsl:choose>
+          <xsl:attribute name="class">
+              <xsl:choose>
+                  <xsl:when test="@type='statement' or @type='substatement'">
+                      <xsl:text>knowl</xsl:text>
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:text>href</xsl:text>
+                  </xsl:otherwise>
+              </xsl:choose>
+          </xsl:attribute>
+          <xsl:apply-templates select="lv:title"/>
+          <!-- <xsl:choose>
               <xsl:when test="@name and not(@name='')">
                   <xsl:value-of select="@name"/>
               </xsl:when>
@@ -592,7 +644,7 @@
               <xsl:otherwise>
                   <xsl:value-of select="concat(@type, ' ', @item)"/>
               </xsl:otherwise>
-          </xsl:choose>
+          </xsl:choose> -->
       </xsl:element>
   </xsl:template>
 

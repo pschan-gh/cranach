@@ -31,6 +31,24 @@
         <xsl:param name="subsection" select="@subsection"/>
         <xsl:param name="subsubsection" select="@subsubsection"/>
         <xsl:element name="{local-name()}" namespace="{$lv}">
+            <xsl:attribute name="course">
+                <xsl:value-of select="$course"/>
+            </xsl:attribute>
+            <xsl:attribute name="chapter">
+                <xsl:value-of select="$chapter"/>
+            </xsl:attribute>
+            <xsl:attribute name="chapter_type">
+                <xsl:value-of select="$chapter_type"/>
+            </xsl:attribute>
+            <xsl:attribute name="section">
+                <xsl:value-of select="$section"/>
+            </xsl:attribute>
+            <xsl:attribute name="subsection">
+                <xsl:value-of select="$subsection"/>
+            </xsl:attribute>
+            <xsl:attribute name="subsubsection">
+                <xsl:value-of select="$subsubsection"/>
+            </xsl:attribute>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
@@ -104,7 +122,7 @@
                 <xsl:with-param name="slide">all</xsl:with-param>
                 <xsl:with-param name="course" select="@title"/>
             </xsl:call-template>
-            <xsl:apply-templates select="lv:chapter|lv:week|lv:lecture|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords|lv:title|text()">
+            <xsl:apply-templates select="lv:chapter|lv:week|lv:lecture|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords|lv:title|lv:label|text()">
                 <xsl:with-param name="environ" select="." />
                 <xsl:with-param name="course" select="@title" />
             </xsl:apply-templates>
@@ -118,17 +136,22 @@
             <xsl:attribute name="course">
                 <xsl:value-of select = "$course" />
             </xsl:attribute>
-
+            <xsl:variable name="serial">
+                <xsl:value-of select = "@num" />
+            </xsl:variable>
+            <xsl:attribute name="serial">
+                <xsl:value-of select = "$serial" />
+            </xsl:attribute>
             <xsl:call-template name="keywords">
                 <xsl:with-param name="environ" select="." />
                 <xsl:with-param name="slide">all</xsl:with-param>
                 <xsl:with-param name="chapter" select="@num"/>
             </xsl:call-template>
-
-            <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|lv:topic|text()">
+            <xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|lv:topic|lv:label|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="@num"/>
                 <xsl:with-param name="chapter_type" select="@chapter_type"/>
+                <xsl:with-param name="serial" select="$serial"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -151,11 +174,20 @@
             <xsl:attribute name="num">
                 <xsl:value-of select="$section"/>
             </xsl:attribute>
-            <xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|text()">
+            <xsl:variable name="serial">
+                <xsl:value-of select="$chapter"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$section"/>
+            </xsl:variable>
+            <xsl:attribute name="serial">
+                <xsl:value-of select="$serial"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|lv:label|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="$chapter"/>
                 <xsl:with-param name="chapter_type" select="$chapter_type"/>
                 <xsl:with-param name="section" select="$section"/>
+                <xsl:with-param name="serial" select="$serial"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -182,11 +214,22 @@
             <xsl:attribute name="num">
                 <xsl:value-of select="$subsection"/>
             </xsl:attribute>
-            <xsl:apply-templates select="lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|text()">
+            <xsl:variable name="serial">
+                <xsl:value-of select="$chapter"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$section"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$subsection"/>
+            </xsl:variable>
+            <xsl:attribute name="serial">
+                <xsl:value-of select="$serial"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:title|lv:label|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="$chapter"/>
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
+                <xsl:with-param name="serial" select="$serial"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -208,13 +251,26 @@
             <xsl:attribute name="chapter">
                 <xsl:value-of select="$chapter"/>
             </xsl:attribute>
-            <xsl:apply-templates select="lv:slides|lv:bare|lv:keywords|lv:title|text()">
+            <xsl:variable name="serial">
+                <xsl:value-of select="$chapter"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$section"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$subsection"/>
+                <xsl:text>.</xsl:text>
+                <xsl:value-of select="$subsubsection"/>
+            </xsl:variable>
+            <xsl:attribute name="serial">
+                <xsl:value-of select="$serial"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="lv:slides|lv:bare|lv:keywords|lv:title|lv:label|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="$chapter"/>
                 <xsl:with-param name="chapter_type" select="$chapter_type"/>
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
+                <xsl:with-param name="serial" select="$serial"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -502,18 +558,20 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-            <xsl:choose>
-                <xsl:when test="@of">
-                    <xsl:attribute name="of">
-                        <xsl:value-of select="@of"/>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="of">
-                        <xsl:value-of select="preceding::lv:statement[1]/@md5[last()]"/>
-                    </xsl:attribute>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:if test="@type='Proof'">
+                <xsl:choose>
+                    <xsl:when test="@of">
+                        <xsl:attribute name="of">
+                            <xsl:value-of select="@of"/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="of">
+                            <xsl:value-of select="preceding::lv:statement[1]/@md5[last()]"/>
+                        </xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
                 <xsl:with-param name="course" select="$course"/>
@@ -536,6 +594,7 @@
         <xsl:param name="subsection_title" select="@subsection_title"/>
         <xsl:param name="subsubsection" select="@subsubsection"/>
         <xsl:param name="subsubsection_title" select="@subsubsection_title"/>
+        <xsl:param name="serial" select="@serial"/>
         <xsl:param name="slide"/>
         <xsl:element name="{local-name()}" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
@@ -557,9 +616,43 @@
             <xsl:attribute name="subsubsection">
                 <xsl:value-of select = "$subsubsection" />
             </xsl:attribute>
+            <xsl:attribute name="serial">
+                <xsl:value-of select = "$serial" />
+            </xsl:attribute>
             <xsl:attribute name="slide">
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
+            <xsl:if test="local-name()='title'">
+                <xsl:if test="../lv:label">
+                    <xsl:for-each select="../lv:label">
+                        <xsl:element name="label" namespace="{$lv}">
+                            <xsl:copy-of select="@*"/>
+                            <xsl:attribute name="course">
+                                <xsl:value-of select = "$course" />
+                            </xsl:attribute>
+                            <xsl:attribute name="chapter">
+                                <xsl:value-of select = "$chapter" />
+                            </xsl:attribute>
+                            <xsl:attribute name="chapter_type">
+                                <xsl:value-of select = "ancestor::lv:chapter/@chapter_type" />
+                            </xsl:attribute>
+                            <xsl:attribute name="section">
+                                <xsl:value-of select = "$section" />
+                            </xsl:attribute>
+                            <xsl:attribute name="subsection">
+                                <xsl:value-of select = "$subsection" />
+                            </xsl:attribute>
+                            <xsl:attribute name="subsubsection">
+                                <xsl:value-of select = "$subsubsection" />
+                            </xsl:attribute>
+                            <xsl:attribute name="slide">
+                                <xsl:value-of select="$slide"/>
+                            </xsl:attribute>
+                            <xsl:copy-of select="./*|./text"/>
+                        </xsl:element>
+                    </xsl:for-each>
+                </xsl:if>
+            </xsl:if>
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
             </xsl:apply-templates>
@@ -609,23 +702,26 @@
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
             <xsl:choose>
-                <xsl:when test="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]">
-                    <xsl:variable name="statement" select="//lv:statement[(@label=current()/@label) or (@md5=current()/@label)]"/>
+                <!-- <xsl:when test="//lv:label[(@name=current()/@label) or (@md5=current()/@label)]">
+                    <xsl:variable name="label" select="//lv:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-slide">
-                        <xsl:value-of select="$statement/@slide"/>
+                        <xsl:value-of select="$label/@slide"/>
                     </xsl:attribute>
-                    <xsl:attribute name="chapter">
-                        <xsl:value-of select="$statement/ancestor::lv:chapter/@num"/>
+                    <xsl:attribute name="src-course">
+                        <xsl:value-of select="$label/@course"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="src-chapter">
+                        <xsl:value-of select="$label/ancestor::lv:chapter/@num"/>
                     </xsl:attribute>
                     <xsl:choose>
-                        <xsl:when test="ancestor::lv:chapter">
+                        <xsl:when test="$label/ancestor::lv:chapter">
                             <xsl:attribute name="item">
-                                <xsl:value-of select="concat($statement/ancestor::lv:chapter/@num, '.', $statement/@num)"/>
+                                <xsl:value-of select="concat($label/ancestor::lv:chapter/@num, '.', $label/ancestor::lv:statement/@num)"/>
                             </xsl:attribute>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="item">
-                                <xsl:value-of select="$statement/@num"/>
+                                <xsl:value-of select="$label/ancestor::lv:statement/@num"/>
                             </xsl:attribute>
                         </xsl:otherwise>
                     </xsl:choose>
@@ -633,71 +729,85 @@
                         <xsl:text>self</xsl:text>
                     </xsl:attribute>
                     <xsl:attribute name="title">
-                        <xsl:value-of select="$statement/title"/>
+                        <xsl:value-of select="$label/title"/>
                     </xsl:attribute>
                     <xsl:attribute name="md5">
-                        <xsl:value-of select="$statement/@md5"/>
+                        <xsl:value-of select="$label/@md5"/>
                     </xsl:attribute>
                     <xsl:attribute name="class">
                         <xsl:text>knowl</xsl:text>
-                    </xsl:attribute>
-                    <xsl:attribute name="name">
-                        <xsl:choose>
-                            <xsl:when test="@name">
-                                <xsl:value-of select="@name"/>
-                            </xsl:when>
-                            <xsl:when test="$statement/@title">
-                                <xsl:value-of select="$statement/@title"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="concat($statement/@type, ' ', $statement/ancestor::lv:chapter/@num, '.', $statement/@num)"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:when test="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]">
-                    <xsl:variable name="statement" select="//idx:branch[(@label=current()/@label) or (@md5=current()/@label)]"/>
-                    <xsl:attribute name="src-course">
-                        <xsl:value-of select="$statement/@course"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="src-chapter">
-                        <xsl:value-of select="$statement/@chapter"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="src-slide">
-                        <xsl:value-of select="$statement/@slide"/>
                     </xsl:attribute>
                     <xsl:attribute name="type">
-                        <xsl:value-of select="$statement/@type"/>
+                        <xsl:value-of select="$label/@type"/>
                     </xsl:attribute>
-                    <xsl:attribute name="item">
-                        <xsl:value-of select="$statement/@item"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:value-of select="$statement/title"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="src-filename">
-                        <xsl:value-of select="$statement/@filename"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="md5">
-                        <xsl:value-of select="$statement/@md5"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="class">
-                        <xsl:text>knowl</xsl:text>
-                    </xsl:attribute>
-
                     <xsl:attribute name="name">
                         <xsl:choose>
                             <xsl:when test="@name">
                                 <xsl:value-of select="@name"/>
                             </xsl:when>
-                            <xsl:when test="not($statement/@title) or ($statement/@title!='')">
-                                <xsl:value-of select="$statement/@title"/>
+                            <xsl:when test="$label/@title">
+                                <xsl:value-of select="$label/@title"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="concat($statement/@type, ' ', $statement/@item)"/>
+                                <xsl:value-of select="concat($label/@type, ' ', $label/ancestor::lv:chapter/@num, '.', $label/ancestor::lv:statement/@num)"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
+                </xsl:when> -->
+                <xsl:when test="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]">
+                    <xsl:variable name="label" select="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
+                    <xsl:attribute name="src-course">
+                        <xsl:value-of select="$label/@course"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="src-chapter">
+                        <xsl:value-of select="$label/@chapter"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="src-slide">
+                        <xsl:value-of select="$label/@slide"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="type">
+                        <xsl:value-of select="$label/@type"/>
+                    </xsl:attribute>
+                    <xsl:if test="$label/@item">
+                        <xsl:attribute name="item">
+                            <xsl:value-of select="$label/@item"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:attribute name="src-filename">
+                        <xsl:value-of select="$label/@filename"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="md5">
+                        <xsl:value-of select="$label/@md5"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="class">
+                        <xsl:text>knowl</xsl:text>
+                    </xsl:attribute>
+                    <!-- <xsl:attribute name="name">
+                        <xsl:choose>
+                            <xsl:when test="@name">
+                                <xsl:value-of select="@name"/>
+                            </xsl:when>
+                            <xsl:when test="not($label/@title) or ($label/@title!='')">
+                                <xsl:value-of select="$label/@title"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                            <xsl:value-of select="concat($label/@type, ' ', $label/@item)"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute> -->
+                    <xsl:attribute name="serial">
+                        <xsl:value-of select="$label/../@serial"/>
+                    </xsl:attribute>
+                    <xsl:element name="title" namespace="{$lv}">
+                        <xsl:choose>
+                            <xsl:when test="$label/../idx:title">
+                                <xsl:copy-of select="$label/../idx:title/*|$label/../idx:title/text()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat($label/@type, ' ', $label/@item)"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:element>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>UNDEFINED</xsl:text>
