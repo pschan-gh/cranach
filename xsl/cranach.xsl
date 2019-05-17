@@ -622,7 +622,7 @@
             <xsl:attribute name="slide">
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
-            <xsl:if test="local-name()='title'">
+            <!-- <xsl:if test="local-name()='title'">
                 <xsl:if test="../lv:label">
                     <xsl:for-each select="../lv:label">
                         <xsl:element name="label" namespace="{$lv}">
@@ -652,7 +652,7 @@
                         </xsl:element>
                     </xsl:for-each>
                 </xsl:if>
-            </xsl:if>
+            </xsl:if> -->
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
             </xsl:apply-templates>
@@ -702,8 +702,8 @@
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
             <xsl:choose>
-                <!-- <xsl:when test="//lv:label[(@name=current()/@label) or (@md5=current()/@label)]">
-                    <xsl:variable name="label" select="//lv:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
+                <xsl:when test="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]">
+                    <xsl:variable name="label" select="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-slide">
                         <xsl:value-of select="$label/@slide"/>
                     </xsl:attribute>
@@ -753,7 +753,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                </xsl:when> -->
+                </xsl:when>
                 <xsl:when test="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]">
                     <xsl:variable name="label" select="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-course">

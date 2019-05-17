@@ -181,7 +181,7 @@ function updateSlideClickEvent() {
     });
 }
 
-function updateKnowl() {
+function updateRefs() {
 
         $('a.knowl').each(function() {
             $(this).attr('knowl', "");
@@ -215,6 +215,42 @@ function updateKnowl() {
             }
 
             $(this).attr('knowl', knowl);
+
+        });
+
+        $('a.href').each(function() {
+
+            var chapter = $(this).attr('chapter');
+            var num = $(this).attr('num');
+            var num = $(this).attr('item');
+            var label = $(this).attr('label');
+            var serial = $(this).attr('serial');
+            var md5 = $(this).attr('md5');
+            var contentDir = ''
+
+            var rootURL = cranach.rootURL;
+            if (cranach.hasXML) {
+                contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+            } else if (cranach.hasWb) {
+                contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+            }
+
+            if ($(this).attr('filename') == 'self') {
+                if (cranach.hasXML) {
+                    var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
+                } else {
+                    var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
+                }
+            } else {
+                if (cranach.hasXML) {
+                    var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+                } else {
+                    var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+                }
+            }
+
+            $(this).attr('target', '_blank');
+            $(this).attr('href', href);
 
         });
 
@@ -330,7 +366,7 @@ function postprocess() {
 
     updateEditor();
     updateSlideClickEvent();
-    updateKnowl();
+    updateRefs();
     updateModal();
     updateScrollEvent();
     updateToc();
@@ -387,7 +423,14 @@ function postprocess() {
 	    $('#output').scrollTo($selectedSlide);
 	    $selectedSlide.click();
 	    $item.find('.item_title').addClass('highlighted');
-	} else {
+	} else if (cranach.selectedSection) {
+        var $section = $('.title[serial="' + cranach.selectedSection + '"]').first();
+        var $selectedSlide = $section.closest('.slide');
+	    $('#output').scrollTo($selectedSlide);
+	    $selectedSlide.click();
+	    $section.addClass('highlighted');
+
+    } else {
 	    var $selectedSlide = $('.slide[slide="' + cranach.selectedSlide  + '"]');
 	    $('#output').scrollTo($selectedSlide);
 	    $selectedSlide.click();

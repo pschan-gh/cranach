@@ -67,6 +67,7 @@ function Cranach(rootURL, params) {
     this.hasIndex = false;
     this.hasQuery = false;
     this.selectedItem = null;
+    this.selectedSection = null;
     this.selectedSlide = 1;
     this.selectedKeyword = null;
     this.present = false;
@@ -126,6 +127,9 @@ function Cranach(rootURL, params) {
             }
             if (urlParams.has('item')) {
                 this.selectedItem = urlParams.get('item');
+            }
+            if (urlParams.has('section')) {
+                this.selectedSection= urlParams.get('section');
             }
 	    if (urlParams.has('keyword')) {
                 this.selectedKeyword = urlParams.get('keyword');

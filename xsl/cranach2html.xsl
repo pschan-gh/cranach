@@ -489,7 +489,7 @@
   </xsl:template>
 
   <xsl:template match="lv:title[@scope='chapter']">
-    <h2 class="chapter_title">
+    <h2 class="chapter_title title">
         <xsl:variable name="serial">
             <xsl:value-of select="ancestor::lv:chapter/@num"/>
         </xsl:variable>
@@ -541,7 +541,7 @@
     <xsl:param name="section_title"/>
     <xsl:param name="subsection"/>
     <xsl:param name="subsection_title"/>
-    <h3 wbtag="section">
+    <h3 wbtag="section" class="title">
         <xsl:variable name="serial">
             <xsl:value-of select="$chapter"/>
             <xsl:text>.</xsl:text>
@@ -571,7 +571,7 @@
     <xsl:param name="section_title"/>
     <xsl:param name="subsection"/>
     <xsl:param name="subsection_title"/>
-    <h4 wbtag="subsection">
+    <h4 wbtag="subsection" class="title">
         <xsl:variable name="serial">
             <xsl:value-of select="$chapter"/>
             <xsl:text>.</xsl:text>
@@ -591,7 +591,7 @@
   </xsl:template>
 
   <xsl:template match="lv:title[@scope='subsubsection']">
-    <h5 wbtag="subsubsection">
+    <h5 wbtag="subsubsection" class="title">
         <xsl:variable name="serial">
             <xsl:value-of select="$chapter"/>
             <xsl:text>.</xsl:text>
@@ -625,7 +625,7 @@
           </xsl:attribute>
           <xsl:attribute name="class">
               <xsl:choose>
-                  <xsl:when test="@type='statement' or @type='substatement'">
+                  <xsl:when test="@item">
                       <xsl:text>knowl</xsl:text>
                   </xsl:when>
                   <xsl:otherwise>
@@ -633,7 +633,13 @@
                   </xsl:otherwise>
               </xsl:choose>
           </xsl:attribute>
+          <xsl:if test="@type='Section'">
+              <xsl:value-of select="concat('Section ', @serial, ' (')"/>
+          </xsl:if>
           <xsl:apply-templates select="lv:title"/>
+          <xsl:if test="@type='Section'">
+              <xsl:value-of select="')'"/>
+          </xsl:if>
           <!-- <xsl:choose>
               <xsl:when test="@name and not(@name='')">
                   <xsl:value-of select="@name"/>
