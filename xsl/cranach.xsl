@@ -703,25 +703,25 @@
             </xsl:attribute>
             <xsl:choose>
                 <xsl:when test="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]">
-                    <xsl:variable name="label" select="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]"/>
+                    <xsl:variable name="statement" select="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-slide">
-                        <xsl:value-of select="$label/@slide"/>
+                        <xsl:value-of select="$statement/@slide"/>
                     </xsl:attribute>
                     <xsl:attribute name="src-course">
-                        <xsl:value-of select="$label/@course"/>
+                        <xsl:value-of select="$statement/@course"/>
                     </xsl:attribute>
                     <xsl:attribute name="src-chapter">
-                        <xsl:value-of select="$label/ancestor::lv:chapter/@num"/>
+                        <xsl:value-of select="$statement/ancestor::lv:chapter/@num"/>
                     </xsl:attribute>
                     <xsl:choose>
-                        <xsl:when test="$label/ancestor::lv:chapter">
+                        <xsl:when test="$statement/ancestor::lv:chapter">
                             <xsl:attribute name="item">
-                                <xsl:value-of select="concat($label/ancestor::lv:chapter/@num, '.', $label/ancestor::lv:statement/@num)"/>
+                                <xsl:value-of select="concat($statement/ancestor::lv:chapter/@num, '.', $statement/@num)"/>
                             </xsl:attribute>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="item">
-                                <xsl:value-of select="$label/ancestor::lv:statement/@num"/>
+                                <xsl:value-of select="$statement/@num"/>
                             </xsl:attribute>
                         </xsl:otherwise>
                     </xsl:choose>
@@ -729,30 +729,43 @@
                         <xsl:text>self</xsl:text>
                     </xsl:attribute>
                     <xsl:attribute name="title">
-                        <xsl:value-of select="$label/title"/>
+                        <xsl:value-of select="$statement/title"/>
                     </xsl:attribute>
                     <xsl:attribute name="md5">
-                        <xsl:value-of select="$label/@md5"/>
+                        <xsl:value-of select="$statement/@md5"/>
                     </xsl:attribute>
                     <xsl:attribute name="class">
                         <xsl:text>knowl</xsl:text>
                     </xsl:attribute>
                     <xsl:attribute name="type">
-                        <xsl:value-of select="$label/@type"/>
+                        <xsl:value-of select="$statement/@type"/>
                     </xsl:attribute>
-                    <xsl:attribute name="name">
+                    <xsl:variable name="name">
                         <xsl:choose>
                             <xsl:when test="@name">
                                 <xsl:value-of select="@name"/>
                             </xsl:when>
-                            <xsl:when test="$label/@title">
-                                <xsl:value-of select="$label/@title"/>
+                            <xsl:when test="$statement/@title">
+                                <xsl:value-of select="$statement/@title"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="concat($label/@type, ' ', $label/ancestor::lv:chapter/@num, '.', $label/ancestor::lv:statement/@num)"/>
+                                <xsl:value-of select="concat($statement/@type, ' ', $statement/ancestor::lv:chapter/@num, '.', $statement/@num)"/>
                             </xsl:otherwise>
                         </xsl:choose>
-                    </xsl:attribute>
+                    </xsl:variable>
+                    <!-- <xsl:attribute name="name">
+                        <xsl:value-of select="$name"/>
+                    </xsl:attribute> -->
+                    <xsl:element name="title" namespace="{$lv}">
+                        <xsl:choose>
+                            <xsl:when test="$statement/lv:title">
+                                <xsl:copy-of select="$statement/lv:title/*|$statement/lv:title/text()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$name"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:element>
                 </xsl:when>
                 <xsl:when test="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]">
                     <xsl:variable name="label" select="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
