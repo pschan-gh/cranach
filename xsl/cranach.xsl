@@ -767,8 +767,16 @@
                         </xsl:choose>
                     </xsl:element>
                 </xsl:when>
-                <xsl:when test="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]">
-                    <xsl:variable name="label" select="//idx:label[(@name=current()/@label) or (@md5=current()/@label)]"/>
+                <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
+		  <xsl:variable name="label" select="(//idx:label[@name=current()/@label])|(//idx:branch[@md5=current()/@label])"/>
+		  <!-- <xsl:choose> -->
+		  <!--   <xsl:when test="//idx:label[@name=current()/@label]"> -->
+                  <!--     <xsl:variable name="label" select="//idx:label[@name=current()/@label]"/> -->
+		  <!--   </xsl:when> -->
+		  <!--   <xsl:when test="//idx:branch[@md5=current()/@label]"> -->
+		  <!--     <xsl:variable name="label" select="//idx:branch[@md5=current()/@label]"/> -->
+		  <!--   </xsl:when> -->
+		  <!-- </xsl:choose> -->
                     <xsl:attribute name="src-course">
                         <xsl:value-of select="$label/@course"/>
                     </xsl:attribute>
@@ -823,7 +831,9 @@
                     </xsl:element>
                 </xsl:when>
                 <xsl:otherwise>
+		  <xsl:element name="title" namespace="{$lv}">
                     <xsl:text>UNDEFINED</xsl:text>
+		  </xsl:element>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
