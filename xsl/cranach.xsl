@@ -344,10 +344,9 @@
                     <xsl:value-of select="@title"/>
                 </xsl:element>
             </xsl:for-each>
-            <xsl:if test="./@title">
+            <!-- <xsl:if test="./@title">
                 <xsl:element name="keyword" namespace="{$lv}">
                     <xsl:attribute name="chapter">
-                        <!-- <xsl:value-of select="ancestor::chapter/@num"/> -->
                         <xsl:value-of select="$chapter"/>
                     </xsl:attribute>
                     <xsl:attribute name="slide">
@@ -355,7 +354,7 @@
                     </xsl:attribute>
                     <xsl:value-of select="@title"/>
                 </xsl:element>
-            </xsl:if>
+            </xsl:if> -->
         </xsl:element>
     </xsl:template>
 
@@ -655,6 +654,12 @@
             </xsl:if> -->
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
+                <xsl:with-param name="course" select="$course"/>
+                <xsl:with-param name="chapter" select="$chapter"/>
+                <xsl:with-param name="chapter_type" select="$chapter_type"/>
+                <xsl:with-param name="section" select="$section"/>
+                <xsl:with-param name="subsection" select="$subsection"/>
+                <xsl:with-param name="subsubsection" select="$subsubsection"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -702,7 +707,7 @@
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
             <xsl:choose>
-                <xsl:when test="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]">
+                <!-- <xsl:when test="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]">
                     <xsl:variable name="statement" select="//lv:statement[(lv:label/@name=current()/@label) or (@md5=current()/@label)]"/>
                     <xsl:attribute name="src-slide">
                         <xsl:value-of select="$statement/@slide"/>
@@ -753,9 +758,6 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:variable>
-                    <!-- <xsl:attribute name="name">
-                        <xsl:value-of select="$name"/>
-                    </xsl:attribute> -->
                     <xsl:element name="title" namespace="{$lv}">
                         <xsl:choose>
                             <xsl:when test="$statement/lv:title">
@@ -766,7 +768,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:element>
-                </xsl:when>
+                </xsl:when> -->
                 <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
 		  <xsl:variable name="label" select="(//idx:label[@name=current()/@label])|(//idx:branch[@md5=current()/@label])"/>
 		  <!-- <xsl:choose> -->

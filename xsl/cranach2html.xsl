@@ -81,7 +81,16 @@
                   <xsl:value-of select="@num"/>
               </xsl:attribute>
               <xsl:if test="local-name()!='bare'">
-                  <xsl:value-of select="concat(local-name(), ' ', $counter, ' ', @title, ' ' , @topic)"/>
+                  <!-- <xsl:value-of select="concat(local-name(), ' ', $counter, ' ', @title, ' ' , @topic)"/> -->
+                  <xsl:value-of select="concat(local-name(), ' ', $counter)"/>
+                  <xsl:apply-templates select="lv:title//text()">
+                      <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
+                      <xsl:with-param name="chapter" select="ancestor::lv:chapter/@num"/>
+                      <xsl:with-param name="section" select="ancestor::lv:section/@num"/>
+                      <xsl:with-param name="subsection" select="ancestor::lv:subsection/@num"/>
+                      <xsl:with-param name="subsubsection" select="ancestor::lv:subsubsection/@num"/>
+                      <xsl:with-param name="toc" select="'true'"/>
+                  </xsl:apply-templates>
               </xsl:if>
           </a>
           <ul>
@@ -423,11 +432,18 @@
             </xsl:choose>
         </xsl:element>
       </button>
+      <xsl:apply-templates select="lv:label"/>
       <xsl:apply-templates select="lv:title"/>
       <blockquote wbtag="skip">
-        <xsl:apply-templates select="*[not(self::lv:title)]|text()"/>
+        <xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]|text()"/>
       </blockquote>
     </div>
+  </xsl:template>
+
+  <xsl:template match="lv:label">
+      <span wbtag="label" style="display:none">
+          <xsl:copy-of select="@*"/>
+      </span>
   </xsl:template>
 
   <xsl:template match="lv:statement/lv:title[text()!='.']">
@@ -435,7 +451,8 @@
       <xsl:copy-of select="@*"/>
       <strong> - </strong>
       <xsl:element name="h5">
-          <xsl:apply-templates select="*|text()"/>
+          <xsl:attribute name="class">custom_title</xsl:attribute>
+          <xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
       </xsl:element>
     </div>
   </xsl:template>
@@ -461,12 +478,14 @@
         <xsl:element name="h5">
             <xsl:attribute name="wbtag">ignore</xsl:attribute>
             <xsl:attribute name="class">item_title</xsl:attribute>
-          <xsl:value-of select="concat(@type, '.')"/>
-          <span style="margin-left:0.5em">
+            <xsl:value-of select="@type"/>
+            <!-- <span style="margin-left:0.5em">
             <xsl:value-of select="@title"/>
-          </span>
+        </span> -->
+          <xsl:apply-templates select="lv:title"/>
+          <xsl:value-of select="'.'"/>
       </xsl:element>
-        <xsl:apply-templates select="*[not(self::title)]|text()"/>
+        <xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]|text()"/>
       </blockquote>
     </div>
   </xsl:template>
@@ -514,7 +533,7 @@
       </span>
       <br wbtag="ignore"/>
       <span class="title">
-        <xsl:apply-templates select="text()"/>
+        <xsl:apply-templates select="text()|*"/>
       </span>
     </h2>
   </xsl:template>
@@ -585,7 +604,7 @@
       <xsl:value-of select="$serial"/>
       <xsl:text> </xsl:text>
       <span class="title">
-          <xsl:apply-templates select="text()"/>
+          <xsl:apply-templates select="text()|*"/>
       </span>
     </h4>
   </xsl:template>
@@ -605,7 +624,7 @@
             <xsl:value-of select="$serial"/>
         </xsl:attribute>
         <span class="title">
-            <xsl:apply-templates select="text()"/>
+            <xsl:apply-templates select="text()|*"/>
         </span>
     </h5>
     <br/>

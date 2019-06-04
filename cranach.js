@@ -57,6 +57,7 @@ function Cranach(rootURL, params) {
         'index':'index.xml',
         'dir':'.',
         'contentURLDir':'',
+        'contentURL': '',
         'query':'',
         'outputID': 'output',
         'doc':null,
@@ -108,6 +109,7 @@ function Cranach(rootURL, params) {
                     this.attr['contentURLDir'] = this.rootURL + '\/?xml=' + this.attr['dir'];
                 }
                 this.attr['localName'] = pathname.match(/([^\/]+)\.(?:wb|xml)$/)[1];
+                this.attr['contentURL'] = this.contentURL;
             }
 
             if (urlParams.has('query')) {

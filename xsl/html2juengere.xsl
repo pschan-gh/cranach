@@ -56,6 +56,7 @@
         <xsl:element name="{@wbtag}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@label"/>
+            <xsl:copy-of select="@name"/>
             <xsl:copy-of select="@id"/>
             <xsl:copy-of select="@href"/>
             <xsl:apply-templates select="*|text()" />
@@ -71,6 +72,9 @@
             <xsl:if test="./xh:span[@class='title']">
                 <xsl:element name="argument">
                     <xsl:value-of select="./xh:span[@class='title']/text()" />
+                </xsl:element>
+                <xsl:element name="title">
+                    <xsl:apply-templates select="./xh:span[@class='title']/text()|./xh:span[@class='title']/*" />
                 </xsl:element>
             </xsl:if>
         </xsl:element>
@@ -126,8 +130,13 @@
             <xsl:copy-of select="@num"/>
             <xsl:copy-of select="@type"/>
             <xsl:copy-of select="@title"/>
-            <xsl:copy-of select="@label"/>
             <xsl:copy-of select="@wbtag"/>
+            <xsl:if test=".//*[@class='custom_title']">
+                <xsl:element name="title">
+                    <xsl:text>&#xa;</xsl:text>
+                    <xsl:copy-of select=".//*[@class='custom_title']/*|.//*[@class='custom_title']/text()"/>
+                </xsl:element>
+            </xsl:if>
             <xsl:apply-templates select="text()|*"/>
             <!-- <xsl:text>&#xa;</xsl:text> -->
         </xsl:element>

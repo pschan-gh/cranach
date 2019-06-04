@@ -50,22 +50,28 @@
     <xsl:template match="statement|substatement">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
-	<xsl:text>&#xa;</xsl:text>
-        <xsl:choose>
+        <xsl:text>&#xa;</xsl:text>
+        <!-- <xsl:choose>
             <xsl:when test="@label!=''">
                 <xsl:value-of select="concat('@label{', @label, '}')"/>
                 <xsl:text>&#xa;</xsl:text>
             </xsl:when>
-        </xsl:choose>
-        <xsl:choose>
+        </xsl:choose> -->
+        <!-- <xsl:choose>
             <xsl:when test="@title!=''">
                 <xsl:value-of select="concat('@title{', @title, '}')"/>
-		                <xsl:text>&#xa;</xsl:text>
+                <xsl:text>&#xa;</xsl:text>
             </xsl:when>
-        </xsl:choose>
+        </xsl:choose> -->
         <xsl:apply-templates select="*|text()" />
         <xsl:text>@end</xsl:text>
         <xsl:text>&#xa;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="title">
+        <xsl:text>&#xa;@title</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>&#xa;@endtitle&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="col_ul">
@@ -73,6 +79,7 @@
         <xsl:apply-templates select="*|text()" />
         <xsl:text>@endul&#xa;</xsl:text>
     </xsl:template>
+
     <xsl:template match="col_ol">
         <xsl:text> @ol&#xa;</xsl:text>
         <xsl:apply-templates select="*|text()" />
@@ -132,7 +139,7 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="course|chapter|week|lecture|section|subsection|subsubsection|topic">
+    <xsl:template match="course|topic|chapter|week|lecture">
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:if test="argument">
@@ -140,9 +147,22 @@
             <xsl:value-of select="argument/text()"/>
             <xsl:text>}</xsl:text>
         </xsl:if>
-        <!--
-	    <xsl:text>&#xa;</xsl:text>
-	-->
+    </xsl:template>
+
+    <xsl:template match="section|subsection|subsubsection">
+        <xsl:text>@</xsl:text>
+        <xsl:value-of select="@wbtag"/>
+        <!-- <xsl:if test="argument">
+            <xsl:text>{</xsl:text>
+            <xsl:value-of select="argument/text()"/>
+            <xsl:text>}</xsl:text>
+        </xsl:if> -->
+        <xsl:apply-templates select="text()|*[not(self::argument)]"/>
+    </xsl:template>
+
+    <xsl:template match="label">
+        <xsl:text>&#xa;@</xsl:text>
+        <xsl:value-of select="concat(@wbtag, '{', @name, '}&#xa;')"/>
     </xsl:template>
 
     <xsl:template match="text()" >

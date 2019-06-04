@@ -35,9 +35,9 @@ function updateModal() {
         $('.current_slide').text(slide).show();
 
         if (cranach.attr['query']) {
-            var url = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&present&slide=' + slide;
+            var url = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
         } else {
-            var url = cranach.contentURL + '&present&slide=' + slide;
+            var url = cranach.contentURL + '&slide=' + slide;
         }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
@@ -148,7 +148,7 @@ function updateSlideClickEvent() {
         }
 
         var url = cranach.contentURL;
-        var urlSlide = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&present&slide=' + slide;
+        var urlSlide = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
         // console.log('SLIDE_BUTTON CLICKED: ' + urlSlide);
 
         $('.url.share_text.slide_info').html(urlSlide);

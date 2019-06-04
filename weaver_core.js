@@ -1,3 +1,5 @@
+// WEAVER_CORE
+
 var domParser = new DOMParser();
 
 const htmlElements = /pre|table|tbody|thead|th|tr|td|i|em|p|a|b|strong|u|h\d|div|img|center|script|iframe|blockquote|ol|ul|li|sup|code|hr|span|iframe|br|hr/;
@@ -32,7 +34,7 @@ var dictionary = {
     "@newcol": "newcol"
 };
 
-var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox", "center", "left", "right"];
+var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox", "center", "left", "right", "title"];
 var chapterType = "Chapter";
 var course='';
 var topic='';
@@ -407,13 +409,32 @@ function Stack(node, doc) {
                 child.node.setAttribute("num", secNums['statement']++);
             }
             break;
+            case "@of":
+            var match = originalWord.trim().match(/@of{(.*?)}/)[1];
+            parent = child.closeTo(/substatement/i);
+            parent.node.setAttribute("of", match);
+            break;
             case "@title":
-            var match = originalWord.trim().match(/@title{(.*?)}/)[1];
-            parent = child.closeTo(/statement/i);
-            var title = parent.addChild('title');
-            title.node.textContent = match;
-            title.close();
-            parent.node.setAttribute("title", match);
+            parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection/i);
+            var match = originalWord.trim().match(/@title{(.*?)}/);
+            if (match) {
+                parent.node.setAttribute("title", match[1].replace(/[^a-z0-9\s\']/ig, ''));
+                child = parent.addChild("title");
+                child.node.textContent += match[1];
+                child = child.closeTo(/title|slide/i).close();
+            } else {
+                child = parent.addChild("title");
+                child.node.setAttribute('scope', parent.node.nodeName);
+                child.node.setAttribute('wbtag', parent.node.nodeName);
+            }
+            break;
+            case "@endtitle":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection/i);
+            parent.node.setAttribute("title", child.node.textContent.replace(/[^a-z0-9\s\']/ig, ''));
+            child = child.closeTo(/title|slide/i).close();
             break;
             case "@framebox":
             child = child.addChild("framebox");
@@ -436,7 +457,7 @@ function Stack(node, doc) {
                 break;
             }
             // var re = new RegExp(child.getEnvironment(), 'i');
-            child = child.closeTo(/statement|substatement|enumerate|itemize|center|slide/i).close();
+            child = child.closeTo(/statement|substatement|enumerate|itemize|center|left|right|slide|framebox/i).close();
             break;
 	    case "@center":
 	    child = child.addChild("center");
@@ -542,15 +563,19 @@ function Stack(node, doc) {
             child.node.setAttribute("wbtag", tagname);
             break;
             case "@label":
-            var parent = child.closeTo(/statement/i);
-            parent.node.setAttribute('label', argument);
+            var parent = child.closeTo(/statement|course|chapter|section|subsection|subsubsection/i);
+            // parent.node.setAttribute('label', argument);
+            var label = parent.addChild("label");
+            label.node.setAttribute('wbtag', tagname);
+            label.node.setAttribute('name', argument);
+            label.node.setAttribute('type', parent.node.getAttribute('type'));
+            label.close();
             break;
             case "@ref":
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
             child = child.addChild("ref");
-            // console.log(originalWord);
             var matches = originalWord.match(/@ref{(.*?)}(\[(.*?)\])*/);
             if(matches) {
                 if(matches[1]) {
@@ -639,26 +664,42 @@ function addSection(sectionType, title, child) {
     }
 
     child = child.addChild(stackName);
+    if (!stackName.match(/section/i)) {
+        child.node.setAttribute('type', stackName.charAt(0).toUpperCase() + stackName.slice(1));
+    } else {
+        child.node.setAttribute('type', 'Section');
+    }
     if (sectionType.match(/chapter|week|lecture/i)) {
         child.node.setAttribute('chapter_type', sectionType.charAt(0).toUpperCase() + sectionType.slice(1));
     }
 
 
-    if ((typeof title != typeof undefined) && title != '' && title != null) {
-        child.node.setAttribute("title", title.replace(/[^a-z0-9\s]/ig,''));
-    }
     child.node.setAttribute("wbtag", sectionType);
     if(stackName.match(/week|lecture|chapter/)) {
         secNums['statement'] = 1;
         child.node.setAttribute("num", secNums[stackName]++);
     }
 
-    child = child.addChild('title');
-    child.node.textContent += title;
-    child.node.setAttribute("wbtag", sectionType);
-    child.node.setAttribute("scope", stackName);
-    child = child.closeTo(RegExp(stackName, 'i'));
+    // if ((typeof title != typeof undefined) && title != '' && title != null) {
+    //     child.node.setAttribute("title", title.replace(/[^a-z0-9\s]/ig,''));
+    //     child = child.addChild('title');
+    //     child.node.textContent += title;
+    //     child.node.setAttribute("wbtag", sectionType);
+    //     child.node.setAttribute("scope", stackName);
+    //     child = child.closeTo(RegExp(stackName, 'i'));
+    // }
+
+    if (((typeof title != typeof undefined) && title != '' && title != null) || stackName.match(/chapter|course/i)) {
+        child.node.setAttribute("title", title.replace(/[^a-z0-9\s]/ig,''));
+        child = child.addChild('title');
+        child.node.textContent += title;
+        child.node.setAttribute("wbtag", sectionType);
+        child.node.setAttribute("scope", stackName);
+        child = child.closeTo(RegExp(stackName, 'i'));
+    }
 
     child = child.addChild('slides').addChild('slide');
     return child;
 }
+
+// WEAVER_CORE ENDS

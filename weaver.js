@@ -33,16 +33,16 @@ function generateXML(source) {
     source = source.replace(/@sep/g, '@slide')
     .replace(/@def([^n]|$)/g, '@defn$1')
     .replace(/#(nstep|ref|label)/g, '@$1')
-    .replace(/\<hr>/g, '<hr />')
-    .replace(/\<br\s*\>/g, '<br/>')
+    // .replace(/\<hr>/g, '<hr />')
+    // .replace(/\<br\s*\>/g, '<br/>')
     .replace(/\<p\s*\>/g, '<p/>')
     .replace(/\<\/p\>/g, '')
-    .replace(/frameborder=(\d+)/g, "frameborder=\"$1\"")
-    .replace(/ href /g, ' href="" ')
+    // .replace(/frameborder=(\d+)/g, "frameborder=\"$1\"")
+    // .replace(/ href /g, ' href="" ')
     .replace(/(\n\s*){2,}/g, "\n@newline\n")
     .replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-    .replace(/#nstep/g, "\n@nstep\n")
-	.replace(/(@@\w+)/g, '<span class="escaped">$1</span>');
+	.replace(/(@@\w+)/g, '<span class="escaped">$1</span>')
+    .replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
     // END LEGACY COMPATIBILITY
 
     var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', "", null);
@@ -52,11 +52,6 @@ function generateXML(source) {
     root.node.setAttribute("xmlns", 'http://www.math.cuhk.edu.hk/~pschan/cranach');
 
     var child = root;
-
-    // child.words = source.match(/(@@\w+)|(@nstep)|(@((?!nstep)[a-zA-Z]+)({.*?})?(\[.*?\])?(?:\.|,|;|))|(\<[a-zA-Z0-9]+(.|\s)*?\/*\>)|(\<\/[a-zA-Z0-9]+\>)|(\s*((?!\<\/*[a-zA-Z0-9]+|@).)*)/g);
-    // child.words = source.match(/(\<\!\-\-)|(\-\-\>)|(@@\w+)|(@nstep)|(@((?!nstep)[a-zA-Z]+)({.*?})?(\[.*?\])?)|(\<[a-zA-Z0-9]+(.|\s)*?\/*\>)|(\<\/[a-zA-Z0-9]+\>)|(\s*((?!\<\/*[a-zA-Z0-9]+|@|\<\!\-\-|\-\-\>).)*)/g);
-
-    // var mainTokensRe = new RegExp('(\<\!\-\-)|(\-\-\>)|(@@\w+)|(@nstep)|(@((?!nstep)[a-zA-Z]+)({.*?})?(\[.*?\])?)|(' + htmlRe + ')|(' + htmlCloseRe + ')|(\s*((?!\<\/*' + htmlRe + '|@|\<\!\-\-|\-\-\>).)*)', 'g');
 
     console.log('MAINTOKENSRE: ' + mainTokensRe.source);
 

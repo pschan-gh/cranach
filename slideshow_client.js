@@ -439,7 +439,8 @@ function commitWb() {
                         .replace(/&gt;/g, '>')
                         .replace(/&amp;/g, '&')
                         .replace(/&apos;/g, "'")
-                        .replace(/^\n*/, '');
+                        .replace(/^\n*/, '')
+                        .replace(/@(section|subsection|subsubsection)\n@title\n*((?:.|\n)*?)\n@endtitle/g, "@$1{$2}");
                     editor.setValue(processedStr, 1);
                     resetHighlight();
                     showTexSource(false);
@@ -661,6 +662,8 @@ function updateSlideProgress(slideIndex, refresh) {
 
 function updateModalRefby(md5String) {
     var contentURLDir = cranach.attr['contentURLDir'];
+    var contentURL = cranach.attr['contentURL'];
+    console.log('CONTENTURL ' + contentURL);
     $.ajax({
         url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
         dataType: "xml"
@@ -674,6 +677,8 @@ function updateModalRefby(md5String) {
             xsltProcessor.importStylesheet(xsl);
             xsltProcessor.setParameter('', 'md5', md5String);
             xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+            xsltProcessor.setParameter('', 'contenturl', contentURL);
+            console.log('REFBY2HTML PRETRANSFORM');
             fragment = xsltProcessor.transformToFragment(index,document);
             console.log('REFBY2HTML');
             fragmentStr = new XMLSerializer().serializeToString(fragment);
