@@ -5,6 +5,7 @@
         xmlns:lv="http://www.math.cuhk.edu.hk/~pschan/cranach"
 >
     <xsl:output method="text" encoding="UTF-8"/>
+
     <xsl:param name="contenturldir"></xsl:param>
 
     <xsl:template match="/">
@@ -271,7 +272,19 @@
                 <xsl:value-of select="concat('\cref{', @label, '}')"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="concat('\href{', $contenturldir, '/' , @filename, '&amp;slide=', @src-slide, '\#item', @num, '}{', @name, '}')"/>
+							<xsl:choose>
+								<xsl:when test="@type='Section'">
+									<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;section=', @serial, '}')"/>
+	              	<xsl:value-of select="concat('{Section ', @serial)" />
+				          <xsl:if test="lv:title">
+				              <xsl:value-of select="concat(' (', lv:title/text(), ')')"/>
+				          </xsl:if>
+									<xsl:text>}</xsl:text>
+	          		</xsl:when>
+								<xsl:otherwise>
+										<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '\#item', @item, '}{', lv:title/text(), '}')"/>
+								</xsl:otherwise>
+							</xsl:choose>
            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

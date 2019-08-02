@@ -930,7 +930,7 @@
 	<xsl:text>webwork</xsl:text>
       </xsl:attribute>
       <xsl:copy-of select="@*"/>
-      <strong class="webwork_label print">WeBWork </strong>
+      <strong class="webwork_label print">WeBWorK</strong>
       <div class="ww" style="overflow:auto">
 	<xsl:attribute name="id">
           <xsl:value-of select="concat('ww_inner_', @ww_id)" />
@@ -939,7 +939,7 @@
 	<iframe style="overflow-x:auto;overflow-y:hidden;display:none">
           <xsl:attribute name="rendered">0</xsl:attribute>
           <xsl:attribute name="data-src">
-            <xsl:value-of select="concat('http://localhost/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
+            <xsl:value-of select="concat('http://localhost/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
           </xsl:attribute>
 	</iframe>
       </div>

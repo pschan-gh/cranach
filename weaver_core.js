@@ -293,7 +293,7 @@ function Stack(node, doc) {
             var re = new RegExp(word + '{(.*?)}');
             var match = originalWord.trim().match(re)[1];
             if (match != this.course) {
-                secNums['chapter'] = '';
+                secNums['chapter'] = 1;
                 child = addSection('course', argument, child);
                 child.node.setAttribute('course', match);
                 child.node.setAttribute('title', match);
@@ -582,7 +582,7 @@ function Stack(node, doc) {
                     child.node.setAttribute('label', matches[1]);
                 }
                 if(matches[2]) {
-                    child.node.setAttribute('name', matches[2]);
+                    child.node.setAttribute('name', matches[2].substring(1, matches[2].length-1));
                 }
             }
             child.node.setAttribute('wbtag', 'ref');
@@ -675,9 +675,11 @@ function addSection(sectionType, title, child) {
 
 
     child.node.setAttribute("wbtag", sectionType);
-    if(stackName.match(/week|lecture|chapter/)) {
+    if(stackName.match(/chapter/)) {
         secNums['statement'] = 1;
-        child.node.setAttribute("num", secNums[stackName]++);
+        // alert(stackName + secNums[stackName]);
+        child.node.setAttribute("num", secNums[stackName]);
+        secNums[stackName]++;
     }
 
     // if ((typeof title != typeof undefined) && title != '' && title != null) {
