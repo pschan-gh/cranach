@@ -266,27 +266,31 @@
       </xsl:if>
     </xsl:template>
 
+    <xsl:template match="lv:href">
+      <xsl:value-of select="concat('\href{', @src, '}{', @name, '}')"/>
+    </xsl:template>
+
     <xsl:template match="lv:ref">
        <xsl:choose>
             <xsl:when test="@filename='self'">
                 <xsl:value-of select="concat('\cref{', @label, '}')"/>
             </xsl:when>
             <xsl:otherwise>
-							<xsl:choose>
-								<xsl:when test="@type='Section'">
-									<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;section=', @serial, '}')"/>
-	              	<xsl:value-of select="concat('{Section ', @serial)" />
-				          <xsl:if test="lv:title">
-				              <xsl:value-of select="concat(' (', lv:title/text(), ')')"/>
-				          </xsl:if>
-									<xsl:text>}</xsl:text>
-	          		</xsl:when>
-								<xsl:otherwise>
-										<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '\#item', @item, '}{', lv:title/text(), '}')"/>
-								</xsl:otherwise>
-							</xsl:choose>
-           </xsl:otherwise>
-        </xsl:choose>
+	      <xsl:choose>
+		<xsl:when test="@type='Section'">
+		  <xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;section=', @serial, '}')"/>
+	          <xsl:value-of select="concat('{Section ', @serial)" />
+		  <xsl:if test="lv:title">
+		    <xsl:value-of select="concat(' (', lv:title/text(), ')')"/>
+		  </xsl:if>
+		  <xsl:text>}</xsl:text>
+	        </xsl:when>
+		<xsl:otherwise>
+		  <xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '\#item', @item, '}{', lv:title/text(), '}')"/>
+		</xsl:otherwise>
+	      </xsl:choose>
+            </xsl:otherwise>
+       </xsl:choose>
     </xsl:template>
 
     <xsl:template match="xh:br">
@@ -332,7 +336,7 @@
 
         <xsl:for-each select="xh:thead/xh:tr">
             <xsl:text>\hline&#10;</xsl:text>
-            <xsl:for-each select="td|th">
+            <xsl:for-each select="xh:td|xh:th">
                 <xsl:if test="self::th|self::td">\bfseries </xsl:if>
                 <xsl:apply-templates />
                 <xsl:if test="position() != last()">

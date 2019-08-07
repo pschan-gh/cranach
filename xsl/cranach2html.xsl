@@ -624,10 +624,23 @@
             <xsl:value-of select="$serial"/>
         </xsl:attribute>
         <span class="title">
-            <xsl:apply-templates select="text()|*"/>
+          <xsl:apply-templates select="text()|*"/>
         </span>
     </h5>
     <br/>
+  </xsl:template>
+
+  <xsl:template match="lv:href">
+      <xsl:element name="a">
+          <xsl:copy-of select="@*"/>
+	  <xsl:attribute name="target">
+              <xsl:text>_blank</xsl:text>
+          </xsl:attribute>
+          <xsl:attribute name="href">
+              <xsl:value-of select="@src"/>
+          </xsl:attribute>
+	  <xsl:value-of select="@name"/>
+      </xsl:element>
   </xsl:template>
 
   <xsl:template match="lv:ref">
