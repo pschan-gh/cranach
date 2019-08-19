@@ -74,13 +74,23 @@
                 <xsl:value-of select="$chapter_type"/>
             </xsl:attribute>
             <xsl:element name="title" namespace="{$lv}">
+                <xsl:value-of select="ltx:title/text()"/>
+            </xsl:element>
+            <!-- <xsl:element name="title" namespace="{$lv}">
                 <xsl:attribute name="chapter_type">
                     <xsl:value-of select="$chapter_type"/>
                 </xsl:attribute>
                 <xsl:attribute name="chapter">
                     <xsl:value-of select="$refnum"/>
                 </xsl:attribute>
-            </xsl:element>
+            </xsl:element> -->
+            <xsl:if test="@labels">
+                  <xsl:element name="label" namespace="{$lv}">
+                      <xsl:attribute name="name">
+                          <xsl:value-of select="substring(@labels, 7)"/>
+                      </xsl:attribute>
+                  </xsl:element>
+            </xsl:if>
             <xsl:element name="slides" namespace="{$lv}">
                 <xsl:element name="slide" namespace="{$lv}">
                     <xsl:apply-templates select="*[not(self::ltx:section) and not(self::ltx:subsection) and not(self::ltx:subsubsection)]">
@@ -97,6 +107,16 @@
             <xsl:attribute name="wbtag">
                 <xsl:value-of select="local-name()"/>
             </xsl:attribute>
+            <xsl:element name="title" namespace="{$lv}">
+                <xsl:value-of select="ltx:title/text()"/>
+            </xsl:element>
+            <xsl:if test="@labels">
+                <xsl:element name="label" namespace="{$lv}">
+                    <xsl:attribute name="name">
+                        <xsl:value-of select="substring(@labels, 7)"/>
+                    </xsl:attribute>
+                </xsl:element>
+            </xsl:if>
             <xsl:element name="slides" namespace="{$lv}">
                 <xsl:element name="slide" namespace="{$lv}">
                     <xsl:apply-templates select="*[not(self::ltx:subsection) and not(self::ltx:subsubsection)]">
@@ -113,6 +133,16 @@
             <xsl:attribute name="wbtag">
                 <xsl:value-of select="local-name()"/>
             </xsl:attribute>
+            <xsl:element name="title" namespace="{$lv}">
+                <xsl:value-of select="ltx:title/text()"/>
+            </xsl:element>
+            <xsl:if test="@labels">
+                <xsl:element name="label" namespace="{$lv}">
+                    <xsl:attribute name="name">
+                        <xsl:value-of select="substring(@labels, 7)"/>
+                    </xsl:attribute>
+                </xsl:element>
+            </xsl:if>
             <xsl:element name="slides" namespace="{$lv}">
                 <xsl:element name="slide" namespace="{$lv}">
                     <xsl:apply-templates select="*[ not(self::ltx:subsubsection)]">
@@ -129,6 +159,18 @@
             <xsl:attribute name="wbtag">
                 <xsl:value-of select="local-name()"/>
             </xsl:attribute>
+            <xsl:if test="./ltx:title">
+                <xsl:element name="title" namespace="{$lv}">
+                    <xsl:value-of select="ltx:title/text()"/>
+                </xsl:element>
+            </xsl:if>
+            <xsl:if test="@labels">
+                <xsl:element name="label" namespace="{$lv}">
+                    <xsl:attribute name="name">
+                        <xsl:value-of select="substring(@labels, 7)"/>
+                    </xsl:attribute>
+                </xsl:element>
+            </xsl:if>
             <xsl:element name="slides" namespace="{$lv}">
                 <xsl:element name="slide" namespace="{$lv}">
                     <xsl:apply-templates select="*[ not(self::ltx:subsubsection)]">
@@ -185,6 +227,13 @@
             <xsl:attribute name="serial">
                 <xsl:value-of select="./ltx:tags/ltx:tag[@role='refnum']/text()"/>
             </xsl:attribute>
+            <xsl:if test="@labels">
+                <xsl:element name="label" namespace="{$lv}">
+                    <xsl:attribute name="name">
+                        <xsl:value-of select="substring(@labels, 7)"/>
+                    </xsl:attribute>
+                </xsl:element>
+            </xsl:if>
             <xsl:apply-templates select="*[not(self::ltx:tags)]|text()"/>
         </xsl:element>
     </xsl:template>
@@ -216,6 +265,17 @@
     <xsl:template match="ltx:tags|ltx:tag"/>
     <xsl:template match="ltx:toctitle"/>
 
+    <xsl:template match="ltx:ref">
+        <xsl:element name="ref" namespace="{$lv}">
+            <xsl:attribute name="wbtag">
+                <xsl:value-of select="local-name()"/>
+            </xsl:attribute>
+            <xsl:attribute name="label">
+                <xsl:value-of select="substring(@labelref, 7)"/>
+            </xsl:attribute>
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="ltx:p">
       <xh:p>
 	<xsl:apply-templates select="*|text()"/>
@@ -232,12 +292,22 @@
         <xsl:choose>
             <xsl:when test="ltx:tags">
                 <xsl:text>\begin{equation}</xsl:text>
+                <xsl:if test="@labels">
+                    <xsl:value-of select="concat('\label{', substring(@labels, 7), '}')"/>
+                </xsl:if>
                 <xsl:apply-templates select="ltx:Math[@mode='display']" />
                 <xsl:text>\end{equation}</xsl:text>
+            </xsl:when>
+            <xsl:when test="ltx:MathFork|ltx:MathBranch">
+                <xsl:text>\[</xsl:text>
+                <xsl:value-of select=".//ltx:Math/@tex"/>
+                <!-- <xsl:apply-templates select="./ltx:MathFork/ltx:Math|./ltx:MathBranch/ltx:Math" /> -->
+                <xsl:text>\]</xsl:text>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text>\[</xsl:text>
                 <xsl:apply-templates select="ltx:Math[@mode='display']" />
+                <!-- <xsl:apply-templates select=".//ltx:Math" /> -->
                 <xsl:text>\]</xsl:text>
             </xsl:otherwise>
         </xsl:choose>

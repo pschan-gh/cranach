@@ -58,11 +58,11 @@
         <xsl:choose>
             <xsl:when test="./lv:title">
                 <xsl:text>&#xa;</xsl:text>
-                <xsl:value-of select="concat('@title{', ./title/text(), '}')"/>
+                <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/>
             </xsl:when>
         </xsl:choose>
         <xsl:text>&#xa;</xsl:text>
-        <xsl:apply-templates select="*|text()" />
+        <xsl:apply-templates select="*[not(self::lv:title)]|text()" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
     </xsl:template>
@@ -127,6 +127,14 @@
 
     <xsl:template match="lv:bare">
         <xsl:apply-templates select="*|text()" />
+    </xsl:template>
+
+    <xsl:template match="lv:label">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@label</xsl:text>
+        <xsl:text>{</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>}</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:topic">

@@ -82,7 +82,7 @@
               </xsl:attribute>
               <xsl:if test="local-name()!='bare'">
                   <!-- <xsl:value-of select="concat(local-name(), ' ', $counter, ' ', @title, ' ' , @topic)"/> -->
-                  <xsl:value-of select="concat(local-name(), ' ', $counter)"/>
+                  <xsl:value-of select="concat(local-name(), ' ', $counter, ' ')"/>
                   <xsl:apply-templates select="lv:title//text()">
                       <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
                       <xsl:with-param name="chapter" select="ancestor::lv:chapter/@num"/>
@@ -355,6 +355,70 @@
         </div>
       </div>
     </div>
+  </xsl:template>
+
+  <xsl:template match="lv:figure">
+    <xsl:variable name="chapter">
+      <xsl:choose>
+	<xsl:when test="ancestor::chapter">
+	  <xsl:value-of select="ancestor::lv:chapter/@num"/>
+	</xsl:when>
+        <xsl:otherwise>
+	  <xsl:value-of select="@chapter"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="num">
+      <xsl:choose>
+	<xsl:when test="ancestor::chapter">
+	  <xsl:number level="any"  count="lv:chapter[@num=$chapter]//lv:statement"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="@num"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="item">
+      <xsl:choose>
+          <xsl:when test="ancestor::chapter">
+              <xsl:value-of select="concat(ancestor::lv:chapter/@num, '.', $num)"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:value-of select="@item"/>
+          </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <p wbtag="ignore"/>
+    <div class='image'>
+      <xsl:attribute name="class">
+        <xsl:text>image</xsl:text>
+      </xsl:attribute>
+      <xsl:attribute name="wbtag">
+        <xsl:value-of select="@wbtag"/>
+      </xsl:attribute>
+      <xsl:attribute name="wbname">
+        <xsl:value-of select="name()"/>
+      </xsl:attribute>
+      <xsl:attribute name="item">
+        <xsl:value-of select="$item"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="lv:label"/>
+	  <xsl:apply-templates select="*[not(self::lv:caption) and not(self::lv:label)]|text()"/>
+	  <xsl:apply-templates select="lv:caption">
+		  <xsl:with-param name="item" select="$item"/>
+	  </xsl:apply-templates>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="lv:caption">
+	  <xsl:param name="item" select="''"/>
+      <small class="caption">
+		  <xsl:attribute name="wbtag">
+			  <xsl:value-of select="'caption'"/>
+		  </xsl:attribute>
+		  <xsl:value-of select="concat('Figure ', ancestor::lv:figure/@item, ' ')"/>
+		  <xsl:apply-templates select="text()"/>
+      </small>
   </xsl:template>
 
   <xsl:template match="lv:statement">
