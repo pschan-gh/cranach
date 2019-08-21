@@ -75,6 +75,7 @@ var rootURL = window.location.href.match(/^(.*?)\/*(?:\?|$)/)[1];
 var params = window.location.href.match(/\?(.*?)(#|$)/);
 
 var cranach = new Cranach(rootURL + '/', params);
+console.clear();
 cranach.setup();
 console.log('CONTENTURL: ' + cranach.contentURL);
 </script>

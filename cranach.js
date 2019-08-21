@@ -1,3 +1,5 @@
+var contentURL = '';
+
 function nsResolver(prefix) {
     var ns = {
         'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
@@ -110,6 +112,7 @@ function Cranach(rootURL, params) {
                 }
                 this.attr['localName'] = pathname.match(/([^\/]+)\.(?:wb|xml)$/)[1];
                 this.attr['contentURL'] = this.contentURL;
+                contentURL = this.contentURL;
             }
 
             if (urlParams.has('query')) {
@@ -209,6 +212,7 @@ function Cranach(rootURL, params) {
         .done(function(wbxslFile) {
                 xsltProcessor.importStylesheet(wbxslFile);
                 xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
+                xsltProcessor.setParameter('', 'contenturl', contentURL);
                 console.log('displayCranachDocToHtml');
                 console.log(docCranach);
                 var fragment = xsltProcessor.transformToFragment(docCranach, document);
@@ -291,7 +295,7 @@ function Cranach(rootURL, params) {
     }
 
     this.render = function() {
-        console.clear();
+        // console.clear();
         this.preprocess();
 
         var el = this;

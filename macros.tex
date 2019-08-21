@@ -14,12 +14,69 @@
 \newcommand{\colvec}[1]{\begin{pmatrix}#1\end{pmatrix}}
 \newcommand{\Span}{{\rm Span}\,}
 \newcommand{\Rank}{{\rm Rank}\,}
-\newcommand{\nullity}{{\rm nullity}\,}
+%% \newcommand{\nullity}{{\rm nullity}\,}
 \newcommand{\adj}{{\rm adj}\,}
 \newcommand{\Proj}{{\rm Proj}}
 \newcommand{\ora}{\overrightarrow}
 \newcommand{\ve}{\varepsilon}
 \newcommand{\phib}{\ol{\phi}}
 
-\require{extpfeil}
 
+\renewcommand{\R}{\mathbf{R}}
+\renewcommand{\Z}{\mathbf{Z}}
+\newcommand{\mat}[4]{\begin{pmatrix} {#1} &amp; {#2} \\ {#3} &amp; {#4}\end{pmatrix}}
+\newcommand{\vvec}[2]{\begin{pmatrix}{#1} \\ {#2} \end{pmatrix}}
+\newcommand{\hvec}[2]{\begin{pmatrix}{#1} &amp; {#2} \end{pmatrix}}
+\renewcommand{\e}{\varepsilon}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\wa}{wolframalpha.com}
+\newcommand{\ind}{\operatorname{ind}}
+
+\newcommand*{\zeromatrix}{\ensuremath{{\cal O}}}
+\newcommand{\matrixentry}[2]{\left[ #1 \right]_{#2}}
+\newcommand{\vectorentry}[2]{\left[ #1 \right]_{#2}}
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\zerovector}{\mathbf{0}}
+\newcommand{\colvector}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\linearsystem}[2]{\ensuremath{#1\vect{x}=#2}}
+\newcommand{\homosystem}[1]{\ensuremath{\linearsystem{#1}{\zerovector}}}
+\newcommand{\augmented}[2]{\left[#1|#2\right]}
+\newcommand{\rowopswap}[2]{\ensuremath{R\sb{#1}\leftrightarrow R\sb{#2}}}
+\newcommand{\rowopmult}[2]{\ensuremath{#1R\sb{#2}}}
+\newcommand{\rowopadd}[3]{\ensuremath{#1R\sb{#2}+R\sb{#3}}}
+\newcommand{\set}[1]{\{ #1 \}}
+\newcommand{\leading}[1]{\fbox{#1}}
+\newcommand{\setparts}[2]{\left\{ \left. #1 \,\right|\, #2\right\}}
+\newcommand{\nsp}[1]{\ensuremath{{\mathcal N}\!\protect\left(#1\protect\right)}}
+\newcommand{\complex}[1]{\ensuremath{{\mathbb R}\sp{#1}}} % change complex to real
+\newcommand{\real}[1]{\ensuremath{{\mathbb R}\sp{#1}}}
+\newcommand*{\vectorlist}[2]{\ensuremath{\vect{#1}\sb{1},\,\vect{#1}\sb{2},\,\vect{#1}\sb{3},\,\ldots,\,\vect{#1}\sb{#2}}}
+\newcommand*{\lincombo}[3]{\ensuremath{#1\sb{1}\vect{#2}\sb{1}+#1\sb{2}\vect{#2}\sb{2}+#1\sb{3}\vect{#2}\sb{3}+\cdots +#1\sb{#3}\vect{#2}\sb{#3}}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand*{\spn}[1]{\ensuremath{\protect\left\langle#1\protect\right\rangle}}
+
+\newcommand*{\rref}{\ensuremath{\xrightarrow{\text{RREF}}}}
+
+\newcommand*{\transpose}[1]{\ensuremath{#1\sp{t}}}
+\newcommand*{\matrixcolumns}[2]{\ensuremath{\left\lbrack\vect{#1}\sb{1}|\vect{#1}\sb{2}|\vect{#1}\sb{3}|\ldots|\vect{#1}\sb{#2}\right\rbrack}}
+\newcommand*{\csp}[1]{\ensuremath{\mathcal{C}\!\protect\left(#1\protect\right)}}
+\newcommand*{\scalarlist}[2]{\ensuremath{{#1}\sb{1},\,{#1}\sb{2},\,{#1}\sb{3},\,\ldots,\,{#1}\sb{#2}}}
+\newcommand*{\rsp}[1]{\ensuremath{\mathcal{R}\!\protect\left(#1\protect\right)}}
+\newcommand*{\nullity}[1]{\ensuremath{n\protect\left(#1\protect\right)}}
+\newcommand*{\rank}[1]{\ensuremath{r\protect\left(#1\protect\right)}}
+\newcommand*{\vcord}[2]{\ensuremath{\rho_{#1}(#2)}}
+\newcommand*{\cbmatrix}[2]{\ensuremath{C_{{#1},{#2}}}}
+\newcommand*{\inverse}[1]{\ensuremath{#1\sp{-1}}}
+\newcommand*{\detname}[1]{\ensuremath{\protect\det\protect\left(#1\protect\right)}}
+\newcommand*{\submatrix}[3]{\ensuremath{#1\protect\left(#2|#3\protect\right)}}
+\newcommand*{\detbars}[1]{|#1|}
+\newcommand*{\charpoly}[2]{\ensuremath{p\sb{#1}\left(#2\right)}}
+\newcommand*{\eigensystem}[3]{\ensuremath{\lambda&amp;=#2&amp;\eigenspace{#1}{#2}&amp;=\spn{\set{#3}}}}
+\newcommand*{\eigenspace}[2]{\ensuremath{{\mathcal E}\sb{#1}\left(#2\right)}}
+\newcommand*{\similar}[2]{\ensuremath{\inverse{#2}#1#2}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand*{\algmult}[2]{\ensuremath{\alpha\sb{#1}\protect\left(#2\protect\right)}}
+\newcommand*{\geomult}[2]{\ensuremath{\gamma\sb{#1}\protect\left(#2\protect\right)}}
+\newcommand{\ip}[2]{\left\langle;#1,#2\right\rangle}
+
+\require{extpfeil}

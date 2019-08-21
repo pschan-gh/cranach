@@ -16,6 +16,7 @@
   <xsl:output method="html" />
 
   <xsl:param name="timestamp" select="'0'" />
+  <xsl:param name="contenturl" select="''" />
 
   <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
@@ -81,7 +82,6 @@
                   <xsl:value-of select="@num"/>
               </xsl:attribute>
               <xsl:if test="local-name()!='bare'">
-                  <!-- <xsl:value-of select="concat(local-name(), ' ', $counter, ' ', @title, ' ' , @topic)"/> -->
                   <xsl:value-of select="concat(local-name(), ' ', $counter, ' ')"/>
                   <xsl:apply-templates select="lv:title//text()">
                       <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
@@ -93,6 +93,14 @@
                   </xsl:apply-templates>
               </xsl:if>
           </a>
+		  <xsl:if test="local-name()='chapter'">
+			  <a target="_blank">
+				  <xsl:attribute name="href">
+					  <xsl:value-of select="concat($contenturl, '&amp;query=//lv:chapter[@num=', @num,']')"/>
+				  </xsl:attribute>
+				  <xsl:text>❏</xsl:text>
+			  </a>
+		  </xsl:if>
           <ul>
               <xsl:for-each select="lv:bare|lv:course|lv:chapter|lv:section|lv:subsection">
                   <xsl:call-template name="toc_entry">
