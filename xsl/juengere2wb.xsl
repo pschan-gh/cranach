@@ -51,27 +51,25 @@
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
         <xsl:text>&#xa;</xsl:text>
-        <!-- <xsl:choose>
-            <xsl:when test="@label!=''">
-                <xsl:value-of select="concat('@label{', @label, '}')"/>
-                <xsl:text>&#xa;</xsl:text>
-            </xsl:when>
-        </xsl:choose> -->
-        <!-- <xsl:choose>
-            <xsl:when test="@title!=''">
-                <xsl:value-of select="concat('@title{', @title, '}')"/>
-                <xsl:text>&#xa;</xsl:text>
-            </xsl:when>
-        </xsl:choose> -->
         <xsl:apply-templates select="*|text()" />
         <xsl:text>@end</xsl:text>
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
+
     <xsl:template match="title">
         <xsl:text>&#xa;@title</xsl:text>
         <xsl:apply-templates select="*|text()" />
         <xsl:text>&#xa;@endtitle&#xa;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="steps">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', @wbtag)"/>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>@endsteps</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="col_ul">
@@ -139,7 +137,7 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="course|topic|chapter|week|lecture">
+    <xsl:template match="course|topic|chapter|week|lecture|setchapter|href">
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:if test="argument">

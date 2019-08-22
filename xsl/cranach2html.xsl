@@ -124,7 +124,8 @@
   </xsl:template>
 
   <xsl:template match="lv:course">
-    <xsl:apply-templates select="lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords">
+    <!-- <xsl:apply-templates select="lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:keywords"> -->
+	<xsl:apply-templates select="lv:*[not(self::lv:title)]">
         <xsl:with-param name="course" select="@title"/>
     </xsl:apply-templates>
   </xsl:template>
@@ -550,13 +551,11 @@
         <xsl:element name="h5">
             <xsl:attribute name="wbtag">ignore</xsl:attribute>
             <xsl:attribute name="class">item_title</xsl:attribute>
-            <xsl:value-of select="@type"/>
-            <!-- <span style="margin-left:0.5em">
-            <xsl:value-of select="@title"/>
-        </span> -->
-          <xsl:apply-templates select="lv:title"/>
-          <xsl:value-of select="'.'"/>
-      </xsl:element>
+			<xsl:value-of select="@type"/>
+			<xsl:value-of select="'&#160;'"/>
+			<xsl:apply-templates select="lv:title"/>
+			<xsl:value-of select="'.'"/>
+		</xsl:element>
         <xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]|text()"/>
       </blockquote>
     </div>
@@ -829,6 +828,12 @@
       <xsl:copy-of select="@*"/>
       <xsl:value-of select="."/>
     </b>
+  </xsl:template>
+
+  <xsl:template match="lv:setchapter">
+	  <span class="hidden">
+		  <xsl:copy-of select="@*"/>
+	  </span>
   </xsl:template>
 
   <xsl:template match="lv:newcol|lv:collapse">

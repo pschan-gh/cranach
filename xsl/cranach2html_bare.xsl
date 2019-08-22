@@ -115,7 +115,7 @@
             <xsl:apply-templates select="@title"/>
 	    </a>
 	    <br/>
-	    <xsl:apply-templates select="*|text()"/>
+	    <xsl:apply-templates select="*[not(self::lv:title)]|text()"/>
             <!-- <blockquote wbtag="skip"> -->
             <!--     <xsl:apply-templates select="*|text()"/> -->
             <!-- </blockquote> -->

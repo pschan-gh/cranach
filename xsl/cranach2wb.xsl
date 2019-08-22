@@ -67,6 +67,15 @@
         <xsl:text>@end</xsl:text>
     </xsl:template>
 
+    <xsl:template match="lv:steps">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', @wbtag)"/>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>@endsteps</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
+    </xsl:template>
+
     <xsl:template match="lv:col_ul">
         <xsl:text>&#xa;@ul</xsl:text>
         <xsl:apply-templates select="*|text()" />
@@ -123,6 +132,10 @@
             <xsl:text>}</xsl:text>
         </xsl:if>
         <xsl:apply-templates select="*|text()" />
+    </xsl:template>
+
+    <xsl:template match="lv:setchapter|lv:href">
+        <xsl:value-of select="concat('@', @wbtag, '{', @argument, '}')"/>
     </xsl:template>
 
     <xsl:template match="lv:bare">

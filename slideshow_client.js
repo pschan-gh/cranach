@@ -440,7 +440,8 @@ function commitWb() {
                         .replace(/&amp;/g, '&')
                         .replace(/&apos;/g, "'")
                         .replace(/^\n*/, '')
-                        .replace(/@(section|subsection|subsubsection)\n@title\n*((?:.|\n)*?)\n@endtitle/g, "@$1{$2}");
+                        .replace(/@(section|subsection|subsubsection)\n@title\n*((?:.|\n)*?)\n@endtitle/g, "@$1{$2}")
+                        .replace(/\\class{steps\d+ steps\}/g, '@nstep');
                     editor.setValue(processedStr, 1);
                     resetHighlight();
                     showTexSource(false);

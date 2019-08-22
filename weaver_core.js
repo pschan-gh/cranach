@@ -34,7 +34,7 @@ var dictionary = {
     "@newcol": "newcol"
 };
 
-var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox", "center", "left", "right", "title"];
+var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enumerate", "itemize", "framebox", "center", "left", "right", "title", "figure"];
 var chapterType = "Chapter";
 var course='';
 var topic='';
@@ -44,7 +44,8 @@ var secNums = {
     'section' : 1,
     'subsection': 1,
     'subsubsection' : 1,
-    'statement': 1
+    'statement': 1,
+    'figure': 1
 }
 
 function Stack(node, doc) {
@@ -145,7 +146,7 @@ function Stack(node, doc) {
 
     this.close = function() {
         if (this.parent != null) {
-            if (this.node.nodeName.match(/statement/i)) {
+            if (this.node.nodeName.match(/statement|figure/i)) {
                 var strippedText = this.node.textContent.replace(/[^a-zA-Z0-9]/g, '')
                 if (strippedText != '') {
                     var textMD5 = md5(strippedText);
@@ -300,6 +301,13 @@ function Stack(node, doc) {
                 course = match;
             }
             break;
+            case '@setchapter':
+            secNums['chapter'] = argument;
+            child = child.addChild('setchapter');
+            child.node.setAttribute('wbtag', tagname);
+            child.node.setAttribute('argument', argument);
+            child = child.close();
+            break;
             case '@chapter':
             case '@section':
             case '@subsection':
@@ -409,6 +417,16 @@ function Stack(node, doc) {
                 child.node.setAttribute("num", secNums['statement']++);
             }
             break;
+            case "@figure":
+            if (child.node.nodeName.match(/PARAGRAPHS/i)) {
+                child = child.close();
+            }
+            var parent = child;
+            child = parent.addChild('figure');
+            child.node.setAttribute("wbtag", tagname);
+            child.node.setAttribute("type", 'Figure');
+            child.node.setAttribute("num", secNums['figure']++);
+            break;
             case "@of":
             var match = originalWord.trim().match(/@of{(.*?)}/)[1];
             parent = child.closeTo(/substatement/i);
@@ -436,6 +454,19 @@ function Stack(node, doc) {
             parent.node.setAttribute("title", child.node.textContent.replace(/[^a-z0-9\s\']/ig, ''));
             child = child.closeTo(/title|slide/i).close();
             break;
+            case "@caption":
+            // parent = child.getParent(/figure/i);
+            if (child.node.nodeName.match(/PARAGRAPHS/i)) {
+                child = child.close();
+            }
+            var match = originalWord.trim().match(/@caption{(.*?)}/);
+            if (match) {
+                // parent.node.setAttribute("title", match[1].replace(/[^a-z0-9\s\']/ig, ''));
+                child = child.addChild("caption");
+                child.node.textContent += match[1];
+                child = child.close();
+            }
+            break;
             case "@framebox":
             child = child.addChild("framebox");
             child.node.setAttribute("wbtag", "framebox");
@@ -457,7 +488,7 @@ function Stack(node, doc) {
                 break;
             }
             // var re = new RegExp(child.getEnvironment(), 'i');
-            child = child.closeTo(/statement|substatement|enumerate|itemize|center|left|right|slide|framebox/i).close();
+            child = child.closeTo(/statement|substatement|enumerate|itemize|center|left|right|slide|framebox|figure/i).close();
             break;
 	    case "@center":
 	    child = child.addChild("center");
@@ -534,6 +565,7 @@ function Stack(node, doc) {
                 child = child.close();
             }
             child = child.addChild("steps");
+            child.node.setAttribute('wbtag', 'steps');
             child.node.setAttribute("stepsid", 'steps' + child.stepsID);
             break;
             case "@nstep":
@@ -563,7 +595,7 @@ function Stack(node, doc) {
             child.node.setAttribute("wbtag", tagname);
             break;
             case "@label":
-            var parent = child.closeTo(/statement|course|chapter|section|subsection|subsubsection/i);
+            var parent = child.closeTo(/statement|course|chapter|section|subsection|subsubsection|figure/i);
             // parent.node.setAttribute('label', argument);
             var label = parent.addChild("label");
             label.node.setAttribute('wbtag', tagname);
@@ -589,11 +621,25 @@ function Stack(node, doc) {
             child = child.close();
             break;
             case "@href":
-            if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
-                child = child.addChild("paragraphs");
-                child.node.setAttribute("wbtag", "paragraphs");
+            // if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
+            //     child = child.addChild("paragraphs");
+            //     child.node.setAttribute("wbtag", "paragraphs");
+            // }
+            child = child.addChild("href");
+            var matches = originalWord.match(/@href{(.*?)}(\[(.*?)\])*/);
+            if(matches) {
+                if(matches[1]) {
+                    child.node.setAttribute('src', matches[1]);
+                }
+                if(matches[2]) {
+                    child.node.setAttribute('name', matches[2]);
+                } else {
+                    child.node.setAttribute('name', matches[1]);
+                }
             }
-            child.node.textContent += '<a target="_blank" href="' + argument + '">' + argument + '</a>';
+            child.node.setAttribute('wbtag', 'href');
+            child.node.setAttribute('argument', argument);
+            child = child.close();
             break;
             case "@keyword":
             var slide = child.getParent(/slide/i);
@@ -675,11 +721,9 @@ function addSection(sectionType, title, child) {
 
 
     child.node.setAttribute("wbtag", sectionType);
-    if(stackName.match(/chapter/)) {
+    if(stackName.match(/week|lecture|chapter/)) {
         secNums['statement'] = 1;
-        // alert(stackName + secNums[stackName]);
-        child.node.setAttribute("num", secNums[stackName]);
-        secNums[stackName]++;
+        child.node.setAttribute("num", secNums[stackName]++);
     }
 
     // if ((typeof title != typeof undefined) && title != '' && title != null) {

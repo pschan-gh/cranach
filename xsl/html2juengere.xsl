@@ -97,6 +97,15 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="xh:*[@wbtag = 'setchapter' or @wbtag='href']">
+        <xsl:element name="{@wbtag}">
+            <xsl:copy-of select="@*"/>
+            <xsl:element name="argument">
+                <xsl:value-of select="@argument" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="xh:*[@wbtag='newline' or @wbtag='para' or local-name()='br']" >
       <xsl:element name="newline"/>
     </xsl:template>

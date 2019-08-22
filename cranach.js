@@ -71,7 +71,7 @@ function Cranach(rootURL, params) {
     this.hasQuery = false;
     this.selectedItem = null;
     this.selectedSection = null;
-    this.selectedSlide = 1;
+    this.selectedSlide = slideIndex;
     this.selectedKeyword = null;
     this.present = false;
     // this.doc = null;
@@ -166,7 +166,7 @@ function Cranach(rootURL, params) {
             var preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
             /* END FIREFOX WORK-AROUND */
 
-	    console.log(preCranachDOM);
+            console.log(preCranachDOM);
             var docCranach = xsltProcessor.transformToDocument(preCranachDOM);
             console.log(docCranach);
             el.attr['doc'] = docCranach;
@@ -276,9 +276,10 @@ function Cranach(rootURL, params) {
                 .replace(/@((course|week|lecture|chapter|section|subsection|subsubsection)(?:{.*?}))\n*@slide/g, "@$1")
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>')
-		.replace(/&amp;/g, '&')
-		.replace(/&apos;/g, "'")
-		.replace(/^\n*/, '')
+                .replace(/&amp;/g, '&')
+                .replace(/&apos;/g, "'")
+                .replace(/^\n*/, '')
+                .replace(/\\class{steps\d+ steps\}/g, '@nstep')
                 , 1);
                 resetHighlight();
                 showTexSource(false);

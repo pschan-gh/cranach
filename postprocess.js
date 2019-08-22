@@ -107,6 +107,7 @@ function updateSlideClickEvent() {
         var chapterType = $(this).attr('chapter_type');
         var chapter = $(this).attr('chapter');
         slideIndex = $(this).attr('slide');
+        cranach.selectedSlide = slideIndex;
         var slide = slideIndex;
         var statements = new Array();
 
