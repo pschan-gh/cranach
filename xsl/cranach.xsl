@@ -72,7 +72,7 @@
         <xsl:element name="bare" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates select="*[not(self::lv:statement) and not(self::lv:substatement)]"/>
-            <xsl:if test="./lv:statement|./lv:substatement">
+            <xsl:if test="./lv:statement|./lv:substatement|./lv:webwork">
                 <xsl:call-template name="keywords">
                     <xsl:with-param name="environ" select="." />
                     <xsl:with-param name="slide" select="'all'"/>
@@ -81,7 +81,7 @@
                 </xsl:call-template>
                 <xsl:element name="slides" namespace="{$lv}">
                     <xsl:copy-of select="@*"/>
-                    <xsl:for-each select="lv:statement|lv:substatement">
+                    <xsl:for-each select="lv:statement|lv:substatement|lv:webwork">
                         <xsl:element name="slide" namespace="{$lv}">
                             <xsl:copy-of select="@*"/>
                             <xsl:variable name="slide">

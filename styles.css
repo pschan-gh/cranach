@@ -18,6 +18,14 @@ body {
     height:100%;
 }
 
+.progress .progress-bar {
+    height:5px;
+    background-color: #aaa;
+  -webkit-transition: none;
+       -o-transition: none;
+          transition: none;
+}
+
 textarea {
     color:#000;
     border:1;

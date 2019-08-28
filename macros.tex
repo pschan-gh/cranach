@@ -48,35 +48,38 @@
 \newcommand{\leading}[1]{\fbox{#1}}
 \newcommand{\setparts}[2]{\left\{ \left. #1 \,\right|\, #2\right\}}
 \newcommand{\nsp}[1]{\ensuremath{{\mathcal N}\!\protect\left(#1\protect\right)}}
-\newcommand{\complex}[1]{\ensuremath{{\mathbb R}\sp{#1}}} % change complex to real
-\newcommand{\real}[1]{\ensuremath{{\mathbb R}\sp{#1}}}
-\newcommand*{\vectorlist}[2]{\ensuremath{\vect{#1}\sb{1},\,\vect{#1}\sb{2},\,\vect{#1}\sb{3},\,\ldots,\,\vect{#1}\sb{#2}}}
-\newcommand*{\lincombo}[3]{\ensuremath{#1\sb{1}\vect{#2}\sb{1}+#1\sb{2}\vect{#2}\sb{2}+#1\sb{3}\vect{#2}\sb{3}+\cdots +#1\sb{#3}\vect{#2}\sb{#3}}}
+\newcommand{\complex}[1]{\ensuremath{{\mathbb R}^{#1}}} % change complex to real
+\newcommand{\real}[1]{\ensuremath{{\mathbb R}^{#1}}}
+
+\newcommand{\transpose}[1]{#1^{t}}
+
+
+\newcommand{\vectorlist}[2]{\ensuremath{\vect{#1}\sb{1},\,\vect{#1}\sb{2},\,\vect{#1}\sb{3},\,\ldots,\,\vect{#1}\sb{#2}}}
+\newcommand{\lincombo}[3]{\ensuremath{#1\sb{1}\vect{#2}\sb{1}+#1\sb{2}\vect{#2}\sb{2}+#1\sb{3}\vect{#2}\sb{3}+\cdots +#1\sb{#3}\vect{#2}\sb{#3}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
-\newcommand*{\spn}[1]{\ensuremath{\protect\left\langle#1\protect\right\rangle}}
+\newcommand{\spn}[1]{\ensuremath{\protect\left\langle#1\protect\right\rangle}}
 
-\newcommand*{\rref}{\ensuremath{\xrightarrow{\text{RREF}}}}
+\newcommand{\rref}{\ensuremath{\xrightarrow{\text{RREF}}}}
 
-\newcommand*{\transpose}[1]{\ensuremath{#1\sp{t}}}
-\newcommand*{\matrixcolumns}[2]{\ensuremath{\left\lbrack\vect{#1}\sb{1}|\vect{#1}\sb{2}|\vect{#1}\sb{3}|\ldots|\vect{#1}\sb{#2}\right\rbrack}}
-\newcommand*{\csp}[1]{\ensuremath{\mathcal{C}\!\protect\left(#1\protect\right)}}
-\newcommand*{\scalarlist}[2]{\ensuremath{{#1}\sb{1},\,{#1}\sb{2},\,{#1}\sb{3},\,\ldots,\,{#1}\sb{#2}}}
-\newcommand*{\rsp}[1]{\ensuremath{\mathcal{R}\!\protect\left(#1\protect\right)}}
-\newcommand*{\nullity}[1]{\ensuremath{n\protect\left(#1\protect\right)}}
-\newcommand*{\rank}[1]{\ensuremath{r\protect\left(#1\protect\right)}}
-\newcommand*{\vcord}[2]{\ensuremath{\rho_{#1}(#2)}}
-\newcommand*{\cbmatrix}[2]{\ensuremath{C_{{#1},{#2}}}}
-\newcommand*{\inverse}[1]{\ensuremath{#1\sp{-1}}}
-\newcommand*{\detname}[1]{\ensuremath{\protect\det\protect\left(#1\protect\right)}}
-\newcommand*{\submatrix}[3]{\ensuremath{#1\protect\left(#2|#3\protect\right)}}
-\newcommand*{\detbars}[1]{|#1|}
-\newcommand*{\charpoly}[2]{\ensuremath{p\sb{#1}\left(#2\right)}}
-\newcommand*{\eigensystem}[3]{\ensuremath{\lambda&amp;=#2&amp;\eigenspace{#1}{#2}&amp;=\spn{\set{#3}}}}
-\newcommand*{\eigenspace}[2]{\ensuremath{{\mathcal E}\sb{#1}\left(#2\right)}}
-\newcommand*{\similar}[2]{\ensuremath{\inverse{#2}#1#2}}
+\newcommand{\matrixcolumns}[2]{\ensuremath{\left\lbrack\vect{#1}\sb{1}|\vect{#1}\sb{2}|\vect{#1}\sb{3}|\ldots|\vect{#1}\sb{#2}\right\rbrack}}
+\newcommand{\csp}[1]{\ensuremath{\mathcal{C}\!\protect\left(#1\protect\right)}}
+\newcommand{\scalarlist}[2]{\ensuremath{{#1}\sb{1},\,{#1}\sb{2},\,{#1}\sb{3},\,\ldots,\,{#1}\sb{#2}}}
+\newcommand{\rsp}[1]{\ensuremath{\mathcal{R}\!\protect\left(#1\protect\right)}}
+\newcommand{\nullity}[1]{\ensuremath{n\protect\left(#1\protect\right)}}
+\newcommand{\rank}[1]{\ensuremath{r\protect\left(#1\protect\right)}}
+\newcommand{\vcord}[2]{\ensuremath{\rho_{#1}(#2)}}
+\newcommand{\cbmatrix}[2]{\ensuremath{C_{{#1},{#2}}}}
+\newcommand{\inverse}[1]{\ensuremath{#1\sp{-1}}}
+\newcommand{\detname}[1]{\ensuremath{\protect\det\protect\left(#1\protect\right)}}
+\newcommand{\submatrix}[3]{\ensuremath{#1\protect\left(#2|#3\protect\right)}}
+\newcommand{\detbars}[1]{|#1|}
+\newcommand{\charpoly}[2]{\ensuremath{p\sb{#1}\left(#2\right)}}
+\newcommand{\eigensystem}[3]{\ensuremath{\lambda&amp;=#2&amp;\eigenspace{#1}{#2}&amp;=\spn{\set{#3}}}}
+\newcommand{\eigenspace}[2]{\ensuremath{{\mathcal E}\sb{#1}\left(#2\right)}}
+\newcommand{\similar}[2]{\ensuremath{\inverse{#2}#1#2}}
 \newcommand{\diag}{\operatorname{diag}}
-\newcommand*{\algmult}[2]{\ensuremath{\alpha\sb{#1}\protect\left(#2\protect\right)}}
-\newcommand*{\geomult}[2]{\ensuremath{\gamma\sb{#1}\protect\left(#2\protect\right)}}
+\newcommand{\algmult}[2]{\ensuremath{\alpha\sb{#1}\protect\left(#2\protect\right)}}
+\newcommand{\geomult}[2]{\ensuremath{\gamma\sb{#1}\protect\left(#2\protect\right)}}
 \newcommand{\ip}[2]{\left\langle;#1,#2\right\rangle}
 
 \require{extpfeil}

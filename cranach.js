@@ -205,23 +205,30 @@ function Cranach(rootURL, params) {
         var xsl = 'xsl/cranach2html.xsl';
         var el = this;
         $('#loading_icon').show();
+        $('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
         $.ajax({
             url: xsl,
             dataType: "xml"
         })
         .done(function(wbxslFile) {
+            $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
+            setTimeout(function() {
                 xsltProcessor.importStylesheet(wbxslFile);
                 xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
                 xsltProcessor.setParameter('', 'contenturl', contentURL);
                 console.log('displayCranachDocToHtml');
                 console.log(docCranach);
-                var fragment = xsltProcessor.transformToFragment(docCranach, document);
-                console.log('LML2HTML');
-                console.log(fragment);
-                var output = document.getElementById('output');
-                $(output).html('');
-                $(output).append(fragment);
-                el.postprocess();
+                $('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
+                setTimeout(function() {
+                    var fragment = xsltProcessor.transformToFragment(docCranach, document);
+                    console.log('LML2HTML');
+                    console.log(fragment);
+                    var output = document.getElementById('output');
+                    $(output).html('');
+                    $(output).append(fragment);
+                    el.postprocess();
+                }, 50);
+            }, 50);
         });
     }
 
@@ -248,9 +255,11 @@ function Cranach(rootURL, params) {
 
             this.attr['doc'] = queryDom;
 
+            $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
             this.preCranachDocToCranachDoc(queryDom, this.displayCranachDocToHtml);
         } else {
             this.attr['doc'] = docCranach;
+            $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
             this.displayCranachDocToHtml(docCranach);
             this.convertCranachDocToWb(docCranach);
         }
@@ -307,7 +316,7 @@ function Cranach(rootURL, params) {
         })
         .done(function(macros) {
             console.log('MACROS FILE FOUND');
-            console.log(macros);
+            // console.log(macros);
             el.macros = new DOMParser().parseFromString('<div>\\(' + macros + '\\)</div>', "text/xml");
         })
         .fail(function() {
@@ -315,11 +324,13 @@ function Cranach(rootURL, params) {
         })
         .always(function() {
             if (el.attr['xmlPath']) {
+                // $('.progress-bar').css('width', '25%').attr('aria-valuenow', '25');
                 $.ajax({
                     url:  el.attr['xmlPath'],
                     dataType: "xml"
                 })
                 .done(function(xml) {
+                    $('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
                     el.attr['doc'] = xml;
                     el.xmlDocQuery(el.attr['query'], xml);
                 });
@@ -329,7 +340,6 @@ function Cranach(rootURL, params) {
                     dataType: "text"
                 })
                 .done(function(wb) {
-                    // console.log(wb);
                     editor.setValue(wb, 1);
                     el.preCranachDocToCranachDoc(generateXML(wb), function(docCranach) { el.xmlDocQuery(el.attr['query'], docCranach);});
                 });
