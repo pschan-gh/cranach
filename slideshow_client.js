@@ -592,7 +592,9 @@ function updateTitle(slide) {
 
     var section = $(slide).attr('section') ?  chapter + '.' + $(slide).attr('section') : '';
 
-    var sectionTitle = $(slide).attr('section_title') ? $(slide).attr('section_title') : $(slide).prevAll('[section_title!=""]:first').attr('section_title');
+    // var sectionTitle = $(slide).attr('section_title') ? $(slide).attr('section_title') : $(slide).prevAll('[section_title!=""]:first').attr('section_title');
+
+    var sectionTitle = $('a.section.highlighted').html();
 
     sectionTitle = sectionTitle ? sectionTitle : '';
 

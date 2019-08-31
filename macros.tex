@@ -41,9 +41,9 @@
 \newcommand{\linearsystem}[2]{\ensuremath{#1\vect{x}=#2}}
 \newcommand{\homosystem}[1]{\ensuremath{\linearsystem{#1}{\zerovector}}}
 \newcommand{\augmented}[2]{\left[#1|#2\right]}
-\newcommand{\rowopswap}[2]{\ensuremath{R\sb{#1}\leftrightarrow R\sb{#2}}}
-\newcommand{\rowopmult}[2]{\ensuremath{#1R\sb{#2}}}
-\newcommand{\rowopadd}[3]{\ensuremath{#1R\sb{#2}+R\sb{#3}}}
+\newcommand{\rowopswap}[2]{R_{#1}\leftrightarrow R_{#2}}
+\newcommand{\rowopmult}[2]{#1R_{#2}}
+\newcommand{\rowopadd}[3]{#1R_{#2}+R_{#3}}
 \newcommand{\set}[1]{\{ #1 \}}
 \newcommand{\leading}[1]{\fbox{#1}}
 \newcommand{\setparts}[2]{\left\{ \left. #1 \,\right|\, #2\right\}}
@@ -54,16 +54,16 @@
 \newcommand{\transpose}[1]{#1^{t}}
 
 
-\newcommand{\vectorlist}[2]{\ensuremath{\vect{#1}\sb{1},\,\vect{#1}\sb{2},\,\vect{#1}\sb{3},\,\ldots,\,\vect{#1}\sb{#2}}}
-\newcommand{\lincombo}[3]{\ensuremath{#1\sb{1}\vect{#2}\sb{1}+#1\sb{2}\vect{#2}\sb{2}+#1\sb{3}\vect{#2}\sb{3}+\cdots +#1\sb{#3}\vect{#2}\sb{#3}}}
+\newcommand{\vectorlist}[2]{\ensuremath{\vect{#1}_{1},\,\vect{#1}_{2},\,\vect{#1}_{3},\,\ldots,\,\vect{#1}_{#2}}}
+\newcommand{\lincombo}[3]{\ensuremath{#1_{1}\vect{#2}_{1}+#1_{2}\vect{#2}_{2}+#1_{3}\vect{#2}_{3}+\cdots +#1_{#3}\vect{#2}_{#3}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 \newcommand{\spn}[1]{\ensuremath{\protect\left\langle#1\protect\right\rangle}}
 
 \newcommand{\rref}{\ensuremath{\xrightarrow{\text{RREF}}}}
 
-\newcommand{\matrixcolumns}[2]{\ensuremath{\left\lbrack\vect{#1}\sb{1}|\vect{#1}\sb{2}|\vect{#1}\sb{3}|\ldots|\vect{#1}\sb{#2}\right\rbrack}}
+\newcommand{\matrixcolumns}[2]{\ensuremath{\left\lbrack\vect{#1}_{1}|\vect{#1}_{2}|\vect{#1}_{3}|\ldots|\vect{#1}_{#2}\right\rbrack}}
 \newcommand{\csp}[1]{\ensuremath{\mathcal{C}\!\protect\left(#1\protect\right)}}
-\newcommand{\scalarlist}[2]{\ensuremath{{#1}\sb{1},\,{#1}\sb{2},\,{#1}\sb{3},\,\ldots,\,{#1}\sb{#2}}}
+\newcommand{\scalarlist}[2]{\ensuremath{{#1}_{1},\,{#1}_{2},\,{#1}_{3},\,\ldots,\,{#1}_{#2}}}
 \newcommand{\rsp}[1]{\ensuremath{\mathcal{R}\!\protect\left(#1\protect\right)}}
 \newcommand{\nullity}[1]{\ensuremath{n\protect\left(#1\protect\right)}}
 \newcommand{\rank}[1]{\ensuremath{r\protect\left(#1\protect\right)}}
@@ -73,13 +73,13 @@
 \newcommand{\detname}[1]{\ensuremath{\protect\det\protect\left(#1\protect\right)}}
 \newcommand{\submatrix}[3]{\ensuremath{#1\protect\left(#2|#3\protect\right)}}
 \newcommand{\detbars}[1]{|#1|}
-\newcommand{\charpoly}[2]{\ensuremath{p\sb{#1}\left(#2\right)}}
+\newcommand{\charpoly}[2]{\ensuremath{p_{#1}\left(#2\right)}}
 \newcommand{\eigensystem}[3]{\ensuremath{\lambda&amp;=#2&amp;\eigenspace{#1}{#2}&amp;=\spn{\set{#3}}}}
-\newcommand{\eigenspace}[2]{\ensuremath{{\mathcal E}\sb{#1}\left(#2\right)}}
+\newcommand{\eigenspace}[2]{\ensuremath{{\mathcal E}_{#1}\left(#2\right)}}
 \newcommand{\similar}[2]{\ensuremath{\inverse{#2}#1#2}}
 \newcommand{\diag}{\operatorname{diag}}
-\newcommand{\algmult}[2]{\ensuremath{\alpha\sb{#1}\protect\left(#2\protect\right)}}
-\newcommand{\geomult}[2]{\ensuremath{\gamma\sb{#1}\protect\left(#2\protect\right)}}
+\newcommand{\algmult}[2]{\ensuremath{\alpha_{#1}\protect\left(#2\protect\right)}}
+\newcommand{\geomult}[2]{\ensuremath{\gamma_{#1}\protect\left(#2\protect\right)}}
 \newcommand{\ip}[2]{\left\langle;#1,#2\right\rangle}
 
 \require{extpfeil}

@@ -356,7 +356,7 @@ function postprocess() {
     $('.icon.xml, .icon.latex').show();
 
     $('.slide_number').hide();
-    $('.slide').find("table:not(.exempt)").addClass("table table-bordered");
+    $('.slide').find("table:not(.exempt):not(.ltx_eqn_table)").addClass("table table-bordered");
 
     // MathJax.Hub.Queue(
     //     ["resetEquationNumbers", MathJax.InputJax.TeX],

@@ -7,14 +7,14 @@
     xmlns:m     = "http://www.w3.org/1998/Math/MathML"
     >
 
-  <!-- <xsl:import href="LaTeXML-math-xhtml.xsl"/> -->
+  <xsl:import href="LaTeXML-block-xhtml.xsl"/>
   <xsl:import href="LaTeXML-common.xsl"/>
 
     <xsl:variable name="lv" select="'http://www.math.cuhk.edu.hk/~pschan/cranach'"/>
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
     <xsl:preserve-space elements="xh:pre ltx:*"/>
-    <!-- <xsl:strip-space elements="*"/> -->
+    <xsl:strip-space elements="ltx:Math"/>
     <xsl:output method="xml" />
 
     <xsl:template match="ltx:document">
@@ -282,39 +282,22 @@
       </xh:p>
     </xsl:template>
 
+    <xsl:template match="ltx:Math">
+        <xsl:text>$</xsl:text>
+        <xsl:value-of select="@tex"/>
+        <xsl:text>$</xsl:text>
+    </xsl:template>
+
     <xsl:template match="ltx:Math[@mode='inline']">
         <xsl:text>$</xsl:text>
         <xsl:value-of select="@tex"/>
         <xsl:text>$</xsl:text>
     </xsl:template>
 
-    <xsl:template match="ltx:equation">
-        <xsl:choose>
-            <xsl:when test="ltx:tags">
-                <xsl:text>\begin{equation}</xsl:text>
-                <xsl:if test="@labels">
-                    <xsl:value-of select="concat('\label{', substring(@labels, 7), '}')"/>
-                </xsl:if>
-                <xsl:apply-templates select="ltx:Math[@mode='display']" />
-                <xsl:text>\end{equation}</xsl:text>
-            </xsl:when>
-            <xsl:when test="ltx:MathFork|ltx:MathBranch">
-                <xsl:text>\[</xsl:text>
-                <xsl:value-of select=".//ltx:Math/@tex"/>
-                <!-- <xsl:apply-templates select="./ltx:MathFork/ltx:Math|./ltx:MathBranch/ltx:Math" /> -->
-                <xsl:text>\]</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>\[</xsl:text>
-                <xsl:apply-templates select="ltx:Math[@mode='display']" />
-                <!-- <xsl:apply-templates select=".//ltx:Math" /> -->
-                <xsl:text>\]</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-
-    <xsl:template match="ltx:Math[@mode='display']">
+    <xsl:template match="ltx:Math[@mode='display' and not(contains(@class, 'ltx_eqn_cell'))]">
+        <xsl:text>$\displaystyle </xsl:text>
         <xsl:value-of select="@tex"/>
+        <xsl:text>$</xsl:text>
     </xsl:template>
 
     <xsl:template match="ltx:para">
@@ -327,11 +310,11 @@
       </xsl:element>
     </xsl:template>
 
-    <xsl:template match="ltx:*">
+    <!-- <xsl:template match="ltx:*">
         <xsl:element name="{local-name()}" namespace="{$lv}">
             <xsl:apply-templates select="*|text()"/>
         </xsl:element>
-    </xsl:template>
+    </xsl:template> -->
 
     <xsl:template match="text()|comment()">
         <xsl:copy-of select="current()"/>
@@ -347,103 +330,10 @@
   <!-- If NOT using MathML, should we avoid using images to represent pure numbers? -->
   <xsl:param name="USE_NUMBER_IMAGES">false</xsl:param>
 
-  <!-- The namespace to use on MathML elements (typically MathML_NAMESPACE or none) -->
-  <!--
-      <xsl:param name="mml_ns">
-      <xsl:value-of select="f:if($USE_NAMESPACES,$MathML_NAMESPACE,'')"/>
-      </xsl:param>
-  -->
+
   <xsl:param name="mml_ns">
       <xsl:value-of select="$MathML_NAMESPACE"/>
   </xsl:param>
-
-  <!-- <xsl:strip-space elements="ltx:Math"/> -->
-
-  <xsl:template match="ltx:Math">
-    <xsl:choose>
-      <!-- Prefer MathML, if allowed -->
-      <!-- <xsl:when test="m:math and $USE_MathML"> -->
-      <xsl:when test="$USE_MathML">
-        <xsl:apply-templates select="." mode="as-MathML"/>
-      </xsl:when>
-      <!-- Optionally avoid using images for pure numbers -->
-      <xsl:when test="not($USE_NUMBER_IMAGES) and ltx:XMath[count(*)=1][ltx:XMTok[1][@role='NUMBER']]">
-        <xsl:value-of select="ltx:XMath/ltx:XMTok/text()"/>
-      </xsl:when>
-      <xsl:when test="not($USE_NUMBER_IMAGES) and
-                      ltx:XMath[count(*)=1][ltx:XMApp[count(*)=2
-                                        and ltx:XMTok[1][@meaning='minus']
-                                        and ltx:XMTok[2][@role='NUMBER']]]">
-        <xsl:value-of select="concat('&#x2212;',ltx:XMath/ltx:XMApp/ltx:XMTok[2]/text())"/>
-      </xsl:when>
-      <!-- If we reach any Math nested within Math, just copy as-is (should be appropriate target)-->
-      <xsl:when test="ancestor::ltx:Math">
-        <xsl:apply-templates mode='copy-foreign'/>
-      </xsl:when>
-      <!-- Or use images for math (Ugh!)-->
-      <xsl:when test="@imagesrc">
-        <xsl:apply-templates select="." mode="as-image"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="." mode="as-MathML"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="ltx:Math" mode="as-image">
-    <xsl:element name="img" namespace="{$xh}">
-      <xsl:call-template name="add_id"/>
-      <xsl:call-template name="add_attributes">
-        <xsl:with-param name="extra_style">
-          <xsl:if test="@imagedepth">
-            <xsl:value-of select="concat('vertical-align:-',@imagedepth,'px')"/>
-          </xsl:if>
-        </xsl:with-param>
-      </xsl:call-template>
-      <xsl:attribute name="src">
-        <xsl:value-of select="f:url(@imagesrc)"/>
-      </xsl:attribute>
-      <xsl:if test="@imagewidth">
-        <xsl:attribute name="width">
-          <xsl:value-of select="@imagewidth"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@imageheight">
-        <xsl:attribute name="height">
-          <xsl:value-of select="@imageheight"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@tex">
-        <xsl:attribute name="alt">
-          <xsl:value-of select="@tex"/>
-        </xsl:attribute>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="ltx:Math" mode="as-TeX">
-    <xsl:element name="span" namespace="{$xh}">
-      <xsl:call-template name="add_id"/>
-      <xsl:call-template name="add_attributes">
-      </xsl:call-template>
-      <xsl:value-of select="@tex"/>
-    </xsl:element>
-  </xsl:template>
-
-  <!-- Top level generated m:math element gets id & class from ltx:Math
-       If the ltx:Math/m:math had any of those, they got lost! -->
-  <xsl:template match="ltx:Math" mode="as-MathML">
-    <xsl:element name="math" namespace="{$mml_ns}">
-      <!-- copy id, class, style from PARENT ltx:Math -->
-      <xsl:call-template name="add_id"/>
-      <xsl:call-template name="add_attributes"/>
-      <!-- but copy OTHER m:math attributes -->
-      <xsl:for-each select="m:math/@*">
-        <xsl:apply-templates select="." mode="copy-attribute"/>
-      </xsl:for-each>
-      <xsl:apply-templates select="m:math/*"/>
-    </xsl:element>
-  </xsl:template>
 
   <!-- Copy MathML, as is -->
   <xsl:template match="m:*">
