@@ -62,47 +62,51 @@
       </xsl:variable>
 
       <li>
-          <a href="#">
-              <xsl:attribute name="class">
-                  <xsl:value-of select="local-name()"/>
-              </xsl:attribute>
-              <xsl:attribute name="course">
-                  <xsl:value-of select="$course"/>
-              </xsl:attribute>
-              <xsl:attribute name="chapter">
-                  <xsl:value-of select="$chapter"/>
-              </xsl:attribute>
-              <xsl:attribute name="section">
-                  <xsl:value-of select="$section"/>
-              </xsl:attribute>
-              <xsl:attribute name="subsection">
-                  <xsl:value-of select="$subsection"/>
-              </xsl:attribute>
-              <xsl:attribute name="{local-name()}">
-                  <xsl:value-of select="@num"/>
-              </xsl:attribute>
-              <xsl:if test="local-name()!='bare'">
-                  <xsl:value-of select="concat(local-name(), ' ', $counter, ' ')"/>
-                  <xsl:apply-templates select="lv:title//text()">
-                      <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
-                      <xsl:with-param name="chapter" select="ancestor::lv:chapter/@num"/>
-                      <xsl:with-param name="section" select="ancestor::lv:section/@num"/>
-                      <xsl:with-param name="subsection" select="ancestor::lv:subsection/@num"/>
-                      <xsl:with-param name="subsubsection" select="ancestor::lv:subsubsection/@num"/>
-                      <xsl:with-param name="toc" select="'true'"/>
-                  </xsl:apply-templates>
-              </xsl:if>
-          </a>
-		  <xsl:if test="local-name()='chapter'">
-			  <a target="_blank">
-				  <xsl:attribute name="href">
-					  <xsl:value-of select="concat($contenturl, '&amp;query=//lv:chapter[@num=', @num,']')"/>
-				  </xsl:attribute>
-				  <xsl:text>❏</xsl:text>
-			  </a>
-		  </xsl:if>
+        <a href="#">
+          <xsl:attribute name="class">
+            <xsl:value-of select="local-name()"/>
+          </xsl:attribute>
+          <xsl:attribute name="course">
+            <xsl:value-of select="$course"/>
+          </xsl:attribute>
+          <xsl:attribute name="chapter">
+            <xsl:value-of select="$chapter"/>
+          </xsl:attribute>
+          <xsl:attribute name="section">
+            <xsl:value-of select="$section"/>
+          </xsl:attribute>
+          <xsl:attribute name="subsection">
+            <xsl:value-of select="$subsection"/>
+          </xsl:attribute>
+          <xsl:attribute name="{local-name()}">
+            <xsl:value-of select="@num"/>
+          </xsl:attribute>
+            <xsl:if test="local-name()!='bare'">
+	      <span class="serial">
+		<xsl:value-of select="concat(local-name(), ' ', $counter, ' ')"/>
+	      </span>
+	      <span class="title">
+              <xsl:apply-templates select="lv:title//text()">
+                <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
+                <xsl:with-param name="chapter" select="ancestor::lv:chapter/@num"/>
+                <xsl:with-param name="section" select="ancestor::lv:section/@num"/>
+                <xsl:with-param name="subsection" select="ancestor::lv:subsection/@num"/>
+                <xsl:with-param name="subsubsection" select="ancestor::lv:subsubsection/@num"/>
+                <xsl:with-param name="toc" select="'true'"/>
+              </xsl:apply-templates>
+	      </span>
+	    </xsl:if>
+        </a>
+	  <xsl:if test="local-name()='chapter'">
+	    <a target="_blank">
+	      <xsl:attribute name="href">
+		<xsl:value-of select="concat($contenturl, '&amp;query=//lv:chapter[@num=', @num,']')"/>
+	      </xsl:attribute>
+	      <xsl:text>❏</xsl:text>
+	    </a>
+	  </xsl:if>
           <ul>
-              <xsl:for-each select="lv:bare|lv:course|lv:chapter|lv:section|lv:subsection">
+            <xsl:for-each select="lv:bare|lv:course|lv:chapter|lv:section|lv:subsection">
                   <xsl:call-template name="toc_entry">
                       <xsl:with-param name="course" select="ancestor::lv:course/@title"/>
                       <xsl:with-param name="chapter" select="ancestor::lv:chapter/@num"/>

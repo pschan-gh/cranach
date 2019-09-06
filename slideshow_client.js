@@ -465,7 +465,7 @@ function focusOn(slide, text) {
 
     if (text!= '') {
         $('#output').scrollTo('#s' + slide);
-        $('#s' + slide + ' *[text=' + text.replace(/[^a-zA-Z0-9]/g, '') + ']').addClass('highlighted');
+        $('#s' + slide + ' *[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
     } else {
         $('#output').scrollTo('#s' + slide, 150);
     }
@@ -594,7 +594,7 @@ function updateTitle(slide) {
 
     // var sectionTitle = $(slide).attr('section_title') ? $(slide).attr('section_title') : $(slide).prevAll('[section_title!=""]:first').attr('section_title');
 
-    var sectionTitle = $('a.section.highlighted').html();
+    var sectionTitle = $('a.section.highlighted').find('span.title').html();
 
     sectionTitle = sectionTitle ? sectionTitle : '';
 

@@ -286,7 +286,7 @@ function updateToc() {
     console.log('UPDATING TOC');
     $('#toc').html('').append($('#toc_src'));
 
-    $('#toc').find('a').each(function() {
+    $('#toc').find('a').find('span.serial').each(function() {
         var string = $(this).text();
         $(this).text(string.charAt(0).toUpperCase() + string.slice(1));
     });
@@ -385,7 +385,7 @@ function postprocess() {
 
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
-            $(this).attr('text', text.replace(/[^a-zA-Z0-9]/g, ''));
+            $(this).attr('text', text.replace(/[^a-zA-Z0-9\-]/g, ''));
         });
 
         $('.slide').each(function() {

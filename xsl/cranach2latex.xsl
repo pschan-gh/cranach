@@ -123,7 +123,7 @@
 
 <xsl:template match="lv:section|lv:subsection|lv:subsubsection">
     <xsl:text>&#xa;</xsl:text>
-    <xsl:value-of select="concat('\', local-name(), '{', ./lv:title/text(),'}')"/>
+    <xsl:value-of select="concat('\', local-name(), '{', normalize-space(./lv:title/text()),'}')"/>
     <xsl:text>&#xa;</xsl:text>
     <xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides" />
 </xsl:template>
