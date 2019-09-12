@@ -42,14 +42,25 @@ function showStep(stepsId) {
     var whichStep = whichSteps[stepsId];
     // var step = stepsId + '.' + whichStep;
     console.log('STEP: ' + whichStep + ', class LENGTH: ' + stepsClass.length);
+    // if (whichStep < stepsClass.length/2) {
+    //     stepsClass[whichStep].style.visibility = "visible";
+    //     whichStep++;
+    // }
     if (whichStep < stepsClass.length/2) {
-        stepsClass[whichStep].style.visibility = "visible";
+        // stepsClass[whichStep].style.visibility = "visible";
+        $('.'+ stepsId + '.step' + whichStep).css('visibility', 'visible');
         whichStep++;
     }
 
-    if (!stepsClass[whichStep]) {
-        document.getElementById("next"+stepsId).disabled = true;
+    if (whichStep >= stepsClass.length/2) {
+	document.getElementById("next"+stepsId).disabled = true;
     }
+
+    // if (!stepsClass[whichStep]) {
+    //    document.getElementById("next"+stepsId).disabled = true;
+    // }
+    
+
     document.getElementById("reset"+stepsId).disabled = false;
     whichSteps[stepsId] = whichStep;
 
