@@ -35,6 +35,10 @@
         <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
+    <xsl:template match="lv:qed" >
+        <xsl:value-of select="concat('&#xa;', '@', name(), '&#xa;')" />
+    </xsl:template>
+
     <xsl:template match="lv:col|lv:newcol" >
         <xsl:value-of select="concat('&#xa;', '@', name())" />
         <xsl:apply-templates select="*|text()" />

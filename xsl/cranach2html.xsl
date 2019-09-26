@@ -1035,7 +1035,7 @@
 	<iframe style="overflow-x:auto;overflow-y:hidden;display:none">
           <xsl:attribute name="rendered">0</xsl:attribute>
           <xsl:attribute name="data-src">
-            <xsl:value-of select="concat('http://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
+            <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
           </xsl:attribute>
 	</iframe>
       </div>

@@ -288,7 +288,7 @@ function Cranach(rootURL, params) {
                 .replace(/&amp;/g, '&')
                 .replace(/&apos;/g, "'")
                 .replace(/^\n*/, '')
-                .replace(/\\class{steps\d+ steps\}/g, '@nstep')
+                .replace(/\\class{steps\d+ steps .*?\}/g, '@nstep')
                 , 1);
                 resetHighlight();
                 showTexSource(false);

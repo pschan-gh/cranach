@@ -177,21 +177,21 @@
     </xsl:template>
 
 
-    <xsl:template match="xh:ul|lv:col_ul">
+    <xsl:template match="xh:ul|lv:col_ul|lv:itemize">
         <!-- <xsl:text>&#xa;\quad\\&#xa;</xsl:text> -->
         <xsl:text>\begin{itemize}</xsl:text>
         <xsl:apply-templates select="*" />
         <xsl:text>\end{itemize}</xsl:text>
     </xsl:template>
 
-    <xsl:template match="xh:ol|lv:col_ol">
+    <xsl:template match="xh:ol|lv:col_ol|lv:enumerate">
         <!-- <xsl:text>&#xa;\quad\\&#xa;</xsl:text> -->
         <xsl:text>\begin{enumerate}</xsl:text>
         <xsl:apply-templates select="*" />
         <xsl:text>\end{enumerate}</xsl:text>
     </xsl:template>
 
-    <xsl:template match="xh:li|lv:col_li">
+    <xsl:template match="xh:li|lv:col_li|lv:item">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>\item </xsl:text>
         <xsl:apply-templates select="text()|*" />
