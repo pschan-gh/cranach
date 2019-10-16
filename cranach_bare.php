@@ -4,7 +4,10 @@ $id = uniqid();
 ?>
 <html>
 <head>
-    <script src="js/jquery.min.js" ></script>
+    <!-- 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    --> 
+    <script src="js/jquery.min.js"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="weaver_core.js"></script>
     <script type="text/javascript" src="weaver.js"></script>
@@ -36,7 +39,7 @@ $id = uniqid();
 <script type="text/javascript">
 // var fullURL = top.location.href;
 var fullURL = decodeURIComponent('<?php echo rawurlencode($actual_link); ?>');
-var $jq = jQuery.noConflict()
+var $jq = jQuery.noConflict();
 var baseURL = fullURL.replace(/cranach_bare\.php/, '').replace(/&query=.*?$/, '').replace(/\#$/, '');
 
 var cranach_bare = new Cranach(baseURL, '<?php echo $id; ?>');
@@ -68,7 +71,7 @@ if(urlParams.has('wb') || urlParams.has('xml')) {
     }
 }
 cranach_bare.render();
-$(function() {
+$jq(function() {
     MathJax.Hub.Queue(
         ["Typeset", MathJax.Hub, document]
     );

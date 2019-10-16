@@ -206,6 +206,21 @@
         <xsl:value-of select="concat('&#xa;', '@end', @wbtag)"/>
     </xsl:template>
 
+    <xsl:template match="xh:table[contains(concat(' ',@class,' '),' ltx_eqn_table')]">
+        <xsl:text>\begin{align*}&#10;</xsl:text>
+        <xsl:for-each select="xh:tr">
+            <xsl:for-each select="xh:td[position()!=last()]">
+                <xsl:if test="position() != 1 and position() != 2">
+                    <xsl:text>&amp;</xsl:text>
+                </xsl:if>
+                <xsl:variable name="length" select="string-length(./text())"/>
+                <xsl:value-of select="substring(./text(),2,($length - 2))"/>
+            </xsl:for-each>
+            <xsl:if test="position()!=last()"> \\&#10;</xsl:if>
+        </xsl:for-each>
+        <xsl:text>&#10;\end{align*}&#10;</xsl:text>
+    </xsl:template>
+
     <xsl:template match="text()" >
         <xsl:value-of select="." />
         <!-- <xsl:value-of select="." disable-output-escaping="yes"/> -->

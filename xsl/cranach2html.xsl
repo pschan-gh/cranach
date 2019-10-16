@@ -98,7 +98,7 @@
 	    </xsl:if>
         </a>
 	  <xsl:if test="local-name()='chapter'">
-	    <a target="_blank">
+	    <a target="_blank" style="margin-left:2px">
 	      <xsl:attribute name="href">
 		<xsl:value-of select="concat($contenturl, '&amp;query=//lv:chapter[@num=', @num,']')"/>
 	      </xsl:attribute>

@@ -4,9 +4,12 @@
     xmlns:xh="http://www.w3.org/1999/xhtml"
     xmlns:lml="http://dlmf.nist.gov/LaTeXML"
     xmlns:lv = "http://www.math.cuhk.edu.hk/~pschan/cranach"
+    xmlns:m = "http://www.w3.org/1998/Math/MathML"
     >
 <!-- xmlns="elephas" -->
     <xsl:output method="html"/>
+
+    <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
     <xsl:template match="lv:document|lml:document">
         <xsl:apply-templates select="*" />
@@ -226,7 +229,40 @@
     </xsl:template>
 
     <xsl:template match="lv:ref">
-        <xsl:choose>
+        <xsl:element name="a">
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="src-chapter">
+                <xsl:value-of select="@src-chapter"/>
+            </xsl:attribute>
+            <xsl:attribute name="item">
+                <xsl:value-of select="@item"/>
+            </xsl:attribute>
+            <xsl:attribute name="type">
+                <xsl:value-of select="@type"/>
+            </xsl:attribute>
+            <xsl:attribute name="class">
+                <xsl:choose>
+                    <xsl:when test="@item">
+                        <xsl:text>knowl</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>href</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <xsl:if test="@type='Section'">
+                <xsl:value-of select="concat('Section ', @serial, ' (')"/>
+            </xsl:if>
+            <xsl:apply-templates select="lv:title"/>
+            <xsl:if test="@type='Section'">
+                <xsl:value-of select="')'"/>
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- <xsl:template match="lv:ref"> -->
+        <!-- <xsl:choose>
             <xsl:when test="//lv:statement[@label=current()]">
                 <xsl:element name="a">
                     <xsl:copy-of select="@*"/>
@@ -246,7 +282,7 @@
                 <xsl:text>UNDEFINED</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:template>
+    </xsl:template> -->
 
     <xsl:template match="lv:keywords">
         <xsl:element name="div">
@@ -442,6 +478,52 @@
                 </xsl:attribute>
             </xsl:element>
         </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="lv:enumerate">
+      <xsl:param name="context" select="''"/>
+      <xsl:text>&#x0A;</xsl:text>
+      <xsl:element name="ol" namespace="{$xh}">
+          <xsl:copy-of select="@wbtag"/>
+          <!-- <xsl:if test="$context!='enumerate'">
+              <xsl:attribute name="type">1|a|i</xsl:attribute>
+          </xsl:if> -->
+          <xsl:apply-templates select="lv:item">
+              <xsl:with-param name="context" select="local-name()"/>
+          </xsl:apply-templates>
+      </xsl:element>
+      <xsl:text>&#x0A;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="lv:itemize">
+      <xsl:param name="context" select="''"/>
+      <xsl:text>&#x0A;</xsl:text>
+      <xsl:element name="ul" namespace="{$xh}">
+          <xsl:copy-of select="@wbtag"/>
+          <xsl:apply-templates select="lv:item">
+              <xsl:with-param name="context" select="local-name()"/>
+          </xsl:apply-templates>
+      </xsl:element>
+      <xsl:text>&#x0A;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="lv:item">
+        <xsl:param name="context" select="''"/>
+      <xsl:text>&#x0A;</xsl:text>
+      <xsl:element name="li" namespace="{$xh}">
+          <xsl:copy-of select="@wbtag"/>
+          <xsl:apply-templates select="*|text()">
+              <xsl:with-param name="context" select="$context"/>
+          </xsl:apply-templates>
+      </xsl:element>
+      <xsl:text>&#x0A;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="m:math">
+      <xsl:element name="math" namespace="http://www.w3.org/1998/Math/MathML">
+        <xsl:copy-of select="@*"/>
+        <xsl:copy-of select="*"/>
+      </xsl:element>
     </xsl:template>
 
 
