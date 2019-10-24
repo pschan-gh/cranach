@@ -12,7 +12,7 @@ const htmlCloseRe = new RegExp('\\<\\/(?:' + htmlElements.source +')(?:\\s+.*?|)
 // const nested = /((?:([^{}]*)|(?:{[^{}]*}))+)/;
 const nested = /((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)/;
 
-const mainTokensRe = new RegExp('(\\n+|\\s+)|(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z]+)(?:{' + nested.source + '})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|(((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).)*)', 'g');
+const mainTokensRe = new RegExp('(\\n+|\\s+)|(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z]+)(?:{\n*' + nested.source + '\n*})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|(((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).)*)', 'g');
 
 var dictionary = {
     "@thm": "Theorem",
@@ -38,6 +38,7 @@ var environs = ["statement", "substatement", "newcol", "col_ul", "col_ol", "enum
 var chapterType = "Chapter";
 var course='';
 var topic='';
+var step = 0;
 
 var secNums = {
     'chapter' : 1,
@@ -274,18 +275,19 @@ function Stack(node, doc) {
             }
         }
 
-        var matches = word.match(/^(@@\w+)({(.*)})*/);
-        if (matches) {
-            // WORK IN PROGRESS
-        }
+        // var matches = word.match(/^(@@\w+)({(.*)})*/);
+        // if (matches) {
+        //     // WORK IN PROGRESS
+        // }
 
         var argument = '';
-        var matches = word.match(/^(@\w+)(?:{(.*?)}$)*/);
+        var matches = word.match(/^(@\w+)(?:{(.*?)}$)*/s);
         if (matches) {
             word = matches[1];
             var tagname = word.substr(1);
             if (matches[2]) {
-                argument = matches[2];
+                argument = matches[2].trim();
+		console.log('ARGUMENT IS: ' + argument);
             }
         }
 
@@ -433,17 +435,27 @@ function Stack(node, doc) {
             parent.node.setAttribute("of", match);
             break;
             case "@title":
-            parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection/i);
-            var match = originalWord.trim().match(/@title{(.*?)}/);
-            if (match) {
-                parent.node.setAttribute("title", match[1].replace(/[^a-z0-9\s\']/ig, ''));
-                child = parent.addChild("title");
-                child.node.textContent += match[1];
-                child = child.closeTo(/title|slide/i).close();
+            // parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection|paragraphs/i);
+            child = child.closeTo(/paragraphs/i).close();
+            console.log('TITLE parent node: ' + child.node.nodeName);
+            if (child.node.nodeName.match(/statement|substatement|chapter|section|subsection|subsubsection/i)) {
+                parent = child;
+                // var match = originalWord.trim().match(/@title{(.*?)}/);
+                if (argument) {
+                    parent.node.setAttribute("title", argument.replace(/[^a-z0-9\s\-\']/ig, ''));
+                    var title = parent.addChild("title");
+                    title.node.textContent += argument.trim();
+                    // child = child.closeTo(/title|slide/i).close();
+                    title.close();
+                } else {
+                    child = parent.addChild("title");
+                    child.node.setAttribute('scope', parent.node.nodeName);
+                    child.node.setAttribute('wbtag', parent.node.nodeName);
+                }
             } else {
-                child = parent.addChild("title");
-                child.node.setAttribute('scope', parent.node.nodeName);
-                child.node.setAttribute('wbtag', parent.node.nodeName);
+                child = child.addChild("paragraphs");
+                child.node.textContent += "ERROR? " + originalWord;
+                child = child.close();
             }
             break;
             case "@endtitle":
@@ -451,7 +463,7 @@ function Stack(node, doc) {
                 break;
             }
             parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection/i);
-            parent.node.setAttribute("title", child.node.textContent.replace(/[^a-z0-9\s\']/ig, ''));
+            parent.node.setAttribute("title", child.node.textContent.replace(/[^a-z0-9\s\-\']/ig, ''));
             child = child.closeTo(/title|slide/i).close();
             break;
             case "@caption":
@@ -561,6 +573,7 @@ function Stack(node, doc) {
             break;
             case "@steps":
             child.stepsID++;
+	    step = 0;
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
@@ -570,7 +583,8 @@ function Stack(node, doc) {
             break;
             case "@nstep":
             var word = originalWord.trim();
-            var insert = '\\class{steps' + child.stepsID + ' steps}';
+            var insert = '\\class{steps' + child.stepsID + ' steps step' + step + '}';
+	    step++;
             child.node.textContent += insert;
             break;
             case "@endsteps":
@@ -615,7 +629,9 @@ function Stack(node, doc) {
                 }
                 if(matches[2]) {
                     child.node.setAttribute('name', matches[2].substring(1, matches[2].length-1));
-                }
+                } else {
+		    child.node.setAttribute('name', '');
+		}
             }
             child.node.setAttribute('wbtag', 'ref');
             child = child.close();
@@ -653,6 +669,7 @@ function Stack(node, doc) {
             // if (word.trim() == '') {
             //     break;
             // }
+            // console.log('DEFAULT: ' + originalWord);
             if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
                 if (child.node.nodeName.match(/root|course|chapter|section/i)) {
                     child = child.addChild('slides').addChild('slide');
@@ -662,8 +679,9 @@ function Stack(node, doc) {
             }
             if (originalWord.match(/@@\w+/)) {
                 originalWord = originalWord.replace(/@@/, '@');
-	    }
+            }
             child.node.textContent += originalWord;
+            console.log('DEFAULT TEXTCONTENT: ' + child.node.textContent);
             break;
         }
 
@@ -675,6 +693,7 @@ function Stack(node, doc) {
 function addSection(sectionType, title, child) {
     var stackName = sectionType;
     var chapterType = '';
+    //var title = title.replace(/^\n*/g, '').replace(/\n*$/g, '');
     console.log('ADDING SECTION: '+ sectionType + ' ' + title + ' ' + child.node.nodeName);
     switch(sectionType) {
         case 'subsubsection':
@@ -726,19 +745,10 @@ function addSection(sectionType, title, child) {
         child.node.setAttribute("num", secNums[stackName]++);
     }
 
-    // if ((typeof title != typeof undefined) && title != '' && title != null) {
-    //     child.node.setAttribute("title", title.replace(/[^a-z0-9\s]/ig,''));
-    //     child = child.addChild('title');
-    //     child.node.textContent += title;
-    //     child.node.setAttribute("wbtag", sectionType);
-    //     child.node.setAttribute("scope", stackName);
-    //     child = child.closeTo(RegExp(stackName, 'i'));
-    // }
-
     if (((typeof title != typeof undefined) && title != '' && title != null) || stackName.match(/chapter|course/i)) {
-        child.node.setAttribute("title", title.replace(/[^a-z0-9\s]/ig,''));
+        child.node.setAttribute("title", title.replace(/[^a-z0-9\s\-]/ig,''));
         child = child.addChild('title');
-        child.node.textContent += title;
+	child.node.textContent = title;
         child.node.setAttribute("wbtag", sectionType);
         child.node.setAttribute("scope", stackName);
         child = child.closeTo(RegExp(stackName, 'i'));
