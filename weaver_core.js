@@ -435,28 +435,28 @@ function Stack(node, doc) {
             parent.node.setAttribute("of", match);
             break;
             case "@title":
-            // parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection|paragraphs/i);
-            child = child.closeTo(/paragraphs/i).close();
-            console.log('TITLE parent node: ' + child.node.nodeName);
-            if (child.node.nodeName.match(/statement|substatement|chapter|section|subsection|subsubsection/i)) {
-                parent = child;
-                // var match = originalWord.trim().match(/@title{(.*?)}/);
-                if (argument) {
-                    parent.node.setAttribute("title", argument.replace(/[^a-z0-9\s\-\']/ig, ''));
-                    var title = parent.addChild("title");
-                    title.node.textContent += argument.trim();
-                    // child = child.closeTo(/title|slide/i).close();
-                    title.close();
-                } else {
-                    child = parent.addChild("title");
-                    child.node.setAttribute('scope', parent.node.nodeName);
-                    child.node.setAttribute('wbtag', parent.node.nodeName);
-                }
-            } else {
-                child = child.addChild("paragraphs");
-                child.node.textContent += "ERROR? " + originalWord;
+            if (child.node.nodeName.match(/paragraphs/i)) {
                 child = child.close();
             }
+            // if (child.node.nodeName.match(/statement|substatement|chapter|section|subsection|subsubsection/i)) {
+            if (argument) {
+                child.node.setAttribute("title", argument.replace(/[^a-z0-9\s\-\']/ig, ''));
+                var title = child.addChild("title");
+                title.node.textContent += argument.trim();
+                // title.node.setAttribute('scope', parent.node.nodeName);
+                title.node.setAttribute('wbtag', child.node.nodeName);
+                // child = child.closeTo(/title|slide/i).close();
+                title.close();
+            } else {
+                child = child.addChild("title");
+                // child.node.setAttribute('scope', parent.node.nodeName);
+                child.node.setAttribute('wbtag', child.node.nodeName);
+            }
+            // } else {
+            //     child = child.addChild("paragraphs");
+            //     child.node.textContent += "ERROR? " + originalWord;
+            //     child = child.close();
+            // }
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {
@@ -748,7 +748,7 @@ function addSection(sectionType, title, child) {
     if (((typeof title != typeof undefined) && title != '' && title != null) || stackName.match(/chapter|course/i)) {
         child.node.setAttribute("title", title.replace(/[^a-z0-9\s\-]/ig,''));
         child = child.addChild('title');
-	child.node.textContent = title;
+        child.node.textContent = title;
         child.node.setAttribute("wbtag", sectionType);
         child.node.setAttribute("scope", stackName);
         child = child.closeTo(RegExp(stackName, 'i'));
