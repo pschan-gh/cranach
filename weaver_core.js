@@ -1,18 +1,15 @@
-// WEAVER_CORE
-
-var domParser = new DOMParser();
-
-const htmlElements = /pre|table|tbody|thead|th|tr|td|i|em|p|a|b|strong|u|h\d|div|img|center|script|iframe|blockquote|ol|ul|li|sup|code|hr|span|iframe|br|hr/;
+var xh_prefix = '';
+const htmlElements = /pre|table|tbody|thead|th|tr|td|i|em|p|a|b|strong|u|h\d|div|img|center|script|iframe|blockquote|ol|ul|li|sup|code|hr|span|iframe|br|hr|textarea/;
 
 const htmlRe = new RegExp('\\<(?:' + htmlElements.source + ')(?:\\s+(?:.|\n)*?|)\\/*\\>', 'i');
 const htmlCloseRe = new RegExp('\\<\\/(?:' + htmlElements.source +')(?:\\s+.*?|)\\>', 'i');
 
-// var mainTokensRe = new RegExp('(\\n+|\\s+)|(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z]+)(?:{.*?})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|(((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).)*?)', 'g');
-
-// const nested = /((?:([^{}]*)|(?:{[^{}]*}))+)/;
 const nested = /((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)/;
 
-const mainTokensRe = new RegExp('(\\n+|\\s+)|(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z]+)(?:{\n*' + nested.source + '\n*})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|(((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).)*)', 'g');
+// const mainTokensRe = new RegExp('(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@nstep)|(@(?:(?!nstep)[a-zA-Z\*]+)(?:{\\n*' + nested.source + '\\n*})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|((?:\\s|\\n)*((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).|\\n)+)', 'g');
+
+const mainTokensRe = new RegExp('(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@(?:[a-zA-Z\*]+)(?:{\\n*' + nested.source + '\\n*})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|((?:\\s|\\n)*((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).|\\n)+)', 'g');
+
 
 var dictionary = {
     "@thm": "Theorem",
@@ -46,7 +43,8 @@ var secNums = {
     'subsection': 1,
     'subsubsection' : 1,
     'statement': 1,
-    'figure': 1
+    'figure': 1,
+    'slide': 1
 }
 
 function Stack(node, doc) {
@@ -56,7 +54,7 @@ function Stack(node, doc) {
     this.doc = doc;
     this.parent = null;
     this.node = node;
-    // console.log(node);
+    // report(node);
     try {
         this.node.setAttribute("environment", "");
     } catch(err)
@@ -73,13 +71,13 @@ function Stack(node, doc) {
 
     this.addChild = function(name, namespace) {
         var namespace = namespace || 'http://www.math.cuhk.edu.hk/~pschan/cranach';
-        console.log('ADDING ' + name + ' with NS: ' + namespace);
+        // report('ADDING ' + name + ' with NS: ' + namespace);
         var parent = this;
         while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
             parent = parent.close();
         }
         var child = new Stack(this.doc.createElementNS(namespace, name));
-        // console.log(parent.node.nodeName + ' ADDING: ' + name);
+        // report(parent.node.nodeName + ' ADDING: ' + name);
         if (environs.includes(name)) {
             child.node.setAttribute("environment", name);
         } else {
@@ -107,7 +105,7 @@ function Stack(node, doc) {
         }
         var child = new Stack(node);
         var name = node.nodeName;
-        // console.log(parent.node.nodeName + ' ADDING: ' + name);
+        // report(parent.node.nodeName + ' ADDING: ' + name);
         if (environs.includes(name)) {
             child.node.setAttribute("environment", name);
         } else {
@@ -124,6 +122,15 @@ function Stack(node, doc) {
         child.parent = parent;
 
         return child;
+    }
+
+    this.loadOptions = function(options) {
+        for (var key in options) {
+            if (options.hasOwnProperty(key)) {
+                report('SETATTRIBUTE: ' + key + " -> " + options[key]);
+                this.node.setAttribute(key, options[key]);
+            }
+        }
     }
 
     this.addComment = function(text) {
@@ -151,7 +158,7 @@ function Stack(node, doc) {
                 var strippedText = this.node.textContent.replace(/[^a-zA-Z0-9]/g, '')
                 if (strippedText != '') {
                     var textMD5 = md5(strippedText);
-                    // console.log("STATEMENT STRIPPED TEXT: " + strippedText);
+                    // report("STATEMENT STRIPPED TEXT: " + strippedText);
                     this.node.setAttribute('md5', textMD5);
                 }
             }
@@ -162,7 +169,7 @@ function Stack(node, doc) {
             this.parent.is_comment = this.is_comment;
             this.parent.course = this.course;
             this.parent.chapterType = this.chapterType;
-            // console.log('CLOSING TO: ' + this.parent.node.nodeName);
+            // report('CLOSING TO: ' + this.parent.node.nodeName);
             return this.parent;
         } else {
             return this;
@@ -192,11 +199,11 @@ function Stack(node, doc) {
     this.closeTo = function(regex) {
         var failsafe = 0;
         var aux = this;
-        // console.log("IN CLOSETO REGEX: " + this.node.nodeName + ' '  + regex);
+        // report("IN CLOSETO REGEX: " + this.node.nodeName + ' '  + regex);
         while((!aux.node.nodeName.match(/root/i)) && (failsafe < 100) && !aux.node.nodeName.match(regex)) {
             failsafe++;
             aux = aux.close();
-            // console.log('CLOSE TO: ' + aux.node.nodeName);
+            // report('CLOSE TO: ' + aux.node.nodeName);
         }
         return aux;
     }
@@ -217,12 +224,31 @@ function Stack(node, doc) {
     this.weave = function() {
         var originalWord = this.words.shift();
 
-        console.log('WEAVING: ' + originalWord);
-        var word = originalWord;
+
+        var verbatim = this.node.nodeName.match(/(script|textarea)/i);
+        if (verbatim) {
+            report('DEFAULT: ' + originalWord);
+            if (!originalWord.match(new RegExp('</' + verbatim[1] + '>', 'i'))) {
+                originalWord = originalWord.replace(/@@(\w+)/g, "@$1");
+                this.node.textContent += originalWord;
+                return this;
+            }
+        } else {
+            if (originalWord.match(/^\n$/)) {
+                return this;
+            }
+            originalWord = originalWord.replace(/@@(\w+)/g, "@escaped{$1}");
+        }
+
+        report('WEAVING: ' + originalWord);
+
+        word = originalWord.trim();
+
+        var word = originalWord.trim();
         var child = this;
 
         if (word.match(/^\<\!\-\-/)) {
-            // console.log('IS COMMENT');
+            // report('IS COMMENT');
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
@@ -232,13 +258,13 @@ function Stack(node, doc) {
         }
 
         if (word.match(/\-\-\>/)) {
-            // console.log('END COMMENT');
-            console.log(child.parent.node.nodeName);
+            // report('END COMMENT');
+            // report(child.parent.node.nodeName);
             child = child.close();
             child.is_comment = false;
             return child;
         } else if (child.is_comment) {
-            // console.log('APPENDING TO COMMENT: ' + originalWord);
+            // report('APPENDING TO COMMENT: ' + originalWord);
             child.node.textContent += originalWord;
             return child;
         }
@@ -247,60 +273,94 @@ function Stack(node, doc) {
         var htmlTagRe = new RegExp('\\<(' + htmlElements.source + ')(\\s+(?:.|\n)*|)\\/*\\>', 'i');
         var htmlMatches = word.match(htmlTagRe);
         if (htmlMatches) {
-            // console.log('WORD: ' + word);
-            // console.log('HTML TAG: ' + htmlMatches[1]);
+            // report('WORD: ' + word);
+            report('HTML TAG: ' + htmlMatches[1]);
             if (htmlMatches[1].match(/^li$/i)) {
                 child = child.closeTo(/ol|ul/i);
             }
 
-            var htmlDom = domParser.parseFromString('<xh:' + htmlMatches[1]+ htmlMatches[2] + '></xh:' + htmlMatches[1] + '>', 'text/html');
+            var tag = htmlMatches[1];
+            if (htmlMatches.length > 2) {
+                var parameters = htmlMatches[2];
+            } else {
+                var parameters = ''
+            }
 
-            var node = htmlDom.getElementsByTagName('xh:' + htmlMatches[1])[0];
-            node.setAttribute('xmlns', "http://www.w3.org/1999/xhtml");
-            // console.log(node);
+            if (htmlMatches[1].match(/^tr|tbody|thead$/i)) {
+                var domString = '<table><' + htmlMatches[1]+ parameters + '></tr></table>';
+            } else if (htmlMatches[1].match(/^td|th$/i)) {
+                var domString = '<table><tr><' + htmlMatches[1]+ parameters + '></td></tr></table>';
+            } else {
+                var domString = '<' + xh_prefix + htmlMatches[1]+ parameters + '></' + xh_prefix + htmlMatches[1] + '>';
+            }
+            var htmlDom = new DOMParser().parseFromString(domString, 'text/html');
+            var node = htmlDom.getElementsByTagName(xh_prefix + htmlMatches[1])[0];
+            // node.setAttribute('xmlns', "http://www.w3.org/1999/xhtml"); //xmldom xmlserializer bug workaround
+            // var node = document.createElementNS("http://www.w3.org/1999/xhtml",tag);
+            // node.outerHTML = '<' + tag + ' ' + parameters + '></' + tag + '>';
+
             child = child.addNode(node);
+            report(child.node.nodeName + ' ' + child.node.namespaceURI);
 
             if (word.match(/\/\>$/) || htmlMatches[1].match(/^(img|hr|br)$/i)) {
                 child = child.close();
-                // console.log('TAG CLOSED');
+                // report('TAG CLOSED');
+                // child = child.addChild('paragraphs');
             }
             return child;
         } else {
             var htmlTagCloseRe = new RegExp('\\<\\/(' + htmlElements.source +')(\\s+.*?|)\\>', 'i');
             var htmlMatches = word.match(htmlTagCloseRe);
             if(htmlMatches) {
-                var re = new RegExp('xh:' + htmlMatches[1], 'i');
-                child = child.closeTo(re).close();
+                var re = new RegExp(xh_prefix + htmlMatches[1], 'i');
+                child = child.closeTo(re);
+                report('TAG CLOSED');
+                // report(child.node);
+                // report(child.node.textContent);
+                child = child.close();
                 return child;
             }
         }
 
-        // var matches = word.match(/^(@@\w+)({(.*)})*/);
-        // if (matches) {
-        //     // WORK IN PROGRESS
-        // }
+        // report('WORD SWITCH :' + word);
 
         var argument = '';
-        var matches = word.match(/^(@\w+)(?:{(.*?)}$)*/s);
+        var options = null;
+        var matches = word.match(/^(@[a-zA-Z\*]+)(?:{((?:.|\n)*?)})?(?:\[(.*?)\])?$/);
+
         if (matches) {
             word = matches[1];
             var tagname = word.substr(1);
             if (matches[2]) {
                 argument = matches[2].trim();
-		console.log('ARGUMENT IS: ' + argument);
+                report('ARGUMENT IS: ' + argument);
+            }
+            if (matches[3]) {
+                try {
+                    options = JSON.parse('{' + matches[3].trim().replace(/'/g, '"') + '}');
+                    report('OPTIONS');
+                    for (var key in options) {
+                        if (options.hasOwnProperty(key)) {
+                            report(key + " -> " + options[key]);
+                        }
+                    }
+                } catch(e) {
+                    options = JSON.parse('{"name":"' + matches[3].trim() + '"}');
+                }
             }
         }
-
+        // console.log(word);
+        // console.log(argument);
         switch(word) {
             case "@course":
-            var re = new RegExp(word + '{(.*?)}');
-            var match = originalWord.trim().match(re)[1];
-            if (match != this.course) {
+            // var re = new RegExp(word + '{(.*?)}');
+            // var match = originalWord.trim().match(re)[1];
+            if (argument != this.course) {
                 secNums['chapter'] = 1;
-                child = addSection('course', argument, child);
-                child.node.setAttribute('course', match);
-                child.node.setAttribute('title', match);
-                course = match;
+                child = addSection('course', argument, child, options);
+                child.node.setAttribute('course', argument);
+                child.node.setAttribute('title', argument);
+                course = argument;
             }
             break;
             case '@setchapter':
@@ -314,17 +374,17 @@ function Stack(node, doc) {
             case '@section':
             case '@subsection':
             case '@subsubsection':
-            child = addSection(tagname, argument, child);
+            child = addSection(tagname, argument, child, options);
             break;
             case '@week':
             chapterType = "Week";
             secNums['chapter'] = +argument;
-            child = addSection('week', '', child);
+            child = addSection('week', '', child, options);
             break;
             case '@lecture':
             chapterType = "Lecture";
             secNums['chapter'] = +argument;
-            child = addSection('lecture', '', child);
+            child = addSection('lecture', '', child, options);
             break;
             case '@chapter_type':
             parent = child.closeTo(/chapter/i);
@@ -338,6 +398,8 @@ function Stack(node, doc) {
             }
             child = child.addChild('slide');
             child.node.setAttribute("wbtag", tagname);
+            child.node.setAttribute("canon_num", secNums['slide']);
+            secNums['slide']++;
             break;
             case '@enumerate':
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
@@ -440,7 +502,7 @@ function Stack(node, doc) {
             }
             // if (child.node.nodeName.match(/statement|substatement|chapter|section|subsection|subsubsection/i)) {
             if (argument) {
-                child.node.setAttribute("title", argument.replace(/[^a-z0-9\s\-\']/ig, ''));
+                child.node.setAttribute("title", argument.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, ''));
                 var title = child.addChild("title");
                 title.node.textContent += argument.trim();
                 // title.node.setAttribute('scope', parent.node.nodeName);
@@ -463,7 +525,7 @@ function Stack(node, doc) {
                 break;
             }
             parent = child.getParent(/statement|substatement|chapter|section|subsection|subsubsection/i);
-            parent.node.setAttribute("title", child.node.textContent.replace(/[^a-z0-9\s\-\']/ig, ''));
+            parent.node.setAttribute("title", child.node.textContent.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, ''));
             child = child.closeTo(/title|slide/i).close();
             break;
             case "@caption":
@@ -502,34 +564,34 @@ function Stack(node, doc) {
             // var re = new RegExp(child.getEnvironment(), 'i');
             child = child.closeTo(/statement|substatement|enumerate|itemize|center|left|right|slide|framebox|figure/i).close();
             break;
-	    case "@center":
-	    child = child.addChild("center");
-	    child.node.setAttribute("wbtag", "center");
-	    break;
-	    case "@endcenter":
+            case "@center":
+            child = child.addChild("center");
+            child.node.setAttribute("wbtag", "center");
+            break;
+            case "@endcenter":
             if (!environs.includes(child.getEnvironment())) {
                 break;
             }
             child = child.closeTo(/center|slide/i).close();
             break;
-	    case "@left":
-	    child = child.addChild("left");
-	    child.node.setAttribute("wbtag", "left");
-	    break;
-	    case "@endleft":
+            case "@left":
+            child = child.addChild("left");
+            child.node.setAttribute("wbtag", "left");
+            break;
+            case "@endleft":
             if (!environs.includes(child.getEnvironment())) {
                 break;
             }
             child = child.closeTo(/left|slide/i).close();
             break;
-	    case "@right":
-        if (child.getEnvironment().match(/left/i)) {
-            child = child.closeTo(/left/i).close();
-        }
-	    child = child.addChild("right");
-	    child.node.setAttribute("wbtag", "right");
-	    break;
-	    case "@endright":
+            case "@right":
+            if (child.getEnvironment().match(/left/i)) {
+                child = child.closeTo(/left/i).close();
+            }
+            child = child.addChild("right");
+            child.node.setAttribute("wbtag", "right");
+            break;
+            case "@endright":
             if (!environs.includes(child.getEnvironment())) {
                 break;
             }
@@ -554,26 +616,24 @@ function Stack(node, doc) {
             child = child.close();
             break;
             case "@topic":
-            var re = new RegExp(word + '{(.*?)}');
-            var match = originalWord.trim().match(re)[1];
             var ancestorNode = child.getParent(/chapter|course/i);
             if (!ancestorNode.node.nodeName.match(/chapter|course/i)) {
                 break;
             }
             var topics = ancestorNode.node.getAttribute('topic');
             if (typeof topics != typeof undefined && topics != null && topics != '') {
-                ancestorNode.node.setAttribute('topic', topics + ', ' + match);
+                ancestorNode.node.setAttribute('topic', topics + ', ' + argument);
             } else {
-                ancestorNode.node.setAttribute('topic', match);
+                ancestorNode.node.setAttribute('topic', argument);
             }
             var aux = ancestorNode.addChild("topic");
             aux.node.setAttribute('scope', 'chapter');
-            aux.node.textContent += match;
+            aux.node.textContent += argument;
             aux = aux.close();
             break;
             case "@steps":
             child.stepsID++;
-	    step = 0;
+            step = 0;
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
@@ -582,9 +642,10 @@ function Stack(node, doc) {
             child.node.setAttribute("stepsid", 'steps' + child.stepsID);
             break;
             case "@nstep":
-            var word = originalWord.trim();
-            var insert = '\\class{steps' + child.stepsID + ' steps step' + step + '}';
-	    step++;
+            console.log('NSTEP: ' + argument);
+            // var insert = '\\class{steps' + child.stepsID + ' steps step' + step + '}';
+            var insert = '\\class{steps}{\\cssId{step' + step + '}{' + argument + '}}';
+            step++;
             child.node.textContent += insert;
             break;
             case "@endsteps":
@@ -627,20 +688,19 @@ function Stack(node, doc) {
                 if(matches[1]) {
                     child.node.setAttribute('label', matches[1]);
                 }
-                if(matches[2]) {
-                    child.node.setAttribute('name', matches[2].substring(1, matches[2].length-1));
-                } else {
-		    child.node.setAttribute('name', '');
-		}
+                if (options != null) {
+                    child.loadOptions(options);
+                }
+                // if(matches[2]) {
+                //     child.node.setAttribute('name', matches[2].substring(1, matches[2].length-1));
+                // } else {
+                //     child.node.setAttribute('name', '');
+                // }
             }
             child.node.setAttribute('wbtag', 'ref');
             child = child.close();
             break;
             case "@href":
-            // if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
-            //     child = child.addChild("paragraphs");
-            //     child.node.setAttribute("wbtag", "paragraphs");
-            // }
             child = child.addChild("href");
             var matches = originalWord.match(/@href{(.*?)}(\[(.*?)\])*/);
             if(matches) {
@@ -658,6 +718,14 @@ function Stack(node, doc) {
             child = child.close();
             break;
             case "@keyword":
+            if (child.node.nodeName.match(/PARAGRAPHS/i)) {
+                child = child.close();
+            }
+            child = child.addChild('inline_keyword');
+            child.node.textContent += argument;
+            child = child.close();
+            break;
+            case "@keyword*":
             var slide = child.getParent(/slide/i);
             var kw = slide.addChild("hc_keyword");
             kw.node.setAttribute("wbtag", "hc_keyword");
@@ -665,23 +733,69 @@ function Stack(node, doc) {
             kw.node.textContent += argument;
             kw.close();
             break;
-            default:
-            // if (word.trim() == '') {
-            //     break;
-            // }
-            // console.log('DEFAULT: ' + originalWord);
-            if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
-                if (child.node.nodeName.match(/root|course|chapter|section/i)) {
-                    child = child.addChild('slides').addChild('slide');
-                }
-                child = child.addChild("paragraphs");
-                child.node.setAttribute("wbtag", "paragraphs");
+            case "@escaped":
+            if (!child.node.nodeName.match(/script|textarea/i)) {
+                child = child.addChild('escaped');
+                child.node.setAttribute('wbtag', 'escaped');
+                child.node.setAttribute('argument', argument);
+                child = child.close();
+                break;
+            } else {
+                originalWord = '@' + argument;
             }
+            default:
+            report('DEFAULT: ' + originalWord);
             if (originalWord.match(/@@\w+/)) {
                 originalWord = originalWord.replace(/@@/, '@');
             }
-            child.node.textContent += originalWord;
-            console.log('DEFAULT TEXTCONTENT: ' + child.node.textContent);
+            if (!child.node.nodeName.match(/^(script|textarea|steps|table|tbody)$/i)) {
+                var chunks = originalWord.split(/(?:\s*\n\s*)(?:\s*\n\s*)+/);
+                report(chunks);
+                var chunk;
+                if (originalWord.match(/^\s*\n\s*\n\s*/)) {
+                    child = child.addChild('newline').close();
+                }
+                for (var i = 0; i < chunks.length; i++){
+                    // chunk = chunks[i].replace(/(^\n+)|(\n+$)/g, '');
+                    if (!child.node.nodeName.match(/title/i)) {
+                        chunk = chunks[i].replace(/(^\n+)|(\n+$)/g, ' ');
+                    } else {
+                        chunk = chunks[i].replace(/(^\n+)|(\n+$)/g, '');
+                    }
+                    if (chunk != '') {
+                        report('CHUNK: ' + chunk);
+                        if (!child.node.nodeName.match(/PARAGRAPHS/i)) {
+                            if (child.node.nodeName.match(/root|course|chapter|section/i)) {
+                                child = child.addChild('slides').addChild('slide');
+                                child.node.setAttribute("canon_num", secNums['slide']);
+                                secNums['slide']++;
+                            }
+                            child = child.addChild("paragraphs");
+                            child.node.setAttribute("wbtag", "paragraphs");
+                        }
+                        child.node.textContent += chunk;
+                        child = child.close();
+                        if (i < chunks.length - 1) {
+                                child = child.addChild('newline').close();
+                            // if (child.node.nodeName.match(new RegExp(htmlElements.source, 'i'))) {
+                            //     var htmlDom = new DOMParser().parseFromString('<br wbtag="newline"/>', 'text/html');
+                            //     var node = htmlDom.getElementsByTagName('br')[0];
+                            //     child = child.addNode(node).close();
+                            // } else {
+                            //     child = child.addChild('newline').close();
+                            // }
+                        } else if (originalWord.match(/\n\s*\n\s*$/)) {
+                            child = child.addChild('newline').close();
+                        }
+                    }
+                }
+            } else {
+                if (!child.node.nodeName.match(/^(table|tbody)$/i)) {
+                    child.node.textContent += originalWord;
+                }
+            }
+
+            // report('DEFAULT TEXTCONTENT: ' + child.node.textContent);
             break;
         }
 
@@ -690,28 +804,28 @@ function Stack(node, doc) {
 
 }
 
-function addSection(sectionType, title, child) {
+function addSection(sectionType, title, child, options) {
     var stackName = sectionType;
     var chapterType = '';
     //var title = title.replace(/^\n*/g, '').replace(/\n*$/g, '');
-    console.log('ADDING SECTION: '+ sectionType + ' ' + title + ' ' + child.node.nodeName);
+    // report('ADDING SECTION: '+ sectionType + ' ' + title + ' ' + child.node.nodeName);
     switch(sectionType) {
         case 'subsubsection':
         child = child.closeTo(RegExp('^(subsection|section|chapter|course|root)$', 'i'));
         if (!(child.node.nodeName.match(/^subsection$/i))) {
-            child = addSection('subsection', '', child).closeTo(RegExp('^subsection$', 'i'));
+            child = addSection('subsection', '', child, options).closeTo(RegExp('^subsection$', 'i'));
         }
         break;
         case 'subsection':
         child = child.closeTo(RegExp('^(section|chapter|course|root)$', 'i'));
         if (!(child.node.nodeName.match(/^section$/i))) {
-            child = addSection('section', '', child).closeTo(RegExp('^section$', 'i'));
+            child = addSection('section', '', child, options).closeTo(RegExp('^section$', 'i'));
         }
         break;
         case 'section':
         child = child.closeTo(RegExp('^(chapter|course|root)$', 'i'));
         if (!(child.node.nodeName.match(/^chapter$/i))) {
-            child = addSection('chapter', '', child).closeTo(RegExp('^chapter$', 'i'));
+            child = addSection('chapter', '', child, options).closeTo(RegExp('^chapter$', 'i'));
         }
         break;
         case 'week':
@@ -719,7 +833,7 @@ function addSection(sectionType, title, child) {
         case 'chapter':
         child = child.closeTo(RegExp('course|root', 'i'));
         if (!(child.node.nodeName.match(/course/i))) {
-            child = addSection('course', '', child).closeTo(RegExp('course', 'i'));
+            child = addSection('course', '', child, options).closeTo(RegExp('course', 'i'));
         }
         stackName = 'chapter';
         break;
@@ -746,7 +860,7 @@ function addSection(sectionType, title, child) {
     }
 
     if (((typeof title != typeof undefined) && title != '' && title != null) || stackName.match(/chapter|course/i)) {
-        child.node.setAttribute("title", title.replace(/[^a-z0-9\s\-]/ig,''));
+        child.node.setAttribute("title", title.replace(/[^a-zÀ-ÿ0-9\s\-]/ig,''));
         child = child.addChild('title');
         child.node.textContent = title;
         child.node.setAttribute("wbtag", sectionType);
@@ -754,8 +868,11 @@ function addSection(sectionType, title, child) {
         child = child.closeTo(RegExp(stackName, 'i'));
     }
 
+    child.loadOptions(options);
     child = child.addChild('slides').addChild('slide');
+    child.node.setAttribute("canon_num", secNums['slide']);
+    child.node.setAttribute("scope", sectionType);
+    // child.node.setAttribute("custom_num", 'none');
+    secNums['slide']++;
     return child;
 }
-
-// WEAVER_CORE ENDS

@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xh="http://www.w3.org/1999/xhtml"
-    xmlns:idx = "elephas_index"
+    xmlns:idx = "http://www.math.cuhk.edu.hk/~pschan/elephas_index"
     >
 
     <xsl:strip-space elements="*"/>
@@ -48,7 +48,7 @@
         <xsl:if test="position()!=1">
             <!-- <br/> -->
         </xsl:if>
-        <button namespace="http://www.w3.org/1999/xhtml" type="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin-left:5px;margin-top:5px" data-html="true" data-container="body" data-toggle="popover"  data-placement="bottom">
+        <button namespace="http://www.w3.org/1999/xhtml" type="button" class="btn btn-outline-info btn-sm btn_keyword index" style="margin-left:5px;margin-top:5px" data-html="true" data-container="body" data-toggle="popover"  data-placement="bottom">
             <xsl:attribute name="data-content">
                 <xsl:apply-templates select="idx:branch[@keyword]"/>
             </xsl:attribute>

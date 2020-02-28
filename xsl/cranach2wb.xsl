@@ -7,8 +7,10 @@
     exclude-result-prefixes="xh"
     >
 
-    <xsl:preserve-space elements="xh:*"/>
-    <!-- <xsl:strip-space elements="*"/> -->
+
+    <!-- <xsl:strip-space elements="xh:span"/> -->
+    <xsl:strip-space elements="xh:* lv:title"/>
+    <xsl:preserve-space elements="xh:textarea xh:pre lv:paragraphs"/>
     <xsl:output method="xml" />
 
     <xsl:template match="/">
@@ -16,113 +18,139 @@
     </xsl:template>
 
     <xsl:template match="lv:document">
-        <xsl:apply-templates select="*|text()" />
+        <xsl:apply-templates select="*" />
     </xsl:template>
 
     <xsl:template match="lv:keywords" />
-    <xsl:template match="lv:title" />
+
+    <xsl:template match="lv:title">
+        <xsl:apply-templates select="*|text()" />
+    </xsl:template>
 
     <xsl:template match="lv:slides" >
-        <xsl:apply-templates select="*|text()" />
+        <xsl:apply-templates select="*" />
     </xsl:template>
 
     <xsl:template match="lv:slide[not(@wbtag)]">
-      <xsl:apply-templates select="*[not(self::lv:topic)]|text()" />
+      <xsl:apply-templates select="*[not(self::lv:topic) and not(self::lv:title)]" />
     </xsl:template>
 
     <xsl:template match="lv:slide[@wbtag]" >
-        <xsl:value-of select="concat('&#xa;', '@', name(), '&#xa;')" />
-        <xsl:apply-templates select="*|text()" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', name())" />
+        <xsl:apply-templates select="*" />
     </xsl:template>
 
     <xsl:template match="lv:qed" >
-        <xsl:value-of select="concat('&#xa;', '@', name(), '&#xa;')" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', name())" />
     </xsl:template>
 
     <xsl:template match="lv:col|lv:newcol" >
-        <xsl:value-of select="concat('&#xa;', '@', name())" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', name())" />
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
         <xsl:text>&#xa;@endcol</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:collapse" >
-      <xsl:text>&#xa;@col&#xa;</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@col</xsl:text>
         <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
     <xsl:template match="lv:statement|lv:substatement">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
-        <xsl:choose>
-            <xsl:when test="@label!=''">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:value-of select="concat('@label{', @label, '}')"/>
-            </xsl:when>
-        </xsl:choose>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:choose>
             <xsl:when test="./lv:title">
                 <xsl:text>&#xa;</xsl:text>
-                <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/>
+                <xsl:text>@title{</xsl:text>
+                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
+                <xsl:apply-templates select="./lv:title/*|./lv:title/text()" />
+                <xsl:text>}</xsl:text>
+                <!-- <xsl:text>&#xa;</xsl:text> -->
             </xsl:when>
         </xsl:choose>
-        <xsl:text>&#xa;</xsl:text>
-        <xsl:apply-templates select="*[not(self::lv:title)]|text()" />
+        <xsl:apply-templates select="*[not(self::lv:title)]" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:steps">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
-        <xsl:text>&#xa;</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
-        <xsl:text>@endsteps</xsl:text>
         <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@endsteps</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:col_ul">
-        <xsl:text>&#xa;@ul</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@ul</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
         <xsl:text>&#xa;@endul</xsl:text>
     </xsl:template>
     <xsl:template match="lv:col_ol">
-        <xsl:text>&#xa;@ol</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@ol</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
         <xsl:text>&#xa;@endol</xsl:text>
     </xsl:template>
     <xsl:template match="lv:col_li">
-        <xsl:text>&#xa;@li&#xa;</xsl:text>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@li</xsl:text>
         <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
     <xsl:template match="lv:itemize|lv:enumerate">
-      <xsl:value-of select="concat('&#xa;', '@', local-name())"/>
-      <xsl:apply-templates select="*|text()" />
-      <xsl:value-of select="concat('&#xa;', '@end', local-name())"/>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', local-name())"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@end', local-name())"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:item">
-      <xsl:value-of select="concat('&#xa;', '@', local-name(), '&#xa;')"/>
-      <xsl:apply-templates select="*|text()" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', local-name())"/>
+        <xsl:apply-templates select="*|text()" />
     </xsl:template>
 
 
     <xsl:template match="lv:webwork">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', name(), '{', @pg_file , '}')"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:wb_image">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@image', '{', @data-src , '}')"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+    </xsl:template>
+    <xsl:template match="lv:image">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@image', '{', @data-src , '}')"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:hc_keyword">
+        <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', 'keyword', '{')" /><xsl:value-of select="."/><xsl:text>} </xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:ref">
-        <xsl:value-of select="concat(' @ref{', @label, '}')"/>
+        <xsl:value-of select="concat('@ref{', @label, '}')"/>
     </xsl:template>
 
 
@@ -130,16 +158,19 @@
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
-        <xsl:if test="./lv:title">
-            <xsl:text>{</xsl:text>
-            <xsl:value-of select="lv:title/text()"/>
-            <xsl:text>}</xsl:text>
-        </xsl:if>
-        <xsl:apply-templates select="*|text()" />
+        <xsl:text>{</xsl:text>
+        <xsl:apply-templates select="./lv:title" />
+        <xsl:text>}</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:apply-templates select="*[not(self::lv:title)]" />
     </xsl:template>
 
     <xsl:template match="lv:setchapter|lv:href">
+        <xsl:if test="parent::*[@wbtag]">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
         <xsl:value-of select="concat('@', @wbtag, '{', @argument, '}')"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:bare">
@@ -152,6 +183,7 @@
         <xsl:text>{</xsl:text>
         <xsl:value-of select="@name"/>
         <xsl:text>}</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:topic">
@@ -160,20 +192,53 @@
         <xsl:text>{</xsl:text>
         <xsl:value-of select="text()"/>
         <xsl:text>}</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
+
+    <!-- <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
+        <xsl:text>@</xsl:text>
+        <xsl:value-of select="@wbtag"/>
+        <xsl:if test="./lv:argument">
+            <xsl:text>{</xsl:text>
+            <xsl:value-of select="./lv:argument/text()|./lv:argument/*"/>
+            <xsl:text>}</xsl:text>
+        </xsl:if>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+    </xsl:template> -->
 
     <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
-        <xsl:if test="@num">
-            <xsl:text>{</xsl:text>
-            <xsl:value-of select="@num"/>
-            <xsl:text>}</xsl:text>
-        </xsl:if>
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:choose>
+            <!-- <xsl:when test="./lv:title">
+                <xsl:text>{</xsl:text>
+                <xsl:value-of select="./lv:title/text()|./lv:title/*"/>
+                <xsl:text>}</xsl:text>
+            </xsl:when> -->
+            <xsl:when test="@num">
+                <xsl:text>{</xsl:text>
+                <xsl:value-of select="@num"/>
+                <xsl:text>}</xsl:text>
+            </xsl:when>
+        </xsl:choose>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
     </xsl:template>
+
+    <xsl:template match="lv:escaped" >
+        <xsl:value-of select="concat('@escaped{', @argument, '}')"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+    </xsl:template>
+
+    <xsl:template match="lv:inline_keyword" >
+        <xsl:if test="not(preceding-sibling::lv:paragraphs) and not(preceding-sibling::xh:*)">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
+        <xsl:value-of select="concat('@keyword{', ./text(), '}')"/>
+    </xsl:template>
+
 
     <xsl:template match="xh:li|xh:hr">
         <xsl:text>&#xa;</xsl:text>
@@ -181,32 +246,55 @@
             <xsl:copy-of select="@*[name(.)!='environment']"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="xh:*[not(@class='escaped') and not(@wbtag='newline') and not(self::xh:li) and not(self::xh:hr)]">
+        <xsl:if test="not(preceding-sibling::lv:paragraphs) and not(preceding-sibling::xh:*)">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
         <xsl:element name="{local-name()}">
             <xsl:copy-of select="@*[name(.)!='environment']"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
+        <!-- <xsl:if test="not(following-sibling::lv:inline_keyword) and not(following-sibling::lv:ref) and following-sibling::*[@wbtag]">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if> -->
     </xsl:template>
 
+    <xsl:template match="*[@wbtag='paragraphs']|lv:paragraphs">
+        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::lv:ref) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
+        <!-- <xsl:apply-templates select="*|text()|comment()" /> -->
+        <xsl:apply-templates select="text()" />
+    </xsl:template>
+
+
     <xsl:template match="xh:span[@class='escaped']" >
+        <xsl:text>@</xsl:text>
+        <xsl:apply-templates select="*|text()" />
         <xsl:value-of select="concat('@', text())"/>
     </xsl:template>
 
-    <xsl:template match="xh:br[@wbtag='newline']|lv:newline">
+    <xsl:template match="xh:br[@wbtag='newline']|lv:newline|xh:newline|newline">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@newline</xsl:text>
-        <xsl:text>&#xa;</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="lv:center|lv:left|lv:right" >
-        <xsl:value-of select="concat('&#xa;', '@', @wbtag)"/>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', @wbtag)"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*|text()" />
-        <xsl:value-of select="concat('&#xa;', '@end', @wbtag)"/>
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@end', @wbtag)"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="xh:table[contains(concat(' ',@class,' '),' ltx_eqn_table')]">
+        <xsl:text>&#xa;</xsl:text>
         <xsl:text>\begin{align*}&#10;</xsl:text>
         <xsl:for-each select="xh:tr">
             <xsl:for-each select="xh:td[position()!=last()]">
@@ -219,9 +307,11 @@
             <xsl:if test="position()!=last()"> \\&#10;</xsl:if>
         </xsl:for-each>
         <xsl:text>&#10;\end{align*}&#10;</xsl:text>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="text()" >
+        <!-- <xsl:value-of select="normalize-space(.)" /> -->
         <xsl:value-of select="." />
         <!-- <xsl:value-of select="." disable-output-escaping="yes"/> -->
     </xsl:template>

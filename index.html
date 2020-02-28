@@ -5,26 +5,24 @@
 </title>
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="shortcut icon" href="#"/>
-
-    <link rel="stylesheet" type="text/css" href="http://tikzjax.com/v1/fonts.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <!-- <script src="js/tether.min.js" ></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.7/js/tether.min.js" integrity="sha256-4lietOiwRDBKx1goZZbRiwB06L+/bPYEGDIKZt82bgg=" crossorigin="anonymous"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 
     <script src="js/jquery.scrollTo.min.js"></script>
 
-
     <link href="js/knowlstyle.css" rel="stylesheet" type="text/css" />
+    <link href="js/lcrefstyle.css" rel="stylesheet" type="text/css" />
     <script src="js/Base64.js" type="text/javascript"></script>
     <script src="js/knowl.js" type="text/javascript" ></script>
+    <script src="js/lcref.js" type="text/javascript" ></script>
 
     <script src="js/ie8.polyfils.min.js" type="text/javascript"></script>
 
@@ -32,60 +30,111 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.min.js" integrity="sha256-uHN1/UDJzJX8BIapjeOIyykot3SXC8YDG38tH+rM718=" crossorigin="anonymous"></script>
 
     <script src="js/ace-builds-master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      function report() {}
+    </script>
+
     <script type="text/javascript" src="weaver_core.js"></script>
     <script type="text/javascript" src="weaver.js"></script>
     <script type="text/javascript" src="cranach.js"></script>
-    <script src="http://tikzjax.com/v1/tikzjax.js"></script>
-
     <script type="text/javascript" src="slideshow_client.js"></script>
     <script type="text/javascript" src="postprocess.js" ></script>
+
+    <!-- <script src="http://tikzjax.com/v1/tikzjax.js"></script> -->
 
     <link rel="stylesheet" href="styles.css" media="all">
     <link rel="stylesheet" href="LaTeXML.css" media="all">
 
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-      skipStartupTypeset: true,
-      tex2jax: {
-      inlineMath: [['$','$'], ['\\(','\\)']],
-      processEnvironments: true,
-      processEscapes: true,
-      ignoreClass: "tex2jax_ignore"
-      },
-      MathML: {
-      extensions: ["content-mathml.js"]
-      },
-      TeX: {
-	  equationNumbers: {autoNumber: "ams"},
-	  extensions: ["AMSmath.js"]
-      }
-     });
+    <script>
+    // console.clear();
+    // const colchar = "▽";
+    // const expchar = "►";
+    var editMode = false;
+    var slideIndex = 1;
+    var slideCount = 0;
+    var slideLine = [];
+    var mode = 'dual';
+    var Range = ace.require('ace/range').Range; // get reference to ace/range
+
+    var baseRenderer;
+
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
-<script>
-console.clear();
-var editMode = false;
-var slideIndex = 1;
-var slideCount = 0;
-var slideLine = [];
-var mode = 'dual';
-var Range = ace.require('ace/range').Range; // get reference to ace/range
 
-var rootURL = window.location.href.match(/^(.*?)\/*(?:\?|$)/)[1];
-var params = window.location.href.match(/\?(.*?)(#|$)/);
+    <script>
+    MathJax = {
+        startup: {
+            typeset: false,
+            ready() {
+                typeset = function (doms) {
+                    MathJax.startup.promise = MathJax.startup.promise
+                      .then(() => {return MathJax.typesetPromise(doms)})
+                      .catch((err) => console.log('Typeset failed: ' + err.message));
+                    return MathJax.startup.promise;
+                };
 
-var cranach = new Cranach(rootURL + '/', params);
-cranach.setup();
-console.log('CONTENTURL: ' + cranach.contentURL);
-</script>
+                MathJax.getAllJax = function (name) {
+                    var list = Array.from(MathJax.startup.document.math);
+                    if (!name) return list;
+                    var container = document.getElementById(name);
+                    if (!container) return list;
+                    // console.log(list);
+                    var filtered = list.filter((node) => container.contains(node.start.node));
+                    console.log(filtered);
+                    return filtered;
+                };
+                MathJax.startup.defaultReady();
+                // MathJax.startup.document.state(0);
+                // MathJax.texReset();
+                MathJax.startup.promise.then(() => {
+                    console.log('MathJax initial typesetting complete');
+                    // var cranach is now a promise
+                    $('.icon.latex, .icon.xml').hide();
+                    baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
+                        console.log(cranach);
+                        return cranach.render(document.getElementById('output'))
+                        .then(renderer => {
+                            return renderer.displayIndexDocToHtml(document.getElementById('index'))
+                            .then(renderer => {
+                                postprocess(renderer);
+                                convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+                                $('#render_sel').prop('disabled', false);
+                                $('#wb_button').prop('disabled', false);
+                                return renderer;
+                            })
+                        });
+                    });
+                });
+            }
+        },
+        loader: {
+            load: ['[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil']
+        },
+        tex: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEnvironments: true,
+            processEscapes: true,
+            processRefs: true,
+            tags: "ams",
+            packages: ['base', 'ams', 'newcommand', 'html', 'extpfeil']
+        },
+        options: {
+            ignoreHtmlClass: "tex2jax_ignore",
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'annotation', 'annotation-xml']
+        }
+    };
+
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script> -->
+
 
 <style type="text/css">
 .ace_highlight-marker {
-    position: absolute; /* without this positions will be erong */
+    position: absolute; /* without this positions will be wrong */
     background: #ddf; /* color */
     z-index: 1000; /* in front of all other markers */
 }
@@ -93,6 +142,23 @@ console.log('CONTENTURL: ' + cranach.contentURL);
     position: absolute; /* without this positions will be erong */
     background: #ffc; /* color */
     z-index: 1000; /* in front of all other markers */
+}
+
+#right_half .dropdown-menu > a:hover {
+    background:SteelBlue;
+    color:white !important;
+}
+
+.navbar-nav li:hover > ul.dropdown-menu {
+    display: block;
+}
+.dropdown-submenu {
+    position:relative;
+}
+.dropdown-menu .dropdown-submenu {
+    top:0;
+    left:100%;
+    margin-top:-6px;
 }
 
 </style>
@@ -105,16 +171,20 @@ console.log('CONTENTURL: ' + cranach.contentURL);
         <div id="print_content" style="width:auto">
         </div>
     </div>
-    <div id="container">
-        <div id="left_half" class="left info_half">
+    <div id="container" class="pane">
+        <div id="left_half" class="left pane overview" mode="overview">
             <div id="info_half">
                 <strong>Table of Contents</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">►
+                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">
+                    <!-- ⊞ -->
                 </a>
-                <div class="collapse" id="toc"></div>
+                <!-- ► -->
+                <div class="collapse toc" id="toc"></div>
                 <br/>
                 <strong>Index</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">►</a>
+                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">
+                    <!-- ⊞ -->
+                </a>
                 <div class="collapse" id="index"></div>
                 <hr/>
                 <div id="info_title" class="title_box">
@@ -122,7 +192,9 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                         <div class="current_course"></div>
                     </h2>
                     <strong>Keywords</strong>
-                    <a class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">►</a>
+                    <a class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
+                        <!-- ⊞ -->
+                    </a>
                     <div id="info_keywords_course" class="collapse"></div>
                     <br/><br/>
                     <h3>
@@ -131,7 +203,9 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                         <div class="current_topics"></div>
                     </h3>
                     <strong>Chapter Keywords</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">►</a>
+                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
+                        <!-- ⊞ -->
+                    </a>
                     <div id="info_keywords_chapter" class="collapse"></div>
                 </div>
                 <div id="info_statements"></div>
@@ -144,7 +218,8 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                     <div id="slide_keywords"></div>
                     <br/>
                     <strong onclick='$(".slide_info.share").show();'>Share</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">►
+                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
+                        <!-- ⊞ -->
                     </a>
                     <div class="slide_info share collapse" id="slide_info_share" style="">
                         <a style="text-decoration:none;color:LightBlue" target="_blank" id="url_open"><span>URL</span></a>
@@ -153,42 +228,69 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                         <span>HTML Hyperlink</span><br/>
                         <textarea class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
                         <p><br></p>
-                        <span class="latex_href">$\LaTeX$ Hyperref</span><br>
+                        <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_lightblue.svg" class="exempt"/>Hyperref</span><br>
                         <textarea class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
                         <span id='modal_keywords'>
                         </span>
                     </div>
                 </div>
                 <div id="info_menu_container">
-                    <input type="image" src="icons/Edit_Notepad_Icon.svg" id="compose_icon" onclick="$('#compose_button').click();">
-                    <button class="plain_button icon hide" onclick="$('#left_half').hide();$('#dual_button').show();$('#right_half').removeClass('right').removeClass('dual_half').addClass('wide');$('.slide_container').addClass('wide')" data-toggle="tooltip" data-placement="right" title="Hide Side Panel">&times;</button>
+                    <!-- <input type="image" src="icons/Edit_Notepad_Icon.svg" id="compose_icon" onclick="$('#compose_button').click();"> -->
+                    <button class="plain_button icon" id="compose_icon" onclick="$('#compose_button').click();">
+                        <i class="material-icons">edit</i>
+                    </button>
+                    <button class="plain_button icon hide" onclick="$('#container').addClass('wide');$('.pane').removeClass('compose').removeClass('info').addClass('overview')" data-toggle="tooltip" data-placement="right" title="Hide Side Panel">
+                        <i class="material-icons">close</i>
+                    </button>
+                    <!-- &times; -->
                 </div>
             </div>
-            <div id="input_container" style="width:100%;height:100%;border:0;display:none">
-                <div id="input" style="margin-right:50px;height:100%;font-size:1.2em;">
-                </div>
-                <div id="edit_menu_container">
-                    <input type="image" id="maximize_icon" src="icons/Maximize_Icon.svg" class="plain_button icon" onclick="$('#right_half').hide();$('#left_half').css('width', '100%');editor.resize();$('#normalize_icon').show();$(this).hide();" data-toggle="tooltip" data-placement="right" title="Maximize composer"/>
-
-                    <input type="image" id="normalize_icon"  src="icons/Normalize_Icon.svg" class="plain_button icon" onclick="$('#right_half').show();$('#left_half').css('width', '');editor.resize();$('#maximize_icon').show();$(this).hide();" data-toggle="tooltip" data-placement="right" title="Normal size"/>
-                    <br/>
-                    <button id="close_icon" class="plain_button icon hide" onclick="$('#normalize_icon').click();$('#dual_button').click();$('#container').css('overflow-y', '');" data-toggle="tooltip" data-placement="right" title="Close composer">&times;</button>
-                    <br/>
-                    <label for="fileInput">
-                        <img id="open_icon" class="exempt icon" src="icons/File_Open.svg" data-toggle="tooltip" data-placement="right" title="Open file"/>
-                        <!-- <button id="open_icon" class="plain_button icon"/> -->
-                        <input id="fileInput" type="file" onchange="openWb(this);" style="display:none">
-                    </label>
-                    <br/>
-                    <button id="save_icon" class="plain_button icon" style="font-weight:normal;font-size:1.5em;text-align:center;" onclick="cranach.saveWb();" data-toggle="tooltip" data-placement="right" title="Save">⬇︎</button>
-                    <br/>
-                    <button id="render_icon" class="plain_button icon" style="font-weight:normal;font-size:2.5em;text-align:center;" onclick="$('#render_button').click();" data-toggle="tooltip" data-placement="right" title="Render Slides">↻</button>
-                    <br/>
-                    <div style="position:absolute;left:0;bottom:2%;width:100%;text-align:center;">
-                        <button id="latex_icon" class="plain_button icon latex" onclick="$('#wb_modal').modal('toggle');cranach.showLatex();" style="font-size:small;text-align:center;width:100%" data-toggle="tooltip" data-placement="right" title="LaTex source">LaTeX</button>
-                        <br/>
-                        <button id="xml_icon" class="plain_button icon xml" onclick="$('#wb_modal').modal('toggle');cranach.showXML();" style="text-align:center" data-toggle="tooltip" data-placement="right" title="XML source">xml</button>
+            <div id="input_container" style="display:flex;flex-direction:column;">
+                <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">
+                    <div class="navbar-collapse collapse">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link">
+                                    <label for="fileInput">
+                                        <i class="material-icons">folder_open</i>
+                                    </label>
+                                </a>
+                                <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="save_icon" onclick="saveWb(editor, baseRenderer);" data-toggle="tooltip" data-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
+                            </li>
+                            <li class="nav-item" style="width:5em">
+                                <select name="render" class="nav-link plain_button" id="render_sel" style="margin-top:10px" disabled>
+                                    <option value="">Render</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </li>
+                            <!-- <li class="nav-item" style="width:5em">
+                                <a id="render_sel" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Render</a>
+                                <div class="render_sel dropdown-menu" aria-labelledby="render_sel">
+                                </div>
+                            </li> -->
+                        </ul>
+                        <ul id="output_icon_container" class="navbar-nav ml-auto">
+                            <!-- <input type="image" class="nav-item plain_button icon" id="maximize_icon" src="icons/Maximize_Icon.svg"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"/> -->
+                            <button class="nav-item plain_button icon" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
+                                <i class="material-icons">zoom_out_map</i>
+                            </button>
+                            <!-- <input id="normalize_icon" type="image" class="nav-item plain_button icon"  src="icons/Normalize_Icon.svg" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size" style="max-height:1em;width:auto"/> -->
+                            <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
+                                <i class="material-icons">vertical_split</i>
+                            </button>
+                            <li class="nav-item">
+                                <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="$('.pane').removeClass('compose').removeClass('present').addClass('info');$('#left_half').attr('mode', 'info').removeClass('full');$('#right_half').show();" data-toggle="tooltip" data-placement="right" title="Close composer">
+                                    <i class="material-icons">close</i>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
+                </nav>
+
+                <div id="input" style="height:100%;font-size:1.2em;">
                 </div>
             </div>
             <script>
@@ -216,7 +318,7 @@ console.log('CONTENTURL: ' + cranach.contentURL);
             });
             </script>
         </div>
-        <div id="right_half" class='right dual_half'>
+        <div id="right_half" class='right pane overview'>
             <div id="loading_icon" style="display:table;height:100%;width:100%;background-color:hsla(0, 0%, 100%, 0.8);z-index:999;">
                 <div style="display:table-cell; vertical-align:middle; width:100%;height:5em;margin:0 auto;text-align:center">
                     <h1 style="color:SteelBlue">Loading</h1>
@@ -226,66 +328,107 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                     </div>
                 </div>
             </div>
-            <div id="output_icon_container">
-                <input type="image" src="icons/Edit_Notepad_Icon.svg" id="edit_icon" class="plain_button icon" onclick="$('#edit_button').click();"/>
-                <input type="image" src="icons/Maximize_Icon.svg" id="full_screen_icon" class="icon" onclick="$('#present_button').click();"/>
-                <input type="image" src="icons/Normalize_Icon.svg" id="dual_icon" class="plain_button icon" onclick="$('#dual_button').click();$('#full_screen_icon').show();$(this).hide();"/>
-            </div>
-            <div id="menu_container" class="dropdown" >
-                <button id="test_button" class="btn btn-outline-info btn-xs dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&#9776;</button>
-                <div id="main_menu" class="dropdown-menu" aria-labelledby="test_button" >
-                    <button id="present_button" class="btn btn-outline-info btn-sm menu_button" type="present" onclick="$('#left_half').animate({marginLeft:'-25%'}, 200, 'linear', function() {$('#right_half').removeClass('compose_half').removeClass('dual_half');$('#right_half').addClass('page');$('#left_half').hide();$(this).css('margin-left','0');});$('#output').removeClass('dual');$('#full_screen_icon').hide();$('#output').addClass('text');$('.separator').hide();$(this).hide();$('#dual_button').show();$('#render_button').hide();$('.menu_button[type!=\'render\']').show();$(this).hide();$('.present').css('display','');$('#dual_icon').show();$('.slide_number').show();mode='present';showDivs(slideIndex);$('#container').css('overflow-y', 'auto');$('.controls').show();">Full Screen</button>
-
-                    <button id="dual_button" type="button" style="width:100%;display:none" class="btn btn-outline-info btn-sm menu_button" type="dual" onclick="$('#left_half').show();$('#info_half').show();$('#left_half').removeClass('compose_half');$('#left_half').addClass('info_half');$('#input_container').hide();$('#right_half').removeClass('page').removeClass('wide').addClass('dual_half right').show();$('.slide').show();$('.slide').removeAttr('style');$('#output').removeClass('text').addClass('dual');$('.slide_container').removeClass('wide');$('.separator').show();$('#output_icon_container').show();$('#present_button').show();console.log('SLIDEINDEX: ' + slideIndex);$('#output').scrollTo($('#s' + slideIndex));$('#s' + slideIndex).click();$('.slide').css('height', 'auto');$('.slide_number').hide();$('#render_button').show();$('#render_button').hide();$('.menu_button').show();$(this).hide();$('.present').hide();$('.controls').hide();$('#container').css('overflow-y', 'hidden');mode='dual'">Dual</button>
-
-                    <button id="compose_button" type="button" style="width:100%;" class="btn btn-outline-info btn-sm menu_button"  type="compose" onclick="$('#left_half').removeClass('info_half').addClass('compose_half');$('#info_half').hide();$('#left_half').show();$('#input_container').show();$('#right_half').removeClass('page');$('#right_half').removeClass('dual_half');$('#right_half').addClass('right').addClass('compose_half');$('.slide').show();$('.slide').removeAttr('style');$('#output').removeClass('text');$('.separator').show();$('#output_icon_container').show();$('#present_button').show();$('#output').scrollTo($('#s' + slideIndex));$('.slide').css('height', 'auto');$('.slide_number').hide();$('#render_button').show();$('.menu_button[type!=\'compose\']').show();$(this).hide();$('.present').hide();mode='compose'">Compose</button>
-
-                    <button id="render_button" class="btn btn-outline-info btn-sm submenu_button" type="render" onclick="$('#loading_icon').show(); cranach.renderWb(editor.getValue());"  style="display:none">Render</button>
-
-                    <button id="print_button" class="btn btn-outline-info btn-sm submenu_button" type="print" onclick="print();">Print</button>
-
-                    <button id='hide' class="btn btn-outline-info btn-sm menu_button" data-toggle="button" aria-pressed="true" onclick="hide(!$(this).hasClass('active'));">Half</button>
-
-                    <a class="dropdown-item" onclick="resizeFont(1);">
-                        <button class="btn btn-outline-info btn-sm menu_button" >Font &#xff0b;</button>
-                    </a>
-
-                    <a class="dropdown-item"  onclick="resizeFont(-1);">
-                        <button class="btn btn-outline-info btn-sm menu_button" >Font &#xff0d;</button>
-                    </a>
-
-                    <button id="uncollapse_button" class="btn btn-outline-info btn-sm menu_button" onclick="collapseToggle(slideIndex);">Uncollapse</button>
-
-                    <button class="btn btn-outline-info btn-sm menu_button" onclick="$('#xmlInput').click()">Open XML</button>
-                    <input id="xmlInput" type="file" onchange="cranach.openXml(this);" style="display:none">
-                    <button id="wb_button" class="btn btn-outline-info btn-sm submenu_button" onclick="commitWb();$('#compose_button').click();">Export to Wb</button>
-                    <a class="dropdown-item">
-                        <input id="edit_box" type="checkbox" style="display:none" />
-                        <button type="button" id="edit_button" style="width:100%" class="btn btn-outline-info btn-sm submenu_button"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked);">Edit</button>
-                        <input id="source_box" type="checkbox" style="display:none;" onchange="" />
-                        <!-- <button id="wb_button" style="display:none;" class="btn btn-outline-info btn-sm submenu_button" onclick="commitWb();$('#compose_button').click();$('#edit_button').click();">Commit Wb</button> -->
-                    </a>
+            <nav id="menu_container" class="navbar navbar-expand-md" style="height:3em;width:100%">
+                <div class="navbar-collapse collapse" onmouseover="$('#slide_sel').show()" onmouseout="$('#slide_sel').hide()">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
+                            <!-- &#9776; -->
+                            <div class="dropdown-menu" aria-labelledby="test_button">
+                                <a id="present_button" function="present" class="dropdown-item menu_button present info" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer)">Full Screen</a>
+                                <a id="info_button" function="dual" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass('info');$('.slide').show();$('.slide').removeAttr('style');$('#s' + slideIndex).click();">Info</a>
+                                <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
+                                <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
+                                <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
+                                    Font &#xff0b;
+                                </a>
+                                <a class="menu_button dropdown-item persist"  onclick="resizeFont(-1);">
+                                    Font &#xff0d;
+                                </a>
+                                <a id="print_button" class="menu_button dropdown-item" function="print" onclick="print(baseRenderer);">Print</a>
+                                <!-- -->
+                                <!-- <a class="dropdown-item">
+                                    <a id="toc_dropdown" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">TOC</a>
+                                    <div id="toc_dropdown_menu" class="dropdown-menu" aria-labelledby="toc_dropdown">
+                                    </div>
+                                </a> -->
+                                <!-- -->
+                                <div class="dropdown-divider"></div>
+                                <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
+                                <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
+                                <input id="edit_box" type="checkbox" style="display:none" />
+                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);">Edit</a>
+                                <a class="dropdown-item">
+                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                    <div class="dropdown-menu" aria-labelledby="advanced" style="background-color:#eee">
+                                        <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
+                                        <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
+                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="LaTex source">LaTeX</a>
+                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-toggle="tooltip" data-placement="right" title="XML source">XML</a>
+                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="Index source">Index</a>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-inline slide_sel">
+                                <div class="form-group">
+                                    <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
+                                    <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
+                                    <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
+                                        <!-- <option value="">Slide</option> -->
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul id="output_icon_container" class="navbar-nav ml-auto">
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button icon dim" data-toggle="button" aria-pressed="false" onclick='dim()'>
+                                <i class="material-icons">brightness_2</i>
+                            </button>
+                            <!-- ☾ -->
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button icon info" id="edit_icon" data-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                                <i class="material-icons">edit</i>
+                            </button>
+                            <!-- <input type="image" src="icons/Edit_Notepad_Icon.svg" id="edit_icon" class="plain_button icon info" onclick="$('#edit_button').click();"/> -->
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button icon info" id="full_screen_icon" data-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
+                                <i class="material-icons">
+                                    fullscreen
+                                </i>
+                            </button>
+                            <!-- <input type="image" src="icons/Maximize_Icon.svg" id="full_screen_icon" class="icon info" onclick="$('#present_button').click();"/> -->
+                        </li>
+                        <li>
+                            <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('#output').scrollTo($('#s' + slideIndex));">
+                                <i class="material-icons">
+                                    fullscreen_exit
+                                </i>
+                            </button>
+                            <!-- <input type="image" src="icons/Normalize_Icon.svg" id="dual_icon" class="plain_button icon info" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('.slide').removeAttr('style');$('#output').scrollTo($('#s' + slideIndex));$('#s' + slideIndex).click();"/> -->
+                        </li>
+                    </ul>
                 </div>
-                <br/>
+            </nav>
+            <div id='output' class="overview dual pane"></div>
+            <div class="controls_container" style="position:fixed;left:2.5%;top:0;display:table;height:100%;width:auto;">
+                <button class="btn plain_button controls" id='left_button' onclick='plusDivs(-1, baseRenderer)'>
+                    &#x276e;
+                </button>
             </div>
-            <div id='output' class="dual"></div>
+            <div class="controls_container" style="position:fixed;right:2.5%;top:0;display:table;height:100%;width:auto;">
+                <button class="btn plain_button controls" id='right_button' onclick='plusDivs(1, baseRenderer)'>
+                    &#x276f;
+                </button>
+            </div>
         </div>
         <div class="present title_box" style="display:none"></div>
-        <button class="btn plain_button controls" style='font-size:2em;left:5%;width:auto;color:SteelBlue' id='left_button' onclick='plusDivs(-1)'>
-            &#x276e;
-        </button>
-        <button class="btn plain_button controls" style='font-size:2em;right:5%;width:auto;color:SteelBlue' id='right_button' onclick='plusDivs(1)'>
-            &#x276f;
-        </button>
-        <script type="text/javascript">
-        $('.controls').on('mouseover', function() {
-            $('#progress_container').show();
-        });
-        $('.controls').on('mouseout', function() {
-            $('#progress_container').hide();
-        });
-        </script>
-        <div id="progress_container" style='position:fixed;top:1em;height:1em;width:100%;margin:auto;background-color:hsla(0,0%,100%,0.75);display:none'>
+
+        <div id="progress_container" style='position:fixed;top:1em;height:1em;width:100%;margin:auto;display:none'>
             <table id="slide_progress" style="width:75%;margin:auto;">
                 <tbody>
                     <tr>
@@ -294,7 +437,8 @@ console.log('CONTENTURL: ' + cranach.contentURL);
             </table>
         </div>
         <a href='javascript:void(0)' id='unhide' style='position:fixed;top:5em;right:2%;color:#428bc1;display:none' onclick='unhide()'>Full Screen</a>
-        <div id="cover_half" onclick="unhide();$('#hide').button('toggle')"></div>
+        <!-- <div id="cover_half" onclick="unhide();$('#hide').button('toggle')"></div> -->
+        <div id="cover_half" onclick="unhide();"></div>
     </div>
 
     <!-- Wb item modal -->
@@ -326,7 +470,8 @@ console.log('CONTENTURL: ' + cranach.contentURL);
                     <stong>HTML Hyperlink</strong><br/>
                     <textarea id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
                     <p><br></p>
-                    <strong class="latex_href">$\LaTeX$ Hyperref</strong><br>
+                    <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
+                    <br/>
                     <textarea id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly"></textarea>
                     <br/><br/>
                     <span>MD5</span><br/>
@@ -342,70 +487,461 @@ console.log('CONTENTURL: ' + cranach.contentURL);
 
     <!-- Wb code window -->
     <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="dialog" >
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
+            <div class="modal-content" style="height:100%">
                 <div class="modal-header">
                     <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"  >
-                    <textarea id="source_text"  name="content" ></textarea>
+                <div class="modal-body" style="height:100%" >
+                    <textarea id="source_text"  name="content" style="height:100%"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="cranach.attr['doc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');cranach.displayCranachDocToHtml(cranach.attr['doc'], 'output');">Render</button>
-                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), cranach, $(this).attr('ext'));">Save</button>
+                    <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
+                    <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
+                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-    $('.icon.latex, .icon.xml').hide();
-    cranach.render();
-    </script>
-
 <script type="text/javascript">
-$('#menu_container .dropdown-item').on({
-    "click":function(e){
-        e.stopPropagation();
+function saveText(text, promise, ext) {
+    var dummyLink = document.createElement('a');
+    uriContent = "data:application/octet-stream," + encodeURIComponent(text);
+    console.log('URICONTENT');
+    console.log(uriContent);
+    dummyLink.setAttribute('href', uriContent);
+
+    promise.then(el => {
+	var filename = el.attr['localName'];
+	dummyLink.setAttribute('download', filename + '.' + ext);
+	dummyLink.click();
+    });
+}
+
+function saveWb(editor, promise) {
+    saveText(editor.session.getValue(), promise, 'wb');
+}
+
+function collectNewcommands(str) {
+    var commandsStr = '';
+    var obj = new Object();
+    var commands = str.match(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
+    console.log(commands);
+
+    if (commands == null || typeof commands == typeof undefined) {
+        return '';
     }
-});
+    for (var i = 0; i < commands.length; i++) {
+        var matches = commands[i].match(/\\newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
+        console.log(matches);
+        obj[matches[1]] = matches[2];
+    }
+    console.log(obj);
+
+    for (const property in obj) {
+        commandsStr += '\\newcommand{' + property + '}' + obj[property] + "\n";
+    }
+    console.log(commandsStr);
+    return commandsStr;
+}
+
+function showLatex(promise) {
+    $('.modal-footer').find('.btn').hide();
+    $('.modal-footer').find('.btn.save').show();
+
+    var xsltProcessor = new XSLTProcessor();
+    $('#wb_modal').find('button.save').attr('ext', 'tex');
+    $('#wb_modal').find('.modal-title').html('LaTeX');
+
+    promise.then(el => {
+	var docCranach = el.attr['cranachDoc'];
+	var contentURLDir = el.attr['contentURLDir'];
+	$.ajax({
+            url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
+            dataType: 'xml'
+	})
+	    .done(function(xsl) {
+		var oParser = new DOMParser();
+		var xml = new XMLSerializer().serializeToString(docCranach);
+		xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
+		xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
+		xml = xml.replace(/#/g, '\#');
+		report(xml);
+		var xmlDOM = oParser.parseFromString(xml, "application/xml");
+		xsltProcessor.importStylesheet(xsl);
+		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+		fragment = xsltProcessor.transformToFragment(xmlDOM, document);
+		report(fragment);
+		fragmentStr = new XMLSerializer().serializeToString(fragment);
+		$('#source_text').val('');
+		var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
+		    .replace(/\n(\ )*/g, "\n")
+		    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+		    .replace(/\<!--.*?--\>/g, '')
+		    .replace(/&amp;/g, "&")
+		    .replace(/\\class{.*?}/g, '')
+            .replace(/\\cssId{.*?}/g, '')
+		    .replace(/&ocirc/g, '\\^o');
+
+        console.log(el.macrosString);
+        var tmp = el.macrosString + "\n" +  latex;
+        latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
+        .replace(/\$\n+\$/g, '')
+        .replace(/\s*}/g, '}');
+		$('#source_text').val(latex);
+	    });
+    });
+}
+
+function showXML(promise) {
+    $('.modal-footer').find('.btn').hide();
+    $('.modal-footer').find('.btn.save').show();
+    $('.modal-footer').find('.btn.render').show();
+
+    $('#source_text').val('');
+    $('#wb_modal').find('button.save').attr('ext', 'xml');
+    $('#wb_modal').find('.modal-title').text('Cranach XML');
+    promise.then(el => {$('#source_text').val(new XMLSerializer().serializeToString(el.attr['cranachDoc']));});
+
+}
+
+function showIndex(promise) {
+    $('.modal-footer').find('.btn').hide();
+    $('.modal-footer').find('.btn.save').show();
+    $('.modal-footer').find('.btn.update-index').show();
+    $('.modal-footer').find('.btn.load-index').show();
+    $('#wb_modal').find('button.save').attr('ext', 'xml');
+    $('#wb_modal').find('.modal-title').text('Index XML');
+
+    $('#source_text').val('');
+    promise.then(el => {
+	if (el.attr['indexDoc']) {
+            $('#source_text').val(new XMLSerializer().serializeToString(el.attr['indexDoc']));
+	}
+    });
+}
+
+function openWb(filePath) {
+
+    var file    = filePath.files[0];
+    var reader  = new FileReader();
+
+    console.log('READER');
+    console.log(file);
+
+    reader.addEventListener("load", function () {
+        console.log('READER RESULT');
+        console.log(reader.result);
+        editor.setValue(reader.result, 1);
+    }, false);
+
+    if (file) {
+        // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
+        var fullPath = filePath.value;
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+        }
+        reader.readAsText(file);
+    }
+}
+
+
+function openXML(promise, filePath) {
+    var file    = filePath.files[0];
+    var reader  = new FileReader();
+
+    report('READER');
+    report(file);
+    if (file) {
+        // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
+        var fullPath = filePath.value;
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            console.log(fullPath);
+        }
+    }
+    var el = this;
+    reader.addEventListener("load", function () {
+        report('READER RESULT');
+        report(reader.result);
+        promise.then(renderer => {
+            var cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
+            renderer.attr['localName'] = filename;
+            renderer.attr['cranachDoc'] = cranachDoc;
+            baseRenderer = renderer.displayCranachDocToHtml().then(renderer => {
+                postprocess(renderer);
+                convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+                return renderer;
+            });
+        });
+    }, false);
+
+    reader.readAsText(file);
+
+}
+
+function commitWb(editor) {
+    var body = showJaxSource('output').getElementsByTagName('body')[0];
+
+    $.ajax({
+        url: 'xsl/html2juengere.xsl',
+        success: function(xsl) {
+            var xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xsl);
+            console.log(body);
+            var preCranachDoc = xsltProcessor.transformToDocument(body,document);
+            console.log('HTML2PRELOVU');
+
+            $('#source_text').val('');
+
+            // // DEBUG
+            // preCranachStr = new XMLSerializer().serializeToString(preCranachDoc);
+            // console.log(preCranachStr);
+            // preCranachDoc = new DOMParser().parseFromString(preCranachStr, 'text/xml');
+
+            $.ajax({
+                url: 'xsl/cranach.xsl',
+                success: function(xsl) {
+                    var xsltProcessor = new XSLTProcessor();
+                    xsltProcessor.importStylesheet(xsl);
+                    console.log(preCranachDoc);
+                    var cranachDoc = xsltProcessor.transformToDocument(preCranachDoc, document);
+                    console.log(cranachDoc);
+                    convertCranachDocToWb(cranachDoc, editor);
+                }
+            });
+
+        }
+    });
+}
+
+function convertCranachDocToWb(cranachDoc, editor) {
+    console.log('convertCranachDocToWb');
+
+    // let nested = /((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)/;
+
+    $.ajax({
+        url: 'xsl/cranach2wb.xsl',
+        dataType: "xml"
+    })
+    .done(function(xsl) {
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsl);
+        fragment = xsltProcessor.transformToFragment(cranachDoc, document);
+        fragmentStr = new XMLSerializer().serializeToString(fragment);
+        // console.log(fragmentStr);
+        editor.setValue(fragmentStr
+            .replace(/@slide(?:\s|\n)*@((course|lecture|week|chapter|section|subsection|subsubsection|topic){(?:.|\n)*?})/g, "@$1")
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&apos;/g, "'")
+            .replace(/\\class{steps}{\\cssId{step\d+}{((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}}/g, '@nstep{$1}')
+            .replace(/\n\s*/g, "\n")
+            .replace(/(\s*@newline\s*)+/g, "\n\n")
+            .replace(/{\n+/g, '{')
+            .replace(/\n+}/g, '}')
+            .replace(/^\n/, '')
+        , 1);
+        showTexSource(false, editor);
+    });
+}
+
+</script>
+
+<script>
 
 $(function() {
 
-    $('.dropdown-submenu button').on('click', function(e) {
-        $(this).next('div').toggle();
-        $(this).next('div').css('max-height', 0.9*$(window).height());
-        $(this).next('div').css('width', 0.75*$(window).width());
+    $('.dropdown-item.persist').on('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
-
-        if ($(this).hasClass('active')) {
-            $(this).removeClass('active');
-            $(this).addClass('btn-outline-info');
-            $(this).removeClass('btn-primary');
-        }  else  {
-            $(this).addClass('active');
-            $(this).addClass('btn-primary');
-            $(this).removeClass('btn-outline-info');
-        }
     });
 
     $('#edit_box').change(function() {
         if ($(this).is(':checked')) {
-            $('#edit_button').removeClass('btn-outline-info');
-            $('#edit_button').addClass('btn-danger');
+            // $('#edit_button').removeClass('btn-outline-info');
+            // $('#edit_button').addClass('btn-danger');
+            $('#edit_button').css('background-color', 'red');
+            $('#edit_button').css('color', 'white');
             $('#edit_icon').attr('src', 'icons/Editting_Icon.svg');
         } else {
-            $('#edit_button').removeClass('btn-danger');
-            $('#edit_button').addClass('btn-outline-info');
+            // $('#edit_button').removeClass('btn-danger');
+            $('#edit_button').css('background-color', '');
+            $('#edit_button').css('color', '');
             $('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
         }
     });
 
+    $('#render_icon').click(function() {
+        $('.icon.latex, .icon.xml').hide();
+        baseRenderer = new Cranach('').setup().then(cranach => {
+            console.log(cranach);
+            return cranach.renderWb(editor.getValue(), document.getElementById('output'))
+            .then(cranach => {
+            return cranach.displayIndexDocToHtml(document.getElementById('index'))})
+            .then(renderer => {
+                postprocess(renderer); return renderer;
+            });
+        });
+    });
+
+    $('#render_sel').mouseover(function() {
+        if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
+            return;
+        }
+        $("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
+
+        var buffer = editor.getValue().replace(/@sep/g, '@slide')
+        .replace(/@@/g, '')
+        .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+        .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+        .replace(/\<!--(.|\n)*?--\>/g, '');
+
+        // console.log(buffer);
+
+        let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
+
+        // console.log(numOfSlides);
+        // console.log(editor.getCursorPosition());
+        var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
+        .replace(/@sep/g, '@slide')
+        .replace(/@@/g, '')
+        .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+        .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+        .replace(/\<!--(.|\n)*?--\>/g, '');
+        console.log(pastBuffer);
+
+        let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
+
+        var o = new Option(currentSlide.toString(), currentSlide);
+        $("#render_sel").append(o);
+        $("#render_sel").append('<hr/>');
+        for (i = numOfSlides; i >= 1; i--) {
+            var o = new Option(i.toString(), i);
+            $("#render_sel").append(o);
+        }
+
+    });
+
+
+    $('#render_sel').on('change', function() {
+        let query;
+        if ($(this).val() != 'all') {
+            let slideNum = $(this).val();
+            query = '//lv:slide[@slide=' + slideNum + ']';
+        } else {
+            query = '';
+        }
+        console.log(query);
+        $("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
+        baseRenderer = new Cranach('').setup({'query':query})
+        .then(cranach => {
+            console.log(cranach);
+            MathJax.typesetClear();
+            return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
+        })
+        .then(cranach => {
+            postprocess(cranach);
+            if (query != '') {
+                $('#s1').find('.collapse').collapse('show');
+                $('#s1').find('.collapsea').removeClass('collapsed');
+                // ▽⊟
+            }
+            return cranach;
+        });
+    });
+
+
+    // $('#render_sel').mouseover(function() {
+    //     if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
+    //         return;
+    //     }
+    //     $(".render_sel.dropdown-menu").html('');
+    //
+    //     var buffer = editor.getValue().replace(/@sep/g, '@slide')
+    //     .replace(/@@/g, '')
+    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+    //     .replace(/\<!--(.|\n)*?--\>/g, '');
+    //
+    //     // console.log(buffer);
+    //
+    //     let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
+    //
+    //     // console.log(numOfSlides);
+    //     // console.log(editor.getCursorPosition());
+    //     var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
+    //     .replace(/@sep/g, '@slide')
+    //     .replace(/@@/g, '')
+    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+    //     .replace(/\<!--(.|\n)*?--\>/g, '');
+    //     console.log(pastBuffer);
+    //
+    //     let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
+    //
+    //     $(".render_sel.dropdown-menu").append($('<a>All</a>').addClass('dropdown-item').attr('value', 'all'));
+    //     $(".render_sel.dropdown-menu").append($('<a>' + currentSlide + '</a>').addClass('dropdown-item').attr('value', currentSlide));
+    //     $(".render_sel.dropdown-menu").append('<hr/>');
+    //     for (i = numOfSlides; i >= 1; i--) {
+    //         $(".render_sel.dropdown-menu").append($('<a>' + i + '</a>').addClass('dropdown-item').attr('value', i));
+    //     }
+    //
+    // });
+
+
+    // $('#render_sel a').click(function() {
+    //     let query;
+    //     if ($(this).val() != 'all') {
+    //         let slideNum = $(this).attr('value');
+    //         query = '//lv:slide[@slide=' + slideNum + ']';
+    //     } else {
+    //         query = '';
+    //     }
+    //     console.log(query);
+    //     $(".render_sel.dropdown-menu").html('');
+    //     baseRenderer = new Cranach('').setup({'query':query})
+    //     .then(cranach => {
+    //         console.log(cranach);
+    //         MathJax.typesetClear();
+    //         return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
+    //     })
+    //     .then(cranach => {
+    //         postprocess(cranach);
+    //         if (query != '') {
+    //             $('#s1').find('.collapse').collapse('show');
+    //             $('#s1').find('.collapsea').text('▽');
+    //             // ▽⊟
+    //         }
+    //         return cranach;
+    //     });
+    // });
+
+
+    $('#left_half .collapsea').click(function() {
+        if ($(this).hasClass('collapsed')) {
+            $(this).removeClass('collapsed')
+        } else {
+            $(this).addClass('collapsed');
+        }
+        // this.text = $(this).hasClass('collapsed') ? '⊞' : '⊟';
+    });
 });
+
 </script>
 
 </body>

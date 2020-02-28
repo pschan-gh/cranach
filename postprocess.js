@@ -1,22 +1,33 @@
-function resetHighlight() {
+function scrollToLine(editor, slide) {
+    // var slideLine = Array();
     lines = editor.getSession().doc.getAllLines();
-    slideCount = 0;
     var isComment = false;
+    var slideCount = 0;
     for (var i = 0; i < lines.length; i++) {
-        if (lines[i].match(/\<\!--/)) {
+        if (lines[i].match(/\<\!\-\-/g)) {
             isComment = true;
         }
-        if (lines[i].match(/--\>/)) {
+        if (lines[i].match(/\-\-\>/g)) {
             isComment = false;
         }
-        if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!--.*?--\>/) && !isComment) {
-            slideCount++;
-            slideLine[slideCount] = i + 1;
+
+        if (!isComment) {
+            if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
+                // slideLine.push(i + 1);
+                slideCount++;
+            }
+        }
+        if (slideCount == slide) {
+            // var line = slideLine[slide];
+            editor.gotoLine(i + 1);
+            break;
         }
     }
+
 }
 
-function updateModal() {
+function updateModal(cranach) {
+    $('.slide_button').off();
     $('.slide_button').on('click', function() {
         console.log('SLIDE BUTTON PRESSED');
         var course = $(this).closest('.slide').attr('course');
@@ -35,9 +46,9 @@ function updateModal() {
         $('.current_slide').text(slide).show();
 
         if (cranach.attr['query']) {
-            var url = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
+            var url = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
         } else {
-            var url = cranach.contentURL + '&slide=' + slide;
+            var url = cranach.attr['contentURL'] + '&slide=' + slide;
         }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
@@ -54,6 +65,7 @@ function updateModal() {
     });
 
 
+    $('.item_button').off();
     $('.item_button').on('click', function() {
         var course = $(this).attr('course');
         var md5String = $(this).attr('md5');
@@ -78,7 +90,7 @@ function updateModal() {
 
         // var slide = $(this).closest('.slide').attr('slide');
 
-        url = cranach.contentURL + '&item=' + item;
+        url = cranach.attr['contentURL'] + '&item=' + item;
         console.log('ITEM CLICK URL: ' + url);
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
@@ -88,134 +100,132 @@ function updateModal() {
         $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + item_type + ' ' + item + '}');
         $('#item_modal').find('.md5').first().html(md5String);
 
-        updateModalRefby(md5String);
-        updateModalProofs(md5String);
+        updateModalRefby(md5String, cranach);
+        updateModalProofs(md5String, cranach);
 
     });
 }
 
-function updateSlideClickEvent() {
-    $('.slide').on('click', function() {
+function updateSlideClickEvent(cranach) {
 
-        if ($(this).attr('slide') != slideIndex) {
-            if (editMode) {
-                $('#edit_button').click();
-            }
+    $('.slide').hover(function() {
+        $('#output_icon_container').show();
+    });
+
+    $('.slide').off();
+    $('.slide').click(function() {
+
+        console.log('SLIDE CLICKED');
+
+        var slideElement = this;
+
+        if (typeof editor !== typeof undefined) {
+            scrollToLine(editor, $(slideElement).attr('canon_num'));
         }
-
-        var course = $(this).attr('course');
-        var chapterType = $(this).attr('chapter_type');
-        var chapter = $(this).attr('chapter');
-        slideIndex = $(this).attr('slide');
-        cranach.selectedSlide = slideIndex;
-        var slide = slideIndex;
-        var statements = new Array();
 
         $('*[text]').removeClass('highlighted');
-
-        $('[data-toggle="popover"]').popover('hide');
-
-        if ($(this).hasClass('tex2jax_ignore')) {
-            console.log("IN VIEW" + $(this).attr('slide'));
-            renderSlide(this);
-        }
-        $(this).nextAll('.slide:lt(2)').each(function() {
-            if ($(this).hasClass('tex2jax_ignore')) {
-                renderSlide(this);
-            }
-        });
-        $(this).prevAll('.slide:lt(2)').each(function() {
-            if ($(this).hasClass('tex2jax_ignore')) {
-                renderSlide(this);
-            }
-        });
-
-        updateTitle(this);
-
         $('.item_button').css('background-color', '');
-        $('#slide_info').show();
+        $('[data-toggle="popover"]').popover('hide');
+        $(this).find('.loading_icon').hide();
+
         $('.separator').css('font-weight', 'normal');
         $('.separator').find('a').css('color', 'pink');
+
         $(this).find('.separator').css('font-weight', 'bold');
         $(this).find('.separator').find('a').css('color', 'red');
-        var line = slideLine[$(this).attr('slide')];
-        editor.gotoLine(line);
 
-
-        if ($('#s' + slideIndex).hasClass('collapsed')) {
-            $('#uncollapse_button').text('Uncollapse');
-        } else {
-            $('#uncollapse_button').text('Collapse');
-        }
-
-        var url = cranach.contentURL;
-        var urlSlide = cranach.contentURL +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
-        // console.log('SLIDE_BUTTON CLICKED: ' + urlSlide);
-
-        $('.url.share_text.slide_info').html(urlSlide);
-
-        $('#url_open').attr('href', urlSlide);
-
-        $('.hyperlink.share_text.slide_info').html('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slide + '</a>');
-
-        $('.hyperref.share_text.slide_info').html('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slide + '}');
-        $(this).find('img').each(function() {
-            imagePostprocess(this);
+        $(this).find('iframe:not([src])').each(function() {
+            $(this).attr('src', $(this).attr('data-src')).show();
+            var $iframe = $(this);
+            $(this).iFrameResize({checkOrigin:false});
         });
 
-        $("div[wbname='statement'][chapter='" + $(this).attr('chapter') + "']").each(function() {
-            if (!($(this).attr('type') in statements)) {
-                statements[$(this).attr('type')] = '';
+        if ($(this).attr('slide') != slideIndex) {
+            if (cranach.attr['editMode']) {
+                $('#edit_button').click();
+            }
+            if (!$(slideElement).hasClass('edit')) {
+                batchRender(slideElement);
+            }
+            var course = $(this).attr('course');
+            var chapterType = $(this).attr('chapter_type');
+            var chapter = $(this).attr('chapter');
+            slideIndex = +$(this).attr('slide');
+            var slide = slideIndex;
+            var statements = new Array();
+
+            updateTitle(slideElement);
+
+            if ($(this).hasClass('collapsed')) {
+                $('#uncollapse_button').text('Uncollapse');
+            } else {
+                $('#uncollapse_button').text('Collapse');
             }
 
-            var item = $(this).attr('item');
-            var slide = $('div[item="' + $(this).attr('item') + '"]').closest('.slide').attr('slide');
+            var url = cranach.attr['contentURL'];
+            var urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
 
-            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + item + "')\">" + item + "</a>";
-        });
-        var html = '';
-        for (var key in statements) {
-            html += '<br/><a class="info_statements" target="_blank" href="' + url + '&query=//lv:statement[@chapter=' + $(this).attr('chapter') + ' and @type=%27' + key + '%27]">' + key + '</a><em> ' + statements[key] + '</em>';
+            $('.url.share_text.slide_info').html(urlSlide);
+
+            $('#url_open').attr('href', urlSlide);
+
+            $('.hyperlink.share_text.slide_info').html('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slide + '</a>');
+
+            $('.hyperref.share_text.slide_info').html('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slide + '}');
+
+            $('#slide_info').show();
+
+            if ($('.current_chapter').first().text() != $(slideElement).attr('chapter')) {
+                $('#info_statements .chapter').hide();
+                $('#info_statements .chapter[chapter="' + $(slideElement).attr('chapter') + '"]').show();
+            }
+
+            updateSlideProgress(slideIndex, false);
         }
-        $('#info_statements').html('');
-        $('#info_statements').html(html);
     });
+
 }
 
-function updateRefs() {
+function updateRefs(cranach) {
 
-        $('a.knowl').each(function() {
-            $(this).attr('knowl', "");
+        $('a.lcref').each(function() {
+            $(this).attr('lcref', "");
 
             var chapter = $(this).attr('chapter');
             var num = $(this).attr('num');
             var num = $(this).attr('item');
             var label = $(this).attr('label');
             var md5 = $(this).attr('md5');
-            var contentDir = ''
 
-            var rootURL = cranach.rootURL;
+            var contentDir = cranach.attr['dir'];
+            var rootURL = cranach.attr['rootURL'];
             if (cranach.hasXML) {
                 contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
             } else if (cranach.hasWb) {
                 contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
             }
 
+            let statementType = 'statement';
+            if ($(this).attr('type').match(/proof|solution|answer/i)) {
+                statementType = 'substatement';
+            }
+
+            var rootURL = cranach.attr['rootURL'];
             if ($(this).attr('filename') == 'self') {
                 if (cranach.hasXML) {
-                    var knowl = rootURL + "cranach_bare.php?xml=" + cranach.attr['xmlPath'] + "&query=//lv:statement[@md5='" + md5 + "']";
+                    var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 } else {
-                    var knowl = rootURL + "cranach_bare.php?wb=" + cranach.attr['wbPath'] + "&query=//lv:statement[@md5='" + md5 + "']";
+                    var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 }
             } else {
-                if (cranach.hasXML) {
-                    var knowl = rootURL + "cranach_bare.php?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@md5='" + md5 + "']";
+                if ($(this).attr('src-filename').match(/\.xml$/)) {
+                    var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 } else {
-                    var knowl = rootURL + "cranach_bare.php?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=//lv:statement[@md5='" + md5 + "']";
+                    var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 }
             }
 
-            $(this).attr('knowl', knowl);
+            $(this).attr('lcref', lcref + '&version=' +Math.random());
 
         });
 
@@ -229,7 +239,7 @@ function updateRefs() {
             var md5 = $(this).attr('md5');
             var contentDir = ''
 
-            var rootURL = cranach.rootURL;
+            var rootURL = cranach.attr['rootURL'];
             if (cranach.hasXML) {
                 contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
             } else if (cranach.hasWb) {
@@ -257,157 +267,226 @@ function updateRefs() {
 
 }
 
-function updateScrollEvent() {
-    $('#output').on("scroll", function() {
-        /* your code go here */
-        $('.slide').each(function() {
-            if (isElementInViewport(this)) {
-                if ($(this).hasClass('tex2jax_ignore')) {
-                    console.log("IN VIEW" + $(this).attr('slide'));
-                    renderSlide(this);
-                }
-                $(this).nextAll('.slide:lt(2)').each(function() {
-                    if ($(this).hasClass('tex2jax_ignore')) {
-                        renderSlide(this);
-                    }
-                });
-                $(this).prevAll('.slide:lt(2)').each(function() {
-                    if ($(this).hasClass('tex2jax_ignore')) {
-                        renderSlide(this);
-                    }
-                });
+var timer = null;
+function updateScrollEvent(cranach) {
+    $('#output').off();
+    // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
+
+    $('#output').on('scroll', function() {
+        if(timer !== null) {
+            clearTimeout(timer);
+        }
+        timer = window.setTimeout(function() {
+            console.log('rendering slides');
+            $('.slide.tex2jax_ignore').each(function() {
+                if (isElementInViewport(this)) {
+                    batchRender(this);
+                };
+            });
+        }, 15*100);
+    });
+
+    /*
+       $('#output').on("scroll", function() {
+       $('.slide.tex2jax_ignore').each(function() {
+            var slide = this;
+            if (isElementInViewport(slide) && ($(this).attr('slide') % 5 == 0)) {
+                window.setTimeout(function() {if (isElementInViewport(slide)) {batchRender(slide)}}, 1.5*1000);
             }
         });
     });
+    */
 
 }
 
-function updateToc() {
+function updateToc(cranach) {
     console.log('UPDATING TOC');
-    $('#toc').html('').append($('#toc_src'));
+    var url = cranach.attr['contentURL'];
 
-    $('#toc').find('a').find('span.serial').each(function() {
+    $('.toc').each(function() {
+        $('#toc').html('').append($('#output').find('.toc_src').first());
+    });
+    $('#output').find('.toc_src').hide();
+
+    $('.toc').find('a').find('span.serial').each(function() {
         var string = $(this).text();
         $(this).text(string.charAt(0).toUpperCase() + string.slice(1));
     });
 
-    $('#toc').find('a.chapter').each(function() {
+    $('.toc').find('a.chapter').each(function() {
+        let chapter = $(this).attr('chapter');
+        let statements = new Array();
+        $("#output div[wbname='statement'][chapter='" + chapter + "']").each(function() {
+            if (!($(this).attr('type') in statements)) {
+                statements[$(this).attr('type')] = '';
+            }
+
+            var item = $(this).attr('item');
+            var slide = $('div[item="' + $(this).attr('item') + '"]').closest('.slide').attr('slide');
+
+            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + item + "')\">" + item + "</a>";
+        });
+        var html = '';
+        for (var key in statements) {
+            html += '<br/><a class="info_statements" target="_blank" href="' + url + '&query=//lv:statement[@chapter=' + chapter + ' and @type=%27' + key + '%27]">' + key + '</a><em> ' + statements[key] + '</em>';
+        }
+
+        $('#info_statements').append('<div class="statements chapter" chapter="' + chapter + '" style="display:none">' + html + '</div>');
+
         var $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            $('#output').scrollTo($slide);
+            // $('#output').scrollTo($slide);
+            jumpToSlide($('#output'), $slide);
             $slide.click();
         });
     });
-    $('#toc').find('a.section').each(function() {
+    console.log($('#info_statements')[0]);
+
+    $('.toc').find('a.section').each(function() {
         var $slide = $('.slide[section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            $('#output').scrollTo($slide);
+            // $('#output').scrollTo($slide);
+            jumpToSlide($('#output'), $slide);
             $slide.click();
         });
     });
-    $('#toc').find('a.subsection').each(function() {
+    $('.toc').find('a.subsection').each(function() {
         var $slide = $('.slide[subsection="' + $(this).attr('subsection') + '"][section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            $('#output').scrollTo($slide);
+            // $('#output').scrollTo($slide);
+            jumpToSlide($('#output'), $slide);
             $slide.click();
         });
     });
+    MathJax.startup.promise = typeset([document.getElementById('toc')]);
 }
 
 function updateCollapseElements() {
-    var colchar = "▽";
-    var expchar = "►";
 
-    $('.collapsea').click(function() {
+    $('#output .collapsea').click(function(event) {
         if ($(this).hasClass('collapsed')) {
-            $(this).removeClass('collapsed')
+            $(this).removeClass('collapsed');
+            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').show("slow");
         } else {
             $(this).addClass('collapsed');
+            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').hide("slow");
         }
-        this.text = $(this).hasClass('collapsed') ? expchar : colchar;
+        // this.text = $(this).hasClass('collapsed') ? expchar : colchar;
     });
+
+    // $('.collapse').each(function() {
+    //     var id = $(this).attr('id');
+    //     $(this).on('hide.bs.collapse', function() {
+    //         $('a.collapsea[aria-controls="' + id + '"]').text(expchar);
+    //     });
+    // });
+    // $('.collapse').each(function() {
+    //     var id = $(this).attr('id');
+    //     $(this).on('show.bs.collapse', function() {
+    //         $('a.collapsea[aria-controls="' + id + '"]').text(colchar);
+    //     });
+    // });
 }
 
 function updateKeywords() {
     $('#info_keywords_course').html('');
     $('div.keywords[slide="all"][environ="course"]').each(function() {
-        $('#info_keywords_course').append($(this));
+        if ($('#info_keywords_course')) {
+            $('#info_keywords_course').append($(this));
+        } else {
+            $(this).hide();
+        }
     });
     $('div.keywords[slide="all"][environ="root"]').each(function() {
-        $('#info_keywords_course').append($(this));
+        if ($('#info_keywords_course')) {
+            $('#info_keywords_course').append($(this));
+        } else {
+            $(this).hide();
+        }
     });
     $('#info_keywords_chapter').html('');
     $('div.keywords[slide="all"][environ="chapter"]').each(function() {
-        $('#info_keywords_chapter').append($(this));
+        if ($('#info_keywords_chapter')) {
+            $('#info_keywords_chapter').append($(this));
+        } else {
+            $(this).hide();
+        }
     });
-    $('#slide_keywords').html('').append($('div.keywords[slide!="all"]'));
+    if ($('#slide_keywords')) {
+        $('#slide_keywords').html('').append($('div.keywords[slide!="all"]'));
+    } else {
+        $(this).hide();
+    }
 }
 
 function updateEditor() {
-    editor.container.style.pointerEvents="auto";
-    editor.container.style.opacity=1; // or use svg filter to make it gray
-    editor.renderer.setStyle("disabled", false);
-    editor.focus();
-    resetHighlight();
+    if (editor) {
+        editor.container.style.pointerEvents="auto";
+        editor.container.style.opacity=1; // or use svg filter to make it gray
+        editor.renderer.setStyle("disabled", false);
+        editor.focus();
+    }
 }
 
-function postprocess() {
+function updateSlideSelector(cranach) {
+
+    var numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
+    // $('#slide_sel').attr('max', numOfSlides);
+    $("#slide_sel").html('');
+    for (let i = 1; i <= numOfSlides; i++) {
+        var o = new Option(i.toString(), i);
+        $("#slide_sel").append(o);
+    }
+    $('#slide_sel').on('change', function() {
+        console.log('JUMPING TO SLIDE: ' + $(this).val());
+        jumpToSlide($('#output'), $('#s' + $(this).val()));
+    });
+}
+
+function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
     $('.icon.xml, .icon.latex').show();
 
-    $('.slide_number').hide();
-    $('.slide').find("table:not(.exempt):not(.ltx_eqn_table)").addClass("table table-bordered");
+    $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
 
-    // MathJax.Hub.Queue(
-    //     ["resetEquationNumbers", MathJax.InputJax.TeX],
-    //     ["PreProcess", MathJax.Hub, document.getElementById('output')],
-    //     ["Reprocess", MathJax.Hub, document.getElementById('output')],
-    //     ["Typeset", MathJax.Hub, document.getElementById('output')]
-    // );
-
-    updateEditor();
-    updateSlideClickEvent();
-    updateRefs();
-    updateModal();
-    updateScrollEvent();
-    updateToc();
+    // updateEditor();
+    updateSlideClickEvent(cranach);
+    updateRefs(cranach);
+    updateModal(cranach);
+    updateScrollEvent(cranach);
+    updateToc(cranach);
     updateCollapseElements();
     updateKeywords();
-    updateSlideProgress(slideIndex, true);
+    updateSlideProgress(cranach.slideIndex, true);
+    updateSlideSelector(cranach);
+    updateTitle($('#s' + cranach.slideIndex)[0]);
 
     $(function() {
+        console.log(cranach);
 
-	$('.latex_href').each(function() {
-	    MathJax.Hub.Queue(
-                ["Typeset", MathJax.Hub,this],
-            );
-	});
+        MathJax.startup.promise.then(() => {
+            // MathJax.typesetClear();
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            return;
+        }).then(() => {
+            // console.log(cranach.macrosString);
+            return MathJax.tex2chtmlPromise(cranach.macrosString);
+        }).then(() => {
+            $('.slide').each(function() {
+                if (isElementInViewport(this)) {
+                    batchRender(this);
+                }
+            });
+        });
 
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
-            $(this).attr('text', text.replace(/[^a-zA-Z0-9\-]/g, ''));
+            $(this).attr('text', text.replace(/[^a-zA-Z0-9À-ÿ\-]/g, ''));
         });
 
-        $('.slide').each(function() {
 
-            if (isElementInViewport(this)) {
-                if ($(this).hasClass('tex2jax_ignore')) {
-                    console.log("IN VIEW" + $(this).attr('slide'));
-                    renderSlide(this);
-                }
-                $(this).nextAll('.slide:lt(2)').each(function() {
-                    if ($(this).hasClass('tex2jax_ignore')) {
-                        renderSlide(this);
-                    }
-                });
-                $(this).prevAll('.slide:lt(2)').each(function() {
-                    if ($(this).hasClass('tex2jax_ignore')) {
-                        renderSlide(this);
-                    }
-                });
-            }
-
-        });
+        $('[data-toggle="popover"]').off();
         $('[data-toggle="popover"]').on('click', function (e) {
             $('[data-toggle="popover"]').each(function(){
     	    $(this).popover('hide');
@@ -415,44 +494,108 @@ function postprocess() {
             $(this).popover('show');
         });
 
-        MathJax.Hub.Queue(["resetEquationNumbers", MathJax.InputJax.TeX]);
+        https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
+        $("button.btn_keyword[data-toggle=popover]:not(.index)").popover({
+            html : true,
+            content: function() {
+                html = 'Loading...';
+                return html;
+            }
+        });
+        $('[data-toggle="popover"]:not(.index)').on('shown.bs.popover', function() {
+            $('.popover-body').each(function() {
+                let id = $(this).closest('.popover').attr('id');
+                console.log(id);
+                var popoverBody = this;
+                $(popoverBody).html('');
+                $('[aria-describedby="' + id + '"]').find('a.dropdown-item').each(function() {
+                    console.log(this);
+                    $(popoverBody).append($(this).clone().removeClass('hidden'));
+                    console.log(popoverBody);
+                });
+            });
+        });
 
-	if (cranach.selectedItem) {
-	    console.log('SELECTED ITEM: ' + cranach.selectedItem);
-        var $item = $('.statement[item="' + cranach.selectedItem + '"], .statement[md5="' + cranach.selectedItem + '"], .substatement[item="' + cranach.selectedItem + '"], .substatement[md5="' + cranach.selectedItem + '"]').first();
-        var $selectedSlide = $item.closest('.slide');
-	    $('#output').scrollTo($selectedSlide);
-	    $selectedSlide.click();
-	    $item.find('.item_title').addClass('highlighted');
-	} else if (cranach.selectedSection) {
-        var $section = $('.title[serial="' + cranach.selectedSection + '"]').first();
-        var $selectedSlide = $section.closest('.slide');
-	    $('#output').scrollTo($selectedSlide);
-	    $selectedSlide.click();
-	    $section.addClass('highlighted');
+        if (cranach.attr['selectedItem']) {
+            console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
+            var $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"]').first();
+            var $selectedSlide = $item.closest('.slide');
+            $('#output').scrollTo($selectedSlide);
+            $selectedSlide.click();
+            $item.find('.item_title').addClass('highlighted');
+        } else if (cranach.attr['selectedSection']) {
+            var $section = $('.title[serial="' + cranach.attr['selectedSection'] + '"]').first();
+            var $selectedSlide = $section.closest('.slide');
+            $('#output').scrollTo($selectedSlide);
+            $selectedSlide.click();
+            $section.addClass('highlighted');
 
-    } else {
-	    var $selectedSlide = $('.slide[slide="' + cranach.selectedSlide  + '"]');
-	    $('#output').scrollTo($selectedSlide);
-	    $selectedSlide.click();
-	}
+        } else {
+            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
+            console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
+            $('#output').scrollTo($selectedSlide);
+        }
 
-	if (cranach.selectedKeyword) {
-            console.log('SELECTED KEYWORD: ' + cranach.selectedKeyword);
-	    // var re = new RegExp(cranach.selectedKeyword.replace(/\s/g, ''), 'i');
-	    // console.log(re);
-            // var $selectedSlide = $('*[text]').filter(function() {
-	    // 	return $(this).attr('text').match(re);
-	    // }).closest('.slide');
-	    focusOn($selectedSlide.attr('slide'), cranach.selectedKeyword.replace(/\s/g, ''));
-	}
+        if (cranach.attr['selectedKeyword']) {
+            console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
+            focusOn($selectedSlide.attr('slide'), cranach.attr['selectedKeyword'].replace(/\s/g, ''));
+        }
 
+
+
+        // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
+        var menu_timer = null;
+        $('#right_half').mousemove(function() {
+            clearTimeout(menu_timer);
+            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+            menu_timer = setTimeout(function () {
+                $("#menu_container .navbar-nav, .controls, .present .slide_number").fadeOut();
+            }, 1000);
+        })
+        $("#menu_container .navbar-nav, .present .slide_number").mouseover(function() {
+            $('#right_half').off('mousemove');
+            clearTimeout(menu_timer);
+            $(this).show();
+        });
+        $('.controls').on('mouseover', function() {
+            $('#progress_container').show();
+            $('#right_half').off('mousemove');
+            clearTimeout(menu_timer);
+            $(this).show();
+        });
+
+        $("#menu_container .navbar-nav, .present .slide_number").mouseout(function() {
+            clearTimeout(menu_timer);
+            $('#right_half').off('mousemove');
+            $('#right_half').mousemove(function() {
+                clearTimeout(menu_timer);
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+                // $(".present .controls").css('display', 'table-cell');
+                menu_timer = setTimeout(function () {
+                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".controls").hide();
+                }, 1000);
+            })
+        });
+        $('.controls').on('mouseout', function() {
+            $('#progress_container').hide();
+            clearTimeout(menu_timer);
+            $('#right_half').off('mousemove');
+            $('#right_half').mousemove(function() {
+                clearTimeout(menu_timer);
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+                // $(".present .controls").css('display', 'table-cell');
+                menu_timer = setTimeout(function () {
+                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".controls").hide();
+                }, 1000);
+            })
+        });
     });
 
-    if (cranach.present) {
+    if (cranach.attr['present']) {
         $('#present_button').click();
     }
 
     $('#loading_icon').hide();
-
 }

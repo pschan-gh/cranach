@@ -4,12 +4,18 @@ function md5(text) {
 
 function generateXML(source) {
     console.log('IN GENERATEXML');
+
+    var wbMD5 = md5(source);
+    console.log(wbMD5);
+
     secNums = {
         'chapter' : 1,
         'section' : 1,
         'subsection': 1,
         'subsubsection' : 1,
-        'statement': 1
+        'statement': 1,
+        'figure': 1,
+        'slide': 1
     }
     docNode = document.implementation.createDocument("", "", null);
 
@@ -39,17 +45,17 @@ function generateXML(source) {
     .replace(/\<\/p\>/g, '')
     // .replace(/frameborder=(\d+)/g, "frameborder=\"$1\"")
     // .replace(/ href /g, ' href="" ')
-    .replace(/(\n\s*){2,}/g, "\n@newline\n")
+    // .replace(/(\n\s*){2,}/g, "\n@newline\n")
     .replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-	.replace(/(@@\w+)/g, '<span class="escaped">$1</span>')
+	// .replace(/@@(\w+)/g, "@escaped{$1}")
     .replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
     // END LEGACY COMPATIBILITY
 
-    var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', "", null);
+    var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', 'document', null);
 
     var root = new Stack(doc.createElementNS('http://www.math.cuhk.edu.hk/~pschan/cranach', 'root'), doc);
     root.node.setAttribute("xmlns:xh", 'http://www.w3.org/1999/xhtml');
-    root.node.setAttribute("xmlns", 'http://www.math.cuhk.edu.hk/~pschan/cranach');
+    root.node.setAttribute("wbmd5", wbMD5);
 
     var child = root;
 
@@ -64,10 +70,9 @@ function generateXML(source) {
     console.log('END REACHED: ' + child.node.nodeName);
     child = child.closeTo(/root/i);
 
-    var xmlDoc = child.node;
-
-    console.log('GENERATEXML');
-    console.log(xmlDoc);
-    return xmlDoc;
-    // return xmlString;
+    console.log('END WEAVER');
+    console.log(child.node);
+    var xmlString = new XMLSerializer().serializeToString(child.node);
+    console.log(xmlString);
+    return xmlString;
 }

@@ -1,102 +1,82 @@
 function renderSlide(slide) {
-    if ($(slide).hasClass("tex2jax_ignore")) {
-        $(slide).removeClass("tex2jax_ignore");
 
-        if (cranach.macros) {
-            MathJax.Hub.Queue(
-                ["Typeset", MathJax.Hub,cranach.macros],
-                ["PreProcess", MathJax.Hub, slide],
-                ["Reprocess", MathJax.Hub, slide],
-                ["Typeset", MathJax.Hub, slide]
-            );
-        } else {
-            MathJax.Hub.Queue(
-                ["PreProcess", MathJax.Hub, slide],
-                ["Reprocess", MathJax.Hub, slide],
-                ["Typeset", MathJax.Hub, slide]
-            );
-        }
-    }
-
-    // MathJax.Hub.Queue(["Typeset",MathJax.Hub,slide]);
-    $(slide).find('img[rendered="0"]').each(function() {
+    $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
-        $(this).attr('rendered', 1);
     });
-    $(slide).find('iframe').each(function() {
+
+    $(slide).find('iframe:not([src])').not(".webwork").each(function() {
         $(this).attr('src', $(this).attr('data-src')).show();
         var $iframe = $(this);
         $(this).iFrameResize({checkOrigin:false});
     });
 
-    $(slide).find('img.loading_icon').hide();
+    if ($(slide).hasClass("tex2jax_ignore")) {
+        $(slide).removeClass("tex2jax_ignore");
+        // MathJax.typesetPromise([slide]);
+        typeset([slide]);
+    }
 }
 
-var whichSteps = {};
-function showStep(stepsId) {
-    var stepsClass = document.getElementsByClassName(stepsId);
 
-    if (whichSteps[stepsId] == null) {
-        whichSteps[stepsId] = 0;
+function batchRender(slide) {
+
+    renderSlide(slide);
+    $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
+        renderSlide(this);
+    });
+    $(slide).prevAll('.slide.tex2jax_ignore:lt(1)').each(function() {
+        renderSlide(this);
+    });
+}
+
+
+function showStep(el) {
+    var $parent = $(el).closest('div[wbtag="steps"]');
+    var $stepsClass = $parent.find('.steps');
+
+    if (typeof $parent.attr('stepId') == typeof undefined || $parent.attr('stepId') == null) {
+        $parent.attr('stepId', 0);
     }
-    var whichStep = whichSteps[stepsId];
-    // var step = stepsId + '.' + whichStep;
-    console.log('STEP: ' + whichStep + ', class LENGTH: ' + stepsClass.length);
-    // if (whichStep < stepsClass.length/2) {
-    //     stepsClass[whichStep].style.visibility = "visible";
-    //     whichStep++;
-    // }
-    if (whichStep < stepsClass.length/2) {
+    var whichStep = $parent.attr('stepId');
+    console.log('STEP: ' + whichStep + ', class LENGTH: ' + $stepsClass.length);
+
+    if (whichStep < $stepsClass.length) {
         // stepsClass[whichStep].style.visibility = "visible";
-        $('.'+ stepsId + '.step' + whichStep).css('visibility', 'visible');
+        $parent.find('#step' + whichStep).css('visibility', 'visible');
         whichStep++;
     }
 
-    if (whichStep >= stepsClass.length/2) {
-	document.getElementById("next"+stepsId).disabled = true;
+    if (whichStep >= $stepsClass.length) {
+        $parent.find('button.next').attr('disabled', true);
     }
 
-    // if (!stepsClass[whichStep]) {
-    //    document.getElementById("next"+stepsId).disabled = true;
-    // }
-    
+    $parent.find('button.reset').attr('disabled', false);
 
-    document.getElementById("reset"+stepsId).disabled = false;
-    whichSteps[stepsId] = whichStep;
+    $parent.attr('stepId', whichStep);
 
 }
 //
 //  Enable the step button and disable the reset button.
 //  Hide the steps.
 //
-function resetSteps(stepsId) {
-    document.getElementById("next"+stepsId).disabled = false;
-    document.getElementById("reset"+stepsId).disabled = true;
-    var i = 0;
-    var step;
-    $('.' + stepsId).css('visibility', 'hidden');
-    whichSteps[stepsId] = 0;
+function resetSteps(el) {
+    $parent = $(el).closest('div[wbtag="steps"]');
+    $parent.find('button.next').attr('disabled', false);
+    $parent.find('button.reset').attr('disabled', true);
+    // $('.' + stepsId).css('visibility', 'hidden');
+    $parent.find('.steps').css('visibility', 'hidden');
+    $parent.attr('stepId', 0);
 }
-function hide(pressed) {
-    element = document.getElementById('cover_half');
-    element.style.display="block";
 
-    if(pressed) {
-        $('#container').css('height', '50%');
-        $('.slide_button').addClass('hide');
-    } else {
-        $('.slide_container').css('position', '');
-        unhide();
-    }
+function hide() {
+    $('#cover_half').show();
+    $('#container').css('height', '50%');
+    $('.slide_button').addClass('hide');
 
 }
 
 function unhide() {
-    element = document.getElementById('cover_half');
-    element.style.display="none";
-    document.getElementById('output').style.height="100%";
-    document.getElementById('unhide').style.display="none";
-
+    $('#cover_half').hide();
     $('#container').css('position', '');
     $('#container').css('height', '');
     $('.slide_button').removeClass('hide');
@@ -104,13 +84,22 @@ function unhide() {
 }
 
 function dim() {
-    document.body.style.background = "#000";
-    var i;
-    var x = document.getElementsByClassName("page");
-    x[0].style.background="#000";
-    var x = document.getElementById("text");
-    x.style.background="#000";
-    x.style.color="#999";
+    if ($('.dim').first().hasClass('dimmed')) {
+        $(' #right_half, #right_half *, #output *').css('background-color', '').css('color', '');
+        $('#right_half').removeClass('dim');
+        $('#progress_container').removeClass('dim');
+        // $('#slide_progress td').removeClass('dim');
+        // $('.separator a').css('background-color', 'white');
+        $('.dim').first().removeClass('dimmed');
+    } else {
+        $('#right_half, #output').css('background-color', '#222').css('color', '#bbb');
+        // $('#output').find('.paragraphs, textarea, table, table *').css('background-color', '#222').css('color', '#bbb');
+        $('#right_half').addClass('dim');
+        $('#progress_container').addClass('dim');
+        // $('#slide_progress td').addClass('dim');
+        // $('.separator a').css('background-color', '#222');
+        $('.dim').first().addClass('dimmed');
+    }
 }
 
 function resizeFont(multiplier) {
@@ -120,78 +109,97 @@ function resizeFont(multiplier) {
     document.getElementById("output").style.fontSize = parseFloat(document.getElementById("output").style.fontSize) + 0.2*(multiplier) + "em";
 }
 
-function plusDivs(n) {
+function plusDivs(n, promise) {
 
     if(editMode) {
         $('#edit_button').click();
     }
 
-    slideIndex = parseInt(slideIndex) + parseInt(n);
+    let index = parseInt(slideIndex) + parseInt(n);
 
-    if (n > 0) {
-        $("#output").animate({marginLeft:"-100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(slideIndex);});
-    } else {
-        $("#output").animate({marginLeft:"100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(slideIndex);});
-    }
+    promise.then(cranach => {
+        if (n > 0) {
+            $("#output").animate({marginLeft:"-100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(index, cranach);});
+        } else {
+            $("#output").animate({marginLeft:"100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(index, cranach);});
+        }
+    });
 
 }
 
-function showDivs(n) {
+function showDivs(n, cranach) {
 
     $('.slide_mask').hide();
 
     var i;
-    var x = document.getElementsByClassName("slide");
+    // var x = document.getElementsByClassName("slide");
+    var $slides = $('#output > .slide');
 
-    if(x == null) {
+    if ($slides.length == null || $slides.length == null < 1) {
         return 0;
     }
 
-    slideIndex = (parseInt(n) + x.length) % x.length;
-    slideIndex = slideIndex == 0 ? x.length : slideIndex;
+    let index = (parseInt(n) + $slides.length) % $slides.length;
+    index = index == 0 ? $slides.length : index;
 
-    var $slide = $('#s'+slideIndex);
-    updateTitle($slide[0]);
+    var $slide = $('#s' + index);
 
-    if ($slide.hasClass('all')) {
-        $('#s'+slideIndex+' .collapse').collapse('hide');
-        $slide.addClass('collapsed');
-        $slide.removeClass('all');
+    if ($slide.length > 0) {
+
+        // updateTitle($slide[0]);
+
+        if ($slide.hasClass('all')) {
+            $('#s' + index + ' .collapse').collapse('hide');
+            $slide.addClass('collapsed');
+            $slide.removeClass('all');
+        }
+
+        if ($('#s' + index).hasClass('collapsed')) {
+            $('#uncollapse_button').text('Uncollapse');
+        } else {
+            $('#uncollapse_button').text('Collapse');
+        }
+
+        $('.slide').hide();
+        $('.lcref .slide').show();
+
+        $slide.css('display', '');
+        $slide.css('vertical-align', '');
+
+        $slide.click();
+
+        // $slide.find('.loading_icon').hide();
+        // $slide.find('iframe:not([src])').each(function() {
+        //     $(this).attr('src', $(this).attr('data-src')).show();
+        //     $(this).iFrameResize({checkOrigin:false});
+        // });
+        //
+        // renderSlide($slide[0]);
+        // renderSlide($slide.prev('.slide')[0]);
+        // renderSlide($slide.next('.slide')[0]);
+
     }
-
-    if ($('#s' + slideIndex).hasClass('collapsed')) {
-        $('#uncollapse_button').text('Uncollapse');
-    } else {
-        $('#uncollapse_button').text('Collapse');
-    }
-
-    $('.slide').hide();
-
-    var $slide = $('#s' + slideIndex);
-    if ($slide != null) {
-
-        $slide.css('display', "table-cell");
-        $slide.css('vertical-align', "middle");
-
-        console.log('RENDER SLIDE: ' + slideIndex);
-        renderSlide($slide[0]);
-        renderSlide($slide.prev('.slide')[0]);
-        renderSlide($slide.next('.slide')[0]);
-    }
-
-    updateSlideProgress(slideIndex, false);
 }
 
-function print() {
+
+function print(promise) {
 
     $('html').css('position', 'relative');
 
-    if(mode == 'dual' || mode == 'compose') {
-        $('#print_content').html($('#output').html());
-        $('#print_content').find('.slide.tex2jax_ignore').each(function() {
-            renderSlide(this);
+    if($('#right_half').hasClass('overview') || $('#right_half').hasClass('compose') || $('#right_half').hasClass('info') ) {
+        // $('#print_content').html($('#output').html());
+        $('#print_content').html('');
+        $('#print_content').append($('#output').clone());
+        promise.then(el => {
+            $('#print_content').find('.slide.tex2jax_ignore').each(function() {
+                // renderSlide(this);
+                $(this).removeClass('tex2jax_ignore');
+            });
+            MathJax.typesetPromise().then(el => {
+                $('#print_content').find('.steps').css('visibility', 'visible');
+            });
         });
-    } else if(mode == 'present'){
+    } else if($('#right_half').hasClass('present')){
         $('.title_box').first().clone().appendTo($('#print_content'));
         $('#print_content').find('.title_box').css('font-size', '0.5em');
         $('#print_content').find('.title_box').css('padding-bottom', '1em');
@@ -207,6 +215,9 @@ function print() {
     $('#print_content').addClass('output_dual');
     $('#print_content').find('.slide').css('display', 'block');
     $('#print_content').find('.slide').css('height', 'auto');
+    $('#print_content').find('img:not([src])').each(function() {
+        imagePostprocess(this);
+    });
     $('#print_content').find('.slide').show();
 
     $('#print_content').find('.statement').after('<hr/>');
@@ -220,120 +231,79 @@ function print() {
     $('#print_content').find('.collapsea').hide();
     $('#print_content').find('.collapse').show();
 
-    $('#print_content').find('.steps').css('visibility', 'visible');
-
-}
-
-function collapseToggle(slideIndex) {
-
-    var $slide = $('#s' + slideIndex);
-
-    if ($slide.hasClass('collapsed')) {
-        $('#s'+slideIndex+' .collapsea').each(function () {
-            if($(this).hasClass('collapsed')) {
-                $(this).click();
-            }
-        });
-        $slide.removeClass('collapsed');
-        $('#uncollapse_button').text('Collapse');
-    } else {
-        $('#s'+slideIndex+' .collapsea').each(function () {
-            if(!$(this).hasClass('collapsed'))
-            $(this).click();
-        });
-        $slide.addClass('collapsed');
-        $('#uncollapse_button').text('Uncollapse');
-    }
 }
 
 function removeTypeset() { // i.e. Show LaTeX source
 
-    console.log('removeTypset called ' + slideIndex);
-    var HTML = MathJax.HTML;
+        console.log('removeTypset called ' + slideIndex);
+        // var jax = MathJax.getAllJax('s' + slideIndex);
+        var jax = MathJax.getAllJax();
+        for (var i = jax.length - 1, m = -1; i > m; i--) {
+            var jaxNode = jax[i].start.node, tex = jax[i].math;
 
-    // if(!showall) {
-    //     var jax = MathJax.Hub.getAllJax('s' + slideIndex);
-    // } else {
-    //     var jax = MathJax.Hub.getAllJax();
-    // }
-    var jax = MathJax.Hub.getAllJax('s' + slideIndex);
+            if (jax[i].display) {
+                if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
+                tex = "\\["+tex+"\\]";
+            } else {tex = "$"+tex+"$"}
 
-    for (var i = jax.length - 1, m = -1; i > m; i--) {
-        var script = jax[i].SourceElement(), tex = jax[i].originalText;
-        var display = 0;
-
-        if (script.type.match(/display/)) {
-            display = 1;
-            if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
-            tex = "\\["+tex+"\\]";
-        } else {tex = "$"+tex+"$"}
-
-        if (typeof jax[i] != typeof undefined) {
-            try {
-                jax[i].Remove();
-            } catch(err) {
-                console.log(err);
+            var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
+            $preview.html(tex);
+            if (jax[i].display) {
+                $preview.css('display', 'block');
             }
-        }
-        var preview = script.previousSibling;
-        if (preview && preview.className === "MathJax_Preview") {
-            preview.parentNode.removeChild(preview);
-        }
 
-        preview = HTML.Element("span",{className:"latexSource"},[tex]);
-        if (display == 1) {
-            preview.style.display = "block";
+            jaxNode.parentNode.insertBefore($preview[0], jaxNode);
+            jaxNode.remove();
         }
-        script.parentNode.insertBefore(preview,script);
-        script.parentNode.removeChild(script);
-    }
-
-    // document.getElementById('source_button').disabled = false;
-
+        MathJax.typesetClear();
 }
 
-function showTexSource(show) {
-    var oldElems = document.getElementById('output').getElementsByClassName("latexSource");
+function showTexSource(show, editor) {
 
-
-    for(var i = oldElems.length - 1; i >= 0; i--) {
-        var oldElem = oldElems.item(i);
-        var parentElem = oldElem.parentNode;
-        var innerElem;
-
-        while (innerElem = oldElem.firstChild)
-        {
-            parentElem.insertBefore(innerElem, oldElem);
-        }
-        parentElem.removeChild(oldElem);
-    }
-
-
+    $('#output').attr('contentEditable', show);
+    $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
+    $('.paragraphs').css('color', '').css('font-family', '');
     if (!show) {
-        MathJax.Hub.Queue(
-            ["PreProcess", MathJax.Hub, document.getElementById('s' + slideIndex)],
-            function () {
-                if (MathJax.InputJax.TeX.resetEquationNumbers) {
-                    MathJax.InputJax.TeX.resetEquationNumbers();
-                }
-            },
-            // ["resetEquationNumbers", MathJax.InputJax.TeX],
-            ["Typeset", MathJax.Hub, document.getElementById('s' + slideIndex)],
-        );
+        MathJax.startup.document.state(0);
+        MathJax.texReset();
+
+        var oldElems = document.getElementById('output').getElementsByClassName("latexSource");
+        // var oldElems = document.getElementById('s' + slideIndex).getElementsByClassName("latexSource");
+
+        for(var i = oldElems.length - 1; i >= 0; i--) {
+            var oldElem = oldElems.item(i);
+            var parentElem = oldElem.parentNode;
+            var innerElem;
+
+            var textNode = document.createTextNode(oldElem.textContent);
+            parentElem.insertBefore(textNode, oldElem);
+        }
+
+        $('.latexSource').remove();
+        // var doms = [];
+        // $('#output > .slide').not('.tex2jax_ignore').each(function() {
+        //     doms.push($(this)[0]);
+        // });
+        // typeset(doms);
+        MathJax.startup.promise.then(() => {
+            $('.slide').addClass('tex2jax_ignore');
+            $('.slide').removeClass('edit');
+            renderSlide($('#s' + slideIndex)[0]);
+        });
         editor.container.style.pointerEvents="auto";
-        editor.container.style.opacity=1; // or use svg filter to make it gray
+        editor.container.style.opacity = 1; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", false);
         editor.focus();
     } else {
+        $('.slide[slide="' + slideIndex + '"]').find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
+        $('.slide[slide="' + slideIndex + '"]').find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
         removeTypeset();
+        $('.slide[slide="' + slideIndex + '"]').addClass('edit');
         editor.container.style.pointerEvents="none";
         editor.container.style.opacity=0.5; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", true);
         editor.blur();
     }
-
-    document.getElementById('output').contentEditable = show;
-    // document.getElementById('edit_button').className = show ? 'btn btn-danger btn-sm menu_button' : 'btn btn-outline-info btn-sm menu_button';
 
 }
 
@@ -345,42 +315,30 @@ function showXML(docCranach) {
 
 }
 
-function showJaxSource(elementId) {
-    var jax = MathJax.Hub.getAllJax(elementId);
+function showJaxSource(outputId) {
 
-    for (var m = -1, i = jax.length - 1; i > m; i--) {
-        var script = jax[i].SourceElement(), tex = jax[i].originalText;
-        var display = 0;
+    var jax = MathJax.getAllJax(outputId);
 
-        if (script.type.match(/display/)) {
-            display = 1;
-            if (!tex.match(/begin{equation}/))
+    for (var i = jax.length - 1, m = -1; i > m; i--) {
+        var jaxNode = jax[i].start.node, tex = jax[i].math;
+
+        if (jax[i].display) {
+            if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
             tex = "\\["+tex+"\\]";
         } else {tex = "$"+tex+"$"}
 
-        if (typeof jax[i] != typeof undefined) {
-            try {
-                jax[i].Remove();
-            } catch(err) {
-                console.log(err);
-            }
-        }
-        var preview = script.previousSibling;
-        if (preview && preview.className === "MathJax_Preview") {
-            preview.parentNode.removeChild(preview);
+        var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
+        $preview.html(tex);
+        if (jax[i].display) {
+            $preview.css('display', 'block');
         }
 
-        preview = MathJax.HTML.Element("span",{className:"latexSource"},[tex]);
-        if (display == 1) {
-            preview.style.display = "block";
-        }
-        script.parentNode.insertBefore(preview,script);
-        script.parentNode.removeChild(script);
+        jaxNode.parentNode.insertBefore($preview[0], jaxNode);
+        jaxNode.remove();
     }
+    MathJax.typesetClear();
 
-    var theContent = document.getElementById('output');
-
-    var clone = theContent.cloneNode(true);
+    var clone = document.getElementById(outputId).cloneNode(true);
 
     var oldElems = clone.getElementsByClassName("latexSource");
 
@@ -400,72 +358,37 @@ function showJaxSource(elementId) {
     var editedContent = clone.innerHTML;
 
     var body = new DOMParser().parseFromString(editedContent, 'text/html');
-    // var body = new DOMParser().parseFromString(editedContent, 'application/xml');
-
 
     var bodyString = new XMLSerializer().serializeToString(body);
+    // console.log(bodyString);
     var body = new DOMParser().parseFromString(bodyString, "application/xml");
-
-    // console.log("SOURCE NODE: ");
     // console.log(body);
     return body;
 }
 
-function commitWb() {
-    var body = showJaxSource('output');
-    $.ajax({
-        url: 'xsl/html2juengere.xsl',
-        success: function(xsl) {
-            var xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(xsl);
-            console.log(body);
-            fragment = xsltProcessor.transformToFragment(body,document);
-            console.log('HTML2PRELOVU');
-            fragmentStr = new XMLSerializer().serializeToString(fragment);
-	    console.log(fragmentStr);
-
-            $('#source_text').val('');
-            var xml = fragmentStr;
-
-            var xmlDOM = new DOMParser().parseFromString(xml, 'text/xml');
-
-            var xsltProcessor = new XSLTProcessor();
-
-            $.ajax({
-                url: 'xsl/juengere2wb.xsl',
-                success: function(xsl) {
-                    console.log('PRECRANACH2WB');
-                    console.log(xmlDOM);
-                    xsltProcessor.importStylesheet(xsl);
-                    fragment = xsltProcessor.transformToFragment(xmlDOM,document);
-                    console.log(fragment);
-                    fragmentStr = new XMLSerializer().serializeToString(fragment);
-                    console.log(fragmentStr);
-                    var processedStr = fragmentStr
-                        .replace(/\n(\s|\n|\r)*/g, "\n")
-                        .replace(/(\s*@newline\s*)+/g, "\n\n")
-                        .replace(/&amp;/g, '&')
-                        .replace(/(?:\s|\n)*@slide(?:\s|\n)*@((course|lecture|week|chapter|section|subsection|subsubsection|topic){.*?})/g, "@$1")
-                        .replace(/&lt;/g, '<')
-                        .replace(/&gt;/g, '>')
-                        .replace(/&amp;/g, '&')
-                        .replace(/&apos;/g, "'")
-                        .replace(/^\n*/, '')
-                        .replace(/@(section|subsection|subsubsection)\n@title\n*((?:.|\n)*?)\n@endtitle/g, "@$1{$2}")
-                        .replace(/\\class{steps\d+ steps\}/g, '@nstep');
-                    editor.setValue(processedStr, 1);
-                    resetHighlight();
-                    showTexSource(false);
-                    $('#output .slide').addClass('tex2jax_ignore');
-                    postprocess();
-                }
-            });
-        }
-    });
-}
-
 function destroyClickedElement(event) {
     document.body.removeChild(event.target);
+}
+
+function collapseToggle(slideIndex) {
+
+    var $slide = $('#s' + slideIndex);
+
+    if ($slide.hasClass('collapsed')) {
+	// $slide.find('.collapse').show();
+        $slide.find('.collapse').collapse('show');
+        $slide.removeClass('collapsed');
+        $slide.find('a.collapsea').removeClass('collapsed');
+        $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        $('#uncollapse_button').text('Collapse');
+    } else {
+	// $slide.find('.collapse').hide();
+        $slide.find('.collapse').collapse('hide');
+        $slide.addClass('collapsed');
+        $slide.find('a.collapsea').addClass('collapsed');
+        $('#uncollapse_button').text('Uncollapse');
+    }
+    // $slide.find('a.collapsea').each(function() { this.text = $slide.hasClass('collapsed') ? expchar : colchar; });
 }
 
 function focusOn(slide, text) {
@@ -480,6 +403,20 @@ function focusOn(slide, text) {
     } else {
         $('#output').scrollTo('#s' + slide, 150);
     }
+    if($('#right_half').hasClass('present')) {
+        baseRenderer.then(cranach => {
+            showDivs(slide, cranach);
+        });
+    }
+}
+
+function jumpToSlide($output, $slide) {
+    $output.scrollTo($slide);
+    if($('#right_half').hasClass('present')) {
+        baseRenderer.then(cranach => {
+            showDivs($slide.attr('slide'), cranach);
+        });
+    }
 }
 
 function highlight(item) {
@@ -491,6 +428,7 @@ function highlight(item) {
 function imagePostprocess(image) {
 
     if ($(image).hasClass('exempt')) {
+        $(image).attr('src', $(image).attr('data-src'));
         return 1;
     }
 
@@ -498,11 +436,11 @@ function imagePostprocess(image) {
 
     var image_width = $(image).closest('.image').css('width');
 
-    $(image).closest('.image').css('background', '');
+    // $(image).closest('.image').css('background', '');
     $(image).closest('.image').css('height', '');
-    $(image).closest('.dual-left').css('background', '');
+    // $(image).closest('.dual-left').css('background', '');
     $(image).closest('.dual-left').css('height', '');
-    $(image).closest('.dual-right').css('background', '');
+    // $(image).closest('.dual-right').css('background', '');
     $(image).closest('.dual-right').css('height', '');
 
     var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
@@ -568,7 +506,10 @@ function imagePostprocess(image) {
             $(image).css('width', '100%');
         }
     }
+
+    $(image).css('background', 'none');
     $(image).show();
+
 }
 
 function updateTitle(slide) {
@@ -603,16 +544,14 @@ function updateTitle(slide) {
 
     var section = $(slide).attr('section') ?  chapter + '.' + $(slide).attr('section') : '';
 
-    // var sectionTitle = $(slide).attr('section_title') ? $(slide).attr('section_title') : $(slide).prevAll('[section_title!=""]:first').attr('section_title');
-
     var sectionTitle = $('a.section.highlighted').find('span.title').html();
 
     sectionTitle = sectionTitle ? sectionTitle : '';
 
-    $('.current_course').text(course);
-    $('.current_chapter').text(chapterType + ' ' + chapter);
-    $('.current_chapter_title').text(chapterTitle);
-    $('.current_topics').text(topics);
+    $('.current_course').html(course);
+    $('.current_chapter').html(chapterType + ' ' + chapter);
+    $('.current_chapter_title').html(chapterTitle);
+    $('.current_topics').html(topics);
 
     if (section != '') {
         $('.current_section').html('Section ' + section + '<br/>' + sectionTitle);
@@ -620,21 +559,16 @@ function updateTitle(slide) {
         $('.current_section').html('');
     }
     $('.current_slide').html('Slide ' + index);
-    if (course != '' || chapter != '' || topic != '') {
+    if (course != '' || chapter != '' || topics != '') {
         $('title').text(course);
     }
 
+    $('#info_half div.keywords[environ="course"], div.keywords[environ="root"]').show();
+    $('#info_half div.keywords[environ="chapter"][chapter="' + chapter + '"][slide="all"]').show();
 
-    $('div.keywords').hide();
-    $('div.keywords[environ="course"], div.keywords[environ="root"]').each(function(){
-        $(this).show();
-    });
-    $('div.keywords[environ="chapter"][chapter="' + chapter + '"][slide="all"]').each(function(){
-        $(this).show();
-    });
-
-    $('div.keywords[slide!="all"]').hide();
-    $('div.keywords[chapter="' + chapter + '"][slide="' + index + '"]').show();
+    $('#info_half div.keywords[slide!="all"]').hide();
+    $('#info_half div.keywords[chapter="' + chapter + '"][slide="' + index + '"]').show();
+    // typeset([document.getElementById('left_half')]);
 
 }
 
@@ -657,24 +591,26 @@ function isElementInViewport (el) {
     );
 }
 
-function updateSlideProgress(slideIndex, refresh) {
+function updateSlideProgress(index, refresh) {
     if (refresh) {
         $('#slide_progress tbody tr').html('');
         var numSlides = document.getElementsByClassName('slide').length;
         var spacing = Math.min(3, 5*20/numSlides);
         for (var i = 0; i < numSlides; i++) {
-            $('#slide_progress tbody tr').append('<td num="' + (+i + 1) + '" style="border-left:' + spacing + 'px solid #fff;border-right: ' + spacing + 'px solid #fff;background-color:#eee;height:7px;"></td>');
+            $('#slide_progress tbody tr').append('<td num="' + (+i + 1) + '" style="border-left-width:' + spacing + 'px; border-right-width: ' + spacing + 'px;"></td>');
         }
     }
     $('#slide_progress td').each(function() {
-        $(this).css('background-color', $(this).attr('num') <= slideIndex ? '#ccc' : '#eee');
+        // $(this).css('background-color', $(this).attr('num') <= slideIndex ? '#ccc' : '#eee');
+        if ($(this).attr('num') <= index) {
+            $(this).removeClass('future').addClass('past');
+        } else {
+            $(this).removeClass('past').addClass('future');
+        }
     });
-    // $('#slide_progress td').css('background-color', '#eee');
-    // $('#slide_progress').find('td[num="' + slideIndex + '"]').css('background-color', '#ccc');
-
 }
 
-function updateModalRefby(md5String) {
+function updateModalRefby(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
     var contentURL = cranach.attr['contentURL'];
     console.log('CONTENTURL ' + contentURL);
@@ -706,7 +642,7 @@ function updateModalRefby(md5String) {
     });
 }
 
-function updateModalProofs(md5String) {
+function updateModalProofs(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
     $.ajax({
         url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
@@ -723,9 +659,6 @@ function updateModalProofs(md5String) {
             var html = '';
             var index = 1;
             while (thisNode) {
-                console.log('SUBSTATEMENT: ' + thisNode.getAttribute('md5') );
-                // html += '<li><a target="_blank" knowl="' + cranach.rootURL + '/cranach_bare.php?xml=' + cranach.attr['dir'] + '/'+ thisNode.getAttribute('filename') + '&query=//lv:substatement[@of=\'' + md5String + '\']"><strong>Proof</strong></a></li>';
-                // html += '<li><a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&query=//lv:substatement[@of=\'' + md5String + '\']"><strong>Proof</strong></a></li>';
                 if (html != '') {
                     html += ', ';
                 }

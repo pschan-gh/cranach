@@ -1,0 +1,18 @@
+<document xmlns="http://www.math.cuhk.edu.hk/~pschan/cranach">
+  <slides environment="" chapter_type="">
+    <slide environment="" chapter_type="" wbtag="slide" id="s1" slide="1" course="" chapter="" section="" subsection="" subsubsection="" chapter_title="" section_title=""><keywords slide="1" environ="slide" chapter="" course=""/>
+<statement environment="statement" chapter_type="" type="Theorem" wbtag="thm" num="1" md5="f3dce3f6672951976f9809abdd2c1a3b" course="" chapter="" slide="1" item="1"><label course="" chapter="" chapter_type="" section="" subsection="" subsubsection="" environment="statement" wbtag="label" name="test" type="Theorem"/>
+
+dsfsdfs
+</statement>
+<newline course="" chapter="" chapter_type="" section="" subsection="" subsubsection="" environment=""/>
+By  <ref environment="" chapter_type="" label="test" name="" wbtag="ref" course="" chapter="" slide="1"><title>UNDEFINED</title></ref> ...</slide>
+  </slides>
+<index xmlns="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
+    <entry md5="f3dce3f6672951976f9809abdd2c1a3b" item="1" slide="1" chapter="" course="" num="1" wbtag="thm" type="Theorem" chapter_type="" environment="statement" filename="local" file_md5="c88e79a8fdb40973731f9d2181d86b9a">
+      <branch item="1" slide="1" chapter="" course="" md5="f3dce3f6672951976f9809abdd2c1a3b" num="1" wbtag="thm" type="Theorem" chapter_type="" environment="statement" filename="local" file_md5="c88e79a8fdb40973731f9d2181d86b9a">
+        <label item="1" slide="1" chapter="" course="" md5="f3dce3f6672951976f9809abdd2c1a3b" num="1" wbtag="label" type="Theorem" chapter_type="" environment="statement" filename="local" file_md5="c88e79a8fdb40973731f9d2181d86b9a" section="" subsection="" subsubsection="" name="test"/>
+      </branch>
+    </entry>
+    <ref slide="1" chapter="" course="" wbtag="ref" name="" label="test" chapter_type="" environment="" filename="local" file_md5="c88e79a8fdb40973731f9d2181d86b9a"/>
+  </index></document>
