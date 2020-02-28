@@ -2,7 +2,7 @@
 
 The project aims to develop a scientific document system
 which works out-of-the-box for rapid slideshow preparation and presentation.
-  
+
 It's designed mainly for Math and Science educators already well-versed in LaTeX.
 
 It has the following components:
@@ -19,10 +19,15 @@ It has the following components:
    * Each theorem-like statement is assigned an MD5 key generated from its content to facilitate labelling and referencing.
 
 3. A frontend web-browser-oriented presentational system.  
-   * It supports keyword/theorem/section hyper-referencing. 
+   * It supports keyword/theorem/section hyper-referencing.
    * It features an Ace editor so users may directly render wb code to cranach and simultaneously to the browser frontend.
    * Users may export cranach file to LaTeX with a click on a button.
    * It has preliminary support for rendering latexml documents.
    * A significant portion of the frontend is devoted to presenting slideshows.
 
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
+
+# Devel Branch
+
+Uses Mathjax 3.0.
+No more reliance on php
