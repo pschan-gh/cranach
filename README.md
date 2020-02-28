@@ -28,6 +28,5 @@ It has the following components:
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
 
 # Devel Branch
-
-Uses Mathjax 3.0.
-No more reliance on php
+   * Migrated to Mathjax 3.0.
+   * No more reliance on php.
