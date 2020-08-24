@@ -5,16 +5,21 @@
 </title>
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <link rel="shortcut icon" href="#"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
     <script src="js/jquery.scrollTo.min.js"></script>
 
@@ -50,8 +55,6 @@
 
     <script>
     // console.clear();
-    // const colchar = "▽";
-    // const expchar = "►";
     var editMode = false;
     var slideIndex = 1;
     var slideCount = 0;
@@ -130,9 +133,6 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js"></script> -->
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script> -->
-
 
 <style type="text/css">
 .ace_highlight-marker {
@@ -275,11 +275,9 @@
                             </li> -->
                         </ul>
                         <ul id="output_icon_container" class="navbar-nav ml-auto">
-                            <!-- <input type="image" class="nav-item plain_button icon" id="maximize_icon" src="icons/Maximize_Icon.svg"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"/> -->
                             <button class="nav-item plain_button icon" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
                                 <i class="material-icons">zoom_out_map</i>
                             </button>
-                            <!-- <input id="normalize_icon" type="image" class="nav-item plain_button icon"  src="icons/Normalize_Icon.svg" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size" style="max-height:1em;width:auto"/> -->
                             <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
                                 <i class="material-icons">vertical_split</i>
                             </button>
@@ -348,13 +346,6 @@
                                     Font &#xff0d;
                                 </a>
                                 <a id="print_button" class="menu_button dropdown-item" function="print" onclick="print(baseRenderer);">Print</a>
-                                <!-- -->
-                                <!-- <a class="dropdown-item">
-                                    <a id="toc_dropdown" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">TOC</a>
-                                    <div id="toc_dropdown_menu" class="dropdown-menu" aria-labelledby="toc_dropdown">
-                                    </div>
-                                </a> -->
-                                <!-- -->
                                 <div class="dropdown-divider"></div>
                                 <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
                                 <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
@@ -378,7 +369,6 @@
                                     <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
                                     <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
                                     <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
-                                        <!-- <option value="">Slide</option> -->
                                     </select>
                                 </div>
                             </div>
@@ -395,7 +385,6 @@
                             <button class="btn plain_button icon info" id="edit_icon" data-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
                                 <i class="material-icons">edit</i>
                             </button>
-                            <!-- <input type="image" src="icons/Edit_Notepad_Icon.svg" id="edit_icon" class="plain_button icon info" onclick="$('#edit_button').click();"/> -->
                         </li>
                         <li class="nav-item" style="width:auto">
                             <button class="btn plain_button icon info" id="full_screen_icon" data-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
@@ -403,7 +392,6 @@
                                     fullscreen
                                 </i>
                             </button>
-                            <!-- <input type="image" src="icons/Maximize_Icon.svg" id="full_screen_icon" class="icon info" onclick="$('#present_button').click();"/> -->
                         </li>
                         <li>
                             <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('#output').scrollTo($('#s' + slideIndex));">
@@ -411,7 +399,6 @@
                                     fullscreen_exit
                                 </i>
                             </button>
-                            <!-- <input type="image" src="icons/Normalize_Icon.svg" id="dual_icon" class="plain_button icon info" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('.slide').removeAttr('style');$('#output').scrollTo($('#s' + slideIndex));$('#s' + slideIndex).click();"/> -->
                         </li>
                     </ul>
                 </div>
@@ -813,12 +800,8 @@ $(function() {
         .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
 
-        // console.log(buffer);
-
         let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
 
-        // console.log(numOfSlides);
-        // console.log(editor.getCursorPosition());
         var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
         .replace(/@sep/g, '@slide')
         .replace(/@@/g, '')
@@ -867,80 +850,12 @@ $(function() {
         });
     });
 
-
-    // $('#render_sel').mouseover(function() {
-    //     if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-    //         return;
-    //     }
-    //     $(".render_sel.dropdown-menu").html('');
-    //
-    //     var buffer = editor.getValue().replace(/@sep/g, '@slide')
-    //     .replace(/@@/g, '')
-    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
-    //     .replace(/\<!--(.|\n)*?--\>/g, '');
-    //
-    //     // console.log(buffer);
-    //
-    //     let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-    //
-    //     // console.log(numOfSlides);
-    //     // console.log(editor.getCursorPosition());
-    //     var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
-    //     .replace(/@sep/g, '@slide')
-    //     .replace(/@@/g, '')
-    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
-    //     .replace(/\<!--(.|\n)*?--\>/g, '');
-    //     console.log(pastBuffer);
-    //
-    //     let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-    //
-    //     $(".render_sel.dropdown-menu").append($('<a>All</a>').addClass('dropdown-item').attr('value', 'all'));
-    //     $(".render_sel.dropdown-menu").append($('<a>' + currentSlide + '</a>').addClass('dropdown-item').attr('value', currentSlide));
-    //     $(".render_sel.dropdown-menu").append('<hr/>');
-    //     for (i = numOfSlides; i >= 1; i--) {
-    //         $(".render_sel.dropdown-menu").append($('<a>' + i + '</a>').addClass('dropdown-item').attr('value', i));
-    //     }
-    //
-    // });
-
-
-    // $('#render_sel a').click(function() {
-    //     let query;
-    //     if ($(this).val() != 'all') {
-    //         let slideNum = $(this).attr('value');
-    //         query = '//lv:slide[@slide=' + slideNum + ']';
-    //     } else {
-    //         query = '';
-    //     }
-    //     console.log(query);
-    //     $(".render_sel.dropdown-menu").html('');
-    //     baseRenderer = new Cranach('').setup({'query':query})
-    //     .then(cranach => {
-    //         console.log(cranach);
-    //         MathJax.typesetClear();
-    //         return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
-    //     })
-    //     .then(cranach => {
-    //         postprocess(cranach);
-    //         if (query != '') {
-    //             $('#s1').find('.collapse').collapse('show');
-    //             $('#s1').find('.collapsea').text('▽');
-    //             // ▽⊟
-    //         }
-    //         return cranach;
-    //     });
-    // });
-
-
     $('#left_half .collapsea').click(function() {
         if ($(this).hasClass('collapsed')) {
             $(this).removeClass('collapsed')
         } else {
             $(this).addClass('collapsed');
         }
-        // this.text = $(this).hasClass('collapsed') ? '⊞' : '⊟';
     });
 });
 
