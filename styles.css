@@ -672,7 +672,7 @@ display: none;
     height:1.2rem; */
     /* background-color:transparent;
     border:none; */
-    margin:auto;
+    /* margin:auto; */
     overflow:hidden;
 }
 
@@ -691,8 +691,8 @@ display: none;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 24px 24px; */
-    width:1.5em;
-    height:1.5em;
+    /* width:1.5em; */
+    /* height:1.5em; */
     background-color:transparent;
     border:none;
     display:none;

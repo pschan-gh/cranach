@@ -254,7 +254,7 @@
                             <li class="nav-item">
                                 <a class="nav-link">
                                     <label for="fileInput">
-                                        <i class="material-icons">folder_open</i>
+                                        <i class="material-icons">open_in_browser</i>
                                     </label>
                                 </a>
                                 <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
@@ -274,13 +274,19 @@
                                 </div>
                             </li> -->
                         </ul>
-                        <ul id="output_icon_container" class="navbar-nav ml-auto">
-                            <button class="nav-item plain_button icon" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
-                                <i class="material-icons">zoom_out_map</i>
-                            </button>
-                            <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
-                                <i class="material-icons">vertical_split</i>
-                            </button>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <!-- <button class="plain_button icon nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
+                                    <i class="material-icons">zoom_out_map</i>
+                                </button> -->
+                                <a class="nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"><i class="material-icons">zoom_out_map</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <!-- <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
+                                    <i class="material-icons">vertical_split</i>
+                                </button> -->
+                                <a id="normalize_icon" class="nav-link" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size"><i class="material-icons">vertical_split</i></a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="$('.pane').removeClass('compose').removeClass('present').addClass('info');$('#left_half').attr('mode', 'info').removeClass('full');$('#right_half').show();" data-toggle="tooltip" data-placement="right" title="Close composer">
                                     <i class="material-icons">close</i>
@@ -550,6 +556,7 @@ function showLatex(promise) {
     promise.then(el => {
 	var docCranach = el.attr['cranachDoc'];
 	var contentURLDir = el.attr['contentURLDir'];
+    var contentURL = el.attr['contentURL'];
 	$.ajax({
             url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
             dataType: 'xml'
@@ -564,6 +571,7 @@ function showLatex(promise) {
 		var xmlDOM = oParser.parseFromString(xml, "application/xml");
 		xsltProcessor.importStylesheet(xsl);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+        xsltProcessor.setParameter('', 'contenturl', contentURL);
 		fragment = xsltProcessor.transformToFragment(xmlDOM, document);
 		report(fragment);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
