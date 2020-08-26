@@ -7,6 +7,7 @@ function renderSlide(slide) {
     $(slide).find('iframe:not([src])').not(".webwork").each(function() {
         $(this).attr('src', $(this).attr('data-src')).show();
         var $iframe = $(this);
+        $(this).css('background', 'none');
         $(this).iFrameResize({checkOrigin:false});
     });
 

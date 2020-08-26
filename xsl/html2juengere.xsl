@@ -27,31 +27,20 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- <xsl:template match="*[@wbtag]">
-        <xsl:element name="{@wbtag}" namespace="{$lv}">
-            <xsl:copy-of select="@wbtag"/>
-            <xsl:copy-of select="@label"/>
-            <xsl:copy-of select="@name"/>
-            <xsl:copy-of select="@id"/>
-            <xsl:copy-of select="@href"/>
-            <xsl:apply-templates select="*|text()" />
-        </xsl:element>
-    </xsl:template> -->
-
     <xsl:template match="//xh:body">
         <xsl:element name="root" namespace="{$lv}">
             <xsl:apply-templates select="xh:div[contains(@class, 'slide')]"/>
         </xsl:element>
     </xsl:template>
 
-    <!-- <xsl:template match="/">
-        <xsl:element name="root" namespace="{$lv}">
-            <xsl:element name="slides" namespace="{$lv}">
-                <xsl:apply-templates select="xh:body/xh:div[contains(@class, 'slide')]"/>
-            </xsl:element>
+    <xsl:template match="div[@wbtag='webwork']" >
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:element name="{@wbtag}" namespace="{$lv}">
+            <xsl:copy-of select="@ww_id"/>
+            <xsl:copy-of select="@pg_file"/>
         </xsl:element>
-    </xsl:template> -->
-
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+    </xsl:template>
 
     <xsl:template match="xh:*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
       <xsl:element name="xh:{local-name()}">
@@ -79,17 +68,6 @@
             <xsl:apply-templates select="xh:div[@class='slide_container']/xh:div[@class='slide_content']/xh:*|xh:div[@class='slide_container']/xh:div[@class='slide_content']/text()"/>
         </xsl:element>
     </xsl:template>
-
-    <!-- <xsl:template match="*[@wbtag]">
-        <xsl:element name="{@wbtag}" namespace="{$lv}">
-            <xsl:copy-of select="@wbtag"/>
-            <xsl:copy-of select="@label"/>
-            <xsl:copy-of select="@name"/>
-            <xsl:copy-of select="@id"/>
-            <xsl:copy-of select="@href"/>
-            <xsl:apply-templates select="*|text()" />
-        </xsl:element>
-    </xsl:template> -->
 
     <xsl:template match="xh:span[@class='escaped']" >
         <xsl:value-of select="concat('@', normalize-space(text()))"/>
@@ -139,10 +117,6 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- <xsl:template match="*[@wbtag='newline' or @wbtag='para' or local-name()='br']" >
-      <xsl:element name="newline" namespace="{$lv}"/>
-    </xsl:template> -->
-
     <xsl:template match="*[@wbtag='newline' or @wbtag='para']" >
       <xsl:element name="newline" namespace="{$lv}"/>
     </xsl:template>
@@ -182,28 +156,6 @@
             <xsl:apply-templates select="text()|*"/>
             <!-- <xsl:text>&#xa;</xsl:text> -->
         </xsl:element>
-    </xsl:template>
-
-    <!-- <xsl:template match="*[@class='custom_title']" >
-        <xsl:element name="title" namespace="{$lv}">
-            <xsl:apply-templates select="*|text()" />
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:template match="*[@wbtag='label']" >
-        <xsl:element name="label" namespace="{$lv}">
-            <xsl:apply-templates select="*|text()" />
-        </xsl:element>
-    </xsl:template> -->
-
-
-    <xsl:template match="xh:div[@wbtag='webwork']" >
-        <!-- <xsl:text>&#xa;</xsl:text> -->
-        <xsl:element name="{@wbtag}" namespace="{$lv}">
-            <xsl:copy-of select="@ww_id"/>
-            <xsl:copy-of select="@pg_file"/>
-        </xsl:element>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="xh:div[@wbtag='wb_image']" >

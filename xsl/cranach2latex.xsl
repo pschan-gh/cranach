@@ -10,6 +10,7 @@
 	<xsl:preserve-space elements="xh:textarea xh:pre lv:paragraphs"/>
 
 	<xsl:param name="contenturldir"></xsl:param>
+	<xsl:param name="contenturl"></xsl:param>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="lv:document" />
@@ -205,8 +206,12 @@
 </xsl:template>
 
 <xsl:template match="lv:webwork">
+	<xsl:variable name="slide">
+		<xsl:value-of select="ancestor::lv:slide/@slide" />
+	</xsl:variable>
 	<xsl:text>&#xa;</xsl:text>
-	<xsl:text>{\bf WeBWork}</xsl:text>
+	<xsl:value-of select="concat('\href{', $contenturl, '&amp;slide=', $slide , '}{{\bf WeBWorK}}')"/>
+	<!-- <xsl:text>{\bf WeBWork}</xsl:text> -->
 </xsl:template>
 
 <xsl:template match="xh:h1">

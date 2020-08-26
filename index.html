@@ -5,16 +5,21 @@
 </title>
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <link rel="shortcut icon" href="#"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
     <script src="js/jquery.scrollTo.min.js"></script>
 
@@ -31,6 +36,10 @@
 
     <script src="js/ace-builds-master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="https://unpkg.com/github-api/dist/GitHub.min.js"></script> -->
+    <script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script>
 
     <script type="text/javascript">
       function report() {}
@@ -50,8 +59,6 @@
 
     <script>
     // console.clear();
-    // const colchar = "▽";
-    // const expchar = "►";
     var editMode = false;
     var slideIndex = 1;
     var slideCount = 0;
@@ -130,9 +137,6 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js"></script> -->
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script> -->
-
 
 <style type="text/css">
 .ace_highlight-marker {
@@ -254,7 +258,7 @@
                             <li class="nav-item">
                                 <a class="nav-link">
                                     <label for="fileInput">
-                                        <i class="material-icons">folder_open</i>
+                                        <i class="material-icons">open_in_browser</i>
                                     </label>
                                 </a>
                                 <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
@@ -274,15 +278,19 @@
                                 </div>
                             </li> -->
                         </ul>
-                        <ul id="output_icon_container" class="navbar-nav ml-auto">
-                            <!-- <input type="image" class="nav-item plain_button icon" id="maximize_icon" src="icons/Maximize_Icon.svg"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"/> -->
-                            <button class="nav-item plain_button icon" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
-                                <i class="material-icons">zoom_out_map</i>
-                            </button>
-                            <!-- <input id="normalize_icon" type="image" class="nav-item plain_button icon"  src="icons/Normalize_Icon.svg" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size" style="max-height:1em;width:auto"/> -->
-                            <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
-                                <i class="material-icons">vertical_split</i>
-                            </button>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <!-- <button class="plain_button icon nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
+                                    <i class="material-icons">zoom_out_map</i>
+                                </button> -->
+                                <a class="nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"><i class="material-icons">zoom_out_map</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <!-- <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
+                                    <i class="material-icons">vertical_split</i>
+                                </button> -->
+                                <a id="normalize_icon" class="nav-link" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size"><i class="material-icons">vertical_split</i></a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="$('.pane').removeClass('compose').removeClass('present').addClass('info');$('#left_half').attr('mode', 'info').removeClass('full');$('#right_half').show();" data-toggle="tooltip" data-placement="right" title="Close composer">
                                     <i class="material-icons">close</i>
@@ -348,13 +356,6 @@
                                     Font &#xff0d;
                                 </a>
                                 <a id="print_button" class="menu_button dropdown-item" function="print" onclick="print(baseRenderer);">Print</a>
-                                <!-- -->
-                                <!-- <a class="dropdown-item">
-                                    <a id="toc_dropdown" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">TOC</a>
-                                    <div id="toc_dropdown_menu" class="dropdown-menu" aria-labelledby="toc_dropdown">
-                                    </div>
-                                </a> -->
-                                <!-- -->
                                 <div class="dropdown-divider"></div>
                                 <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
                                 <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
@@ -378,7 +379,6 @@
                                     <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
                                     <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
                                     <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
-                                        <!-- <option value="">Slide</option> -->
                                     </select>
                                 </div>
                             </div>
@@ -395,7 +395,6 @@
                             <button class="btn plain_button icon info" id="edit_icon" data-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
                                 <i class="material-icons">edit</i>
                             </button>
-                            <!-- <input type="image" src="icons/Edit_Notepad_Icon.svg" id="edit_icon" class="plain_button icon info" onclick="$('#edit_button').click();"/> -->
                         </li>
                         <li class="nav-item" style="width:auto">
                             <button class="btn plain_button icon info" id="full_screen_icon" data-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
@@ -403,7 +402,6 @@
                                     fullscreen
                                 </i>
                             </button>
-                            <!-- <input type="image" src="icons/Maximize_Icon.svg" id="full_screen_icon" class="icon info" onclick="$('#present_button').click();"/> -->
                         </li>
                         <li>
                             <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('#output').scrollTo($('#s' + slideIndex));">
@@ -411,7 +409,6 @@
                                     fullscreen_exit
                                 </i>
                             </button>
-                            <!-- <input type="image" src="icons/Normalize_Icon.svg" id="dual_icon" class="plain_button icon info" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('.slide').removeAttr('style');$('#output').scrollTo($('#s' + slideIndex));$('#s' + slideIndex).click();"/> -->
                         </li>
                     </ul>
                 </div>
@@ -500,11 +497,20 @@
                 <div class="modal-body" style="height:100%" >
                     <textarea id="source_text"  name="content" style="height:100%"></textarea>
                 </div>
-                <div class="modal-footer">
-                    <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
-                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
-                    <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
-                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
+                <div class="modal-footer" style="justify-content:flex-start;display:block">
+                    <div style="float:left">
+                        <form class="github">
+                            <!-- <input id="gh_username" name="gh_username" value="username" /> -->
+                            <!-- <input type="password" id="gh_password" name="gh_password" value="access tokens"/> -->
+                        </form>
+                        <button class="btn btn-outline-info btn-sm commit" onclick="commitXml(baseRenderer);">Commit</button>
+                    </div>
+                    <div style="float:right">
+                        <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                        <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
+                        <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
+                        <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -563,6 +569,8 @@ function showLatex(promise) {
     promise.then(el => {
 	var docCranach = el.attr['cranachDoc'];
 	var contentURLDir = el.attr['contentURLDir'];
+    var contentURL = el.attr['contentURL'];
+
 	$.ajax({
             url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
             dataType: 'xml'
@@ -577,6 +585,7 @@ function showLatex(promise) {
 		var xmlDOM = oParser.parseFromString(xml, "application/xml");
 		xsltProcessor.importStylesheet(xsl);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+        xsltProcessor.setParameter('', 'contenturl', contentURL);
 		fragment = xsltProcessor.transformToFragment(xmlDOM, document);
 		report(fragment);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
@@ -602,6 +611,8 @@ function showLatex(promise) {
 
 function showXML(promise) {
     $('.modal-footer').find('.btn').hide();
+    $('.modal-footer .github').css('display', 'inline-block')
+    $('.modal-footer').find('.btn.commit').show();
     $('.modal-footer').find('.btn.save').show();
     $('.modal-footer').find('.btn.render').show();
 
@@ -609,7 +620,54 @@ function showXML(promise) {
     $('#wb_modal').find('button.save').attr('ext', 'xml');
     $('#wb_modal').find('.modal-title').text('Cranach XML');
     promise.then(el => {$('#source_text').val(new XMLSerializer().serializeToString(el.attr['cranachDoc']));});
+}
 
+function commitXml(promise) {
+    promise.then(el => {
+        let docCranach = el.attr['cranachDoc'];
+        let contentURLDir = el.attr['contentURLDir'];
+        let contentURL = el.attr['contentURL'];
+
+        let ghRepoUsername;
+        let ghRepo;
+
+        let gh_match = contentURL.match(/raw\.githubusercontent.com\/(.*?)\/(.*?)\//);
+        if (gh_match) {
+            ghRepoUsername = gh_match[1];
+            ghRepo = gh_match[2];
+        } else {
+            ghRepoUsername = '';
+            ghRepo = '';
+        }
+        console.log(ghRepoUsername + ' ' + ghRepo);
+
+        // https://www.audero.it/blog/2015/10/17/upload-files-on-github-using-github-js/
+        $.ajax({
+            url: 'tokens/token.txt',
+            dataType: 'text',
+        }).done(function(token) {
+            var gh = new GitHub({
+                // username: $('#gh_username').val(),
+                // password: $('#gh_password').val(),
+                token: token
+            });
+            // Creates an object representing the repository you want to work with
+            var repository = gh.getRepo(ghRepoUsername, ghRepo);
+
+            // Creates a new file (or updates it if the file already exists)
+            // with the content provided
+            console.log(el.attr['localName']);
+            repository.writeFile(
+                'devel', // e.g. 'master'
+                el.attr['localName'], // e.g. 'blog/index.md'
+                $('#source_text').val(), // e.g. 'Hello world, this is my new content'
+                'update', // e.g. 'Created new index'
+                function(err) {
+                    alert(err);
+                }
+            );
+        });
+    });
 }
 
 function showIndex(promise) {
@@ -813,12 +871,8 @@ $(function() {
         .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
 
-        // console.log(buffer);
-
         let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
 
-        // console.log(numOfSlides);
-        // console.log(editor.getCursorPosition());
         var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
         .replace(/@sep/g, '@slide')
         .replace(/@@/g, '')
@@ -867,80 +921,12 @@ $(function() {
         });
     });
 
-
-    // $('#render_sel').mouseover(function() {
-    //     if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-    //         return;
-    //     }
-    //     $(".render_sel.dropdown-menu").html('');
-    //
-    //     var buffer = editor.getValue().replace(/@sep/g, '@slide')
-    //     .replace(/@@/g, '')
-    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
-    //     .replace(/\<!--(.|\n)*?--\>/g, '');
-    //
-    //     // console.log(buffer);
-    //
-    //     let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-    //
-    //     // console.log(numOfSlides);
-    //     // console.log(editor.getCursorPosition());
-    //     var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
-    //     .replace(/@sep/g, '@slide')
-    //     .replace(/@@/g, '')
-    //     .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-    //     .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
-    //     .replace(/\<!--(.|\n)*?--\>/g, '');
-    //     console.log(pastBuffer);
-    //
-    //     let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-    //
-    //     $(".render_sel.dropdown-menu").append($('<a>All</a>').addClass('dropdown-item').attr('value', 'all'));
-    //     $(".render_sel.dropdown-menu").append($('<a>' + currentSlide + '</a>').addClass('dropdown-item').attr('value', currentSlide));
-    //     $(".render_sel.dropdown-menu").append('<hr/>');
-    //     for (i = numOfSlides; i >= 1; i--) {
-    //         $(".render_sel.dropdown-menu").append($('<a>' + i + '</a>').addClass('dropdown-item').attr('value', i));
-    //     }
-    //
-    // });
-
-
-    // $('#render_sel a').click(function() {
-    //     let query;
-    //     if ($(this).val() != 'all') {
-    //         let slideNum = $(this).attr('value');
-    //         query = '//lv:slide[@slide=' + slideNum + ']';
-    //     } else {
-    //         query = '';
-    //     }
-    //     console.log(query);
-    //     $(".render_sel.dropdown-menu").html('');
-    //     baseRenderer = new Cranach('').setup({'query':query})
-    //     .then(cranach => {
-    //         console.log(cranach);
-    //         MathJax.typesetClear();
-    //         return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
-    //     })
-    //     .then(cranach => {
-    //         postprocess(cranach);
-    //         if (query != '') {
-    //             $('#s1').find('.collapse').collapse('show');
-    //             $('#s1').find('.collapsea').text('▽');
-    //             // ▽⊟
-    //         }
-    //         return cranach;
-    //     });
-    // });
-
-
     $('#left_half .collapsea').click(function() {
         if ($(this).hasClass('collapsed')) {
             $(this).removeClass('collapsed')
         } else {
             $(this).addClass('collapsed');
         }
-        // this.text = $(this).hasClass('collapsed') ? '⊞' : '⊟';
     });
 });
 
