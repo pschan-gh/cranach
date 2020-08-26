@@ -528,6 +528,13 @@
                     <form class="github">
                         <div class="form-row">
                             <div class="form-group col-md-4">
+                                <label for="ghRepoUsername">
+                                    Username
+                                </label>
+                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" value=""/>
+                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label for="ghRepo">
                                     Github Repository
                                 </label>
@@ -539,28 +546,21 @@
                                 </label>
                                 <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="ghRepoUsername">
-                                    Username
-                                </label>
-                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" value=""/>
-                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
-                            </div>
                             <label for="ghAccessToken">
                                 Access Token
                             </label>
                             <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
                     <div class="feedback" style="float:left">
                         <span class="message"></span>
                         <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
-                    </div>
+                    </div>  
                     <div style="float:right">
                         <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());">Commit</button>
                     </div>
-                </div>
-                <div class="modal-footer">
                 </div>
             </div>
         </div>
