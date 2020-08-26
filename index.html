@@ -37,9 +37,12 @@
     <script src="js/ace-builds-master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
     <!-- <script src="https://unpkg.com/github-api/dist/GitHub.min.js"></script> -->
-    <script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script>
+    <!-- <script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script> -->
+
+    <script src="js/axios.min.js" type="text/javascript"></script>
+    <script src="js/GitHub.bundle.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
       function report() {}
@@ -369,6 +372,7 @@
                                         <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="LaTex source">LaTeX</a>
                                         <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-toggle="tooltip" data-placement="right" title="XML source">XML</a>
                                         <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="Index source">Index</a>
+                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(); $('#gh_modal').modal('toggle')" data-toggle="tooltip" data-placement="right" title="Index source">GitHub</a>
                                     </div>
                                 </a>
                             </div>
@@ -499,11 +503,6 @@
                 </div>
                 <div class="modal-footer" style="justify-content:flex-start;display:block">
                     <div style="float:left">
-                        <form class="github">
-                            <!-- <input id="gh_username" name="gh_username" value="username" /> -->
-                            <!-- <input type="password" id="gh_password" name="gh_password" value="access tokens"/> -->
-                        </form>
-                        <button class="btn btn-outline-info btn-sm commit" onclick="commitXml(baseRenderer);">Commit</button>
                     </div>
                     <div style="float:right">
                         <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
@@ -511,6 +510,53 @@
                         <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
                         <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Commit <span id="localFilename" name="localFilename"></span> to Github</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="github">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="ghRepo">
+                                    Github Repository
+                                </label>
+                                <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="ghBranch">
+                                    Username
+                                </label>
+                                <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="ghRepoUsername">
+                                    Username
+                                </label>
+                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" value=""/>
+                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
+                            </div>
+                        </div>
+                    </form>
+                    <div class="feedback" style="float:left">
+                        <span class="message"></span>
+                        <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
+                    </div>
+                    <div style="float:right">
+                        <button style="float:right" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val());">Commit</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>
@@ -622,59 +668,65 @@ function showXML(promise) {
     promise.then(el => {$('#source_text').val(new XMLSerializer().serializeToString(el.attr['cranachDoc']));});
 }
 
-function commitXml(promise) {
-    promise.then(el => {
-        // let contentURL = window.location.href.match(/^(.*?)\/*(?:\?|$)/).length ? window.location.href.match(/^(.*?)\/*(?:\?|$)/)[1] : '';
-        let contentURL = window.location.href;
-        let params = window.location.href.match(/\?(.*?)(#|$)/);
+function initGhDialog() {
+    let contentURL = window.location.href;
+    let params = window.location.href.match(/\?(.*?)(#|$)/);
 
-        let urlParams = new URLSearchParams(params[1]);
-        let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
-        let localName = pathname.match(/(local|([^\/]+)\.(?:wb|xml))$/)[1];
+    let urlParams = new URLSearchParams(params[1]);
+    let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+    let localFilename = pathname.match(/(local|([^\/]+))\.(?:wb|xml)$/)[1] + '.wb';
 
-        // let contentURLDir = el.attr['contentURLDir'];
-        // let contentURL = el.attr['contentURL'];
+    let ghRepoUsername;
+    let ghRepo;
 
-        let ghRepoUsername;
-        let ghRepo;
+    console.log(contentURL);
+    let gh_match = contentURL.match(/raw\.githubusercontent.com\/(.*?)\/(.*?)\//);
+    if (gh_match) {
+        ghRepoUsername = gh_match[1];
+        ghRepo = gh_match[2];
+    } else {
+        ghRepoUsername = '';
+        ghRepo = '';
+    }
 
-        console.log(contentURL);
-        let gh_match = contentURL.match(/raw\.githubusercontent.com\/(.*?)\/(.*?)\//);
-        if (gh_match) {
-            ghRepoUsername = gh_match[1];
-            ghRepo = gh_match[2];
-        } else {
-            ghRepoUsername = '';
-            ghRepo = '';
-        }
-        console.log(ghRepoUsername + ' ' + ghRepo);
+    console.log(ghRepoUsername + ' ' + ghRepo);
 
-        // https://www.audero.it/blog/2015/10/17/upload-files-on-github-using-github-js/
-        $.ajax({
-            url: 'tokens/token.txt',
-            dataType: 'text',
-        }).done(function(token) {
-            var gh = new GitHub({
-                // username: $('#gh_username').val(),
-                // password: $('#gh_password').val(),
-                token: token
-            });
-            // Creates an object representing the repository you want to work with
-            var repository = gh.getRepo(ghRepoUsername, ghRepo);
+    $('#ghRepo').val(ghRepo);
+    $('#ghRepoUsername').val(ghRepoUsername);
+    $('#localFilename').text(localFilename);
+}
 
-            // Creates a new file (or updates it if the file already exists)
-            // with the content provided
-            console.log(localName);
-            repository.writeFile(
-                'devel', // e.g. 'master'
-                localName, // e.g. 'blog/index.md'
-                $('#source_text').val(), // e.g. 'Hello world, this is my new content'
-                'update', // e.g. 'Created new index'
-                function(err) {
-                    alert(err);
-                }
-            );
+function commitGh(ghRepoUsername, ghRepo) {
+
+    // $.ajax({
+    //     url: ../tokens/index.php,
+    //     dataType: 'text',
+    // })
+
+    $('#gh_modal .loading').show();
+    $.post("../tokens/index.php", { type: "github", username: ghRepoUsername } ).done(function(token) {
+        var gh = new GitHub({
+            token: token
         });
+        // Creates an object representing the repository you want to work with
+        var repository = gh.getRepo(ghRepoUsername, ghRepo);
+
+        // Creates a new file (or updates it if the file already exists)
+        // with the content provided
+        repository.writeFile(
+            $('#ghRepoBranch').val(), // e.g. 'master'
+            $('#localFilename').text(), // e.g. 'blog/index.md'
+            $('#source_text').val(), // e.g. 'Hello world, this is my new content'
+            'update' + ' ' + $('#localFilename').text(), // e.g. 'Created new index'
+            function(err) {
+                if (err) {
+                    $('#gh_modal .feedback .message').text(err);
+                } else {
+                    $('#gh_modal .feedback .message').text('Success.')
+                }
+                $('#gh_modal .loading').hide();
+            }
+        );
     });
 }
 
