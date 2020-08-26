@@ -557,7 +557,7 @@
                         <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
                     </div>
                     <div style="float:right">
-                        <button style="float:right" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());">Commit</button>
+                        <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());">Commit</button>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -696,8 +696,16 @@ function initGhDialog() {
     console.log(ghRepoUsername + ' ' + ghRepo);
 
     $('#ghRepo').val(ghRepo);
-    $('#ghRepoUsername').val(ghRepoUsername);
+    // $('#ghRepoUsername').val(ghRepoUsername);
     $('#localFilename').text(localFilename);
+    $('#gh_modal button.commit').hide();
+
+    let promise = commitWb(editor);
+
+    promise.then(el => {
+        $('#gh_modal button.commit').show();
+    });
+
 }
 
 function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
@@ -840,7 +848,7 @@ function openXML(promise, filePath) {
 function commitWb(editor) {
     var body = showJaxSource('output').getElementsByTagName('body')[0];
 
-    $.ajax({
+    return $.ajax({
         url: 'xsl/html2juengere.xsl',
         success: function(xsl) {
             var xsltProcessor = new XSLTProcessor();

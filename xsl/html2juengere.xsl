@@ -42,7 +42,7 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
+    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates select="*|text()|comment()" />
