@@ -519,7 +519,7 @@
         <div class="modal-dialog" role="dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title notkw" id="wb_source">Commit <span id="localFilename" name="localFilename"></span> to Github</h5>
+                    <h5 class="modal-title notkw" id="wb_source">Commit <code id="localFilename" name="localFilename" style="background-color:white;padding:5px;border-radius:5px"></code> to Github</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -535,7 +535,7 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="ghBranch">
-                                    Username
+                                    Branch
                                 </label>
                                 <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
                             </div>
@@ -546,6 +546,10 @@
                                 <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" value=""/>
                                 <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
                             </div>
+                            <label for="ghAccessToken">
+                                Access Token
+                            </label>
+                            <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
                         </div>
                     </form>
                     <div class="feedback" style="float:left">
@@ -553,7 +557,7 @@
                         <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
                     </div>
                     <div style="float:right">
-                        <button style="float:right" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val());">Commit</button>
+                        <button style="float:right" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());">Commit</button>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -696,27 +700,47 @@ function initGhDialog() {
     $('#localFilename').text(localFilename);
 }
 
-function commitGh(ghRepoUsername, ghRepo) {
+function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
 
-    // $.ajax({
-    //     url: ../tokens/index.php,
-    //     dataType: 'text',
-    // })
-
+    $('#gh_modal .feedback .message').text('');
     $('#gh_modal .loading').show();
-    $.post("../tokens/index.php", { type: "github", username: ghRepoUsername } ).done(function(token) {
-        var gh = new GitHub({
-            token: token
-        });
-        // Creates an object representing the repository you want to work with
-        var repository = gh.getRepo(ghRepoUsername, ghRepo);
 
-        // Creates a new file (or updates it if the file already exists)
-        // with the content provided
+    let wbString = editor.getValue();
+
+    if (ghAccessToken == "") {
+        $.post("tokens/index.php", { type: "github", username: ghRepoUsername } ).done(function(token) {
+            let gh = new GitHub({
+                token: token
+            });
+            // Creates an object representing the repository you want to work with
+            let repository = gh.getRepo(ghRepoUsername, ghRepo);
+
+            // Creates a new file (or updates it if the file already exists)
+            // with the content provided
+            repository.writeFile(
+                $('#ghRepoBranch').val(), // e.g. 'master'
+                $('#localFilename').text(), // e.g. 'blog/index.md'
+                wbString, // e.g. 'Hello world, this is my new content'
+                'update' + ' ' + $('#localFilename').text(), // e.g. 'Created new index'
+                function(err) {
+                    if (err) {
+                        $('#gh_modal .feedback .message').text(err);
+                    } else {
+                        $('#gh_modal .feedback .message').text('Success.')
+                    }
+                    $('#gh_modal .loading').hide();
+                }
+            );
+        });
+    } else {
+        let gh = new GitHub({
+            token: ghAccessToken
+        });
+        let repository = gh.getRepo(ghRepoUsername, ghRepo);
         repository.writeFile(
             $('#ghRepoBranch').val(), // e.g. 'master'
             $('#localFilename').text(), // e.g. 'blog/index.md'
-            $('#source_text').val(), // e.g. 'Hello world, this is my new content'
+            wbString, // e.g. 'Hello world, this is my new content'
             'update' + ' ' + $('#localFilename').text(), // e.g. 'Created new index'
             function(err) {
                 if (err) {
@@ -727,7 +751,7 @@ function commitGh(ghRepoUsername, ghRepo) {
                 $('#gh_modal .loading').hide();
             }
         );
-    });
+    }
 }
 
 function showIndex(promise) {
