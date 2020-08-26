@@ -624,13 +624,21 @@ function showXML(promise) {
 
 function commitXml(promise) {
     promise.then(el => {
-        let docCranach = el.attr['cranachDoc'];
-        let contentURLDir = el.attr['contentURLDir'];
-        let contentURL = el.attr['contentURL'];
+        // let contentURL = window.location.href.match(/^(.*?)\/*(?:\?|$)/).length ? window.location.href.match(/^(.*?)\/*(?:\?|$)/)[1] : '';
+        let contentURL = window.location.href;
+        let params = window.location.href.match(/\?(.*?)(#|$)/);
+
+        let urlParams = new URLSearchParams(params[1]);
+        let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+        let localName = pathname.match(/(local|([^\/]+)\.(?:wb|xml))$/)[1];
+
+        // let contentURLDir = el.attr['contentURLDir'];
+        // let contentURL = el.attr['contentURL'];
 
         let ghRepoUsername;
         let ghRepo;
 
+        console.log(contentURL);
         let gh_match = contentURL.match(/raw\.githubusercontent.com\/(.*?)\/(.*?)\//);
         if (gh_match) {
             ghRepoUsername = gh_match[1];
@@ -656,10 +664,10 @@ function commitXml(promise) {
 
             // Creates a new file (or updates it if the file already exists)
             // with the content provided
-            console.log(el.attr['localName']);
+            console.log(localName);
             repository.writeFile(
                 'devel', // e.g. 'master'
-                el.attr['localName'], // e.g. 'blog/index.md'
+                localName, // e.g. 'blog/index.md'
                 $('#source_text').val(), // e.g. 'Hello world, this is my new content'
                 'update', // e.g. 'Created new index'
                 function(err) {

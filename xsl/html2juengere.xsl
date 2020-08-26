@@ -49,7 +49,7 @@
       </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:img">
+    <xsl:template match="xh:img|img">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*[name()!='data-src']"/>
           <xsl:apply-templates select="*|text()|comment()" />
@@ -69,13 +69,13 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:span[@class='escaped']" >
+    <xsl:template match="*[@class='escaped']" >
         <xsl:value-of select="concat('@', normalize-space(text()))"/>
     </xsl:template>
 
 
     <xsl:template match="*[@wbtag='ignore']" />
-    <xsl:template match="xh:*[@class='knowl-output']" />
+    <xsl:template match="*[@class='knowl-output']" />
 
     <xsl:template match="*[@wbtag='skip']">
         <xsl:apply-templates select="*|text()" />
@@ -125,7 +125,7 @@
       <xsl:element name="br" namespace="{$xh}"/>
     </xsl:template>
 
-    <xsl:template match="xh:span[@wbtag='paragraphs']" >
+    <xsl:template match="*[@wbtag='paragraphs']" >
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:attribute name="wbtag">
                 <xsl:text>paragraphs</xsl:text>
@@ -135,14 +135,14 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='center' or @wbtag='left' or @wbtag='right']" >
+    <xsl:template match="*[@wbtag='center' or @wbtag='left' or @wbtag='right']" >
          <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:apply-templates select="text()|comment()|*"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbname='statement' or @wbname='substatement']">
+    <xsl:template match="*[@wbname='statement' or @wbname='substatement']">
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="{@wbname}" namespace="{$lv}">
             <xsl:copy-of select="@course"/>
@@ -158,7 +158,7 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='wb_image']" >
+    <xsl:template match="*[@wbtag='wb_image']" >
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@data-src"/>
@@ -166,7 +166,7 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='qed']" >
+    <xsl:template match="*[@wbtag='qed']" >
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="qed" namespace="{$lv}"/>
         <!-- <xsl:text>&#xa;</xsl:text> -->
