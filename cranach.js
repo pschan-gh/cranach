@@ -329,17 +329,9 @@ function Cranach(url) {
                         $(output).html('');
                         // $(output).html(str);
                         $(output).append(fragment);
-                        // if (!el.bare) {
-                        //     el.postprocess();
-                        // }
-                        // el.postprocess(output);
-                        // if (!this.bare) {
-                        //     this.convertCranachDocToWb();
-                        // }
                         resolve(el);
                     }, 0);
                 }, 0);
-
             });
         });
     }
@@ -398,7 +390,8 @@ function Cranach(url) {
     this.updateIndex = function() {
         console.log('UPDATEINDEXTOHTML');
         var cranachDoc = this.attr['cranachDoc'];
-        var filename = 'local';
+        // var filename = 'local';
+        var filename = this.attr['localName'];
         var contents = new XMLSerializer().serializeToString(cranachDoc);
 
         var docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
