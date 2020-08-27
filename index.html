@@ -36,13 +36,14 @@
     <!-- <script src="https://unpkg.com/github-api/dist/GitHub.min.js"></script> -->
     <!-- <script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script> -->
 
-    <script src="js/axios.min.js" type="text/javascript"></script>
-    <script src="js/GitHub.bundle.min.js" type="text/javascript"></script>
+    <!-- <script src="js/axios.min.js" type="text/javascript"></script>
+    <script src="js/GitHub.bundle.min.js" type="text/javascript"></script> -->
 
     <script type="text/javascript">
       function report() {}
     </script>
 
+    <script type="module" src="gittools.js"></script>
     <script type="text/javascript" src="weaver_core.js"></script>
     <script type="text/javascript" src="weaver.js"></script>
     <script type="text/javascript" src="cranach.js"></script>
@@ -60,11 +61,8 @@
     var slideLine = [];
     var mode = 'dual';
     var Range = ace.require('ace/range').Range; // get reference to ace/range
-
     var warnClose = false;
-
     var baseRenderer;
-
     </script>
 
     <script>
@@ -514,7 +512,7 @@
         <div class="modal-dialog" role="dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title notkw" id="wb_source">Commit <code id="localFilenameRoot" name="localFilenameRoot" style="background-color:white;padding:5px;border-radius:5px"></code> to Github</h5>
+                    <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
