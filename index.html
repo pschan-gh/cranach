@@ -61,6 +61,8 @@
     var mode = 'dual';
     var Range = ace.require('ace/range').Range; // get reference to ace/range
 
+    var warnClose = false;
+
     var baseRenderer;
 
     </script>
@@ -356,7 +358,7 @@
                                 <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
                                 <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
                                 <input id="edit_box" type="checkbox" style="display:none" />
-                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);">Edit</a>
+                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
                                 <a class="dropdown-item">
                                     <a id="advanced" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
                                     <div class="dropdown-menu" aria-labelledby="advanced" style="background-color:#eee">
@@ -561,7 +563,7 @@
                             <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
                         </div>
                         <div style="float:right">
-                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());">Commit</button>
+                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());warnClose = false">Commit</button>
                         </div>
                     </div>
                 </div>
@@ -675,6 +677,19 @@ $(function() {
             $(this).addClass('collapsed');
         }
     });
+
+    window.addEventListener("beforeunload", function (e) {
+        if (warnClose) {
+            var confirmationMessage = 'It looks like you have been editing something. '
+            + 'If you leave before saving, your changes will be lost.';
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        } else {
+            return undefined;
+        }
+    });
+
 });
 
 </script>
