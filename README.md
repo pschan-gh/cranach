@@ -26,7 +26,3 @@ It has the following components:
    * A significant portion of the frontend is devoted to presenting slideshows.
 
 The project currently works on browsers with XSLTProcessor support, such as Chrome, Safari, and Firefox.
-
-# Devel Branch
-   * Migrated to Mathjax 3.0.
-   * No more reliance on php.

@@ -70,6 +70,7 @@
     </xsl:template>
 
     <xsl:template match="*[@class='escaped']" >
+
         <xsl:value-of select="concat('@', normalize-space(text()))"/>
     </xsl:template>
 
@@ -159,6 +160,7 @@
     </xsl:template>
 
     <xsl:template match="*[@wbtag='wb_image']" >
+
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@data-src"/>
