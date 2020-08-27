@@ -104,6 +104,9 @@ function showXML(promise) {
 }
 
 function initGhDialog(editor) {
+
+    $('#gh_modal .feedback .message').html('');
+
     let contentURL = window.location.href;
     let params = window.location.href.match(/\?(.*?)(#|$)/);
 
