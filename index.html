@@ -678,6 +678,7 @@ $(function() {
         }
     });
 
+    // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
     window.addEventListener("beforeunload", function (e) {
         if (warnClose) {
             var confirmationMessage = 'It looks like you have been editing something. '
