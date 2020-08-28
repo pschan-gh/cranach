@@ -16,7 +16,7 @@
     <xsl:variable name="lv" select="'http://www.math.cuhk.edu.hk/~pschan/cranach'"/>
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
-    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='webwork' and @wbtag!='wb_image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
+    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='webwork' and @wbtag!='wb_image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='hc_keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@label"/>
@@ -184,6 +184,11 @@
 
     <xsl:template match="*[@wbtag='keyword']">
         <xsl:element name="inline_keyword" namespace="{$lv}">
+           <xsl:value-of select="./text()" disable-output-escaping="no"/>
+       </xsl:element>
+    </xsl:template>
+    <xsl:template match="*[@wbtag='hc_keyword']">
+        <xsl:element name="hc_keyword" namespace="{$lv}">
            <xsl:value-of select="./text()" disable-output-escaping="no"/>
        </xsl:element>
     </xsl:template>

@@ -144,11 +144,6 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="lv:hc_keyword">
-        <xsl:text>&#xa;</xsl:text>
-        <xsl:value-of select="concat('@', 'keyword', '{')" /><xsl:value-of select="."/><xsl:text>} </xsl:text>
-    </xsl:template>
-
     <xsl:template match="lv:ref">
         <xsl:value-of select="concat('@ref{', @label, '}')"/>
     </xsl:template>
@@ -239,6 +234,13 @@
         <xsl:value-of select="concat('@keyword{', ./text(), '}')"/>
     </xsl:template>
 
+    <xsl:template match="lv:hc_keyword">
+        <xsl:if test="not(preceding-sibling::lv:paragraphs) and not(preceding-sibling::xh:*)">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
+        <xsl:value-of select="concat('@keyword*{', ./text(), '}')"/>
+    </xsl:template>
+
 
     <xsl:template match="xh:li|xh:hr">
         <xsl:text>&#xa;</xsl:text>
@@ -254,7 +256,7 @@
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <xsl:element name="{local-name()}">
-            <xsl:copy-of select="@*[name(.)!='environment']"/>
+            <xsl:copy-of select="@*[name(.)!='environment' and name(.)!='text']"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
         <!-- <xsl:if test="not(following-sibling::lv:inline_keyword) and not(following-sibling::lv:ref) and following-sibling::*[@wbtag]">
