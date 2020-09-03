@@ -1,5 +1,5 @@
-import { Octokit } from "https://cdn.pika.dev/@octokit/rest";
-import { createPullRequest } from "https://cdn.pika.dev/octokit-plugin-create-pull-request";
+import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
+import { createPullRequest } from "https://cdn.skypack.dev/octokit-plugin-create-pull-request";
 const MyOctokit = Octokit.plugin(createPullRequest);
 
 function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
@@ -30,7 +30,7 @@ function ghCommitFiles(octokit, owner, repo, branch, fileroot) {
 	let xmlFile = fileroot + '.xml';
 
 	$('#gh_modal .loading').show();
-	$('#gh_modal .feedback .message').append('<div><code>Sending pull request ' + fileroot + ', index.xml.</code></div>');
+	$('#gh_modal .feedback .message').append('<div><code>Sending pull request: ' + wbFile + ', ' + xmlFile + ', index.xml.</code></div>');
 
 	octokit.createPullRequest({
     owner: owner,

@@ -557,11 +557,11 @@
                 <div class="modal-footer">
                     <div style="width:100%">
                         <div class="feedback" style="float:left;font-size:small">
-                            <div class="message" style="display:inline-block;float:left"></div>
                             <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none" src="icons/Loading_icon.gif"/>
+                            <div class="message" style="display:inline-block;float:left"></div>                            
                         </div>
                         <div style="float:right">
-                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit" onclick="commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());warnClose = false">Commit</button>
+                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
                         </div>
                     </div>
                 </div>
@@ -572,6 +572,10 @@
 
 <script>
 $(function() {
+
+    $('#gh_modal button.commit').click(function(){
+	commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());warnClose = false;
+    });
 
     $('.dropdown-item.persist').on('click', function(e) {
         e.stopPropagation();
