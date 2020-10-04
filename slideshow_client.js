@@ -259,12 +259,12 @@ function removeTypeset() { // i.e. Show LaTeX source
         MathJax.typesetClear();
 }
 
-function showTexSource(show, editor) {
+function showTexSource(showSource, editor) {
 
-    $('#output').attr('contentEditable', show);
+    $('#output').attr('contentEditable', showSource);
     $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $('.paragraphs').css('color', '').css('font-family', '');
-    if (!show) {
+    if (!showSource) {
         MathJax.startup.document.state(0);
         MathJax.texReset();
 

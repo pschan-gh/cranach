@@ -70,13 +70,13 @@
     </xsl:template>
 
     <xsl:template match="*[@class='escaped']" >
-
         <xsl:value-of select="concat('@', normalize-space(text()))"/>
     </xsl:template>
 
 
     <xsl:template match="*[@wbtag='ignore']" />
     <xsl:template match="*[@class='knowl-output']" />
+    <xsl:template match="*[@class='lcref-output']" />
 
     <xsl:template match="*[@wbtag='skip']">
         <xsl:apply-templates select="*|text()" />

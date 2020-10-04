@@ -191,9 +191,6 @@ function updateRefs(cranach) {
         $('a.lcref').each(function() {
             $(this).attr('lcref', "");
 
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
             var label = $(this).attr('label');
             var md5 = $(this).attr('md5');
 
@@ -231,9 +228,6 @@ function updateRefs(cranach) {
 
         $('a.href').each(function() {
 
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
             var label = $(this).attr('label');
             var serial = $(this).attr('serial');
             var md5 = $(this).attr('md5');

@@ -39,16 +39,10 @@ function generateXML(source) {
     source = source.replace(/@sep/g, '@slide')
     .replace(/@def([^n]|$)/g, '@defn$1')
     .replace(/#(nstep|ref|label)/g, '@$1')
-    // .replace(/\<hr>/g, '<hr />')
-    // .replace(/\<br\s*\>/g, '<br/>')
     .replace(/\<p\s*\>/g, '<p/>')
     .replace(/\<\/p\>/g, '')
-    // .replace(/frameborder=(\d+)/g, "frameborder=\"$1\"")
-    // .replace(/ href /g, ' href="" ')
-    // .replace(/(\n\s*){2,}/g, "\n@newline\n")
     .replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-	// .replace(/@@(\w+)/g, "@escaped{$1}")
-    .replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
+	.replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
     // END LEGACY COMPATIBILITY
 
     var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', 'document', null);
