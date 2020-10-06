@@ -42,11 +42,11 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="*[@wbtag='ignore']" />
-    <xsl:template match="*[@class='knowl-output']" />
-    <xsl:template match="*[@class='lcref-output']" />
+    <xsl:template match="*[@wbtag='ignore']" priority='1'/>
+    <xsl:template match="*[@class='knowl-output']" priority='1'/>
+    <xsl:template match="*[@class='lcref-output']"  priority='1'/>
     
-    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag) and not(@class='lcref-output')]">
+    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates select="*|text()|comment()" />

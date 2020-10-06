@@ -401,4 +401,12 @@
 	<xsl:text>IMAGE</xsl:text>
 </xsl:template>
 
+<xsl:template match="xh:script">
+	<xsl:variable name="slide">
+		<xsl:value-of select="ancestor::lv:slide/@slide" />
+	</xsl:variable>
+	<xsl:text>&#xa;</xsl:text>
+	<xsl:value-of select="concat('\href{', $contenturl, '&amp;slide=', $slide , '}{Interactive Example}')"/>
+</xsl:template>
+
 </xsl:stylesheet>
