@@ -342,7 +342,7 @@
 <xsl:template match="comment()" >
 </xsl:template>
 
-<xsl:template match="xh:table[not(./xh:tbody)]|xh:tbody">
+<xsl:template match="xh:table|xh:tbody">
 	<xsl:text>\begin{center}&#10;</xsl:text>
 	<xsl:text>\begin{tabular}{|</xsl:text>
 
@@ -369,33 +369,27 @@
 		<xsl:text>\\\hline&#10;</xsl:text>
 	</xsl:for-each>
 
-	<xsl:for-each select="xh:tr|xh:tbody/xh:tr">
-		<!-- <xsl:if test="position() != 1">
+	<xsl:for-each select="xh:tr|xh:tbody/xh:tr">		
 		<xsl:text>\hline&#10;</xsl:text>
-	</xsl:if> -->
-
-	<xsl:text>\hline&#10;</xsl:text>
-
-	<xsl:for-each select="xh:td|xh:th">
-		<xsl:if test="self::th">\bfseries </xsl:if>
-		<xsl:apply-templates />
-		<xsl:if test="position() != last()">
-			<xsl:text>&amp;</xsl:text>
-		</xsl:if>
+		<xsl:for-each select="xh:td|xh:th">
+			<xsl:if test="self::th">\bfseries </xsl:if>
+			<xsl:apply-templates />
+			<xsl:if test="position() != last()">
+				<xsl:text>&amp;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>		
+		<xsl:if test="position()!=last()"> \\&#10;</xsl:if>
 	</xsl:for-each>
 
-	<xsl:if test="position()!=last()"> \\&#10;</xsl:if>
-</xsl:for-each>
-
-<xsl:text>\\\hline&#10;</xsl:text>
-<xsl:text>&#xa;\end{tabular}&#10;</xsl:text>
-<xsl:text>&#xa;\end{center}</xsl:text>
-
+	<xsl:text>\\\hline&#10;</xsl:text>
+	<xsl:text>&#xa;\end{tabular}&#10;</xsl:text>
+	<xsl:text>&#xa;\end{center}</xsl:text>
+	
 </xsl:template>
 
-<xsl:template match="xh:table[./xh:tbody]">
+<!-- <xsl:template match="xh:table[./xh:tbody]">
 	<xsl:apply-templates select="xh:tbody"/>
-</xsl:template>
+</xsl:template> -->
 
 <xsl:template match="xh:img">
 	<xsl:text>IMAGE</xsl:text>
