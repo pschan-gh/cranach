@@ -65,7 +65,7 @@
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
             <div wbtag="ignore">
-                <div class="slide_number" style="display:none">
+                <div class="slide_number hidden" style="display:none">
                     <button class="plain_button slide_button">
                         <xsl:copy-of select="@*[name()!='wbtag']"/>
                         <xsl:text>Slide </xsl:text>

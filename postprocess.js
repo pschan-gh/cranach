@@ -13,12 +13,10 @@ function scrollToLine(editor, slide) {
 
         if (!isComment) {
             if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
-                // slideLine.push(i + 1);
                 slideCount++;
             }
         }
         if (slideCount == slide) {
-            // var line = slideLine[slide];
             editor.gotoLine(i + 1);
             break;
         }
@@ -536,41 +534,42 @@ function postprocess(cranach) {
             focusOn($selectedSlide.attr('slide'), cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }
 
-
-
         // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
         var menu_timer = null;
+        $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             menu_timer = setTimeout(function () {
-                $("#menu_container .navbar-nav, .controls, .present .slide_number").fadeOut();
+                $("#menu_container .navbar-nav, .controls, .present .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
-        $("#menu_container .navbar-nav, .present .slide_number").mouseover(function() {
+        
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
+        });        
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
+            clearTimeout(menu_timer);
+            $('#right_half').off('mousemove');
+            $('#right_half').mousemove(function() {
+                clearTimeout(menu_timer);
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                menu_timer = setTimeout(function () {
+                    $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+                    $(".controls").hide();
+                }, 1000);
+            })
         });
+
+        $('.controls').off();
         $('.controls').on('mouseover', function() {
             $('#progress_container').show();
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
-        });
-
-        $("#menu_container .navbar-nav, .present .slide_number").mouseout(function() {
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
-                menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
         });
         $('.controls').on('mouseout', function() {
             $('#progress_container').hide();
@@ -578,8 +577,7 @@ function postprocess(cranach) {
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 menu_timer = setTimeout(function () {
                     $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();
