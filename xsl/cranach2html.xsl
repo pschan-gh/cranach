@@ -643,6 +643,7 @@
 						<xsl:apply-templates select="text()|*"/>
 					</span>
 				</h2>
+				<xsl:apply-templates select="ancestor::*/lv:label"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<h2 class="chapter_title title">
@@ -670,6 +671,7 @@
 						<xsl:apply-templates select="text()|*"/>
 					</span>
 				</h2>
+				<xsl:apply-templates select="ancestor::*/lv:label"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -714,6 +716,7 @@
 				<xsl:apply-templates select="*|text()"/>
 			</span>
 		</h3>
+		<xsl:apply-templates select="ancestor::*/lv:label"/>
 	</xsl:template>
 	<xsl:template match="lv:title[@scope='subsection']">
 		<xsl:param name="course" select="@course"/>
@@ -741,6 +744,7 @@
 				<xsl:apply-templates select="text()|*"/>
 			</span>
 		</h4>
+		<xsl:apply-templates select="ancestor::*/lv:label"/>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='subsubsection']">
@@ -771,6 +775,7 @@
 				<xsl:apply-templates select="text()|*"/>
 			</span>
 		</h5>
+		<xsl:apply-templates select="ancestor::*/lv:label"/>
 		<br/>
 	</xsl:template>
 

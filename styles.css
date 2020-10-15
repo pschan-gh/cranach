@@ -891,6 +891,7 @@ background:url(Loading_icon.gif) center center no-repeat;*/
 .latexSource{
     border: 1px solid;
     font-family: "Courier New";
+    font-size: 0.8em;
     color : #f44;
     white-space: pre-wrap;
 }

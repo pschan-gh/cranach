@@ -671,6 +671,7 @@ function Stack(node, doc) {
             break;
             case "@label":
             var parent = child.closeTo(/statement|course|chapter|section|subsection|subsubsection|figure/i);
+            // var parent = child.closeTo(/statement|slide|figure/i);
             // parent.node.setAttribute('label', argument);
             var label = parent.addChild("label");
             label.node.setAttribute('wbtag', tagname);

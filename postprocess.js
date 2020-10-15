@@ -212,7 +212,7 @@ function updateRefs(cranach) {
                 } else {
                     var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 }
-            } else {
+            } else if ($(this).attr('src-filename')) {
                 if ($(this).attr('src-filename').match(/\.xml$/)) {
                     var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 } else {
