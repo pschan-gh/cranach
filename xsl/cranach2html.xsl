@@ -141,9 +141,6 @@
 
 	<xsl:template match="lv:bare">
 		<xsl:apply-templates select="*">
-			<!-- <xsl:with-param name="chapter" select="@num"/>
-			<xsl:with-param name="course" select="@course"/>
-			<xsl:with-param name="chapter" select="@chapter"/> -->
 		</xsl:apply-templates>
 	</xsl:template>
 
@@ -1127,15 +1124,16 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- <xsl:template match="lv:paragraphs|*[@wbtag='paragraphs']"> -->
 	<xsl:template match="lv:paragraphs">
-		<!-- <xsl:text>&#x0A;</xsl:text> -->
-		<!-- <xsl:apply-templates select="text()"/> -->
-		<!-- <xsl:value-of select="normalize-space(./text())" disable-output-escaping="yes"/> -->
 		<span class="paragraphs">
 			<xsl:value-of select="text()" disable-output-escaping="yes"/>
 		</span>
-		<!-- <xsl:value-of select="text()" disable-output-escaping="yes"/> -->
+	</xsl:template>
+	
+	<xsl:template match="lv:comment">
+		<div class="comment">
+			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:enumerate">
@@ -1199,7 +1197,12 @@
 </xsl:template>
 
 <xsl:template match="comment()">
-	<xsl:copy-of select="current()"/>
+	<xsl:element name="div" namespace="{$xh}">
+		<xsl:attribute name="style">
+			<xsl:value-of select="'display:none'"/>
+		</xsl:attribute>
+		<xsl:copy-of select="."/>
+	</xsl:element>
 	<!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
 </xsl:template>
 

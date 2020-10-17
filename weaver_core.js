@@ -135,10 +135,11 @@ function Stack(node, doc) {
 
     this.addComment = function(text) {
         var parent = this;
-        while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
-            parent = parent.close();
-        }
-        var child = new Stack(this.doc.createComment(text));
+        // while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
+        //     parent = parent.close();
+        // }
+        
+        var child = new Stack(parent.doc.createComment(text));
 
         child.doc = parent.doc;
         child.words = parent.words;
@@ -252,7 +253,8 @@ function Stack(node, doc) {
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
-            child = child.addComment('');
+            child = child.addChild("comment");
+            // child = child.addComment('');
             child.is_comment = true;
             return child;
         }
@@ -265,7 +267,8 @@ function Stack(node, doc) {
             return child;
         } else if (child.is_comment) {
             // report('APPENDING TO COMMENT: ' + originalWord);
-            child.node.textContent += originalWord;
+            console.log('COMMENT ' + originalWord);
+            child.node.textContent += originalWord;            
             return child;
         }
 
@@ -776,13 +779,6 @@ function Stack(node, doc) {
                         child = child.close();
                         if (i < chunks.length - 1) {
                                 child = child.addChild('newline').close();
-                            // if (child.node.nodeName.match(new RegExp(htmlElements.source, 'i'))) {
-                            //     var htmlDom = new DOMParser().parseFromString('<br wbtag="newline"/>', 'text/html');
-                            //     var node = htmlDom.getElementsByTagName('br')[0];
-                            //     child = child.addNode(node).close();
-                            // } else {
-                            //     child = child.addChild('newline').close();
-                            // }
                         } else if (originalWord.match(/\n\s*\n\s*$/)) {
                             child = child.addChild('newline').close();
                         }

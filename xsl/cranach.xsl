@@ -941,12 +941,13 @@
         <xsl:value-of select="." disable-output-escaping="no" />
         <!-- <xsl:copy-of select="current()"/> -->
     </xsl:template>
+    
     <xsl:template match="comment()">
-        <xsl:element name="paragraphs" namespace="{$lv}">
+        <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
             <xsl:comment>
                 <xsl:value-of select="." disable-output-escaping="no" />
             </xsl:comment>
-        </xsl:element>
+        <!-- </xsl:element> -->
     </xsl:template>
 
 </xsl:stylesheet>

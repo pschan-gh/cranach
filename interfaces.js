@@ -84,8 +84,6 @@ function showLatex(promise) {
         var tmp = el.macrosString + "\n" +  latex;
         latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
         .replace(/\$\n+\$/g, '')
-        .replace(/\\\[\s*(\\begin{align)/g, "$1")
-        .replace(/(end{align(\*)*})\s*\\\]/g, "$1")
         .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
 		$('#source_text').val(latex);
 	    });

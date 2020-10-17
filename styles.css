@@ -773,7 +773,11 @@ display: none;
     color:#aaa;
 }
 
-.comments {
+.comment {
+display:none;    
+}
+
+/* .comments {
     marginLeft:5%;
     marginRight:5%;
     width:40%;
@@ -782,7 +786,7 @@ display: none;
     height:100%;
     background:#f9f9f9;
     display:none;
-}
+} */
 
 #cover_half {
 display:none;
@@ -1076,12 +1080,12 @@ and (max-width : 1024px) {
 z-index:100;
 }
 
-.comments_button {
+/* .comments_button {
 position:absolute;
 bottom:0;
 right:0;
 margin-top: 5px;
-}
+} */
 
 .btn-xs {
 padding:0;

@@ -271,6 +271,12 @@
         <!-- <xsl:apply-templates select="*|text()|comment()" /> -->
         <xsl:apply-templates select="text()" />
     </xsl:template>
+    
+    <xsl:template match="lv:comment">
+        <xsl:text>&#xa;&lt;!--</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>--&gt;&#xa;</xsl:text>
+    </xsl:template>
 
 
     <xsl:template match="xh:span[@class='escaped']" >

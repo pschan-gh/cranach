@@ -221,9 +221,12 @@ function removeTypeset() { // i.e. Show LaTeX source
             var jaxNode = jax[i].start.node, tex = jax[i].math;
 
             if (jax[i].display) {
-                if (!tex.match(/begin{equation(\*)*}|begin{align(\*)*}|begin{multline(\*)*}/))
-                tex = "\\["+tex+"\\]";
-            } else {tex = "$"+tex+"$"}
+                if (tex.match(/begin{split/)) {
+                    tex = "\\["+tex+"\\]";
+                }
+            } else {
+                tex = "$"+tex+"$";
+            }
 
             var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
             $preview.html(tex);

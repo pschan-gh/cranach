@@ -46,11 +46,17 @@
     <xsl:template match="*[@class='knowl-output']" priority='1'/>
     <xsl:template match="*[@class='lcref-output']"  priority='1'/>
     
-    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
+    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag) and not(contains(@class, 'jxgbox')) and @class!='comment']">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates select="*|text()|comment()" />
       </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="*[contains(@class, 'jxgbox')]">
+        <xsl:element name="xh:{local-name()}">
+            <xsl:copy-of select="@*"/>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="xh:img|img">
@@ -209,5 +215,11 @@
         <xsl:comment>
             <xsl:value-of select="." disable-output-escaping="no"/>
         </xsl:comment>
+    </xsl:template>
+    
+    <xsl:template match="*[@class='comment']">
+        <xsl:element name="comment" namespace="{$lv}">
+            <xsl:apply-templates select="*|text()" />
+        </xsl:element>
     </xsl:template>
 </xsl:stylesheet>
