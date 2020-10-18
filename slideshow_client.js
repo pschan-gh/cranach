@@ -221,7 +221,7 @@ function removeTypeset() { // i.e. Show LaTeX source
             var jaxNode = jax[i].start.node, tex = jax[i].math;
 
             if (jax[i].display) {
-                if (tex.match(/begin{split/)) {
+                if (!tex.match(/(begin{align)|(begin{multline)|(begin{eqnarray)/)) {
                     tex = "\\["+tex+"\\]";
                 }
             } else {
