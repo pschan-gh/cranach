@@ -1322,6 +1322,10 @@ text-align: left;
     visibility:hidden;
 }
 
+.lcref-content .steps {
+    visibility:visible;
+}
+
 #info_statements_num  a, #info_statements  a:visited, #info_statements  a:link{
     color:#ddd;
 }

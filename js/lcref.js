@@ -148,7 +148,7 @@ function lcref_click_handler($el) {
                     new Cranach(url).setup().then(cranach => {
                         return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($output[0]).render();
                     }).then(() => {
-                        typeset([$lcref[0]]);
+                        typeset([$lcref[0]]);                        
                     });
                 });
             } else {
