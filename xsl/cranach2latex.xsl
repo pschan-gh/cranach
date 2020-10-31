@@ -346,7 +346,7 @@
 	<xsl:text>\begin{center}&#10;</xsl:text>
 	<xsl:text>\begin{tabular}{|</xsl:text>
 
-	<xsl:for-each select="xh:thead/xh:tr[1]/*|xh:tr[1]/*">
+	<xsl:for-each select="xh:thead/xh:tr[1]/*|xh:tbody/xh:tr[1]/*|xh:tr[1]/*">
 		<xsl:choose>
 			<xsl:when test="@colspan">
 				<xsl:for-each select="(//*)[position()&lt;=current()/@colspan]">|c|</xsl:for-each>
