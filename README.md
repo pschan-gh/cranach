@@ -12,7 +12,7 @@ It has the following components:
     * It aims to support direct inclusion of HTML5 elements.
     * It aims to support direct inclusion of MathML elements, both presentational and semantic.
 
-2. A high-level functional language (called "wb") which facilitates the creation of cranach files.
+2. A scripting language (called "wb") which facilitates the creation of cranach files.
    * It is expected to readily accept LaTeX math typesetting commands and raw html elements.
    * Its syntax is designed to be easily mastered by users already moderately-versed in LaTeX.
    * Each wb file has no preamble, so multiple files may be concatenated seamlessly to form a larger wb file.
