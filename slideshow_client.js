@@ -221,7 +221,8 @@ function removeTypeset() { // i.e. Show LaTeX source
             var jaxNode = jax[i].start.node, tex = jax[i].math;
 
             if (jax[i].display) {
-                if (!tex.match(/(begin{align)|(begin{multline)|(begin{eqnarray)/)) {
+                // if (!tex.match(/(begin{align)|(begin{multline)|(begin{eqnarray)/)) {
+                if (!tex.match(/^\s*\\begin/)) {
                     tex = "\\["+tex+"\\]";
                 }
             } else {
@@ -305,7 +306,8 @@ function showJaxSource(outputId) {
         var jaxNode = jax[i].start.node, tex = jax[i].math;
 
         if (jax[i].display) {
-            if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
+            // if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
+            if (!tex.match(/^\s*\\begin/))
             tex = "\\["+tex+"\\]";
         } else {tex = "$"+tex+"$"}
 
