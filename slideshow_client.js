@@ -217,32 +217,11 @@ function removeTypeset() { // i.e. Show LaTeX source
         console.log('removeTypset called ' + slideIndex);
         // var jax = MathJax.getAllJax('s' + slideIndex);
         var jax = MathJax.getAllJax();
-        for (var i = jax.length - 1, m = -1; i > m; i--) {
-            var jaxNode = jax[i].start.node, tex = jax[i].math;
-
-            if (jax[i].display) {
-                // if (!tex.match(/(begin{align)|(begin{multline)|(begin{eqnarray)/)) {
-                if (!tex.match(/^\s*\\begin/)) {
-                    tex = "\\["+tex+"\\]";
-                }
-            } else {
-                tex = "$"+tex+"$";
-            }
-
-            var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
-            $preview.html(tex);
-            if (jax[i].display) {
-                $preview.css('display', 'block');
-            }
-
-            jaxNode.parentNode.insertBefore($preview[0], jaxNode);
-            jaxNode.remove();
-        }
+        showTexFrom(jax);
         MathJax.typesetClear();
 }
 
 function showTexSource(showSource, editor) {
-
     $('#output').attr('contentEditable', showSource);
     $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $('.paragraphs').css('color', '').css('font-family', '');
@@ -263,11 +242,7 @@ function showTexSource(showSource, editor) {
         }
 
         $('.latexSource').remove();
-        // var doms = [];
-        // $('#output > .slide').not('.tex2jax_ignore').each(function() {
-        //     doms.push($(this)[0]);
-        // });
-        // typeset(doms);
+        
         MathJax.startup.promise.then(() => {
             $('.slide').addClass('tex2jax_ignore');
             $('.slide').removeClass('edit');
@@ -298,16 +273,13 @@ function showXML(docCranach) {
 
 }
 
-function showJaxSource(outputId) {
-
-    var jax = MathJax.getAllJax(outputId);
-
+functino showTexFrom(jax) {
     for (var i = jax.length - 1, m = -1; i > m; i--) {
         var jaxNode = jax[i].start.node, tex = jax[i].math;
 
         if (jax[i].display) {
             // if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
-            if (!tex.match(/^\s*\\begin/))
+            if (!tex.match(/^\s*\\begin(?!{split)/))
             tex = "\\["+tex+"\\]";
         } else {tex = "$"+tex+"$"}
 
@@ -320,6 +292,14 @@ function showJaxSource(outputId) {
         jaxNode.parentNode.insertBefore($preview[0], jaxNode);
         jaxNode.remove();
     }
+}
+
+function showJaxSource(outputId) {
+
+    var jax = MathJax.getAllJax(outputId);
+
+    showTexFrom(jax);
+    
     MathJax.typesetClear();
 
     var clone = document.getElementById(outputId).cloneNode(true);
