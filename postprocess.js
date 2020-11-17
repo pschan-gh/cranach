@@ -68,7 +68,8 @@ function updateModal(cranach) {
         var course = $(this).attr('course');
         var md5String = $(this).attr('md5');
         var item_type = $(this).attr('type');
-        var chapter = $(this).attr('chapter');
+        var chapterType = $(this).attr('chapter_type');
+        var chapter = $(this).attr('chapter');        
         var item = $(this).attr('item');
         var slide = $(this).closest('.slide').attr('slide');
 
@@ -81,7 +82,7 @@ function updateModal(cranach) {
         $('#share_item span').hide();
 
         $('.current_course').text(course);
-        $('.current_chapter').text(chapter);
+        $('.current_chapter').text(chapterType + ' ' + chapter);
         $('.current_item_type').text(item_type);
         $('.current_item').text(item);
         $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();

@@ -273,7 +273,7 @@ function showXML(docCranach) {
 
 }
 
-functino showTexFrom(jax) {
+function showTexFrom(jax) {
     for (var i = jax.length - 1, m = -1; i > m; i--) {
         var jaxNode = jax[i].start.node, tex = jax[i].math;
 
