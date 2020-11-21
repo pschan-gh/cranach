@@ -69,7 +69,7 @@ function updateModal(cranach) {
         var md5String = $(this).attr('md5');
         var item_type = $(this).attr('type');
         var chapterType = $(this).attr('chapter_type');
-        var chapter = $(this).attr('chapter');        
+        var chapter = $(this).attr('chapter');
         var item = $(this).attr('item');
         var slide = $(this).closest('.slide').attr('slide');
 
@@ -512,7 +512,7 @@ function postprocess(cranach) {
 
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
-            var $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"]').first();
+            var $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name=' + cranach.attr['selectedItem'] + ']').first();
             var $selectedSlide = $item.closest('.slide');
             $('#output').scrollTo($selectedSlide);
             $selectedSlide.click();
@@ -545,13 +545,13 @@ function postprocess(cranach) {
                 $("#menu_container .navbar-nav, .controls, .present .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
-        
+
         $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
         $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
-        });        
+        });
         $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
             clearTimeout(menu_timer);
             $('#right_half').off('mousemove');

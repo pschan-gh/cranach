@@ -561,6 +561,7 @@
 
 	<xsl:template match="lv:label">
 		<span wbtag="label" style="display:none">
+            <xsl:attribute name="class">label</xsl:attribute>
 			<xsl:copy-of select="@*"/>
 		</span>
 	</xsl:template>
@@ -1129,7 +1130,7 @@
 			<xsl:value-of select="text()" disable-output-escaping="yes"/>
 		</span>
 	</xsl:template>
-	
+
 	<xsl:template match="lv:comment">
 		<div class="comment">
 			<xsl:value-of select="text()" disable-output-escaping="yes"/>

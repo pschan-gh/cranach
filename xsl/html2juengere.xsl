@@ -62,6 +62,11 @@
     <xsl:template match="xh:img|img">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*[name()!='data-src']"/>
+          <xsl:if test="not(@src) and @data-src">
+              <xsl:attribute name="src">
+                  <xsl:value-of select="@data-src"/>
+              </xsl:attribute>
+          </xsl:if>
           <xsl:apply-templates select="*|text()|comment()" />
       </xsl:element>
     </xsl:template>
