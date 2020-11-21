@@ -528,13 +528,13 @@
 			<xsl:attribute name="type">
 				<xsl:value-of select="@type"/>
 			</xsl:attribute>
-			<button class="plain_button item_button" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<button class="plain_button item_button item_title" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
 				<xsl:copy-of select="@*"/>
 				<xsl:attribute name="wbtag">
 					<xsl:value-of select="'transparent'"/>
 				</xsl:attribute>
-				<xsl:element name="h5">
-					<xsl:attribute name="class">item_title</xsl:attribute>
+				<!-- <xsl:attribute name="class">item_title</xsl:attribute> -->
+				<xsl:element name="h5">					
 					<xsl:attribute name="wbtag">ignore</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="not(@typerefnum)">
@@ -550,9 +550,9 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:element>
+				<xsl:apply-templates select="lv:title"/>
 			</button>
-			<xsl:apply-templates select="lv:label"/>
-			<xsl:apply-templates select="lv:title"/>
+			<xsl:apply-templates select="lv:label"/>			
 			<blockquote wbtag="skip">
 				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
 			</blockquote>
