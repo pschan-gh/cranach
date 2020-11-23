@@ -669,7 +669,11 @@ $(function() {
         }
         console.log(query);
         $("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
-        baseRenderer = new Cranach('').setup({'query':query})
+        baseRenderer.then(cranach => {
+            let dir = cranach.attr['dir'];
+            baseRenderer = new Cranach('').setup({'dir':dir, 'query':query});
+            return baseRenderer;
+        })
         .then(cranach => {
             console.log(cranach);
             MathJax.typesetClear();

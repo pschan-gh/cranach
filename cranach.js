@@ -29,7 +29,6 @@ function Cranach(url) {
         'outputID': 'output',
         'cranachString': '',
         'preCranachString': '',
-        'indexString': '',
         'localName':'untitled',
         'editor':null,
         'editMode':false,
