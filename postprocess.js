@@ -41,12 +41,18 @@ function updateModal(cranach) {
         $('.current_course').text(course).show();
         $('.current_chapter').text(chapter).show();
         $('.current_chapter').text(chapterType + ' ' + chapter).show();
-        $('.current_slide').text(slide).show();
+        $('.current_slide').text('Slide ' + slide).show();
+
+        let url = cranach.attr['contentURL'];
+
+        let $labels = $(this).closest('div.slide').find('.label');
+
+        let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
 
         if (cranach.attr['query']) {
-            var url = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
+            url += '&query=' + cranach.attr['query'] + '&slide=' + slideLabel;
         } else {
-            var url = cranach.attr['contentURL'] + '&slide=' + slide;
+            url += '&slide=' + slideLabel;
         }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
@@ -63,8 +69,8 @@ function updateModal(cranach) {
     });
 
 
-    $('.item_button').off();
-    $('.item_button').on('click', function() {
+    $('.item_button, .section_button').off();
+    $('.item_button, .section_button').on('click', function() {
         var course = $(this).attr('course');
         var md5String = $(this).attr('md5');
         var item_type = $(this).attr('type');
@@ -89,14 +95,31 @@ function updateModal(cranach) {
 
         // var slide = $(this).closest('.slide').attr('slide');
 
-        url = cranach.attr['contentURL'] + '&item=' + item;
-        console.log('ITEM CLICK URL: ' + url);
+        let url = cranach.attr['contentURL'];
+        let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
 
+        let $labels = $(this).closest('div').find('.label');
+                
+        if ($labels.length) {
+            url += '&amp;' + argName + '=' + $labels.first().attr('name');
+        } else {
+            url +=  '&amp;' + argName + '=' + item;
+        }
+        
         $('#item_modal').find('#item_modal_link').attr('href', url);
-
         $('#item_modal').find('#share_url').html(url);
-        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + item_type + ' ' + item + '</a>');
-        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + item_type + ' ' + item + '}');
+        
+        let title = '';
+        
+        let titles = $(this).find('*[wbtag="title"]');
+         if (titles.length) {
+             title = titles.first().text();
+         } else {
+             title = item_type + ' ' + item;
+         }
+        
+        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
         $('#item_modal').find('.md5').first().html(md5String);
 
         updateModalRefby(md5String, cranach);
@@ -123,6 +146,7 @@ function updateSlideClickEvent(cranach) {
         }
 
         $('*[text]').removeClass('highlighted');
+        $('button').removeClass('highlighted');
         $('.item_button').css('background-color', '');
         $('[data-toggle="popover"]').popover('hide');
         $(this).find('.loading_icon').hide();
@@ -523,22 +547,24 @@ function postprocess(cranach) {
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
-            $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.statement, .substatement');
+            // $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.statement, .substatement, ');
+            $item = $('.item_title[item="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
 
             //  var $selectedSlide = $item.closest('.slide');
             $('#output').scrollTo($item);
             // $selectedSlide.click();
-            $item.find('.item_title').first().addClass('highlighted');
+            $item.addClass('highlighted');
         } else if (cranach.attr['selectedSection']) {
-            var $section = $('.title[serial="' + cranach.attr['selectedSection'] + '"]').first();
+            var $section = $('.section_title[item="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
             var $selectedSlide = $section.closest('.slide');
-            $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
+            $('#output').scrollTo($section);
             $section.addClass('highlighted');
+            // $selectedSlide.click();            
         } else {
-            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
+            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
             $('#output').scrollTo($selectedSlide);
+            $selectedSlide.click();
         }
 
         if (cranach.attr['selectedKeyword']) {
