@@ -76,7 +76,7 @@ function updateModal(cranach) {
         var item_type = $(this).attr('type');
         var chapterType = $(this).attr('chapter_type');
         var chapter = $(this).attr('chapter');
-        var item = $(this).attr('item');
+        var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
         var slide = $(this).closest('.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
@@ -90,7 +90,7 @@ function updateModal(cranach) {
         $('.current_course').text(course);
         $('.current_chapter').text(chapterType + ' ' + chapter);
         $('.current_item_type').text(item_type);
-        $('.current_item').text(item);
+        $('.current_item').text($(this).attr('item') ? item : '');
         $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();
 
         // var slide = $(this).closest('.slide').attr('slide');
@@ -115,7 +115,7 @@ function updateModal(cranach) {
          if (titles.length) {
              title = titles.first().text();
          } else {
-             title = item_type + ' ' + item;
+             title = $(this).attr('item') ? item_type + ' ' + item : item_type;
          }
         
         $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
@@ -338,10 +338,12 @@ function updateToc(cranach) {
                 statements[$(this).attr('type')] = '';
             }
 
-            var item = $(this).attr('item');
-            var slide = $('div[item="' + $(this).attr('item') + '"]').closest('.slide').attr('slide');
+            var serial = $(this).attr('item');
+            var $item = $('div[serial="' + $(this).attr('item') + '"]').closest('div.statement').first();
+            var slide = $item.closest('.slide').attr('slide');
 
-            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + item + "')\">" + item + "</a>";
+            // statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + serial + "')\">" + serial + "</a>";
+            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' serial='" + serial + "' href='javascript:void(0)'>" + serial + "</a>";
         });
         var html = '';
         for (var key in statements) {
@@ -349,12 +351,18 @@ function updateToc(cranach) {
         }
 
         $('#info_statements').append('<div class="statements chapter" chapter="' + chapter + '" style="display:none">' + html + '</div>');
+        let $item;
+        $('#info_statements').find('.info_statements_num').click(function() {
+            $item = $('.item_title[serial="' + $(this).attr('serial') + '"]').first();
+            focusOn($item, '');
+            highlight($(this).attr('serial'));
+        });
 
         var $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
             // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
-            $slide.click();
+            // $slide.click();
         });
     });
     console.log($('#info_statements')[0]);
@@ -548,14 +556,14 @@ function postprocess(cranach) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
             // $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.statement, .substatement, ');
-            $item = $('.item_title[item="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
+            $item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
 
             //  var $selectedSlide = $item.closest('.slide');
             $('#output').scrollTo($item);
             // $selectedSlide.click();
             $item.addClass('highlighted');
         } else if (cranach.attr['selectedSection']) {
-            var $section = $('.section_title[item="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
+            var $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
             var $selectedSlide = $section.closest('.slide');
             $('#output').scrollTo($section);
             $section.addClass('highlighted');
@@ -569,7 +577,7 @@ function postprocess(cranach) {
 
         if (cranach.attr['selectedKeyword']) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
-            focusOn($selectedSlide.attr('slide'), cranach.attr['selectedKeyword'].replace(/\s/g, ''));
+            focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }
 
         // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time

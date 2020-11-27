@@ -350,21 +350,23 @@ function collapseToggle(slideIndex) {
     }
 }
 
-function focusOn(slide, text) {
-    if ($('#s' + slide).hasClass('collapsed')) {
-        collapseToggle(slide);
+function focusOn($item, text) {
+    let $slide = $item.closest('div.slide').first();
+    let slideNum = $slide.attr('slide');
+    if ($slide.hasClass('collapsed')) {
+        collapseToggle(slideNum);
     }
-    $('#s' + slide).click();
+    // $slide.click();
 
     if (text!= '') {
-        $('#output').scrollTo('#s' + slide);
-        $('#s' + slide + ' *[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
+        $('#output').scrollTo($item);
+        $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
     } else {
-        $('#output').scrollTo('#s' + slide, 150);
+        $('#output').scrollTo($item, 150);
     }
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
-            showDivs(slide, cranach);
+            showDivs(slideNum, cranach);
         });
     }
 }
