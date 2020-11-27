@@ -488,8 +488,8 @@ function postprocess(cranach) {
             return;
         }).then(() => {
             // console.log(cranach.macrosString);
-            // return MathJax.tex2chtmlPromise(cranach.macrosString);
-            return MathJax.tex2svgPromise(cranach.macrosString);
+            return MathJax.tex2chtmlPromise(cranach.macrosString);
+            // return MathJax.tex2svgPromise(cranach.macrosString);
         }).then(() => {
             $('.slide').each(function() {
                 if (isElementInViewport(this)) {
