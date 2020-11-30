@@ -77,6 +77,7 @@ function updateModal(cranach) {
         var chapterType = $(this).attr('chapter_type');
         var chapter = $(this).attr('chapter');
         var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
+        var serial = $(this).attr('serial');
         var slide = $(this).closest('.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
@@ -101,13 +102,13 @@ function updateModal(cranach) {
         let $labels = $(this).closest('div').find('.label');
                 
         if ($labels.length) {
-            url += '&amp;' + argName + '=' + $labels.first().attr('name');
+            url += '&' + argName + '=' + $labels.first().attr('name');
         } else {
-            url +=  '&amp;' + argName + '=' + item;
+            url +=  '&' + argName + '=' + serial;
         }
         
         $('#item_modal').find('#item_modal_link').attr('href', url);
-        $('#item_modal').find('#share_url').html(url);
+        $('#item_modal').find('#share_url').text(url);
         
         let title = '';
         
@@ -118,8 +119,8 @@ function updateModal(cranach) {
              title = $(this).attr('item') ? item_type + ' ' + item : item_type;
          }
         
-        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+        $('#item_modal').find('#share_hyperlink').text('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_hyperref').text('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
         $('#item_modal').find('.md5').first().html(md5String);
 
         updateModalRefby(md5String, cranach);

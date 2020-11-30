@@ -645,6 +645,7 @@
 			</h1>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
 		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='chapter']">
@@ -696,6 +697,7 @@
 			</xsl:choose>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
 		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:topic[@scope='chapter']">
@@ -747,8 +749,10 @@
 				</span>
 			</h3>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
-		</button>		
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
+	
 	<xsl:template match="lv:title[@scope='subsection']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
@@ -785,6 +789,7 @@
 			</h4>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
 		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='subsubsection']">
@@ -825,6 +830,7 @@
 			</h5>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
 		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:href">
