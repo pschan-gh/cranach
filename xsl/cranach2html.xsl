@@ -747,8 +747,7 @@
 				</span>
 			</h3>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
-		</button>
-		<br/>		
+		</button>		
 	</xsl:template>
 	<xsl:template match="lv:title[@scope='subsection']">
 		<xsl:param name="course" select="@course"/>
@@ -826,7 +825,6 @@
 			</h5>
 			<xsl:apply-templates select="ancestor::*/lv:label"/>
 		</button>
-		<br/>
 	</xsl:template>
 
 	<xsl:template match="lv:href">
