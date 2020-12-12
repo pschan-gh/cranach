@@ -937,7 +937,7 @@
 						 <xsl:value-of select="@slide"/>
 					</xsl:attribute>
 					<xsl:attribute name="onclick">
-						 <xsl:value-of select="concat('focusOn(', @slide , ',&quot;' , $keyword , '&quot;)')"/>
+						 <xsl:value-of select="concat('focusOn($(&quot;#s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
 					</xsl:attribute>
 					<xsl:value-of select="concat('Slide ', @slide)"/>
 				</a>
