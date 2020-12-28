@@ -463,7 +463,8 @@
 			<xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>
 			</xsl:attribute>
-			<xsl:value-of select="concat('Figure ', ancestor::lv:figure/@serial, ' ')"/>
+			<!-- <xsl:value-of select="concat('Figure ', ancestor::lv:figure/@serial, ' ')"/> -->
+			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
 			<xsl:apply-templates select="text()"/>
 		</small>
 	</xsl:template>

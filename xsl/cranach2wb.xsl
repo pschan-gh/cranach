@@ -143,6 +143,23 @@
         <xsl:value-of select="concat('@image', '{', @data-src , '}')"/>
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
+    <xsl:template match="lv:figure">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@', @wbtag)"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:choose>
+            <xsl:when test="./lv:caption">
+                <xsl:text>&#xa;</xsl:text>
+                <xsl:text>@caption{</xsl:text>
+                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
+                <xsl:apply-templates select="./lv:caption/*|./lv:caption/text()" />
+                <xsl:text>}</xsl:text>                
+            </xsl:when>
+        </xsl:choose>
+        <xsl:apply-templates select="*[not(self::lv:caption)]" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@end</xsl:text>
+    </xsl:template>
 
     <xsl:template match="lv:ref">
         <xsl:value-of select="concat('@ref{', @label, '}')"/>

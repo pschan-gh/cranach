@@ -148,7 +148,7 @@ function lcref_click_handler($el) {
                     new Cranach(url).setup().then(cranach => {
                         return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($output[0]).render();
                     }).then(() => {
-                        typeset([$lcref[0]]);                        
+                        renderElement($lcref);
                     });
                 });
             } else {
@@ -156,7 +156,7 @@ function lcref_click_handler($el) {
                 new Cranach(url).setup().then(cranach => {
                     return cranach.setBare().xmlDocQueryAndRender($output[0]);
                 }).then(() => {
-                    typeset([$lcref[0]]);
+                    renderElement($lcref);
                 });
             }
         };
@@ -189,6 +189,18 @@ function lcref_click_handler($el) {
         }
     }
 } //~~ end click handler for *[lcref] elements
+
+function renderElement($lcref) {
+    typeset([$lcref[0]]);
+    $lcref.find('img').each(function() {
+        imagePostprocess($(this));
+    });
+    $lcref.find('iframe:not([src])').each(function() {
+        $(this).attr('src', $(this).attr('data-src')).show();
+        var $iframe = $(this);
+        $(this).iFrameResize({checkOrigin:false});
+    });
+}
 
 /** register a click handler for each element with the lcref attribute
 * @see jquery's doc about 'live'! the handler function does the

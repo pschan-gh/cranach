@@ -494,6 +494,12 @@ function Stack(node, doc) {
             child.node.setAttribute("type", 'Figure');
             child.node.setAttribute("num", secNums['figure']++);
             break;
+            case "@endfigure":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            child = child.closeTo(/figure/i).close();
+            break;
             case "@of":
             var match = originalWord.trim().match(/@of{(.*?)}/)[1];
             parent = child.closeTo(/substatement/i);
@@ -517,11 +523,7 @@ function Stack(node, doc) {
                 // child.node.setAttribute('scope', parent.node.nodeName);
                 child.node.setAttribute('wbtag', child.node.nodeName);
             }
-            // } else {
-            //     child = child.addChild("paragraphs");
-            //     child.node.textContent += "ERROR? " + originalWord;
-            //     child = child.close();
-            // }
+            
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {
@@ -559,7 +561,7 @@ function Stack(node, doc) {
                 break;
             }
             child = child.closeTo(/itemize|slide/i).close();
-            break;
+            break;            
             case "@end":
             if (!environs.includes(child.getEnvironment())) {
                 break;

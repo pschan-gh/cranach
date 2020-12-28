@@ -230,6 +230,9 @@ function updateRefs(cranach) {
             if ($(this).attr('type').match(/proof|solution|answer/i)) {
                 statementType = 'substatement';
             }
+            if ($(this).attr('type').match(/figure/i)) {
+                statementType = 'figure';
+            }
 
             var rootURL = cranach.attr['rootURL'];
             if ($(this).attr('filename') == 'self') {
