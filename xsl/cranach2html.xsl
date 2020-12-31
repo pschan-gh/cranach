@@ -459,12 +459,18 @@
 
 	<xsl:template match="lv:caption">
 		<xsl:param name="serial" select="''"/>
-		<small class="caption">
+		<small class="caption" wbtag="ignore">
+			<!-- <xsl:attribute name="wbtag">
+				<xsl:value-of select="'caption'"/>
+			</xsl:attribute> -->
+			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+			<!-- <xsl:apply-templates select="text()"/> -->
+		</small>
+        <small class="caption">
 			<xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>
 			</xsl:attribute>
-			<!-- <xsl:value-of select="concat('Figure ', ancestor::lv:figure/@serial, ' ')"/> -->
-			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+			<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
 			<xsl:apply-templates select="text()"/>
 		</small>
 	</xsl:template>
@@ -537,7 +543,7 @@
 					<xsl:value-of select="'transparent'"/>
 				</xsl:attribute>
 				<!-- <xsl:attribute name="class">item_title</xsl:attribute> -->
-				<xsl:element name="h5">					
+				<xsl:element name="h5">
 					<xsl:attribute name="wbtag">ignore</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="not(@typerefnum)">
@@ -555,7 +561,7 @@
 				</xsl:element>
 				<xsl:apply-templates select="lv:title"/>
 				<xsl:apply-templates select="lv:label"/>
-			</button>						
+			</button>
 			<blockquote wbtag="skip">
 				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
 			</blockquote>
@@ -619,7 +625,7 @@
 					</xsl:element>
 					<xsl:apply-templates select="lv:label"/>
 				</button>
-				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>				
+				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
 			</blockquote>
 		</div>
 	</xsl:template>
@@ -734,7 +740,7 @@
 			<xsl:attribute name="serial">
 				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
-			<h3 wbtag="section" class="title">				
+			<h3 wbtag="section" class="title">
 				<xsl:attribute name="serial">
 					<xsl:value-of select="$serial"/>
 				</xsl:attribute>
@@ -753,7 +759,7 @@
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
-	
+
 	<xsl:template match="lv:title[@scope='subsection']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
@@ -778,7 +784,7 @@
 			<xsl:attribute name="serial">
 				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
-			<h4 wbtag="subsection" class="title">				
+			<h4 wbtag="subsection" class="title">
 				<xsl:attribute name="serial">
 					<xsl:value-of select="$serial"/>
 				</xsl:attribute>
@@ -821,7 +827,7 @@
 			<xsl:attribute name="serial">
 				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
-			<h5 wbtag="subsubsection" class="title">				
+			<h5 wbtag="subsubsection" class="title">
 				<xsl:attribute name="serial">
 					<xsl:value-of select="$serial"/>
 				</xsl:attribute>

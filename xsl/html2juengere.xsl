@@ -16,7 +16,7 @@
     <xsl:variable name="lv" select="'http://www.math.cuhk.edu.hk/~pschan/cranach'"/>
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
-    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='webwork' and @wbtag!='wb_image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='hc_keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
+    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='webwork' and @wbtag!='image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='hc_keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@label"/>
@@ -45,7 +45,7 @@
     <xsl:template match="*[@wbtag='ignore']" priority='1'/>
     <xsl:template match="*[@class='knowl-output']" priority='1'/>
     <xsl:template match="*[@class='lcref-output']"  priority='1'/>
-    
+
     <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag) and not(contains(@class, 'jxgbox')) and not(@class='comment')]">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
@@ -169,13 +169,10 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="*[@wbtag='wb_image']" >
-
-        <!-- <xsl:text>&#xa;</xsl:text> -->
+    <xsl:template match="*[@wbtag='image']" >
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@data-src"/>
         </xsl:element>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="*[@wbtag='qed']" >
@@ -221,7 +218,7 @@
             <xsl:value-of select="." disable-output-escaping="no"/>
         </xsl:comment>
     </xsl:template>
-    
+
     <xsl:template match="*[@class='comment']">
         <xsl:element name="comment" namespace="{$lv}">
             <xsl:apply-templates select="*|text()" />
