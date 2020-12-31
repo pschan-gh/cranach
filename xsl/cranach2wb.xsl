@@ -7,9 +7,7 @@
     exclude-result-prefixes="xh"
     >
 
-
-    <!-- <xsl:strip-space elements="xh:span"/> -->
-    <xsl:strip-space elements="xh:* lv:title"/>
+    <xsl:strip-space elements="xh:* lv:title lv:*"/>
     <xsl:preserve-space elements="xh:textarea xh:pre lv:paragraphs"/>
     <xsl:output method="xml" />
 
@@ -165,7 +163,6 @@
         <xsl:value-of select="concat('@ref{', @label, '}')"/>
     </xsl:template>
 
-
     <xsl:template match="lv:course|lv:chapter|lv:section|lv:subsection|lv:subsubsection">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@</xsl:text>
@@ -282,7 +279,7 @@
     </xsl:template>
 
     <xsl:template match="*[@wbtag='paragraphs']|lv:paragraphs">
-        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::lv:ref) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
+        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <!-- <xsl:apply-templates select="*|text()|comment()" /> -->
