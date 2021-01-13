@@ -278,7 +278,7 @@ function showTexFrom(jax) {
         var jaxNode = jax[i].start.node, tex = jax[i].math;
 
         if (jax[i].display) {
-            if (!tex.match(/begin{equation|begin{align|begin{multline|begin{eqnarray/)) {
+            if (!tex.match(/^\s*\\(begin{equation|(begin{align(\*)?})|begin{multline|begin{eqnarray)/)) {
             // if (!tex.match(/^\s*\\begin(?!{split)/))  {
                 tex = "\\["+tex+"\\]";
             }
