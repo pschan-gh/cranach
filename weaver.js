@@ -41,7 +41,7 @@ function generateXML(source) {
     .replace(/#(nstep|ref|label)/g, '@$1')
     .replace(/\<p\s*\>/g, '<p/>')
     .replace(/\<\/p\>/g, '')
-    .replace(/\<b>(.*?)</b>/g, '@keyword{$1}')
+    .replace(/\<b\>(.*?)\<\/b\>/g, '@keyword{$1}')
     .replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
 	.replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
     // END LEGACY COMPATIBILITY

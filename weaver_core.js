@@ -138,7 +138,7 @@ function Stack(node, doc) {
         // while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
         //     parent = parent.close();
         // }
-        
+
         var child = new Stack(parent.doc.createComment(text));
 
         child.doc = parent.doc;
@@ -268,7 +268,7 @@ function Stack(node, doc) {
         } else if (child.is_comment) {
             // report('APPENDING TO COMMENT: ' + originalWord);
             console.log('COMMENT ' + originalWord);
-            child.node.textContent += originalWord;            
+            child.node.textContent += originalWord;
             return child;
         }
 
@@ -290,9 +290,18 @@ function Stack(node, doc) {
             }
 
             if (htmlMatches[1].match(/^tr|tbody|thead$/i)) {
-                var domString = '<table><' + htmlMatches[1]+ parameters + '></tr></table>';
+                let tag = htmlMatches[1].match(/^(tr|tbody|thead)$/i)[1];
+                // var domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
+                var domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
             } else if (htmlMatches[1].match(/^td|th$/i)) {
-                var domString = '<table><tr><' + htmlMatches[1]+ parameters + '></td></tr></table>';
+                let tag = htmlMatches[1].match(/^(td|th)$/i)[1];
+                var domString = '<table><tr><' + htmlMatches[1]+ parameters + '></' + tag + '></tr></table>';
+                // var domString = '<' + htmlMatches[1]+ parameters + '>';
+                // if ((htmlMatches[1].match(/^td$/i))) {
+                //     domString += '</td>';
+                // } else {
+                //     domString += '</th>';
+                // }
             } else {
                 var domString = '<' + xh_prefix + htmlMatches[1]+ parameters + '></' + xh_prefix + htmlMatches[1] + '>';
             }
@@ -523,7 +532,7 @@ function Stack(node, doc) {
                 // child.node.setAttribute('scope', parent.node.nodeName);
                 child.node.setAttribute('wbtag', child.node.nodeName);
             }
-            
+
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {
@@ -561,7 +570,7 @@ function Stack(node, doc) {
                 break;
             }
             child = child.closeTo(/itemize|slide/i).close();
-            break;            
+            break;
             case "@end":
             if (!environs.includes(child.getEnvironment())) {
                 break;
