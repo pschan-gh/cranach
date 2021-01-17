@@ -1167,7 +1167,9 @@
 				<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
 					<xsl:attribute name="rendered">0</xsl:attribute>
 					<xsl:attribute name="data-src">
-						<xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
+						<!-- <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/> -->
+                        <!-- https://webwork.libretexts.org/webwork2/html2xml?answersSubmitted=0&sourceFilePath=Library/Michigan/gateways/derivative/topic_powers_sums/prob10.pg&problemSeed=1234567&courseID=anonymous&userID=anonymous&course_password=anonymous&showSummary=1&displayMode=MathJax&problemIdentifierPrefix=102&language=en&outputformat=libretexts -->
+                        <xsl:value-of select="concat('https://webwork.libretexts.org/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=anonymous&amp;userID=anonymous&amp;course_password=anonymous&amp;showSummary=1&amp;language=en&amp;outputformat=libretexts')"/>
 					</xsl:attribute>
 				</iframe>
 			</div>
