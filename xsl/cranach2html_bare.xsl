@@ -716,6 +716,7 @@
                 </iframe>
             </div>
         </div>
+        <br/>
     </xsl:template>
 
     <xsl:template match="lv:image">
