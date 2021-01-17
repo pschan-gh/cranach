@@ -17,6 +17,11 @@ body {
     height:100%;
 }
 
+iframe.webwork {
+    border: #ddd solid 2px;
+    border-radius:5px;
+}
+
 #slide_sel {
     display:none;
 }
@@ -775,7 +780,7 @@ display: none;
 }
 
 .comment {
-display:none;    
+display:none;
 }
 
 /* .comments {
