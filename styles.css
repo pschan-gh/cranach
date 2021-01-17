@@ -17,6 +17,10 @@ body {
     height:100%;
 }
 
+.light {
+    color:#888; 
+}
+
 iframe.webwork {
     border: #ddd solid 2px;
     border-radius:5px;

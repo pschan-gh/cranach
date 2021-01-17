@@ -1159,9 +1159,9 @@
 			</xsl:attribute>
 			<xsl:copy-of select="@*"/>
 			<strong class="webwork_label print">WeBWorK</strong>
-            <xsl:text> (powered by </xsl:text>
-            <a target="_blank" href="https://libretexts.org/">LibreTexts</a>
-            <xsl:text>)</xsl:text>
+            <small class="light"> (powered by </small>
+            <small><a target="_blank" href="https://libretexts.org/">LibreTexts</a></small>
+            <small class="light">)</small>
 			<div class="ww" style="overflow:auto">
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
@@ -1177,6 +1177,7 @@
 				</iframe>
 			</div>
 		</div>
+		<br/>
 	</xsl:template>
 
 	<xsl:template match="lv:image">
