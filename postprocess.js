@@ -45,7 +45,7 @@ function updateModal(cranach) {
 
         let url = cranach.attr['contentURL'];
 
-        let $labels = $(this).closest('div.slide').find('.label');
+        let $labels = $(this).closest('div.slide').find('> .label');
 
         let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
 
@@ -100,25 +100,25 @@ function updateModal(cranach) {
         let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
 
         let $labels = $(this).closest('div').find('.label');
-                
+
         if ($labels.length) {
             url += '&' + argName + '=' + $labels.first().attr('name');
         } else {
             url +=  '&' + argName + '=' + serial;
         }
-        
+
         $('#item_modal').find('#item_modal_link').attr('href', url);
         $('#item_modal').find('#share_url').text(url);
-        
+
         let title = '';
-        
+
         let titles = $(this).find('*[wbtag="title"]');
          if (titles.length) {
              title = titles.first().text();
          } else {
              title = $(this).attr('item') ? item_type + ' ' + item : item_type;
          }
-        
+
         $('#item_modal').find('#share_hyperlink').text('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
         $('#item_modal').find('#share_hyperref').text('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
         $('#item_modal').find('.md5').first().html(md5String);
@@ -571,7 +571,7 @@ function postprocess(cranach) {
             var $selectedSlide = $section.closest('.slide');
             $('#output').scrollTo($section);
             $section.addClass('highlighted');
-            // $selectedSlide.click();            
+            // $selectedSlide.click();
         } else {
             var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
