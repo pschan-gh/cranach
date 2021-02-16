@@ -228,8 +228,17 @@ iframe.webwork {
     background:#fff;
     text-align: justify;
     font-size:1.2em;
-    /* overflow-x:auto; */
+    overflow-x:auto;
     display:table;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    /* justify-content: center; */
 }
 
 #output.info, #output.overview, #output.compose {
@@ -340,14 +349,22 @@ display:block;
 }
 
 .present .slide {
-position:relative;
-height:auto;
+/* position:relative; */
+/* height:auto; */
 /* width:17cm; */
-overflow:auto;
-margin:auto;
-display:table-cell;
-vertical-align: middle;
+/* overflow:auto; */
+/* margin:auto; */
+/* display:table-cell;
+vertical-align: middle; */
+  /* display: flex; */
+  /* justify-content: center; */
+  align-content: center;
+  flex-direction: column;
 }
+/* 
+.carousel-item {
+    transition: transform 2s ease, opacity .5s ease-out !important;
+} */
 
 .slide_number {
     position:fixed;
@@ -380,8 +397,8 @@ vertical-align: middle;
 }
 
 .present .controls {
-    display:table-cell;
-    vertical-align:middle;
+    /* display:table-cell;
+    vertical-align:middle; */
     height:100%;
     width:auto;
     font-size:2em;

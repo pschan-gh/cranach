@@ -1166,7 +1166,14 @@
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
 				</xsl:attribute>
-				<div style="text-align:center;overflow-y:hidden;height:3.5cm;width:5cm" class="loading_icon"><img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/><br/><div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div></div>
+				<div style="text-align:center;overflow-y:hidden;height:3.5cm;width:5cm" class="loading_icon">
+                    <!-- <img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/> -->
+                    <div class="spinner-border text-secondary" style="margin:2em" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <br/>
+                    <div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
+                </div>
 				<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
 					<xsl:attribute name="rendered">0</xsl:attribute>
 					<xsl:attribute name="data-src">

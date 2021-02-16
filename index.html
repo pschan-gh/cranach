@@ -5,7 +5,8 @@
 </title>
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <!-- <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" /> -->
     <link rel="stylesheet" type="text/css" href="js/jsxgraph.css" />
 
@@ -165,7 +166,7 @@
     background:SteelBlue;
     color:white !important;
 }
-
+/* 
 .navbar-nav li:hover > ul.dropdown-menu {
     display: block;
 }
@@ -176,7 +177,7 @@
     top:0;
     left:100%;
     margin-top:-6px;
-}
+} */
 
 </style>
 
@@ -289,7 +290,7 @@
                                 </div>
                             </li> -->
                         </ul>
-                        <ul class="navbar-nav ml-auto">
+                        <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <!-- <button class="plain_button icon nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
                                     <i class="material-icons">zoom_out_map</i>
@@ -354,7 +355,7 @@
                 <div class="navbar-collapse collapse" onmouseover="$('#slide_sel').show()" onmouseout="$('#slide_sel').hide()">
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
+                            <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
                             <!-- &#9776; -->
                             <div class="dropdown-menu" aria-labelledby="test_button">
                                 <a id="present_button" function="present" class="dropdown-item menu_button present info" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer)">Full Screen</a>
@@ -397,7 +398,7 @@
                             </div>
                         </li>
                     </ul>
-                    <ul id="output_icon_container" class="navbar-nav ml-auto">
+                    <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
                         <li class="nav-item" style="width:auto">
                             <button class="btn plain_button icon dim" data-toggle="button" aria-pressed="false" onclick='dim()'>
                                 <i class="material-icons">brightness_2</i>
@@ -427,14 +428,14 @@
                 </div>
             </nav>
             <div id='output' class="overview dual pane"></div>
-            <div class="controls_container" style="position:fixed;left:2.5%;top:0;display:table;height:100%;width:auto;">
-                <button class="btn plain_button controls" id='left_button' onclick='plusDivs(-1, baseRenderer)'>
-                    &#x276e;
+            <div class="controls_container">
+                <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
                 </button>
-            </div>
-            <div class="controls_container" style="position:fixed;right:2.5%;top:0;display:table;height:100%;width:auto;">
-                <button class="btn plain_button controls" id='right_button' onclick='plusDivs(1, baseRenderer)'>
-                    &#x276f;
+                <button class="carousel-control-next" type="button" data-bs-target="#right_half"  data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
                 </button>
             </div>
         </div>

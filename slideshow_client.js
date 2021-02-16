@@ -124,8 +124,11 @@ function plusDivs(n, promise) {
 
 function showDivs(n, cranach) {
 
-    $('.slide_mask').hide();
-
+    $('#right_half').addClass('carousel carousel-dark slide');
+    $('#output').addClass('carousel-inner');
+    $('#output div.slide').addClass('carousel-item');
+    $('.slide_content').addClass('w-100 d-block');
+    
     var $slides = $('#output > .slide');
 
     if ($slides.length == null || $slides.length == null < 1) {
@@ -136,30 +139,37 @@ function showDivs(n, cranach) {
     index = index == 0 ? $slides.length : index;
 
     var $slide = $('#s' + index);
+    
+    $slide.addClass('active');
 
-    if ($slide.length > 0) {
-
-        if ($slide.hasClass('all')) {
-            $('#s' + index + ' .collapse').collapse('hide');
-            $slide.addClass('collapsed');
-            $slide.removeClass('all');
-        }
-
-        if ($('#s' + index).hasClass('collapsed')) {
-            $('#uncollapse_button').text('Uncollapse');
-        } else {
-            $('#uncollapse_button').text('Collapse');
-        }
-
-        $slides.hide();
-        $slide.show();
-        $slide.find('.lcref .slide').show();
-
-        // $slide.css('display', '');
-        // $slide.css('vertical-align', '');
-
-        $slide.click();
-    }
+    // if ($slide.length > 0) {
+    // 
+    //     if ($slide.hasClass('all')) {
+    //         $('#s' + index + ' .collapse').collapse('hide');
+    //         $slide.addClass('collapsed');
+    //         $slide.removeClass('all');
+    //     }
+    // 
+    //     if ($('#s' + index).hasClass('collapsed')) {
+    //         $('#uncollapse_button').text('Uncollapse');
+    //     } else {
+    //         $('#uncollapse_button').text('Collapse');
+    //     }
+    // 
+    //     $slides.hide();
+    //     $slide.show();
+    //     $slide.find('.lcref .slide').show();
+    // 
+    //     // $slide.css('display', '');
+    //     // $slide.css('vertical-align', '');
+    // 
+    //     $slide.click();
+    // }
+    
+    $('.carousel').carousel('pause');
+    // $('.carousel').on('slide.bs.carousel', function () {
+    // 
+    // })
 }
 
 

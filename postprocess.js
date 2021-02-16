@@ -586,54 +586,54 @@ function postprocess(cranach) {
 
         // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
         var menu_timer = null;
-        $('#right_half').off();
-        $('#right_half').mousemove(function() {
-            clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-            menu_timer = setTimeout(function () {
-                $("#menu_container .navbar-nav, .controls, .present .slide_number").not('.hidden').fadeOut();
-            }, 1000);
-        })
+        // $('#right_half').off();
+        // $('#right_half').mousemove(function() {
+        //     clearTimeout(menu_timer);
+        //     $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+        //     menu_timer = setTimeout(function () {
+        //         $("#menu_container .navbar-nav, .controls, .present .slide_number").not('.hidden').fadeOut();
+        //     }, 1000);
+        // })
+        // 
+        // $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
+        // $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
+        //     $('#right_half').off('mousemove');
+        //     clearTimeout(menu_timer);
+        //     $(this).show();
+        // });
+        // $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
+        //     clearTimeout(menu_timer);
+        //     $('#right_half').off('mousemove');
+        //     $('#right_half').mousemove(function() {
+        //         clearTimeout(menu_timer);
+        //         $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+        //         menu_timer = setTimeout(function () {
+        //             $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+        //             $(".controls").hide();
+        //         }, 1000);
+        //     })
+        // });
 
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
-            $('#right_half').off('mousemove');
-            clearTimeout(menu_timer);
-            $(this).show();
-        });
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-                menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
-        });
-
-        $('.controls').off();
-        $('.controls').on('mouseover', function() {
-            $('#progress_container').show();
-            $('#right_half').off('mousemove');
-            clearTimeout(menu_timer);
-            $(this).show();
-        });
-        $('.controls').on('mouseout', function() {
-            $('#progress_container').hide();
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-                menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
-        });
+        // $('.controls').off();
+        // $('.controls').on('mouseover', function() {
+        //     $('#progress_container').show();
+        //     $('#right_half').off('mousemove');
+        //     clearTimeout(menu_timer);
+        //     $(this).show();
+        // });
+        // $('.controls').on('mouseout', function() {
+        //     $('#progress_container').hide();
+        //     clearTimeout(menu_timer);
+        //     $('#right_half').off('mousemove');
+        //     $('#right_half').mousemove(function() {
+        //         clearTimeout(menu_timer);
+        //         $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+        //         menu_timer = setTimeout(function () {
+        //             $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+        //             $(".controls").hide();
+        //         }, 1000);
+        //     })
+        // });
     });
 
     if (cranach.attr['present']) {
