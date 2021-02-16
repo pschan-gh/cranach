@@ -124,10 +124,11 @@ function plusDivs(n, promise) {
 
 function showDivs(n, cranach) {
 
-    $('#right_half').addClass('carousel carousel-dark slide');
+    $('#right_half').addClass('slide');
     $('#output').addClass('carousel-inner');
     $('#output div.slide').addClass('carousel-item');
-    $('.slide_content').addClass('w-100 d-block');
+    $('.controls_container').show();
+    // $('.slide_content').addClass('w-100 d-block');
     
     var $slides = $('#output > .slide');
 
@@ -168,7 +169,8 @@ function showDivs(n, cranach) {
     
     $('.carousel').carousel('pause');
     // $('.carousel').on('slide.bs.carousel', function () {
-    // 
+    //     // $('.carousel-item .slide_number').hide();
+    //     // $('.carousel-item.active .slide_number').show();
     // })
 }
 

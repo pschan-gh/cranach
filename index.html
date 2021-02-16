@@ -341,7 +341,7 @@
             });
             </script>
         </div>
-        <div id="right_half" class='right pane overview'>
+        <div id="right_half" class='right pane overview carousel carousel-dark'>
             <div id="loading_icon" style="display:table;height:100%;width:100%;background-color:hsla(0, 0%, 100%, 0.8);z-index:999;">
                 <div style="display:table-cell; vertical-align:middle; width:100%;height:5em;margin:0 auto;text-align:center">
                     <h1 style="color:SteelBlue">Loading</h1>
@@ -418,7 +418,7 @@
                             </button>
                         </li>
                         <li>
-                            <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('.slide').show();$('#output').scrollTo($('#s' + slideIndex));">
+                            <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex));$('#right_half').removeClass('carousel'), $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');">
                                 <i class="material-icons">
                                     fullscreen_exit
                                 </i>
@@ -428,7 +428,7 @@
                 </div>
             </nav>
             <div id='output' class="overview dual pane"></div>
-            <div class="controls_container">
+            <div class="controls_container controls">
                 <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
