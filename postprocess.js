@@ -28,11 +28,13 @@ function updateModal(cranach) {
     $('.slide_button').off();
     $('.slide_button').on('click', function() {
         console.log('SLIDE BUTTON PRESSED');
-        var course = $(this).closest('.slide').attr('course');
+        let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
+        let slide = $slide.attr('slide');
+        
+        var course = $slide.attr('course');
 
-        var slide = $(this).closest('.slide').attr('slide');
-        var chapterType = $(this).closest('.slide').attr('chapter_type');
-        var chapter = $(this).closest('.slide').attr('chapter');
+        var chapterType = $slide.attr('chapter_type');
+        var chapter = $slide.attr('chapter');
 
         $('.modal-title > span').hide();
         $('.md5.share_text').text('');
@@ -45,7 +47,7 @@ function updateModal(cranach) {
 
         let url = cranach.attr['contentURL'];
 
-        let $labels = $(this).closest('div.slide').find('> .label');
+        let $labels = $slide.find('> .label');
 
         let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
 
@@ -634,6 +636,12 @@ function postprocess(cranach) {
                 }, 1000);
             })
         });
+        
+        $('.carousel').on('slide.bs.carousel', function () {
+            $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
+            $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+            // $('.carousel-item.active .slide_number').show();
+        })
     });
 
     if (cranach.attr['present']) {

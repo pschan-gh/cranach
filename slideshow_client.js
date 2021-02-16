@@ -168,10 +168,8 @@ function showDivs(n, cranach) {
     // }
     
     $('.carousel').carousel('pause');
-    // $('.carousel').on('slide.bs.carousel', function () {
-    //     // $('.carousel-item .slide_number').hide();
-    //     // $('.carousel-item.active .slide_number').show();
-    // })
+    $('#right_half .slide_number button').text('Slide ' + index);
+    $('#right_half .slide_number button').attr('slide', index);
 }
 
 

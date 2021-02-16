@@ -342,13 +342,12 @@
 				<xsl:value-of select="@wbtag"/>
 			</xsl:attribute>
 			<div class="slide_container" wbtag="ignore">
-				<div class="slide_number">
+				<!-- <div class="slide_number">
 					<button class="plain_button slide_button">
-						<!-- <xsl:copy-of select="@*[name()!='wbtag']"/> -->
 						<xsl:text>Slide </xsl:text>
 						<xsl:value-of select="$slide"/>
 					</button>
-				</div>
+				</div> -->
 				<div class="separator" style="position:relative; width:100%; height:1.5em; text-align:center;" wbtag="ignore">
 					<xsl:attribute name="slide">
 						<xsl:value-of select="$slide"/>
