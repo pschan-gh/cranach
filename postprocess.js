@@ -626,7 +626,15 @@ function postprocess(cranach) {
             } else {
                 $output.css('display', '');
             }
-        })        
+        })
+        $('#output div.collapse').on('shown.bs.collapse', function() {
+            let $output = $('#output');
+            if ($output[0].scrollHeight >  $output.innerHeight()) {
+                $output.css('display', 'block');
+            } else {
+                $output.css('display', '');
+            }
+        });
     });
 
     if (cranach.attr['present']) {
