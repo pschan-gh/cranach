@@ -1335,7 +1335,6 @@ and (max-width : 1024px) {
     box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
     }
 
-
     .page
      {
 	background:#fff;
@@ -1347,7 +1346,7 @@ and (max-width : 1024px) {
     }
 
     html {
-        font-size: 1.2em;
+        font-size: 24px;
     }
     #title, .title_box.present {
 	position:relative;
@@ -1365,13 +1364,13 @@ and (max-width : 1024px) {
     .overview .slide_number {
 	display:none;
     }
-
-/*
-      .fb-like {display:none;}
-      .comments_button {display:none;}
-*/
+    
     #test_button {
-	font-size: 2.5em;
+	font-size: 1.5em;
+    }
+    
+    .material-icons {
+        font-size: 36px !important;
     }
 
     .menu_button, .submenu_button {
