@@ -625,6 +625,7 @@ function postprocess(cranach) {
             
             if ($output[0].scrollHeight >  $output.innerHeight()) {
                 $output.css('display', 'block');
+                $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
             } else {
                 $output.css('display', '');
             }
@@ -633,6 +634,7 @@ function postprocess(cranach) {
             let $output = $('#output');
             if ($output[0].scrollHeight >  $output.innerHeight()) {
                 $output.css('display', 'block');
+                $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
             } else {
                 $output.css('display', '');
             }

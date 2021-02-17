@@ -353,7 +353,8 @@
                             <!-- &#9776; -->
                             <div class="dropdown-menu" aria-labelledby="test_button">
                                 <a id="present_button" function="present" class="dropdown-item menu_button present info" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer)">Full Screen</a>
-                                <a id="info_button" function="dual" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass('info');$('.slide').show();$('.slide').removeAttr('style');$('#s' + slideIndex).click();">Split Screen</a>
+                                <!-- <a id="info_button" function="dual" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass('info');$('.slide').show();$('.slide').removeAttr('style');$('#output .slide_content').css('padding-bottom', '');$('#s' + slideIndex).click();">Split Screen</a> -->
+                                <a id="info_button" function="dual" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#dual_icon').click()">Split Screen</a>
                                 <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
                                 <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
                                 <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
@@ -412,7 +413,7 @@
                             </button>
                         </li>
                         <li>
-                            <button class="btn plain_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex));$('#right_half').removeClass('carousel'), $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();">
+                            <button class="btn plain_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');">
                                 <i class="material-icons">
                                     fullscreen_exit
                                 </i>

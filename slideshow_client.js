@@ -144,6 +144,13 @@ function showDivs(n, cranach) {
     $slide.addClass('active');
 
     $('.carousel').carousel('pause');
+    let $output = $('#output');
+    if ($output[0].scrollHeight >  $output.innerHeight()) {
+        $output.css('display', 'block');
+        $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
+    } else {
+        $output.css('display', '');
+    }
     $('#right_half .slide_number button').text('Slide ' + index);
     $('#right_half .slide_number button').attr('slide', index);
 }
@@ -325,13 +332,15 @@ function collapseToggle(slideIndex) {
 
     if ($slide.hasClass('collapsed')) {
         $slide.removeClass('collapsed');
-        $slide.find('.collapse').addClass('show');        
-        $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        // $slide.find('.collapse').addClass('show');        
+        // $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        $slide.find('.collapse').collapse('show');        
         $('#uncollapse_button').text('Collapse');
     } else {
-        $slide.find('.collapse').removeClass('show');
         $slide.addClass('collapsed');
-        $slide.find('a.collapsea').attr('aria-expanded', 'false');
+        // $slide.find('.collapse').removeClass('show');        
+        // $slide.find('a.collapsea').attr('aria-expanded', 'false');
+        $slide.find('.collapse').collapse('hide');
         $('#uncollapse_button').text('Uncollapse');
     }
 }
