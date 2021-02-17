@@ -419,6 +419,10 @@ vertical-align: middle; */
     margin-top:10px !important;
 }
 
+.carousel.pointer-event {
+    touch-action: pan-y pinch-zoom !important;
+  }
+
 select#render_sel option[value="Render"]
 {
     background-image:url("icons/refresh-24px.svg");

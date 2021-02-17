@@ -87,13 +87,14 @@ function dim() {
     if ($('.dim').first().hasClass('dimmed')) {
         $(' #right_half, #right_half *, #output *').css('background-color', '').css('color', '');
         $('#right_half').removeClass('dim');
-        // $('#progress_container').removeClass('dim');
         $('.dim').first().removeClass('dimmed');
+        $('#right_half').addClass('carousel-dark');
     } else {
         $('#right_half, #output').css('background-color', '#222').css('color', '#bbb');
         $('#right_half').addClass('dim');
         // $('#progress_container').addClass('dim');
         $('.dim').first().addClass('dimmed');
+        $('#right_half').removeClass('carousel-dark');
     }
 }
 
