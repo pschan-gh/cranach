@@ -621,6 +621,8 @@ function postprocess(cranach) {
             let $output = $('#output');
             slideIndex = $slide.attr('slide');
             
+            batchRender($slide[0]);
+            
             if ($output[0].scrollHeight >  $output.innerHeight()) {
                 $output.css('display', 'block');
             } else {
