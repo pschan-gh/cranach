@@ -151,7 +151,7 @@ function updateSlideClickEvent(cranach) {
         $('*[text]').removeClass('highlighted');
         $('button').removeClass('highlighted');
         $('.item_button').css('background-color', '');
-        $('[data-toggle="popover"]').popover('hide');
+        // $('[data-toggle="popover"]').popover('hide');
         $(this).find('.loading_icon').hide();
 
         $('.separator').css('font-weight', 'normal');
@@ -206,7 +206,7 @@ function updateSlideClickEvent(cranach) {
                 $('#info_statements .chapter[chapter="' + $(slideElement).attr('chapter') + '"]').show();
             }
 
-            updateSlideProgress(slideIndex, false);
+            // updateSlideProgress(slideIndex, false);
         }
     });
 
@@ -392,33 +392,6 @@ function updateToc(cranach) {
     MathJax.startup.promise = typeset([document.getElementById('toc')]);
 }
 
-function updateCollapseElements() {
-
-    $('#output .collapsea').click(function(event) {
-        if ($(this).hasClass('collapsed')) {
-            $(this).removeClass('collapsed');
-            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').show("slow");
-        } else {
-            $(this).addClass('collapsed');
-            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').hide("slow");
-        }
-        // this.text = $(this).hasClass('collapsed') ? expchar : colchar;
-    });
-
-    // $('.collapse').each(function() {
-    //     var id = $(this).attr('id');
-    //     $(this).on('hide.bs.collapse', function() {
-    //         $('a.collapsea[aria-controls="' + id + '"]').text(expchar);
-    //     });
-    // });
-    // $('.collapse').each(function() {
-    //     var id = $(this).attr('id');
-    //     $(this).on('show.bs.collapse', function() {
-    //         $('a.collapsea[aria-controls="' + id + '"]').text(colchar);
-    //     });
-    // });
-}
-
 function updateKeywords() {
     $('#info_keywords_course').html('');
     $('div.keywords[slide="all"][environ="course"]').each(function() {
@@ -486,12 +459,12 @@ function postprocess(cranach) {
     updateModal(cranach);
     updateScrollEvent(cranach);
     updateToc(cranach);
-    updateCollapseElements();
     updateKeywords();
-    updateSlideProgress(cranach.slideIndex, true);
+    // updateSlideProgress(cranach.slideIndex, true);
     updateSlideSelector(cranach);
     updateTitle($('#s' + cranach.slideIndex)[0]);
-
+    
+    
     $(function() {
         console.log(cranach);
 
@@ -518,23 +491,23 @@ function postprocess(cranach) {
         });
 
 
-        $('[data-toggle="popover"]').off();
-        $('[data-toggle="popover"]').on('click', function (e) {
-            $('[data-toggle="popover"]').each(function(){
-    	    $(this).popover('hide');
-    	});
-            $(this).popover('show');
-        });
+        // $('[data-toggle="popover"]').off();
+        // $('[data-toggle="popover"]').on('click', function (e) {
+        //     $('[data-toggle="popover"]').each(function(){
+    	//     $(this).popover('hide');
+    	// });
+        //     $(this).popover('show');
+        // });
 
         https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
-        $("button.btn_keyword[data-toggle=popover]:not(.index)").popover({
+        $("button.btn_keyword[data-bs-toggle=popover]").popover({
             html : true,
             content: function() {
                 html = 'Loading...';
                 return html;
             }
         });
-        $('[data-toggle="popover"]:not(.index)').on('shown.bs.popover', function() {
+        $('[data-bs-toggle="popover"]').on('shown.bs.popover', function() {
             $('.popover-body').each(function() {
                 let id = $(this).closest('.popover').attr('id');
                 console.log(id);
@@ -549,14 +522,14 @@ function postprocess(cranach) {
         });
 
         // https://stackoverflow.com/questions/20466903/bootstrap-popover-hide-on-click-outside/27615920
-        $('body').on('click', function (e) {
-            $('[data-toggle=popover]').each(function () {
-                // hide any open popovers when the anywhere else in the body is clicked
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
+        // $('body').on('click', function (e) {
+        //     $('[data-toggle=popover]').each(function () {
+        //         // hide any open popovers when the anywhere else in the body is clicked
+        //         if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+        //             $(this).popover('hide');
+        //         }
+        //     });
+        // });
 
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
@@ -592,6 +565,7 @@ function postprocess(cranach) {
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
             $("#menu_container .navbar-nav, .present .controls, .present .active .slide_number").not('.hidden').fadeIn();
+            $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
                 $("#menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
             }, 1000);
@@ -609,6 +583,7 @@ function postprocess(cranach) {
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
                 $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
                     $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
                     $(".controls").hide();
@@ -618,18 +593,19 @@ function postprocess(cranach) {
 
         $('.controls').off();
         $('.controls').on('mouseover', function() {
-            $('#progress_container').show();
+            // $('#progress_container').show();
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
         });
         $('.controls').on('mouseout', function() {
-            $('#progress_container').hide();
+            // $('#progress_container').hide();
             clearTimeout(menu_timer);
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
                 $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
                     $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();
@@ -640,8 +616,9 @@ function postprocess(cranach) {
         $('.carousel').on('slide.bs.carousel', function () {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+            $('.carousel').carousel('pause');
             // $('.carousel-item.active .slide_number').show();
-        })
+        })        
     });
 
     if (cranach.attr['present']) {

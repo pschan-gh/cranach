@@ -193,14 +193,14 @@
         <div id="left_half" class="left pane overview" mode="overview">
             <div id="info_half">
                 <strong>Table of Contents</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">
+                <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">
                     <!-- ⊞ -->
                 </a>
                 <!-- ► -->
                 <div class="collapse toc" id="toc"></div>
                 <br/>
                 <strong>Index</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">
+                <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">
                     <!-- ⊞ -->
                 </a>
                 <div class="collapse" id="index"></div>
@@ -210,7 +210,7 @@
                         <div class="current_course"></div>
                     </h2>
                     <strong>Keywords</strong>
-                    <a class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
+                    <a class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
                         <!-- ⊞ -->
                     </a>
                     <div id="info_keywords_course" class="collapse"></div>
@@ -221,7 +221,7 @@
                         <div class="current_topics"></div>
                     </h3>
                     <strong>Chapter Keywords</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
+                    <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
                         <!-- ⊞ -->
                     </a>
                     <div id="info_keywords_chapter" class="collapse"></div>
@@ -236,7 +236,7 @@
                     <div id="slide_keywords"></div>
                     <br/>
                     <strong onclick='$(".slide_info.share").show();'>Share</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
+                    <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
                         <!-- ⊞ -->
                     </a>
                     <div class="slide_info share collapse" id="slide_info_share" style="">
@@ -257,7 +257,7 @@
                     <button class="plain_button icon" id="compose_icon" onclick="$('#compose_button').click();">
                         <i class="material-icons">edit</i>
                     </button>
-                    <button class="plain_button icon hide" onclick="$('#container').addClass('wide');$('.pane').removeClass('compose').removeClass('info').addClass('overview')" data-toggle="tooltip" data-placement="right" title="Hide Side Panel">
+                    <button class="plain_button icon hide" onclick="$('#container').addClass('wide');$('.pane').removeClass('compose').removeClass('info').addClass('overview')" data-bs-toggle="tooltip" data-bs-placement="right" title="Hide Side Panel">
                         <i class="material-icons">close</i>
                     </button>
                     <!-- &times; -->
@@ -276,7 +276,7 @@
                                 <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="save_icon" onclick="saveWb(editor, baseRenderer);" data-toggle="tooltip" data-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
+                                <a class="nav-link" id="save_icon" onclick="saveWb(editor, baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
                             </li>
                             <li class="nav-item" style="width:5em">
                                 <select name="render" class="nav-link plain_button" id="render_sel" style="margin-top:10px" disabled>
@@ -284,27 +284,16 @@
                                     <option value="all">All</option>
                                 </select>
                             </li>
-                            <!-- <li class="nav-item" style="width:5em">
-                                <a id="render_sel" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Render</a>
-                                <div class="render_sel dropdown-menu" aria-labelledby="render_sel">
-                                </div>
-                            </li> -->
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
-                                <!-- <button class="plain_button icon nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer">
-                                    <i class="material-icons">zoom_out_map</i>
-                                </button> -->
-                                <a class="nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Maximize composer"><i class="material-icons">zoom_out_map</i></a>
+                                <a class="nav-link" id="maximize_icon"  onclick="$('#right_half').hide();$('#left_half').addClass('full');editor.resize();" data-bs-toggle="tooltip" data-bs-placement="right" title="Maximize composer"><i class="material-icons">zoom_out_map</i></a>
                             </li>
                             <li class="nav-item">
-                                <!-- <button id="normalize_icon" class="nav-item plain_button icon" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size">
-                                    <i class="material-icons">vertical_split</i>
-                                </button> -->
-                                <a id="normalize_icon" class="nav-link" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-toggle="tooltip" data-placement="right" title="Normal size"><i class="material-icons">vertical_split</i></a>
+                                <a id="normalize_icon" class="nav-link" onclick="$('#right_half').show();$('#left_half').removeClass('full');editor.resize();" data-bs-toggle="tooltip" data-bs-placement="right" title="Normal size"><i class="material-icons">vertical_split</i></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="$('.pane').removeClass('compose').removeClass('present').addClass('info');$('#left_half').attr('mode', 'info').removeClass('full');$('#right_half').show();" data-toggle="tooltip" data-placement="right" title="Close composer">
+                                <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="$('.pane').removeClass('compose').removeClass('present').addClass('info');$('#left_half').attr('mode', 'info').removeClass('full');$('#right_half').show();" data-bs-toggle="tooltip" data-bs-placement="right" title="Close composer">
                                     <i class="material-icons">close</i>
                                 </a>
                             </li>
@@ -375,14 +364,14 @@
                                 <input id="edit_box" type="checkbox" style="display:none" />
                                 <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
                                 <a class="dropdown-item">
-                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
                                     <div class="dropdown-menu" aria-labelledby="advanced" style="background-color:#eee">
                                         <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
                                         <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
-                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="LaTex source">LaTeX</a>
-                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-toggle="tooltip" data-placement="right" title="XML source">XML</a>
-                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-toggle="tooltip" data-placement="right" title="Index source">Index</a>
-                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-toggle="tooltip" data-placement="right" title="Index source">GitHub</a>
+                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
+                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
                                     </div>
                                 </a>
                             </div>
@@ -400,25 +389,25 @@
                     </ul>
                     <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon dim" data-toggle="button" aria-pressed="false" onclick='dim()'>
+                            <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
                                 <i class="material-icons">brightness_2</i>
                             </button>
                             <!-- ☾ -->
                         </li>
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon info" id="edit_icon" data-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                            <button class="btn plain_button icon info" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
                                 <i class="material-icons">edit</i>
                             </button>
                         </li>
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon info" id="full_screen_icon" data-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
+                            <button class="btn plain_button icon info" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
                                 <i class="material-icons">
                                     fullscreen
                                 </i>
                             </button>
                         </li>
                         <li>
-                            <button class="btn plain_button icon info" id="dual_icon" data-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex));$('#right_half').removeClass('carousel'), $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');">
+                            <button class="btn plain_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex));$('#right_half').removeClass('carousel'), $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();">
                                 <i class="material-icons">
                                     fullscreen_exit
                                 </i>
@@ -428,6 +417,10 @@
                 </div>
             </nav>
             <div id='output' class="overview dual pane"></div>
+            <div class="controls carousel-indicators">
+                <!-- <button type="button" data-bs-target="#right_half" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide 2"></button> -->
+            </div>
             <div class="controls_container controls">
                 <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -445,14 +438,14 @@
         </div>
         <div class="present title_box" style="display:none"></div>
 
-        <div id="progress_container" style='position:fixed;top:1em;height:1em;width:100%;margin:auto;display:none'>
+        <!-- <div id="progress_container" style='position:fixed;top:1em;height:1em;width:100%;margin:auto;display:none'>
             <table id="slide_progress" style="width:75%;margin:auto;">
                 <tbody>
                     <tr>
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div> -->
         <a href='javascript:void(0)' id='unhide' style='position:fixed;top:5em;right:2%;color:#428bc1;display:none' onclick='unhide()'>Full Screen</a>
         <!-- <div id="cover_half" onclick="unhide();$('#hide').button('toggle')"></div> -->
         <div id="cover_half" onclick="unhide();"></div>

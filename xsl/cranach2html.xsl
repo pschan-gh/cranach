@@ -926,7 +926,7 @@
 
 	<xsl:template match="lv:keyword">
 		<xsl:param name="slide" select="'all'"/>
-		<button class="btn btn-outline-info btn-sm btn_keyword" style="margin-left:5px;margin-top:5px" data-html="true" data-container="body" data-toggle="popover"  data-placement="bottom" slide="{$slide}">
+		<button class="btn btn-outline-info btn-sm btn_keyword" style="margin-left:5px;margin-top:5px" data-bs-html="true" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
 			<xsl:attribute name="wbtag">
 				<xsl:text>ignore</xsl:text>
 			</xsl:attribute>
@@ -989,7 +989,7 @@
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
 		</xsl:variable>
 		<!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
-		<a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore">
+		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 			<xsl:attribute name="aria-controls">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -1095,7 +1095,7 @@
 			<xsl:variable name="id">
 				<xsl:value-of select="concat('s', $timestamp, $li)" />
 			</xsl:variable>
-			<a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore">
+			<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 				<xsl:attribute name="aria-controls"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="href">#<xsl:value-of select="$id" /></xsl:attribute>
 				<!-- <xsl:attribute name="href">#</xsl:attribute> -->

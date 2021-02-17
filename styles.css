@@ -48,19 +48,19 @@ iframe.webwork {
     background-color: #eee;
 }
 
-#info_half .collapsea:before {
+#info_half .collapsea[aria-expanded="true"]:before {
     content: '⊟';
 }
 
-#info_half .collapsea.collapsed:before {
+#info_half .collapsea[aria-expanded="false"]:before {
     content: '⊞';
 }
 
-#output .collapsea:before {
+#output .collapsea[aria-expanded="true"]:before {
     content: '▽';
 }
 
-#output .collapsea.collapsed:before {
+#output .collapsea[aria-expanded="false"]:before {
     content: '►';
 }
 
@@ -228,7 +228,8 @@ iframe.webwork {
     background:#fff;
     text-align: justify;
     font-size:1.2em;
-    overflow-x:auto;
+    overflow-x:hidden;
+    overflow-y:auto;
     display:table;
     display: -webkit-flexbox;
     display: -ms-flexbox;
@@ -387,23 +388,27 @@ vertical-align: middle; */
     /* display:block; */
 }
 
-#controls, .controls {
-    /* position:absolute; */
-    /* top:50%; */
-    display:none;
-}
-
 .overview .contols {
     display:none;
 }
 
+
+.controls {
+    display:none;
+}
+/* .present .controls_container, .present .controls {
+    display:block;    
+} */
+
 .present .controls {
-    /* display:table-cell;
-    vertical-align:middle; */
-    /* height:100%; */
     width:auto;
     font-size:2em;
     color:SteelBlue;
+    opacity:0.25;
+}
+
+.present .carousel-indicators {
+    bottom:90% !important;
 }
 
 select#render_sel option[value="Render"]

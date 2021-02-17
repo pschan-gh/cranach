@@ -48,10 +48,10 @@
         <xsl:if test="position()!=1">
             <!-- <br/> -->
         </xsl:if>
-        <button namespace="http://www.w3.org/1999/xhtml" type="button" class="btn btn-outline-info btn-sm btn_keyword index" style="margin-left:5px;margin-top:5px" data-html="true" data-container="body" data-toggle="popover"  data-placement="bottom">
-            <xsl:attribute name="data-content">
-                <xsl:apply-templates select="idx:branch[@keyword]"/>
-            </xsl:attribute>
+        <button namespace="http://www.w3.org/1999/xhtml" type="button" class="btn btn-outline-info btn-sm btn_keyword index" style="margin-left:5px;margin-top:5px" data-bs-trigger="focus" data-bs-html="true" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom">
+            <!-- <xsl:attribute name="data-bs-content">                
+            </xsl:attribute> -->
+            <xsl:apply-templates select="idx:branch[@keyword]"/>
             <xsl:value-of select="idx:branch[1]/text()"/>
         </button>
         <xsl:text> </xsl:text>
@@ -60,13 +60,31 @@
     <xsl:template match="idx:branch[@keyword]">
             <xsl:if test="position()!=1"><xsl:text>&lt;br/&gt;</xsl:text></xsl:if>
             <!-- <xsl:text>&lt;a target="_blank" href ="</xsl:text><xsl:value-of select='$contenturldir' />/<xsl:value-of select="./@filename" /><xsl:text>&amp;slide=</xsl:text><xsl:value-of select="@slide"/><xsl:text>"&gt;Chapter </xsl:text><xsl:value-of select="@chapter" /><xsl:text>&lt;/a&gt;</xsl:text> -->
-	    <xsl:text>&lt;a target="_blank" href="</xsl:text>
+	    <!-- <xsl:text>&lt;a target="_blank" href="</xsl:text>
 	    <xsl:value-of select='$contenturldir' />
 	    <xsl:value-of select="concat('/', @filename)" />
 	    <xsl:text>&amp;slide=</xsl:text><xsl:value-of select="@slide"/>
 	    <xsl:text>&amp;keyword=</xsl:text><xsl:value-of select="@keyword"/>
 	    <xsl:text>"&gt;Chapter </xsl:text><xsl:value-of select="@chapter" />
 	    <xsl:text>&lt;/a&gt;</xsl:text>
+         -->
+        <xsl:variable name="apos">&apos;</xsl:variable>
+        <xsl:variable name="keyword">
+            <xsl:value-of select="@keyword"/>
+        </xsl:variable>
+        <a class="dropdown-item hidden" target="_blank">
+            <xsl:attribute name="slide">
+                <xsl:value-of select="@slide"/>
+            </xsl:attribute>
+            <xsl:attribute name="href">
+                <xsl:value-of select="concat($contenturldir, '/', ./@filename, '&amp;slide=', @slide, '&amp;keyword=', @keyword)"/>
+            </xsl:attribute>
+            <xsl:value-of select="concat('Chapter ', @chapter)"/>
+            <!-- <xsl:attribute name="onclick">
+                <xsl:value-of select="concat('focusOn($(&quot;#s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
+            </xsl:attribute>
+            <xsl:value-of select="concat('Slide ', @slide)"/> -->
+        </a>
     </xsl:template>
 
 </xsl:stylesheet>
