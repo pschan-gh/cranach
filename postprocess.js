@@ -564,7 +564,7 @@ function postprocess(cranach) {
         $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .active .slide_number").not('.hidden').fadeIn();
+            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
                 $("#menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
@@ -613,11 +613,19 @@ function postprocess(cranach) {
             })
         });
         
-        $('.carousel').on('slide.bs.carousel', function () {
+        $('.carousel').on('slid.bs.carousel', function () {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
             $('.carousel').carousel('pause');
-            // $('.carousel-item.active .slide_number').show();
+            let $slide = $('#output div.slide.active');
+            let $output = $('#output');
+            slideIndex = $slide.attr('slide');
+            
+            if ($output[0].scrollHeight >  $output.innerHeight()) {
+                $output.css('display', 'block');
+            } else {
+                $output.css('display', '');
+            }
         })        
     });
 

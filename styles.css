@@ -384,8 +384,7 @@ vertical-align: middle; */
     color:#ccc;
     font-size:75%;
     z-index:990;
-    display:none;
-    /* display:block; */
+    display:block;
 }
 
 .overview .contols {
