@@ -352,7 +352,7 @@
                             <!-- &#9776; -->
                             <div class="dropdown-menu" aria-labelledby="test_button">
                                 <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);">Full Screen</a>
-                                <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Presentation Mode</a>
+                                <a id="presentation_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Presentation Mode</a>
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');document.exitFullscreen();">Split Screen</a>
                                 <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
