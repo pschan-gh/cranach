@@ -99,10 +99,10 @@ function dim() {
 }
 
 function resizeFont(multiplier) {
-    if (document.getElementById("output").style.fontSize == "") {
-        document.getElementById("output").style.fontSize = "1.0em";
+    if (document.getElementsByTagName("html")[0].style.fontSize == "") {
+        document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
     }
-    document.getElementById("output").style.fontSize = parseFloat(document.getElementById("output").style.fontSize) + 0.2*(multiplier) + "em";
+    document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
 }
 
 function updateCarousel(slide) {

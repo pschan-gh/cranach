@@ -351,8 +351,8 @@
                             <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
                             <!-- &#9776; -->
                             <div class="dropdown-menu" aria-labelledby="test_button">
-                                <a id="present_button" function="present" class="dropdown-item menu_button present info" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Full Screen</a>
-                                <a id="info_button" function="dual" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');document.exitFullscreen();">Split Screen</a>
+                                <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Full Screen</a>
+                                <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');document.exitFullscreen();">Split Screen</a>
                                 <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
                                 <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
                                 <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
@@ -399,19 +399,19 @@
                             <!-- ☾ -->
                         </li>
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon info" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                            <button class="btn plain_button menu_button icon info" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
                                 <i class="material-icons">edit</i>
                             </button>
                         </li>
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon info" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
+                            <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
                                 <i class="material-icons">
                                     fullscreen
                                 </i>
                             </button>
                         </li>
                         <li>
-                            <button class="btn plain_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
+                            <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
                                 <i class="material-icons">
                                     fullscreen_exit
                                 </i>
