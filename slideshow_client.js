@@ -29,6 +29,15 @@ function batchRender(slide) {
     });
 }
 
+function adjustHeight() {
+    let $output = $('#output');
+    if ($output[0].scrollHeight >  $output.innerHeight()) {
+        $output.css('display', 'block');
+        $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
+    } else {
+        $output.css('display', '');
+    }
+}
 
 function showStep(el) {
     var $parent = $(el).closest('div[wbtag="steps"]');
@@ -144,13 +153,7 @@ function showDivs(n, cranach) {
     $slide.addClass('active');
 
     $('.carousel').carousel('pause');
-    let $output = $('#output');
-    if ($output[0].scrollHeight >  $output.innerHeight()) {
-        $output.css('display', 'block');
-        $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
-    } else {
-        $output.css('display', '');
-    }
+    adjustHeight();
     $('#right_half .slide_number button').text('Slide ' + index);
     $('#right_half .slide_number button').attr('slide', index);
 }

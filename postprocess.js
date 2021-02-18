@@ -617,27 +617,14 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
             $('.carousel').carousel('pause');
-            let $slide = $('#output div.slide.active');
-            let $output = $('#output');
+            let $slide = $('#output div.slide.active');            
             slideIndex = $slide.attr('slide');
             
             batchRender($slide[0]);
-            
-            if ($output[0].scrollHeight >  $output.innerHeight()) {
-                $output.css('display', 'block');
-                $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
-            } else {
-                $output.css('display', '');
-            }
+            adjustHeight();            
         })
         $('#output div.collapse').on('shown.bs.collapse', function() {
-            let $output = $('#output');
-            if ($output[0].scrollHeight >  $output.innerHeight()) {
-                $output.css('display', 'block');
-                $('.carousel-item.active .slide_content').css('padding-bottom', '15em');
-            } else {
-                $output.css('display', '');
-            }
+            adjustHeight(); 
         });
     });
 
