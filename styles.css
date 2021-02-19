@@ -876,7 +876,7 @@ span.latex_href svg {
 }
 
 thead th {
-background-color:SteelBlue;
+background-color:SteelBlue !important;
 color:#eee;
 }
 

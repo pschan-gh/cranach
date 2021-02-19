@@ -450,7 +450,7 @@ function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
     $('.icon.xml, .icon.latex').show();
 
-    $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
+    // $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
 
     // updateEditor();
     updateSlideClickEvent(cranach);
