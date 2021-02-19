@@ -151,7 +151,6 @@ function updateSlideClickEvent(cranach) {
         $('*[text]').removeClass('highlighted');
         $('button').removeClass('highlighted');
         $('.item_button').css('background-color', '');
-        // $('[data-toggle="popover"]').popover('hide');
         $(this).find('.loading_icon').hide();
 
         $('.separator').css('font-weight', 'normal');
@@ -491,16 +490,8 @@ function postprocess(cranach) {
         });
 
 
-        // $('[data-toggle="popover"]').off();
-        // $('[data-toggle="popover"]').on('click', function (e) {
-        //     $('[data-toggle="popover"]').each(function(){
-    	//     $(this).popover('hide');
-    	// });
-        //     $(this).popover('show');
-        // });
-
-        https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
-        $("button.btn_keyword[data-bs-toggle=popover]").popover({
+        // https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
+        $("[data-bs-toggle=popover]").popover({
             html : true,
             content: function() {
                 html = 'Loading...';
@@ -520,16 +511,6 @@ function postprocess(cranach) {
                 });
             });
         });
-
-        // https://stackoverflow.com/questions/20466903/bootstrap-popover-hide-on-click-outside/27615920
-        // $('body').on('click', function (e) {
-        //     $('[data-toggle=popover]').each(function () {
-        //         // hide any open popovers when the anywhere else in the body is clicked
-        //         if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-        //             $(this).popover('hide');
-        //         }
-        //     });
-        // });
 
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);

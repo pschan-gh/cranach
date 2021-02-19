@@ -48,12 +48,12 @@
         <xsl:if test="position()!=1">
             <!-- <br/> -->
         </xsl:if>
-        <button namespace="http://www.w3.org/1999/xhtml" type="button" class="btn btn-outline-info btn-sm btn_keyword index" style="margin-left:5px;margin-top:5px" data-bs-trigger="focus" data-bs-html="true" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom">
+        <xh:a namespace="http://www.w3.org/1999/xhtml" tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword index" data-bs-trigger="focus" data-bs-html="true" data-bs-toggle="popover" data-bs-placement="bottom" style="margin:2.5px">
             <!-- <xsl:attribute name="data-bs-content">                
             </xsl:attribute> -->
             <xsl:apply-templates select="idx:branch[@keyword]"/>
             <xsl:value-of select="idx:branch[1]/text()"/>
-        </button>
+        </xh:a>
         <xsl:text> </xsl:text>
     </xsl:template>
 

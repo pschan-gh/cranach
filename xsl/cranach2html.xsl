@@ -926,7 +926,7 @@
 
 	<xsl:template match="lv:keyword">
 		<xsl:param name="slide" select="'all'"/>
-		<button class="btn btn-outline-info btn-sm btn_keyword" style="margin-left:5px;margin-top:5px" data-bs-html="true" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
+		<xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
 			<xsl:attribute name="wbtag">
 				<xsl:text>ignore</xsl:text>
 			</xsl:attribute>
@@ -949,7 +949,7 @@
 				</a>
 			</xsl:for-each>
 			<xsl:value-of select="$keyword"/>
-		</button>
+		</xh:a>
 	</xsl:template>
 
 	<xsl:template match="lv:wiki">
