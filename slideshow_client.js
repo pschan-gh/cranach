@@ -156,6 +156,8 @@ function showDivs(n, cranach) {
     adjustHeight();
     $('#right_half .slide_number button').text('Slide ' + index);
     $('#right_half .slide_number button').attr('slide', index);
+    
+    $('.lcref-output').remove();
 }
 
 
