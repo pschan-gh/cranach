@@ -1456,5 +1456,12 @@ and (max-width : 1024px) {
     .dual_half > #output_icon_container {
         /* display:none; */
     }
+    
+    .dropdown-menu {
+        height: 80vh;
+        width:95vw;
+        overflow-y:auto;
+        overflow-x:hidden;
+    }
 
 }
