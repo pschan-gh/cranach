@@ -166,18 +166,23 @@
     background:SteelBlue;
     color:white !important;
 }
-/* 
-.navbar-nav li:hover > ul.dropdown-menu {
+
+.navbar-nav li.advanced:hover {
+    position:relative;    
+}
+
+.navbar-nav li.advanced:hover > ul.dropdown-submenu {
     display: block;
 }
+
 .dropdown-submenu {
-    position:relative;
+    position:absolute;
 }
-.dropdown-menu .dropdown-submenu {
+.dropdown-submenu {
     top:0;
     left:100%;
     margin-top:-6px;
-} */
+}
 
 </style>
 </head>
@@ -359,37 +364,71 @@
                         <li class="nav-item dropdown">
                             <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
                             <!-- &#9776; -->
-                            <div class="dropdown-menu" aria-labelledby="test_button">
-                                <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);">Full Screen</a>
-                                <a id="presentation_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Presentation Mode</a>
+                            <ul class="dropdown-menu" aria-labelledby="test_button">
+                                <li>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);">Full Screen</a>
+                                </li>
+                                <li>
+                                    <a id="presentation_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#right_half')[0].requestFullscreen();">Presentation Mode</a>
+                                </li>
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
-                                <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');if(document.fullscreenElement){document.exitFullscreen();}">Split Screen</a>
-                                <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
-                                <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
-                                <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
-                                    Font &#xff0b;
-                                </a>
-                                <a class="menu_button dropdown-item persist"  onclick="resizeFont(-1);">
-                                    Font &#xff0d;
-                                </a>
-                                <a id="print_button" class="menu_button dropdown-item" function="print" onclick="print(baseRenderer);">Print</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
-                                <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
-                                <input id="edit_box" type="checkbox" style="display:none" />
-                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
-                                <a class="dropdown-item">
-                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
-                                    <div class="dropdown-menu" aria-labelledby="advanced" style="background-color:#eee">
-                                        <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
-                                        <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
-                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
-                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
-                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
-                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
-                                    </div>
-                                </a>
-                            </div>
+                                <li>
+                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode'));$('#output').scrollTo($('#s' + slideIndex)); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');if(document.fullscreenElement){document.exitFullscreen();}">Split Screen</a>
+                                </li>
+                                <li>
+                                    <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
+                                </li>
+                                <li>
+                                    <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
+                                        Font &#xff0b;
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item persist"  onclick="resizeFont(-1);">
+                                        Font &#xff0d;
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="print_button" class="menu_button dropdown-item" function="print" onclick="print(baseRenderer);">Print</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider"/>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
+                                    <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
+                                    <input id="edit_box" type="checkbox" style="display:none" />
+                                </li>
+                                <li>
+                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                </li>
+                                <li class="advanced">
+                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                    <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
+                                        <li>
+                                            <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
+                                        </li>
+                                        <li>
+                                            <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
+                                        </li>
+                                        <li>
+                                            <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                        </li>
+                                        <li>
+                                            <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                        </li>
+                                        <li>
+                                            <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
+                                        </li>
+                                        <li>
+                                            <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
+                                        </li>
+                                    </ul>
+                                </li>                                
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <div class="form-inline slide_sel">
@@ -505,9 +544,7 @@
             <div class="modal-content" style="height:100%">
                 <div class="modal-header">
                     <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="height:100%" >
                     <textarea id="source_text"  name="content" style="height:100%"></textarea>
@@ -531,9 +568,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="github">
@@ -575,11 +610,11 @@
                 <div class="modal-footer">
                     <div style="width:100%">
                         <div class="feedback" style="float:left;font-size:small">
-                            <div class="spinner-border text-secondary" role="status">
+                            <div class="spinner-border text-secondary loading" role="status" style="float:left;display:none;">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
-                            <div class="message" style="display:inline-block;float:left"></div>
+                            <div class="message" style="display:inline-block;float:left;margin-left:5px;"></div>
                         </div>
                         <div style="float:right">
                             <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
