@@ -31,6 +31,9 @@ function batchRender(slide) {
 
 function adjustHeight() {
     let $output = $('#right_half .carousel-inner');
+    if (!$output.length) {
+        return 0;
+    }
     if ($output[0].scrollHeight >  $output.innerHeight()) {
         $output.css('display', 'block');
         $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
