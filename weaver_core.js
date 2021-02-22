@@ -246,6 +246,7 @@ function Stack(node, doc) {
         word = originalWord.trim();
 
         var word = originalWord.trim();
+        var parent;
         var child = this;
 
         if (word.match(/^\<\!\-\-/)) {
@@ -402,6 +403,9 @@ function Stack(node, doc) {
             parent = child.closeTo(/chapter/i);
             parent.node.setAttribute("chapter_type", argument);
             chapterType = argument;
+            break;
+            case '@skip':
+            child.node.setAttribute("data-lecture-skip", "true");
             break;
             case '@slide':
             child = child.closeTo(/SLIDES|section|chapter|course|root/i);

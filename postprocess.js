@@ -466,6 +466,10 @@ function postprocess(cranach) {
     
     $(function() {
         console.log(cranach);
+        
+        if (cranach.attr['lectureMode']) {
+            $('[data-lecture-skip="true"]').css('color', '#ccc');
+        }
 
         MathJax.startup.promise.then(() => {
             // MathJax.typesetClear();

@@ -41,7 +41,8 @@ function Cranach(url) {
         /* DOM elements */
         'preCranachDoc': null,
         'cranachDoc': null,
-        'indexDoc': null
+        'indexDoc': null,
+        'lectureMode' : 0
     };
 
     this.hasXML = false;
@@ -150,6 +151,9 @@ function Cranach(url) {
             }
             if (urlParams.has('keyword')) {
                 this.attr['selectedKeyword'] = urlParams.get('keyword');
+            }
+            if (urlParams.has('lecture')) {
+                this.attr['lectureMode'] = 1;
             }
         }
 
