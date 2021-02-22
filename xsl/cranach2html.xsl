@@ -997,6 +997,8 @@
 				<xsl:value-of select="concat('#', $id)" />
 				<!-- <xsl:value-of select="'#'" /> -->
 			</xsl:attribute>
+			<span class="material-icons expand_more">play_arrow</span>
+			<span class="material-icons expand_less">arrow_drop_down</span>
 			<!-- ► -->
 		</a>
 		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
@@ -1098,6 +1100,8 @@
 			<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 				<xsl:attribute name="aria-controls"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="href">#<xsl:value-of select="$id" /></xsl:attribute>
+				<span class="material-icons expand_more">play_arrow</span>
+				<span class="material-icons expand_less">keyboard_arrow_down</span>
 				<!-- <xsl:attribute name="href">#</xsl:attribute> -->
 				<!-- ► -->
 			</a>
