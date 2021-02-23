@@ -998,7 +998,7 @@
 				<!-- <xsl:value-of select="'#'" /> -->
 			</xsl:attribute>
 			<span class="material-icons expand_more">play_arrow</span>
-			<span class="material-icons expand_less">arrow_drop_down</span>
+			<span class="material-icons-outlined expand_less">play_arrow</span>
 			<!-- ► -->
 		</a>
 		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">

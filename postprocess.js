@@ -469,6 +469,7 @@ function postprocess(cranach) {
         
         if (cranach.attr['lectureMode']) {
             $('[data-lecture-skip="true"]').css('color', '#ccc');
+            $('[data-lecture-skip="true"] *').css('color', 'inherit');
         }
 
         MathJax.startup.promise.then(() => {
