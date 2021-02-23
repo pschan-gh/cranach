@@ -76,9 +76,16 @@ iframe.webwork {
     display:inline-flex !important;
 }
 
-#output .material-icons, #info_half .material-icons {
-    vertical-align:bottom !important;    
+#output .material-icons.expand_more, #output .material-icons-outlined.expand_less {
+    vertical-align:sub !important;    
     margin-left:-5px !important;
+}
+#info_half .material-icons {
+    vertical-align:bottom !important;    
+    /* margin-left:-5px !important; */
+}
+#output .material-icons-outlined.expand_less {
+    transform:rotate(90deg) !important;
 }
 
 /* .dim #slide_progress td.past {
