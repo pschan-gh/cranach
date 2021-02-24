@@ -17,6 +17,12 @@ body {
     height:100%;
 }
 
+#right_half .navbar {
+    position:absolute !important;
+    top:0;
+    left:0;
+}
+
 .light {
     color:#888; 
 }
@@ -550,7 +556,7 @@ b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h
     background-color:#ff0;
 }
 
-.hidden {
+.hidden, .comment {
 display:none;
 }
 

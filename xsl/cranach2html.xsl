@@ -1274,7 +1274,7 @@
 </xsl:template>
 
 <xsl:template match="comment()">
-	<xsl:element name="div" namespace="{$xh}">
+	<xsl:element name="div" namespace="{$xh}" class="hidden">
 		<xsl:attribute name="style">
 			<xsl:value-of select="'display:none'"/>
 		</xsl:attribute>
