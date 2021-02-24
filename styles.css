@@ -484,12 +484,10 @@ ol > li > ol > li > ol {
     display:none;
 }
 
-#toc a.course {
-    font-size:1.6em;
-}
 
 #toc a.course {
-    font-size:1.6em;
+    font-size:1.2em;
+    font-weight:bold;
 }
 
 #toc a.chapter {
@@ -504,11 +502,15 @@ ol > li > ol > li > ol {
     font-size:0.8em;
 }
 #toc a.subsubsection {
-    font-size:0.6em;
+    font-size:0.8em;
 }
 
 #toc a.highlighted {
     color:#9ff;
+}
+
+.list-group-item {
+    background-color:inherit;
 }
 
 b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h1.highlighted, button.highlighted{

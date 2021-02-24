@@ -62,6 +62,9 @@
 		</xsl:variable>
 
 		<li>
+			<xsl:attribute name="class">
+				<xsl:value-of select="local-name()"/>
+			</xsl:attribute>
 			<a href="#">
 				<xsl:attribute name="class">
 					<xsl:value-of select="local-name()"/>
@@ -119,12 +122,6 @@
 		</li>
 	</xsl:template>
 
-	<!-- <xsl:template match="xh:*[not(self::xh:iframe) and not(self::xh:img) and not(self::xh:br) and not(self::xh:newline)]">
-		<xsl:element name="{local-name()}" namespace="{$xh}">
-			<xsl:copy-of select="@*[(name(.)!='environment') and (name(.)!='chapter_type')]"/>
-			<xsl:apply-templates select="text()|comment()|*"/>
-		</xsl:element>
-	</xsl:template> -->
 	<xsl:template match="xh:*[not(self::xh:iframe) and not(self::xh:img) and not(self::xh:br or self::xh:hr)]">
 		<xsl:element name="{local-name()}" namespace="{$xh}">
 			<xsl:copy-of select="@*[(name(.)!='environment') and (name(.)!='chapter_type')]"/>
