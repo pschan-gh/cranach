@@ -23,6 +23,7 @@
             <xsl:copy-of select="@name"/>
             <xsl:copy-of select="@id"/>
             <xsl:copy-of select="@href"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
     </xsl:template>
@@ -164,6 +165,7 @@
             <xsl:copy-of select="@type"/>
             <xsl:copy-of select="@title"/>
             <xsl:copy-of select="@wbtag"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="text()|*"/>
             <!-- <xsl:text>&#xa;</xsl:text> -->
         </xsl:element>

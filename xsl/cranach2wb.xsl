@@ -61,7 +61,10 @@
     <xsl:template match="lv:statement|lv:substatement">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:if test="@data-lecture-skip='true'">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:text>@skip</xsl:text>
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="./lv:title">
                 <xsl:text>&#xa;</xsl:text>
