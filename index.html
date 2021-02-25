@@ -400,10 +400,14 @@
                                 <li>
                                     <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
                                     <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
-                                    <input id="edit_box" type="checkbox" style="display:none" />
                                 </li>
+                                <!-- <li>
+                                    <a class="menu_button dropdown-item" onclick="$('#htmlInput').click()">Open HTML</a>
+                                    <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
+                                </li> -->
                                 <li>
                                     <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                    <input id="edit_box" type="checkbox" style="display:none" />
                                 </li>
                                 <li class="advanced">
                                     <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>

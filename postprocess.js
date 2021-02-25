@@ -431,7 +431,11 @@ function updateEditor() {
 
 function updateSlideSelector(cranach) {
 
-    var numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
+    try {
+        var numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
+    } catch(error) {
+        return 0;
+    }
     // $('#slide_sel').attr('max', numOfSlides);
     $("#slide_sel").html('');
     for (let i = 1; i <= numOfSlides; i++) {
