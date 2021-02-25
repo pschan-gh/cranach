@@ -16,6 +16,7 @@ function renderSlide(slide) {
         // MathJax.typesetPromise([slide]);
         typeset([slide]);
     }
+    
 }
 
 

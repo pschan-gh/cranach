@@ -140,8 +140,7 @@ function updateSlideClickEvent(cranach) {
     $('.slide').off();
     $('.slide').click(function() {
 
-        console.log('SLIDE CLICKED');
-
+        console.log('SLIDE CLICKED');        
         var slideElement = this;
 
         if (typeof editor !== typeof undefined) {
@@ -299,7 +298,6 @@ function updateScrollEvent(cranach) {
             clearTimeout(timer);
         }
         timer = window.setTimeout(function() {
-            console.log('rendering slides');
             $('.slide.tex2jax_ignore').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);
@@ -448,7 +446,7 @@ function updateSlideSelector(cranach) {
 
 function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
-    $('.icon.xml, .icon.latex').show();
+    $('.icon.xml, .icon.latex').show();    
 
     // $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
 
@@ -461,16 +459,10 @@ function postprocess(cranach) {
     updateKeywords();
     // updateSlideProgress(cranach.slideIndex, true);
     updateSlideSelector(cranach);
-    updateTitle($('#s' + cranach.slideIndex)[0]);
-    
+    updateTitle($('#s' + cranach.slideIndex)[0]);    
     
     $(function() {
-        console.log(cranach);
-        
-        if (cranach.attr['lectureMode']) {
-            $('[data-lecture-skip="true"]').css('color', '#ccc');
-            $('[data-lecture-skip="true"] *').css('color', 'inherit');
-        }
+        console.log(cranach);        
 
         MathJax.startup.promise.then(() => {
             // MathJax.typesetClear();
@@ -484,7 +476,7 @@ function postprocess(cranach) {
         }).then(() => {
             $('.slide').each(function() {
                 if (isElementInViewport(this)) {
-                    batchRender(this);
+                    batchRender(this);                    
                 }
             });
         });
@@ -612,11 +604,16 @@ function postprocess(cranach) {
         $('#output div.collapse').on('shown.bs.collapse', function() {
             adjustHeight(); 
         });
+        if (cranach.attr['lectureMode']) {   
+            console.log('LECTURE MODE');     
+            $('[data-lecture-skip="true"]').css('color', '#ccc');
+            $('[data-lecture-skip="true"] *').css('color', 'inherit');
+        }
     });
 
     if (cranach.attr['present']) {
         $('#present_button').click();
     }
 
-    $('#loading_icon').hide();
+    $('#loading_icon').hide();    
 }

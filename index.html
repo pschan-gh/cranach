@@ -657,7 +657,7 @@ $(function() {
 
     $('#render_icon').click(function() {
         $('.icon.latex, .icon.xml').hide();
-        baseRenderer = new Cranach('').setup().then(cranach => {
+        baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
             console.log(cranach);
             return cranach.renderWb(editor.getValue(), document.getElementById('output'))
             .then(cranach => {
@@ -715,7 +715,7 @@ $(function() {
         $("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
         baseRenderer.then(cranach => {
             let dir = cranach.attr['dir'];
-            baseRenderer = new Cranach('').setup({'dir':dir, 'query':query});
+            baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode']});
             return baseRenderer;
         })
         .then(cranach => {
