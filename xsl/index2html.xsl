@@ -58,7 +58,7 @@
     </xsl:template>
 
     <xsl:template match="idx:branch[@keyword]">
-            <xsl:if test="position()!=1"><xsl:text>&lt;br/&gt;</xsl:text></xsl:if>
+            <!-- <xsl:if test="position()!=1"><xsl:text>&lt;br/&gt;</xsl:text></xsl:if> -->
             <!-- <xsl:text>&lt;a target="_blank" href ="</xsl:text><xsl:value-of select='$contenturldir' />/<xsl:value-of select="./@filename" /><xsl:text>&amp;slide=</xsl:text><xsl:value-of select="@slide"/><xsl:text>"&gt;Chapter </xsl:text><xsl:value-of select="@chapter" /><xsl:text>&lt;/a&gt;</xsl:text> -->
 	    <!-- <xsl:text>&lt;a target="_blank" href="</xsl:text>
 	    <xsl:value-of select='$contenturldir' />
