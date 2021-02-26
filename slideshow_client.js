@@ -1,5 +1,8 @@
 function renderSlide(slide) {
 
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
+
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
@@ -15,8 +18,7 @@ function renderSlide(slide) {
         $(slide).removeClass("tex2jax_ignore");
         // MathJax.typesetPromise([slide]);
         typeset([slide]);
-    }
-    
+    }    
 }
 
 

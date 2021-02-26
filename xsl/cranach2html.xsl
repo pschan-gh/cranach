@@ -986,7 +986,7 @@
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
 		</xsl:variable>
 		<!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
-		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
+		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="" aria-expanded="false" wbtag="ignore">
 			<xsl:attribute name="aria-controls">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -998,7 +998,7 @@
 			<span class="material-icons-outlined expand_less">play_arrow</span>
 			<!-- ► -->
 		</a>
-		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
+		<div class="hidden_collapse" xmlns="http://www.w3.org/1999/xhtml">
 			<xsl:attribute name="id">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>

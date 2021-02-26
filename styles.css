@@ -558,7 +558,7 @@ b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h
     background-color:#ff0;
 }
 
-.hidden, .comment {
+.hidden, .comment, .hidden_collapse {
 display:none;
 }
 
