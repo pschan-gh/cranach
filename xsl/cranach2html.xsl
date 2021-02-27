@@ -921,9 +921,10 @@
 		</h5>
 	</xsl:template>
 
+	<!-- <xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}"> -->
 	<xsl:template match="lv:keyword">
 		<xsl:param name="slide" select="'all'"/>
-		<xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
+		<xsl:element name="a" namespace="{$xh}" tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">		
 			<xsl:attribute name="wbtag">
 				<xsl:text>ignore</xsl:text>
 			</xsl:attribute>
@@ -946,7 +947,7 @@
 				</a>
 			</xsl:for-each>
 			<xsl:value-of select="$keyword"/>
-		</xh:a>
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="lv:wiki">

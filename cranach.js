@@ -307,7 +307,6 @@ function Cranach(url) {
         var output = this.output;
         $(output).find('#loading_icon').show();
         $(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
-        console.log(xsl);
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: xsl,
