@@ -998,7 +998,7 @@
 			<span class="material-icons-outlined expand_less">play_arrow</span>
 			<!-- ► -->
 		</a>
-		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
+		<div class="hidden_collapse">
 			<xsl:attribute name="id">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -1102,7 +1102,7 @@
 				<!-- <xsl:attribute name="href">#</xsl:attribute> -->
 				<!-- ► -->
 			</a>
-			<div class="collapse">
+			<div class="hidden_collapse">
 				<xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="wbtag">
 					<xsl:value-of select="@wbtag"/>
@@ -1274,9 +1274,9 @@
 </xsl:template>
 
 <xsl:template match="comment()">
-	<xsl:element name="div" namespace="{$xh}" class="hidden">
-		<xsl:attribute name="style">
-			<xsl:value-of select="'display:none'"/>
+	<xsl:element name="div" namespace="{$xh}">
+		<xsl:attribute name="class">
+			<xsl:value-of select="hidden"/>
 		</xsl:attribute>
 		<xsl:copy-of select="."/>
 	</xsl:element>
