@@ -921,10 +921,9 @@
 		</h5>
 	</xsl:template>
 
-	<!-- <xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}"> -->
 	<xsl:template match="lv:keyword">
 		<xsl:param name="slide" select="'all'"/>
-		<xsl:element name="a" namespace="{$xh}" tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">		
+		<xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
 			<xsl:attribute name="wbtag">
 				<xsl:text>ignore</xsl:text>
 			</xsl:attribute>
@@ -947,7 +946,7 @@
 				</a>
 			</xsl:for-each>
 			<xsl:value-of select="$keyword"/>
-		</xsl:element>
+		</xh:a>
 	</xsl:template>
 
 	<xsl:template match="lv:wiki">
@@ -987,7 +986,7 @@
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
 		</xsl:variable>
 		<!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
-		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="" aria-expanded="false" wbtag="ignore">
+		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 			<xsl:attribute name="aria-controls">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -999,7 +998,7 @@
 			<span class="material-icons-outlined expand_less">play_arrow</span>
 			<!-- ► -->
 		</a>
-		<div class="hidden_collapse" xmlns="http://www.w3.org/1999/xhtml">
+		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
 			<xsl:attribute name="id">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
