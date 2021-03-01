@@ -133,9 +133,9 @@ function updateModal(cranach) {
 
 function updateSlideClickEvent(cranach) {
 
-    $('.slide').hover(function() {
-        $('#output_icon_container').show();
-    });
+    // $('.slide').hover(function() {
+    //     $('#output_icon_container').show();
+    // });
 
     $('.slide').off();
     $('.slide').click(function() {
@@ -211,88 +211,88 @@ function updateSlideClickEvent(cranach) {
 }
 
 function updateRefs(cranach) {
-
-        $('a.lcref').each(function() {
-            $(this).attr('lcref', "");
-
-            var label = $(this).attr('label');
-            var md5 = $(this).attr('md5');
-
-            var contentDir = cranach.attr['dir'];
-            var rootURL = cranach.attr['rootURL'];
+    
+    $('a.lcref').each(function() {
+        $(this).attr('lcref', "");
+        
+        var label = $(this).attr('label');
+        var md5 = $(this).attr('md5');
+        
+        var contentDir = cranach.attr['dir'];
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        let statementType = 'statement';
+        if ($(this).attr('type').match(/proof|solution|answer/i)) {
+            statementType = 'substatement';
+        }
+        if ($(this).attr('type').match(/figure/i)) {
+            statementType = 'figure';
+        }
+        
+        var rootURL = cranach.attr['rootURL'];
+        if ($(this).attr('filename') == 'self') {
             if (cranach.hasXML) {
-                contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-            } else if (cranach.hasWb) {
-                contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-            }
-
-            let statementType = 'statement';
-            if ($(this).attr('type').match(/proof|solution|answer/i)) {
-                statementType = 'substatement';
-            }
-            if ($(this).attr('type').match(/figure/i)) {
-                statementType = 'figure';
-            }
-
-            var rootURL = cranach.attr['rootURL'];
-            if ($(this).attr('filename') == 'self') {
-                if (cranach.hasXML) {
-                    var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                } else {
-                    var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                }
-            } else if ($(this).attr('src-filename')) {
-                if ($(this).attr('src-filename').match(/\.xml$/)) {
-                    var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                } else {
-                    var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                }
-            }
-
-            $(this).attr('lcref', lcref + '&version=' +Math.random());
-
-        });
-
-        $('a.href').each(function() {
-
-            var label = $(this).attr('label');
-            var serial = $(this).attr('serial');
-            var md5 = $(this).attr('md5');
-            var contentDir = ''
-
-            var rootURL = cranach.attr['rootURL'];
-            if (cranach.hasXML) {
-                contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-            } else if (cranach.hasWb) {
-                contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-            }
-
-            if ($(this).attr('filename') == 'self') {
-                if (cranach.hasXML) {
-                    var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
-                } else {
-                    var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
-                }
+                var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
             } else {
-                if (cranach.hasXML) {
-                    var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-                } else {
-                    var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-                }
+                var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
             }
-
-            $(this).attr('target', '_blank');
-            $(this).attr('href', href);
-
-        });
-
+        } else if ($(this).attr('src-filename')) {
+            if ($(this).attr('src-filename').match(/\.xml$/)) {
+                var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        }
+        
+        $(this).attr('lcref', lcref + '&version=' +Math.random());
+        
+    });
+                    
+    $('a.href').each(function() {
+                    
+        var label = $(this).attr('label');
+        var serial = $(this).attr('serial');
+        var md5 = $(this).attr('md5');
+        var contentDir = ''
+        
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        if ($(this).attr('filename') == 'self') {
+            if (cranach.hasXML) {
+                var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
+            } else {
+                var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
+            }
+        } else {
+            if (cranach.hasXML) {
+                var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            } else {
+                var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            }
+        }
+        
+        $(this).attr('target', '_blank');
+        $(this).attr('href', href);
+        
+    });
+    
 }
 
 var timer = null;
 function updateScrollEvent(cranach) {
     $('#output').off();
+    
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
-
     $('#output').on('scroll', function() {
         if(timer !== null) {
             clearTimeout(timer);
@@ -305,17 +305,6 @@ function updateScrollEvent(cranach) {
             });
         }, 15*100);
     });
-
-    /*
-       $('#output').on("scroll", function() {
-       $('.slide.tex2jax_ignore').each(function() {
-            var slide = this;
-            if (isElementInViewport(slide) && ($(this).attr('slide') % 5 == 0)) {
-                window.setTimeout(function() {if (isElementInViewport(slide)) {batchRender(slide)}}, 1.5*1000);
-            }
-        });
-    });
-    */
 
 }
 
@@ -378,10 +367,9 @@ function updateToc(cranach) {
             $slide.click();
         });
     });
-    $('.toc').find('a.subsection').each(function() {
+    $('.toc a.subsection').each(function() {
         var $slide = $('.slide[subsection="' + $(this).attr('subsection') + '"][section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
             $slide.click();
         });
@@ -436,7 +424,6 @@ function updateSlideSelector(cranach) {
     } catch(error) {
         return 0;
     }
-    // $('#slide_sel').attr('max', numOfSlides);
     $("#slide_sel").html('');
     for (let i = 1; i <= numOfSlides; i++) {
         var o = new Option(i.toString(), i);
@@ -452,9 +439,6 @@ function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
     $('.icon.xml, .icon.latex').show();    
 
-    // $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
-
-    // updateEditor();
     updateSlideClickEvent(cranach);
     updateRefs(cranach);
     updateModal(cranach);
@@ -516,19 +500,15 @@ function postprocess(cranach) {
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
-            // $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.statement, .substatement, ');
             $item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
 
-            //  var $selectedSlide = $item.closest('.slide');
             $('#output').scrollTo($item);
-            // $selectedSlide.click();
             $item.addClass('highlighted');
         } else if (cranach.attr['selectedSection']) {
             var $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
             var $selectedSlide = $section.closest('.slide');
             $('#output').scrollTo($section);
             $section.addClass('highlighted');
-            // $selectedSlide.click();
         } else {
             var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
