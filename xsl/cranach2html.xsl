@@ -277,6 +277,7 @@
 			<xsl:number format="1" level="any" count="lv:slide"/>
 		</xsl:variable>
 		<div class="slide collapsed tex2jax_ignore">
+			<xsl:copy-of select="@*"/>
 			<xsl:attribute name="id">
 				<xsl:text>s</xsl:text>
 				<xsl:value-of select="$slide"/>
