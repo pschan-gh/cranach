@@ -650,7 +650,7 @@
 					<xsl:apply-templates select="text()"/>
 				</span>
 			</h1>
-			<xsl:apply-templates select="ancestor::*/lv:label"/>
+			<xsl:apply-templates select="ancestor::lv:course/lv:label"/>
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
@@ -702,7 +702,7 @@
 					</h2>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:apply-templates select="ancestor::*/lv:label"/>
+			<xsl:apply-templates select="ancestor::lv:chapter/lv:label"/>
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
@@ -755,7 +755,7 @@
 					<xsl:apply-templates select="*|text()"/>
 				</span>
 			</h3>
-			<xsl:apply-templates select="ancestor::*/lv:label"/>
+			<xsl:apply-templates select="ancestor::lv:section/lv:label"/>
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
@@ -794,7 +794,7 @@
 					<xsl:apply-templates select="text()|*"/>
 				</span>
 			</h4>
-			<xsl:apply-templates select="ancestor::*/lv:label"/>
+			<xsl:apply-templates select="ancestor::lv:subsection/lv:label"/>
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
@@ -835,7 +835,7 @@
 					<xsl:apply-templates select="text()|*"/>
 				</span>
 			</h5>
-			<xsl:apply-templates select="ancestor::*/lv:label"/>
+			<xsl:apply-templates select="ancestor::lv:subsubsection/lv:label"/>
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
