@@ -81,6 +81,7 @@
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@slide"/>
             <xsl:copy-of select="@id"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="xh:div[@class='slide_container']/xh:div[@class='slide_content']/xh:*|xh:div[@class='slide_container']/xh:div[@class='slide_content']/text()"/>
         </xsl:element>
     </xsl:template>

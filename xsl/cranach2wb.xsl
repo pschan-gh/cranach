@@ -36,6 +36,10 @@
     <xsl:template match="lv:slide[@wbtag]" >
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', name())" />
+        <xsl:if test="@data-lecture-skip='true'">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:text>@skip</xsl:text>
+        </xsl:if>
         <xsl:apply-templates select="*" />
     </xsl:template>
 
