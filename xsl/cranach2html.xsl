@@ -17,6 +17,7 @@
 
 	<xsl:param name="timestamp" select="'0'" />
 	<xsl:param name="contenturl" select="''" />
+	<xsl:param name="contentdir" select="''" />
 
 	<xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
@@ -1015,7 +1016,7 @@
 			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
 			<xsl:if test="@src">
 				<xsl:attribute name="data-src">
-					<xsl:value-of select="@src"/>
+					<xsl:value-of select="concat($contentdir, '/', @src)"/>
 				</xsl:attribute>
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>

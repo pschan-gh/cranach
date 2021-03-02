@@ -319,6 +319,7 @@ function Cranach(url) {
                     xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
                     console.log(el.attr['contentURL']);
                     xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
+                    xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
                     // xsltProcessor.setParameter('', 'contenturl', '');
                     console.log('displayCranachDocToHtml');
                     $(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
