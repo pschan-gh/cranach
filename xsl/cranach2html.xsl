@@ -1015,9 +1015,18 @@
 		<xsl:element name="{local-name()}" namespace="{$xh}">
 			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
 			<xsl:if test="@src">
-				<xsl:attribute name="data-src">
-					<xsl:value-of select="concat($contentdir, '/', @src)"/>
-				</xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="contains(@src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@src"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @src)"/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>
 			<xsl:apply-templates select="text()|comment()|*"/>
@@ -1194,11 +1203,23 @@
 			<xsl:attribute name="class">
 				<xsl:text>image</xsl:text>
 			</xsl:attribute>
-			<xsl:copy-of select="@*[name(.)!='src']"/>
+			<xsl:copy-of select="@*[name(.)!='src']"/>			
 			<xsl:element name="img">
 				<xsl:attribute name="wbtag">ignore</xsl:attribute>
 				<xsl:copy-of select="@*[name(.)!='src']"/>
 				<xsl:attribute name="rendered">0</xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="contains(@data-src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@data-src"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @data-src)"/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
