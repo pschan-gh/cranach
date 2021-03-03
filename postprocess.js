@@ -590,8 +590,7 @@ function postprocess(cranach) {
         });
         if (cranach.attr['lectureMode']) {   
             console.log('LECTURE MODE');     
-            $('[data-lecture-skip="true"]').css('color', '#ccc');
-            $('[data-lecture-skip="true"] *').css('color', 'inherit');
+            $('[data-lecture-skip="true"]').addClass('lecture_skip');
         }
     });
 

@@ -1236,6 +1236,10 @@ font-weight:bolder;
     padding: 0 2em;
 }
 
+.lecture_skip * {
+    color:#ccc !important;
+}
+
 @media print {
 
     html {
