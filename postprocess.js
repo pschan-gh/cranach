@@ -139,10 +139,13 @@ function updateSlideClickEvent(cranach) {
 
     $('.slide').off();
     $('.slide').click(function() {
-
+        
         console.log('SLIDE CLICKED');        
+        $('.slide').removeClass('selected');
+        $(this).addClass('selected');
         var slideElement = this;
 
+        
         if (typeof editor !== typeof undefined) {
             scrollToLine(editor, $(slideElement).attr('canon_num'));
         }
@@ -179,13 +182,7 @@ function updateSlideClickEvent(cranach) {
             var statements = new Array();
 
             updateTitle(slideElement);
-
-            if ($(this).hasClass('collapsed')) {
-                $('#uncollapse_button').text('Uncollapse');
-            } else {
-                $('#uncollapse_button').text('Collapse');
-            }
-
+            
             var url = cranach.attr['contentURL'];
             var urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
 
@@ -204,7 +201,12 @@ function updateSlideClickEvent(cranach) {
                 $('#info_statements .chapter[chapter="' + $(slideElement).attr('chapter') + '"]').show();
             }
 
-            // updateSlideProgress(slideIndex, false);
+            if ($(this).find('a.collapsea[aria-expanded="false"]').length) {
+                $('#uncollapse_button').text('Uncollapse');
+            } else {
+                $('#uncollapse_button').text('Collapse');
+            }
+
         }
     });
 
@@ -579,8 +581,8 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
             $('.carousel').carousel('pause');
-            let $slide = $('#output div.slide.active');            
-            slideIndex = $slide.attr('slide');
+            let $slide = $('#output div.slide.active');
+            $slide.click();
             
             batchRender($slide[0]);
             adjustHeight();            
