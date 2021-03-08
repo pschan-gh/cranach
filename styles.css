@@ -876,7 +876,7 @@ max-width:600px;
 
 #output img {
     max-width:100%;
-    /* background:transparent url(icons/Loading_icon.gif) center no-repeat; */
+    background:transparent url(icons/Loading_icon.gif) center no-repeat;
 }
 
 .dual-left{

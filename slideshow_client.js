@@ -393,11 +393,13 @@ function highlight(item) {
 }
 function imagePostprocess(image) {
 
-    if ($(image).hasClass('exempt')) {
+    if ($(image).hasClass('exempt') || Math.max($(image)[0].naturalWidth, $(image)[0].naturalHeight) < 450) {
         $(image).attr('src', $(image).attr('data-src'));
+        $(image).css('background', 'none');
+        $(image).show();
         return 1;
     }
-
+    
     $(image).attr('src', $(image).attr('data-src'));
 
     $(image).on('load', function() {
@@ -409,11 +411,6 @@ function imagePostprocess(image) {
     
         var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
         
-        console.log($(image).attr('src') + ' ' + Math.max($(image)[0].naturalWidth, $(image)[0].naturalHeight));
-        if ($(image).hasClass('exempt') || Math.max($(image)[0].naturalWidth, $(image)[0].naturalHeight) < 450) {
-            return 1;
-        }
-        console.log(override);
         
         if(/svg/.test($(image).attr('src'))) {
             if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
