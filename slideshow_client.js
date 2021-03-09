@@ -392,87 +392,88 @@ function highlight(item) {
 
 }
 function imagePostprocess(image) {
-
-    if ($(image).hasClass('exempt')) {
-        $(image).attr('src', $(image).attr('data-src'));
-        return 1;
-    }
-
+    
     $(image).attr('src', $(image).attr('data-src'));
-
-    var image_width = $(image).closest('.image').css('width');
-
-    $(image).closest('.image').css('height', '');
-    $(image).closest('.dual-left').css('height', '');
-    $(image).closest('.dual-right').css('height', '');
-
-    var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
-
-    if ($(image).hasClass('exempt')) {
-        override = true;
-    }
-
-    if(/svg/.test($(image).attr('src'))) {
-        if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
-            var width = 300;
-            var height = 300;
-            $(image).attr('width', width);
-        } else if (!override) {
-            var width = 450;
-            var height = 450;
-            $(image).closest('.image').css('width', '450');
-            $(image).attr('width', width);
-        } else {
-            $(image).css('width', '100%');
+    $(image).on('load', function() {
+            
+        if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
+            $(image).css('background', 'none');
+            $(image).show();
+            return 1;
         }
-    } else if (!override) {
-        $(image).removeAttr('style');
-        $(image).removeAttr('width');
-        $(image).removeAttr('height');
-        var width = $(image).get(0).naturalWidth;
-        var height = $(image).get(0).naturalHeight;
+        var image_width = $(image).closest('.image').css('width');
+        
+        $(image).closest('.image').css('height', '');
+        $(image).closest('.dual-left').css('height', '');
+        $(image).closest('.dual-right').css('height', '');
 
-        if (width > height) {
-            if (width > 600) {
-                $(image).css('width', '100%');
-                $(image).css('max-height', '100%');
+        var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
+        
+        if ($(image).hasClass('exempt')) {
+            override = true;
+        }
+        
+        if(/svg/.test($(image).attr('src'))) {
+            if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+                var width = 300;
+                var height = 300;
+                $(image).attr('width', width);
+            } else if (!override) {
+                var width = 450;
+                var height = 450;
+                $(image).closest('.image').css('width', '450');
+                $(image).attr('width', width);
             } else {
-                $(image).css('max-width', '100%');
-                $(image).css('height', 'auto');
+                $(image).css('width', '100%');
             }
-        } else {
-            if (height > 560) {
-                if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+        } else if (!override) {
+            $(image).removeAttr('style');
+            $(image).removeAttr('width');
+            $(image).removeAttr('height');
+            var width = $(image).get(0).naturalWidth;
+            var height = $(image).get(0).naturalHeight;            
+            
+            if (width > height) {
+                if (width > 600) {
                     $(image).css('width', '100%');
                     $(image).css('max-height', '100%');
                 } else {
-                    if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
-                        $(image).css('height', '560px');
-                        $(image).css('width', 'auto');
-                    } else {
-                        $(image).css('height', 'auto');
-                        $(image).css('max-width', '100%');
-                    }
+                    $(image).css('max-width', '100%');
+                    $(image).css('height', 'auto');
                 }
             } else {
-                if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
-                    $(image).css('max-width', '100%');
-                    $(image).css('height', 'auto');
+                if (height > 560) {
+                    if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+                        $(image).css('width', '100%');
+                        $(image).css('max-height', '100%');
+                    } else {
+                        if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
+                            $(image).css('height', '560px');
+                            $(image).css('width', 'auto');
+                        } else {
+                            $(image).css('height', 'auto');
+                            $(image).css('max-width', '100%');
+                        }
+                    }
                 } else {
-                    $(image).css('max-width', '100%');
-                    $(image).css('height', 'auto');
+                    if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
+                        $(image).css('max-width', '100%');
+                        $(image).css('height', 'auto');
+                    } else {
+                        $(image).css('max-width', '100%');
+                        $(image).css('height', 'auto');
+                    }
                 }
             }
+        } else {
+            if ($(image).css('width') == '' || typeof $(image).css('width') === typeof undefined || $(image).css('width') === false) {
+                $(image).css('width', '100%');
+            }
         }
-    } else {
-        if ($(image).css('width') == '' || typeof $(image).css('width') === typeof undefined || $(image).css('width') === false) {
-            $(image).css('width', '100%');
-        }
-    }
 
-    $(image).css('background', 'none');
-    $(image).show();
-
+        $(image).css('background', 'none');
+        $(image).show();
+    });
 }
 
 function updateTitle(slide) {
