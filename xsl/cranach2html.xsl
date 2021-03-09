@@ -457,6 +457,7 @@
 
 	<xsl:template match="lv:caption">
 		<xsl:param name="serial" select="''"/>
+        <br/>
 		<small class="caption" wbtag="ignore">
 			<!-- <xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>

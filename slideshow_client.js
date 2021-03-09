@@ -392,6 +392,7 @@ function highlight(item) {
 
 }
 function imagePostprocess(image) {
+<<<<<<< HEAD
 
     if ($(image).hasClass('exempt') || Math.max($(image)[0].naturalWidth, $(image)[0].naturalHeight) < 450) {
         $(image).attr('src', $(image).attr('data-src'));
@@ -403,14 +404,34 @@ function imagePostprocess(image) {
     $(image).attr('src', $(image).attr('data-src'));
 
     $(image).on('load', function() {
+=======
+    
+    $(image).attr('src', $(image).attr('data-src'));
+    $(image).on('load', function() {
+            
+        if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
+            $(image).css('background', 'none');
+            $(image).show();
+            return 1;
+        }
+>>>>>>> 1dd4af8c50d992098331d9314d9d974efe9d9c7a
         var image_width = $(image).closest('.image').css('width');
         
         $(image).closest('.image').css('height', '');
         $(image).closest('.dual-left').css('height', '');
         $(image).closest('.dual-right').css('height', '');
+<<<<<<< HEAD
     
         var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
         
+=======
+
+        var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
+        
+        if ($(image).hasClass('exempt')) {
+            override = true;
+        }
+>>>>>>> 1dd4af8c50d992098331d9314d9d974efe9d9c7a
         
         if(/svg/.test($(image).attr('src'))) {
             if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
@@ -430,7 +451,11 @@ function imagePostprocess(image) {
             $(image).removeAttr('width');
             $(image).removeAttr('height');
             var width = $(image).get(0).naturalWidth;
+<<<<<<< HEAD
             var height = $(image).get(0).naturalHeight;
+=======
+            var height = $(image).get(0).naturalHeight;            
+>>>>>>> 1dd4af8c50d992098331d9314d9d974efe9d9c7a
             
             if (width > height) {
                 if (width > 600) {
@@ -469,11 +494,17 @@ function imagePostprocess(image) {
                 $(image).css('width', '100%');
             }
         }
+<<<<<<< HEAD
         
         $(image).css('background', 'none');
         $(image).show();
     });
+=======
+>>>>>>> 1dd4af8c50d992098331d9314d9d974efe9d9c7a
 
+        $(image).css('background', 'none');
+        $(image).show();
+    });
 }
 
 function updateTitle(slide) {
