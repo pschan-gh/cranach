@@ -457,21 +457,22 @@
 
 	<xsl:template match="lv:caption">
 		<xsl:param name="serial" select="''"/>
-        <br/>
-		<small class="caption" wbtag="ignore">
-			<!-- <xsl:attribute name="wbtag">
+        <div wbtag="skip">
+			<small class="caption" wbtag="ignore">
+				<!-- <xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>
-			</xsl:attribute> -->
-			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
-			<!-- <xsl:apply-templates select="text()"/> -->
-		</small>
-        <small class="caption">
-			<xsl:attribute name="wbtag">
-				<xsl:value-of select="'caption'"/>
-			</xsl:attribute>
-			<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
-			<xsl:apply-templates select="text()"/>
-		</small>
+			    </xsl:attribute> -->
+				<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+				<!-- <xsl:apply-templates select="text()"/> -->
+			</small>
+			<small class="caption">
+				<xsl:attribute name="wbtag">
+					<xsl:value-of select="'caption'"/>
+				</xsl:attribute>
+				<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
+				<xsl:apply-templates select="text()"/>
+			</small>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:statement">
@@ -1110,8 +1111,7 @@
 				<xsl:attribute name="aria-controls"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="href">#<xsl:value-of select="$id" /></xsl:attribute>
 				<span class="material-icons expand_more">play_arrow</span>
-				<span class="material-icons expand_less">keyboard_arrow_down</span>
-				<!-- <xsl:attribute name="href">#</xsl:attribute> -->
+				<span class="material-icons-outlined expand_less">play_arrow</span>
 				<!-- ► -->
 			</a>
 			<div class="hidden_collapse">
