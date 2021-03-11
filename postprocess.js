@@ -340,6 +340,7 @@ function updateToc(cranach) {
             statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' serial='" + serial + "' href='javascript:void(0)'>" + serial + "</a>";
         });
         var html = '';
+        $('#info_statements').html('');
         for (var key in statements) {
             html += '<br/><a class="info_statements" target="_blank" href="' + url + '&query=//lv:statement[@chapter=' + chapter + ' and @type=%27' + key + '%27]">' + key + '</a><em> ' + statements[key] + '</em>';
         }
@@ -359,7 +360,7 @@ function updateToc(cranach) {
             // $slide.click();
         });
     });
-    console.log($('#info_statements')[0]);
+    // console.log($('#info_statements')[0]);
 
     $('.toc').find('a.section').each(function() {
         var $slide = $('.slide[section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
@@ -604,8 +605,8 @@ function postprocess(cranach) {
         if (cranach.attr['present']) {
             $('#present_button').click();
         }
-        $('#loading_icon').hide();    
+        $('#loading_icon').hide();
+        
     });
-
     
 }
