@@ -374,7 +374,7 @@
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <li>
                                     <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
-                                </li>
+                                </li>                                
                                 <li>
                                     <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
                                 </li>
@@ -412,6 +412,12 @@
                                 <li class="advanced">
                                     <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
                                     <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
+                                        <li>
+                                            <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
+                                                <input type="checkbox" class="lecture_mode"/>
+                                                Lecture Mode
+                                            </a>
+                                        </li>
                                         <li>
                                             <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
                                         </li>

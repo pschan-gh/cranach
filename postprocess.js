@@ -590,15 +590,22 @@ function postprocess(cranach) {
         $('#output div.collapse').on('shown.bs.collapse', function() {
             adjustHeight(); 
         });
+        $('input.lecture_mode').change(function() {
+            if (this.checked) {
+                $('[data-lecture-skip="true"]').addClass('lecture_skip');
+            } else {
+                $('[data-lecture-skip="true"]').removeClass('lecture_skip');
+            }
+        });
         if (cranach.attr['lectureMode']) {   
             console.log('LECTURE MODE');     
             $('[data-lecture-skip="true"]').addClass('lecture_skip');
         }
+        if (cranach.attr['present']) {
+            $('#present_button').click();
+        }
+        $('#loading_icon').hide();    
     });
 
-    if (cranach.attr['present']) {
-        $('#present_button').click();
-    }
-
-    $('#loading_icon').hide();    
+    
 }
