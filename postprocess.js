@@ -597,7 +597,7 @@ function postprocess(cranach) {
                 $('[data-lecture-skip="true"]').removeClass('lecture_skip');
             }
         });
-        if (cranach.attr['lectureMode']) {   
+        if (cranach.attr['lectureMode'] || $('input.lecture_mode')[0].checked) {   
             console.log('LECTURE MODE');     
             $('[data-lecture-skip="true"]').addClass('lecture_skip');
         }
