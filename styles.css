@@ -1386,7 +1386,7 @@ and (max-width : 1024px) {
     }
 
     html {
-        font-size: 40px;
+        /* font-size: 40px; */
     }
 
     .slide_container {
@@ -1419,7 +1419,7 @@ and (max-width : 1024px) {
     }
     
     .material-icons {
-        font-size: 60px !important;
+        /* font-size: 60px !important; */
     }
 
     .menu_button, .submenu_button {
