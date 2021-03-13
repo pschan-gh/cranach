@@ -1425,7 +1425,11 @@ and (max-width : 1024px) {
     .menu_button, .submenu_button {
         font-size:1.5em;
     }
-    .menu_button.present, .menu_button.dual {
+    .menu_button.present, .menu_button.dual, .menu_button.edit {
+        display:none !important;
+    }
+    
+    .dropdown-menu .advanced {
         display:none !important;
     }
 
@@ -1479,8 +1483,8 @@ and (max-width : 1024px) {
     }
     
     .dropdown-menu {
-        height: 80vh;
-        width:95vw;
+        /* height: 80vh;
+        width:95vw; */
         overflow-y:auto;
         overflow-x:hidden;
     }

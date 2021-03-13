@@ -405,7 +405,7 @@
                                     <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
                                 </li> -->
                                 <li>
-                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
                                     <input id="edit_box" type="checkbox" style="display:none" />
                                 </li>
                                 <li class="advanced">
@@ -458,7 +458,7 @@
                             <!-- ☾ -->
                         </li>
                         <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button menu_button icon info" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                            <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
                                 <i class="material-icons">edit</i>
                             </button>
                         </li>
