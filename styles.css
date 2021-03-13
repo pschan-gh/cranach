@@ -1433,6 +1433,14 @@ and (max-width : 1024px) {
         display:none !important;
     }
 
+    #menu_container {
+        background-color:white;
+    }
+    
+    #menu_container navbar-nav {
+        display:flex;
+    }
+
     #left_half.overview {
         position:relative;
         float:left;
