@@ -355,9 +355,7 @@ function updateToc(cranach) {
 
         var $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
-            // $slide.click();
         });
     });
     // console.log($('#info_statements')[0]);
@@ -529,28 +527,28 @@ function postprocess(cranach) {
         $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+            $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
-                $("#menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+                $(".present #menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
         
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
         });
-        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
             clearTimeout(menu_timer);
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+                    $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
@@ -569,10 +567,10 @@ function postprocess(cranach) {
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".present #menu_container .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
