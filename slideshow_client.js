@@ -5,8 +5,10 @@ function annotate() {
         if ($(slide).find('.canvas-controls:visible').length) {
             $(slide).find('.canvas-controls').hide();
             $(slide).find('.canvas-controls .disable').click();
+            $(slide).find('.slide_container').removeClass('annotate');
         } else {
             $(slide).find('.canvas-controls').show();
+            $(slide).find('.slide_container').addClass('annotate');
             $(slide).find('.canvas-controls .enable').click();
         }
         return 1;
@@ -17,8 +19,10 @@ function annotate() {
 
 function addCanvas(slide) {
     if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
-        return 0;
+            return 0;
     }
+
+    $(slide).find('.slide_container').addClass('annotate');
 
     let width = $('#output')[0].scrollWidth;
     let height = $('#output')[0].scrollHeight;
@@ -29,22 +33,37 @@ function addCanvas(slide) {
       height: height,
       showWarnings: true,
     });
+    slide.cfd.setLineWidth(3);
     slide.redrawCount = $(slide).find('.canvas-controls .redraw-count').first()[0];
     slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
       slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
     });
 
     $(slide).find('.canvas-controls .clear').click(() => slide.cfd.clear());
-    $(slide).find('.canvas-controls .new').click(function() {
-        slide.cfd.clear();
-        $(slide.cfd.canvas).remove();
-        addCanvas(slide);
+    $(slide).find('.canvas-controls .extend').click(function() {
+        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
+        var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+        var img = new Image();
+        img.src = oldCanvas;
+        img.onload = function (){
+            // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+            let ctx = slide.cfd.canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+        }
+        // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+        // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+        // addCanvas(slide, true);
     });
     $(slide).find('.canvas-controls .disable').click(() => $(slide.cfd.canvas).hide());
     $(slide).find('.canvas-controls .enable').click(() => $(slide.cfd.canvas).show());
     $(slide).find('.canvas-controls .undo').click(() => slide.cfd.undo());
     $(slide).find('.canvas-controls .redo').click(() => slide.cfd.redo());
     $(slide).find('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
+    $(slide).find('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 255, 0]));
+    $(slide).find('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
+    $(slide).find('.canvas-controls .yellow').click(() => slide.cfd.setDrawingColor([255, 255, 0]));
+    $(slide).find('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
 
 }
 

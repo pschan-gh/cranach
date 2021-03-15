@@ -392,25 +392,34 @@
 					</xsl:apply-templates>
 				</div>
 			</div>
-			<div class="canvas-controls" style="position:fixed;left:25%;bottom:0;display:none;z-index:1000" wbtag="skip">
-                <button class="clear">Clear canvas</button>
-                <button class="new">New canvas</button>
-                <button class="restore">Restore canvas</button>
-                <!-- <button class="bucket">Bucket</button>  -->
-				<button class="disable">Disable</button>
-                <button class="enable">Enable</button>
-				<button class="undo">Undo</button>
-                <button class="redo">Redo</button>
-                <br />
-                <button class="red color" >Red</button>
-                <button class="green color" >Green</button>
-                <button class="blue color" >Blue</button>
-                <button class="black color" >Black</button>
-                <button class="darkgrey color" >darkgrey</button>
-                <button class="grey color" >grey</button>
-                <button class="lightgrey color" >lightgrey</button> <br />
-                <span class="redraw-count" style="display:none">0</span>
-            </div>
+			<div class="canvas-controls">
+				<nav class="navbar navbar-expand-lg navbar-light bg-light">
+					<div class="container-fluid">
+						<div class="collapse navbar-collapse">
+							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<li class="nav-item"><a class="nav-link clear">Clear canvas</a></li>
+								<li class="nav-item"><a class="nav-link extend">Extend canvas</a></li>
+								<li class="nav-item"><a class="nav-link restore">Restore canvas</a></li>
+								<li class="nav-item"><a class="nav-link disable">Disable</a></li>
+								<li class="nav-item"><a class="nav-link enable">Enable</a></li>
+								<li class="nav-item"><a class="nav-link undo">Undo</a></li>
+								<li class="nav-item"><a class="nav-link redo">Redo</a></li>
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Color</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+										<li class="dropdown-item"><a class="nav-link red color">Red</a></li>
+										<li class="dropdown-item"><a class="nav-link green color">Green</a></li>
+										<li class="dropdown-item"><a class="nav-link blue color">Blue</a></li>
+										<li class="dropdown-item"><a class="nav-link yellow color">yellow</a></li>
+										<li class="dropdown-item"><a class="nav-link black color">Black</a></li>
+									</ul>
+								</li>			                
+							</ul>
+						</div>
+					</div>
+				</nav>
+				<span class="redraw-count" style="display:none">0</span>
+			</div>			
 		</div>
 	</xsl:template>
 
