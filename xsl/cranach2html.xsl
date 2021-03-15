@@ -393,19 +393,15 @@
 				</div>
 			</div>
 			<div class="canvas-controls">
-				<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<nav class="navbar navbar-expand-lg navbar-light">
 					<div class="container-fluid">
 						<div class="collapse navbar-collapse">
 							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item"><a class="nav-link clear">Clear canvas</a></li>
-								<li class="nav-item"><a class="nav-link extend">Extend canvas</a></li>
-								<li class="nav-item"><a class="nav-link restore">Restore canvas</a></li>
-								<li class="nav-item"><a class="nav-link disable">Disable</a></li>
-								<li class="nav-item"><a class="nav-link enable">Enable</a></li>
-								<li class="nav-item"><a class="nav-link undo">Undo</a></li>
-								<li class="nav-item"><a class="nav-link redo">Redo</a></li>
+								<li class="nav-item"><a class="nav-link clear"><span class="material-icons">restart_alt</span></a></li>
+								<li class="nav-item"><a class="nav-link expand"><span class="material-icons">expand</span></a></li>
+								<!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->								
 								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Color</a>
+									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
 									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 										<li class="dropdown-item"><a class="nav-link red color">Red</a></li>
 										<li class="dropdown-item"><a class="nav-link green color">Green</a></li>
@@ -413,7 +409,11 @@
 										<li class="dropdown-item"><a class="nav-link yellow color">yellow</a></li>
 										<li class="dropdown-item"><a class="nav-link black color">Black</a></li>
 									</ul>
-								</li>			                
+								</li>
+								<li class="nav-item"><a class="nav-link undo"><span class="material-icons">undo</span></a></li>
+								<li class="nav-item"><a class="nav-link redo"><span class="material-icons">redo</span></a></li>
+								<li class="nav-item"><a class="nav-link disable"><span class="material-icons">edit_off</span></a></li>
+								<li class="nav-item"><a class="nav-link enable"><span class="material-icons">mode</span></a></li>								
 							</ul>
 						</div>
 					</div>

@@ -33,20 +33,24 @@ function addCanvas(slide) {
       height: height,
       showWarnings: true,
     });
-    slide.cfd.setLineWidth(3);
+    slide.cfd.setLineWidth(2);
     slide.redrawCount = $(slide).find('.canvas-controls .redraw-count').first()[0];
     slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
       slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
     });
 
-    $(slide).find('.canvas-controls .clear').click(() => slide.cfd.clear());
-    $(slide).find('.canvas-controls .extend').click(function() {
+    // $(slide).find('.canvas-controls .clear').click(() => slide.cfd.clear());
+    $(slide).find('.canvas-controls .clear').click(function() {
+        $(slide).find('canvas').remove();
+        addCanvas(slide);
+    });
+    $(slide).find('.canvas-controls .expand').click(function() {
         // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
         var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
         var img = new Image();
         img.src = oldCanvas;
         img.onload = function (){
-            // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
             $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
             let ctx = slide.cfd.canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
@@ -55,8 +59,14 @@ function addCanvas(slide) {
         // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
         // addCanvas(slide, true);
     });
-    $(slide).find('.canvas-controls .disable').click(() => $(slide.cfd.canvas).hide());
-    $(slide).find('.canvas-controls .enable').click(() => $(slide.cfd.canvas).show());
+    $(slide).find('.canvas-controls .disable').click(function() {
+        $(slide.cfd.canvas).hide();
+        $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+    });
+    $(slide).find('.canvas-controls .enable').click(function() {
+        $(slide.cfd.canvas).show();
+        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');
+    });
     $(slide).find('.canvas-controls .undo').click(() => slide.cfd.undo());
     $(slide).find('.canvas-controls .redo').click(() => slide.cfd.redo());
     $(slide).find('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
