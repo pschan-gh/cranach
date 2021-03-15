@@ -6,10 +6,17 @@ function annotate() {
             $(slide).find('.canvas-controls').hide();
             $(slide).find('.canvas-controls .disable').click();
             $(slide).find('.slide_container').removeClass('annotate');
+            $('.carousel').carousel({
+                touch: true
+            })
         } else {
             $(slide).find('.canvas-controls').show();
             $(slide).find('.slide_container').addClass('annotate');
             $(slide).find('.canvas-controls .enable').click();
+            $('.carousel').attr('data-bs-touch', "false");
+            $('.carousel').carousel({
+                touch: false
+            })
         }
         return 1;
     }
@@ -21,7 +28,10 @@ function addCanvas(slide) {
     if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
             return 0;
     }
-
+    $('.carousel').attr('data-bs-touch', "false");
+    $('.carousel').carousel({
+        touch: false
+    })
     $(slide).find('.slide_container').addClass('annotate');
 
     let width = $('#output')[0].scrollWidth;
@@ -62,6 +72,10 @@ function addCanvas(slide) {
     $(slide).find('.canvas-controls .disable').click(function() {
         $(slide.cfd.canvas).hide();
         $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+        // $('.carousel').attr('data-bs-touch', "true");
+        $('.carousel').carousel({
+            touch: true
+        })
     });
     $(slide).find('.canvas-controls .enable').click(function() {
         $(slide.cfd.canvas).show();
