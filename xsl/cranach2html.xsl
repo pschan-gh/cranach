@@ -392,14 +392,14 @@
 					</xsl:apply-templates>
 				</div>
 			</div>
-			<div class="canvas-controls" style="position:fixed;left:25%;bottom:0;display:none;" wbtag="skip">
+			<div class="canvas-controls" style="position:fixed;left:25%;bottom:0;display:none;z-index:1000" wbtag="skip">
                 <button class="clear">Clear canvas</button>
-                <button class="save">Save canvas</button>
+                <button class="new">New canvas</button>
                 <button class="restore">Restore canvas</button>
                 <!-- <button class="bucket">Bucket</button>  -->
-				<button id="disable">Disable</button>
+				<button class="disable">Disable</button>
                 <button class="enable">Enable</button>
-				<button id="undo">Undo</button>
+				<button class="undo">Undo</button>
                 <button class="redo">Redo</button>
                 <br />
                 <button class="red color" >Red</button>

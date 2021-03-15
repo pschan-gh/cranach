@@ -440,7 +440,11 @@ vertical-align: middle; */
     font-size:2em;
     color:SteelBlue;
     opacity:0.25;
-    z-index:1500;
+    z-index:500;
+}
+
+canvas {
+    z-index:999;
 }
 
 .present .carousel-indicators {

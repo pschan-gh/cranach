@@ -2,21 +2,26 @@ function annotate() {
     let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
 
     if ($(slide).find('canvas').length) {
-
-        $(slide).find('canvas-controls').hide();
+        if ($(slide).find('.canvas-controls:visible').length) {
+            $(slide).find('.canvas-controls').hide();
+            $(slide).find('.canvas-controls .disable').click();
+        } else {
+            $(slide).find('.canvas-controls').show();
+            $(slide).find('.canvas-controls .enable').click();
+        }
         return 1;
     }
     addCanvas(slide);
     $(slide).find('.canvas-controls').show();
 }
 
-function addCanvas (slide) {
+function addCanvas(slide) {
     if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
         return 0;
     }
 
-    let width = $('#output')[0].offsetWidth;
-    let height = $('#output')[0].offsetHeight;
+    let width = $('#output')[0].scrollWidth;
+    let height = $('#output')[0].scrollHeight;
 
     slide.cfd = new CanvasFreeDrawing.default({
       elementId: slide.id,
@@ -30,6 +35,11 @@ function addCanvas (slide) {
     });
 
     $(slide).find('.canvas-controls .clear').click(() => slide.cfd.clear());
+    $(slide).find('.canvas-controls .new').click(function() {
+        slide.cfd.clear();
+        $(slide.cfd.canvas).remove();
+        addCanvas(slide);
+    });
     $(slide).find('.canvas-controls .disable').click(() => $(slide.cfd.canvas).hide());
     $(slide).find('.canvas-controls .enable').click(() => $(slide.cfd.canvas).show());
     $(slide).find('.canvas-controls .undo').click(() => slide.cfd.undo());
