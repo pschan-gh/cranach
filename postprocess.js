@@ -450,6 +450,7 @@ function postprocess(cranach) {
     updateSlideSelector(cranach);
     updateTitle($('#s' + cranach.slideIndex)[0]);    
     
+    
     $(function() {
         console.log(cranach);        
 
@@ -584,7 +585,10 @@ function postprocess(cranach) {
             $slide.click();
             
             batchRender($slide[0]);
-            adjustHeight();            
+            adjustHeight();
+            if ($slide.find('canvas').length == 0) {
+                $('canvas-controls').hide();
+            }
         })
         $('#output div.collapse').on('shown.bs.collapse', function() {
             adjustHeight(); 

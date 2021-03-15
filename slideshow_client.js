@@ -1,5 +1,98 @@
-function renderSlide(slide) {
+function annotate() {
+    let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
+    addCanvas(slide);
+    $('#canvas-controls').show();
+}
 
+function addCanvas (slide) {
+    
+    // $(slide).append('<button id="clear">Clear canvas</button>');
+    // $(slide).append('<button id="save">Save canvas</button>');
+    // $(slide).append('<button id="restore">Restore canvas</button>');
+    // $(slide).append('<button id="bucket">Bucket</button>');
+    // $(slide).append('<button id="disable">Disable</button>');
+    // $(slide).append('<button id="enable">Enable</button>');
+    // $(slide).append('<button id="undo">Undo</button>');
+    // $(slide).append('<button id="redo">Redo</button>');
+    
+    if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
+        return 0;
+    }
+    
+    let width = $('#output')[0].offsetWidth;
+    let height = $('#output')[0].offsetHeight;
+    
+    const cfd = new CanvasFreeDrawing.default({
+      elementId: slide.id,
+      width: width,
+      height: height,
+      showWarnings: true,
+    });
+    const redrawCount = document.getElementById('redraw-count');
+    cfd.on({ event: 'redraw', counter: 0 }, () => {
+      redrawCount.innerText = parseInt(redrawCount.innerText) + 1;
+    });
+    // const textarea = document.getElementById('backup');
+    document
+      .getElementById('clear')
+      .addEventListener('click', () => cfd.clear());
+    // document
+    //   .getElementById('disable')
+    //   .addEventListener('click', () => cfd.disableDrawingMode());
+    document
+      .getElementById('disable')
+      .addEventListener('click', () => $(cfd.canvas).hide());
+    // document
+    //   .getElementById('enable')
+    //   .addEventListener('click', () => cfd.enableDrawingMode());
+    document
+        .getElementById('enable')
+        .addEventListener('click', () => $(cfd.canvas).show());
+    // document.getElementById('save').addEventListener('click', () => {
+    //   textarea.value = cfd.save();
+    // });
+    document.getElementById('restore').addEventListener('click', () => {
+      cfd.restore(textarea.value);
+    });
+    document.getElementById('undo').addEventListener('click', () => cfd.undo());
+    document.getElementById('redo').addEventListener('click', () => cfd.redo());
+    document.getElementById('bucket').addEventListener('click', () => {
+      cfd.configBucketTool({
+        tolerance: document.getElementById('tolerance').value,
+      });
+      const isActive = cfd.toggleBucketTool();
+      document.getElementById('bucket').classList.add('active');
+      if (isActive) {
+      } else {
+        document.getElementById('bucket').classList.remove('active');
+      }
+    });
+    document
+      .getElementById('red')
+      .addEventListener('click', () => cfd.setDrawingColor([255, 0, 0]));
+    // document
+    //   .getElementById('green')
+    //   .addEventListener('click', () => cfd.setDrawingColor([0, 255, 0]));
+    // document
+    //   .getElementById('blue')
+    //   .addEventListener('click', () => cfd.setDrawingColor([0, 0, 255]));
+    // document
+    //   .getElementById('black')
+    //   .addEventListener('click', () => cfd.setDrawingColor([0, 0, 0]));
+    // document
+    //   .getElementById('darkgrey')
+    //   .addEventListener('click', () => cfd.setDrawingColor([50, 50, 50]));
+    // document
+    //   .getElementById('grey')
+    //   .addEventListener('click', () => cfd.setDrawingColor([100, 100, 100]));
+    // document
+    //   .getElementById('lightgrey')
+    //   .addEventListener('click', () => cfd.setDrawingColor([150, 150, 150]));    
+}
+
+
+function renderSlide(slide) {
+    
     $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
@@ -19,6 +112,8 @@ function renderSlide(slide) {
         // MathJax.typesetPromise([slide]);
         typeset([slide]);
     }    
+    
+    // addCanvas(slide);
 }
 
 
