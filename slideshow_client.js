@@ -77,9 +77,16 @@ function addCanvas(slide) {
             touch: true
         })
     });
+    $(slide).find('.canvas-controls .erase').click(function() {
+        slide.cfd.setErase();
+        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
+    });
     $(slide).find('.canvas-controls .enable').click(function() {
         $(slide.cfd.canvas).show();
-        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');
+        slide.cfd.setDraw();
+        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
     });
     $(slide).find('.canvas-controls .undo').click(() => slide.cfd.undo());
     $(slide).find('.canvas-controls .redo').click(() => slide.cfd.redo());

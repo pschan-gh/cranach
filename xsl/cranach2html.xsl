@@ -413,7 +413,8 @@
 								<li class="nav-item"><a class="nav-link undo"><span class="material-icons">undo</span></a></li>
 								<li class="nav-item"><a class="nav-link redo"><span class="material-icons">redo</span></a></li>
 								<li class="nav-item"><a class="nav-link disable"><span class="material-icons">edit_off</span></a></li>
-								<li class="nav-item"><a class="nav-link enable"><span class="material-icons">mode</span></a></li>								
+								<li class="nav-item"><a class="nav-link erase"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
+								<li class="nav-item"><a class="nav-link enable"><span class="material-icons">mode_edit</span></a></li>								
 							</ul>
 						</div>
 					</div>
