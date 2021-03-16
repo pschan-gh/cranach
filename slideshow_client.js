@@ -72,10 +72,8 @@ function addCanvas(slide) {
     $(slide).find('.canvas-controls .disable').click(function() {
         $(slide.cfd.canvas).hide();
         $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+        $(slide).find('.canvas-controls .enable').removeClass('disabled');
         // $('.carousel').attr('data-bs-touch', "true");
-        $('.carousel').carousel({
-            touch: true
-        })
     });
     $(slide).find('.canvas-controls .erase').click(function() {
         slide.cfd.setErase();
