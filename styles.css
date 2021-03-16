@@ -862,7 +862,7 @@ canvas {
 .canvas-controls {
 position:fixed !important;
 top:0;
-left:10%;
+right:2em;
 width:100%;
 display:none;
 z-index:1500;

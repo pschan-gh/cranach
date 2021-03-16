@@ -531,7 +531,7 @@ function postprocess(cranach) {
             $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
-                $(".present #menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+                $(".present.fadeout #menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
         
@@ -549,7 +549,7 @@ function postprocess(cranach) {
                 $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+                    $(".present.fadeout #menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
