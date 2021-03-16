@@ -528,10 +528,11 @@ function postprocess(cranach) {
         $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+            $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
-                $(".present.fadeout #menu_container .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+                $(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+                $(".controls, .present .active .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
         
@@ -546,10 +547,10 @@ function postprocess(cranach) {
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $(".present.fadeout #menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
@@ -568,10 +569,10 @@ function postprocess(cranach) {
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $(".present #menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $(".present #menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
