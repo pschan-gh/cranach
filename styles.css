@@ -862,8 +862,8 @@ canvas {
 
 .canvas-controls {
 position:fixed !important;
-top:0;
-right:500px;
+top:50px;
+right:75px;
 /* width:100%; */
 display:none;
 z-index:1500;

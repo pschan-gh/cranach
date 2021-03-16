@@ -393,7 +393,7 @@
 				</div>
 			</div>
 			<div class="canvas-controls">
-				<nav class="navbar navbar-expand-lg navbar-light">
+				<nav class="navbar navbar-collapse-lg navbar-light">
 					<div class="container-fluid">
 						<div>
 							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
