@@ -140,7 +140,7 @@ function updateSlideClickEvent(cranach) {
     $('.slide').off();
     $('.slide').click(function() {
         
-        console.log('SLIDE CLICKED');        
+        // console.log('SLIDE CLICKED');        
         $('.slide').removeClass('selected');
         $(this).addClass('selected');
         var slideElement = this;
