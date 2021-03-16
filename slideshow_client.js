@@ -18,11 +18,11 @@ function updateCanvas(slide) {
     if ($('#output').hasClass('annotate')) {
         $(slide).find('.canvas-controls').show();
         if ($(slide).find('canvas').length) {                        
-            $(slide).find('.canvas-controls .enable').click();
+            $(slide).find('.canvas-controls .disable').click();
             return 1;
         } else {            
             addCanvas(slide);
-            $(slide).find('.canvas-controls .enable').click();
+            $(slide).find('.canvas-controls .disable').click();
         }
     } else {
         if ($(slide).find('canvas').length) {
@@ -83,7 +83,7 @@ function addCanvas(slide) {
         // addCanvas(slide, true);
     });
     $(slide).find('.canvas-controls .disable').click(function() {
-        $(slide.cfd.canvas).hide();
+        $(slide.cfd.canvas).css('z-index', 0);
         $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
         $(slide).find('.canvas-controls .enable').removeClass('disabled');
         // $('.carousel').attr('data-bs-touch', "true");
@@ -94,7 +94,8 @@ function addCanvas(slide) {
         $(this).addClass('disabled');
     });
     $(slide).find('.canvas-controls .enable').click(function() {
-        $(slide.cfd.canvas).show();
+        // $(slide.cfd.canvas).show();
+        $(slide.cfd.canvas).css('z-index', 999);
         slide.cfd.setDraw();
         $(slide).find('.canvas-controls .nav-link').removeClass('disabled');        
         $(this).addClass('disabled');
