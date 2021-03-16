@@ -87,6 +87,7 @@ function addCanvas(slide) {
         // addCanvas(slide, true);
     });
     $(slide).find('.canvas-controls .disable').click(function() {
+        slide.cfd.disableDrawingMode();
         $(slide.cfd.canvas).css('z-index', 0);
         $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
         $(slide).find('.canvas-controls .enable').removeClass('disabled');
@@ -98,6 +99,7 @@ function addCanvas(slide) {
         $(this).addClass('disabled');
     });
     $(slide).find('.canvas-controls .enable').click(function() {
+        slide.cfd.enableDrawingMode();
         $(slide.cfd.canvas).show();
         $(slide.cfd.canvas).css('z-index', 999);
         slide.cfd.setDraw();
