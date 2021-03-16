@@ -587,9 +587,10 @@ function postprocess(cranach) {
             
             batchRender($slide[0]);
             adjustHeight();
-            if ($slide.find('canvas').length == 0) {
-                $('canvas-controls').hide();
-            }
+            // if ($slide.find('canvas').length == 0) {
+            //     $('canvas-controls').hide();
+            // }
+            updateCanvas($slide[0]);
         })
         $('#output div.collapse').on('shown.bs.collapse', function() {
             adjustHeight(); 

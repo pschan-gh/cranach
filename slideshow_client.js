@@ -1,39 +1,52 @@
 function annotate() {
-    let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
+    
+    if ($('#output').hasClass('annotate')) {
+        $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('#output').removeClass('annotate')
+        $('#output').removeClass('annotate');
+    } else {
+        $('#output').addClass('annotate');
+        $('.carousel').attr('data-bs-touch', "false");
+    }
+    // let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
+    let slide = $('#output div.slide.active')[0];
+    updateCanvas(slide);
+    
+}
 
-    if ($(slide).find('canvas').length) {
-        if ($(slide).find('.canvas-controls:visible').length) {
+function updateCanvas(slide) {    
+    if ($('#output').hasClass('annotate')) {
+        $(slide).find('.canvas-controls').show();
+        if ($(slide).find('canvas').length) {                        
+            $(slide).find('.canvas-controls .enable').click();
+            return 1;
+        } else {            
+            addCanvas(slide);
+            $(slide).find('.canvas-controls .enable').click();
+        }
+    } else {
+        if ($(slide).find('canvas').length) {
             $(slide).find('.canvas-controls').hide();
             $(slide).find('.canvas-controls .disable').click();
-            $(slide).find('.slide_container').removeClass('annotate');
-            $('.carousel').carousel({
-                touch: true
-            })
-        } else {
-            $(slide).find('.canvas-controls').show();
-            $(slide).find('.slide_container').addClass('annotate');
-            $(slide).find('.canvas-controls .enable').click();
-            $('.carousel').attr('data-bs-touch', "false");
-            $('.carousel').carousel({
-                touch: false
-            })
         }
-        return 1;
-    }
-    addCanvas(slide);
-    $(slide).find('.canvas-controls').show();
+    } 
+    // if ($(slide).find('.canvas-controls:visible').length) {
+    //     $(slide).find('.canvas-controls').hide();
+    //     $(slide).find('.canvas-controls .disable').click();
+    //     $(slide).find('.slide_container').removeClass('annotate');
+    // } else {
+    //     $(slide).find('.canvas-controls').show();
+    //     $(slide).find('.slide_container').addClass('annotate');
+    //     $(slide).find('.canvas-controls .enable').click();
+    //     $('.carousel').attr('data-bs-touch', "false");                
+    // }
 }
 
 function addCanvas(slide) {
     if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
             return 0;
     }
-    $('.carousel').attr('data-bs-touch', "false");
-    $('.carousel').carousel({
-        touch: false
-    })
-    $(slide).find('.slide_container').addClass('annotate');
-
+    
     let width = $('#output')[0].scrollWidth;
     let height = $('#output')[0].scrollHeight;
 
@@ -91,7 +104,7 @@ function addCanvas(slide) {
     $(slide).find('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
     $(slide).find('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 255, 0]));
     $(slide).find('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
-    $(slide).find('.canvas-controls .yellow').click(() => slide.cfd.setDrawingColor([255, 255, 0]));
+    $(slide).find('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
     $(slide).find('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
 
 }
@@ -137,7 +150,7 @@ function adjustHeight() {
     if (!$output.length) {
         return 0;
     }
-    if ($output[0].scrollHeight >  $output.innerHeight()) {
+    if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
         $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
     } else {

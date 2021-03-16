@@ -406,7 +406,7 @@
 										<li class="dropdown-item"><a class="nav-link red color">Red</a></li>
 										<li class="dropdown-item"><a class="nav-link green color">Green</a></li>
 										<li class="dropdown-item"><a class="nav-link blue color">Blue</a></li>
-										<li class="dropdown-item"><a class="nav-link yellow color">yellow</a></li>
+										<li class="dropdown-item"><a class="nav-link orange color">Orange</a></li>
 										<li class="dropdown-item"><a class="nav-link black color">Black</a></li>
 									</ul>
 								</li>

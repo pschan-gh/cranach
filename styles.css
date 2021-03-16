@@ -448,6 +448,7 @@ vertical-align: middle; */
     top: 0 !important;
     bottom:initial !important;
     margin-top:10px !important;
+    z-index:1200 !important;
 }
 
 .carousel.pointer-event {
@@ -869,7 +870,7 @@ z-index:1500;
 font-size:1rem;
 }
 
-.slide_container.annotate {
+.annotate .slide_container {
     float:left;
     padding-left:2em;
     z-index:750;

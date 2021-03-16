@@ -372,7 +372,7 @@
                                 </li>
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <li>
-                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
+                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
                                 </li>                                
                                 <li>
                                     <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
