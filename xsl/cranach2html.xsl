@@ -395,7 +395,7 @@
 			<div class="canvas-controls">
 				<nav class="navbar navbar-expand-lg navbar-light">
 					<div class="container-fluid">
-						<div class="collapse navbar-collapse">
+						<div>
 							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 								<li class="nav-item"><a class="nav-link clear"><span class="material-icons">restart_alt</span></a></li>
 								<li class="nav-item"><a class="nav-link expand"><span class="material-icons">expand</span></a></li>
