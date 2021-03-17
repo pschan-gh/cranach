@@ -391,36 +391,8 @@
 						<xsl:with-param name="slide" select="$slide"/>
 					</xsl:apply-templates>
 				</div>
-			</div>
-			<div class="canvas-controls">
-				<nav class="navbar navbar-collapse-lg navbar-light">
-					<div class="container-fluid">
-						<div>
-							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item"><a class="nav-link clear"><span class="material-icons">restart_alt</span></a></li>
-								<li class="nav-item"><a class="nav-link expand"><span class="material-icons">expand</span></a></li>
-								<!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->								
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-										<li class="dropdown-item"><a class="nav-link red color">Red</a></li>
-										<li class="dropdown-item"><a class="nav-link green color">Green</a></li>
-										<li class="dropdown-item"><a class="nav-link blue color">Blue</a></li>
-										<li class="dropdown-item"><a class="nav-link orange color">Orange</a></li>
-										<li class="dropdown-item"><a class="nav-link black color">Black</a></li>
-									</ul>
-								</li>
-								<li class="nav-item"><a class="nav-link undo"><span class="material-icons">undo</span></a></li>
-								<li class="nav-item"><a class="nav-link redo"><span class="material-icons">redo</span></a></li>
-								<li class="nav-item"><a class="nav-link disable"><span class="material-icons">edit_off</span></a></li>
-								<li class="nav-item"><a class="nav-link erase"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
-								<li class="nav-item"><a class="nav-link enable"><span class="material-icons">mode_edit</span></a></li>								
-							</ul>
-						</div>
-					</div>
-				</nav>
-				<span class="redraw-count" style="display:none">0</span>
 			</div>			
+			<span class="annotate redraw-count" style="display:none">0</span>		
 		</div>
 	</xsl:template>
 

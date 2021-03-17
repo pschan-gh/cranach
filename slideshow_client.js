@@ -17,33 +17,79 @@ function annotate() {
 
 function updateCanvas(slide) {    
     if ($('#output').hasClass('annotate')) {        
-        $(slide).find('.canvas-controls').show();
-        if ($(slide).find('canvas').length) {                     
-            $(slide).find('.canvas-controls .disable').click();
+        $('.canvas-controls').show();
+        if ($(slide).find('canvas').length) {                                 
             $(slide.cfd.canvas).show();
             return 1;
         } else {            
             addCanvas(slide);
-            $(slide).find('.canvas-controls .disable').click();
             $(slide.cfd.canvas).show();
         }        
     } else {
         if ($(slide).find('canvas').length) {
-            $(slide).find('.canvas-controls').hide();
-            $(slide).find('canvas').hide();
-            $(slide).find('.canvas-controls .disable').click();
+            $('.canvas-controls').hide();
+            $(slide).find('canvas').hide();            
         }
     } 
-    // if ($(slide).find('.canvas-controls:visible').length) {
-    //     $(slide).find('.canvas-controls').hide();
-    //     $(slide).find('.canvas-controls .disable').click();
+    // if ($('.canvas-controls:visible').length) {
+    //     $('.canvas-controls').hide();
+    //     $('.canvas-controls .disable').click();
     //     $(slide).find('.slide_container').removeClass('annotate');
     // } else {
-    //     $(slide).find('.canvas-controls').show();
+    //     $('.canvas-controls').show();
     //     $(slide).find('.slide_container').addClass('annotate');
-    //     $(slide).find('.canvas-controls .enable').click();
+    //     $('.canvas-controls .enable').click();
     //     $('.carousel').attr('data-bs-touch', "false");                
     // }
+    // $('.canvas-controls .clear').click(() => slide.cfd.clear());
+    $('.canvas-controls .clear').click(function() {
+        $(slide).find('canvas').remove();
+        addCanvas(slide);
+    });
+    $('.canvas-controls .expand').click(function() {
+        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
+        var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+        var img = new Image();
+        img.src = oldCanvas;
+        img.onload = function (){
+            $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+            let ctx = slide.cfd.canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+        }
+        // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+        // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+        // addCanvas(slide, true);
+    });
+    $('.canvas-controls .disable').click(function() {
+        slide.cfd.disableDrawingMode();
+        $(slide.cfd.canvas).css('z-index', 0);
+        $('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+        $('.canvas-controls .enable').removeClass('disabled');
+        // $('.carousel').attr('data-bs-touch', "true");
+    });
+    $('.canvas-controls .erase').click(function() {
+        slide.cfd.setErase();
+        $('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
+    });
+    $('.canvas-controls .enable').click(function() {
+        slide.cfd.enableDrawingMode();
+        $(slide.cfd.canvas).show();
+        $(slide.cfd.canvas).css('z-index', 999);
+        slide.cfd.setDraw();
+        $('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
+    });
+    $('.canvas-controls .undo').click(() => slide.cfd.undo());
+    $('.canvas-controls .redo').click(() => slide.cfd.redo());
+    $('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
+    $('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
+    $('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
+    $('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
+    $('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
+    
+    $('.canvas-controls .disable').click();
 }
 
 function addCanvas(slide) {
@@ -61,58 +107,10 @@ function addCanvas(slide) {
       showWarnings: true,
     });
     slide.cfd.setLineWidth(2);
-    slide.redrawCount = $(slide).find('.canvas-controls .redraw-count').first()[0];
+    slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
     slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
       slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-    });
-
-    // $(slide).find('.canvas-controls .clear').click(() => slide.cfd.clear());
-    $(slide).find('.canvas-controls .clear').click(function() {
-        $(slide).find('canvas').remove();
-        addCanvas(slide);
-    });
-    $(slide).find('.canvas-controls .expand').click(function() {
-        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-        var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-        var img = new Image();
-        img.src = oldCanvas;
-        img.onload = function (){
-            $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
-            $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
-            let ctx = slide.cfd.canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-        }
-        // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
-        // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
-        // addCanvas(slide, true);
-    });
-    $(slide).find('.canvas-controls .disable').click(function() {
-        slide.cfd.disableDrawingMode();
-        $(slide.cfd.canvas).css('z-index', 0);
-        $(slide).find('.canvas-controls .nav-link').not('.enable').addClass('disabled');
-        $(slide).find('.canvas-controls .enable').removeClass('disabled');
-        // $('.carousel').attr('data-bs-touch', "true");
-    });
-    $(slide).find('.canvas-controls .erase').click(function() {
-        slide.cfd.setErase();
-        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');        
-        $(this).addClass('disabled');
-    });
-    $(slide).find('.canvas-controls .enable').click(function() {
-        slide.cfd.enableDrawingMode();
-        $(slide.cfd.canvas).show();
-        $(slide.cfd.canvas).css('z-index', 999);
-        slide.cfd.setDraw();
-        $(slide).find('.canvas-controls .nav-link').removeClass('disabled');        
-        $(this).addClass('disabled');
-    });
-    $(slide).find('.canvas-controls .undo').click(() => slide.cfd.undo());
-    $(slide).find('.canvas-controls .redo').click(() => slide.cfd.redo());
-    $(slide).find('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
-    $(slide).find('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 255, 0]));
-    $(slide).find('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
-    $(slide).find('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
-    $(slide).find('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
+    });    
 
 }
 
