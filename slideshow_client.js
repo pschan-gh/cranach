@@ -42,6 +42,7 @@ function updateCanvas(slide) {
     //     $('.carousel').attr('data-bs-touch', "false");                
     // }
     // $('.canvas-controls .clear').click(() => slide.cfd.clear());
+    $('.canvas-controls .annotate').off().
     $('.canvas-controls .clear').click(function() {
         $(slide).find('canvas').remove();
         addCanvas(slide);
