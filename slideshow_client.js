@@ -18,31 +18,17 @@ function annotate() {
 function updateCanvas(slide) {    
     if ($('#output').hasClass('annotate')) {        
         $('.canvas-controls').show();
-        if ($(slide).find('canvas').length) {                                 
-            $(slide.cfd.canvas).show();
-            return 1;
-        } else {            
+        if (!$(slide).find('canvas').length) {
             addCanvas(slide);
-            $(slide.cfd.canvas).show();
-        }        
+        }   
+        $(slide.cfd.canvas).show();     
     } else {
         if ($(slide).find('canvas').length) {
             $('.canvas-controls').hide();
             $(slide).find('canvas').hide();            
         }
     } 
-    // if ($('.canvas-controls:visible').length) {
-    //     $('.canvas-controls').hide();
-    //     $('.canvas-controls .disable').click();
-    //     $(slide).find('.slide_container').removeClass('annotate');
-    // } else {
-    //     $('.canvas-controls').show();
-    //     $(slide).find('.slide_container').addClass('annotate');
-    //     $('.canvas-controls .enable').click();
-    //     $('.carousel').attr('data-bs-touch', "false");                
-    // }
-    // $('.canvas-controls .clear').click(() => slide.cfd.clear());
-    $('.canvas-controls .annotate').off().
+    $('.canvas-controls .annotate').off();    
     $('.canvas-controls .clear').click(function() {
         $(slide).find('canvas').remove();
         addCanvas(slide);
