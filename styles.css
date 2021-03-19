@@ -97,6 +97,10 @@ iframe.webwork {
     transform:rotate(90deg) !important;
 }
 
+#output.dual div.slide:first-child {
+    padding-top:2.5em;
+}
+
 /* .dim #slide_progress td.past {
     background-color: #555;
 }
