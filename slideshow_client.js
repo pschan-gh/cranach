@@ -27,6 +27,7 @@ function updateCanvas(slide) {
             $('.canvas-controls').hide();
             $(slide).find('canvas').hide();            
         }
+        return 1;
     } 
     $('.canvas-controls .annotate').off();    
     $('.canvas-controls .clear').click(function() {
