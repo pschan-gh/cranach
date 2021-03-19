@@ -97,9 +97,9 @@ iframe.webwork {
     transform:rotate(90deg) !important;
 }
 
-#output.dual div.slide:first-child {
+/* #output.dual div.slide:first-child {
     padding-top:2.5em;
-}
+} */
 
 /* .dim #slide_progress td.past {
     background-color: #555;
@@ -1081,8 +1081,12 @@ position:relative;
 }
 
 #menu_container {
-    background-color:#fff;
+    /* background-color:#fff; */
     z-index:1000;
+}
+
+.present #menu_container {
+    background-color:#fff;
 }
 
 #main_menu {
@@ -1470,7 +1474,7 @@ and (max-width : 1024px) {
     }
 
     #menu_container {
-        background-color:white;
+        background-color:#fff;
     }
     
     #menu_container navbar-nav {
