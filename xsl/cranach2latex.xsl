@@ -310,10 +310,10 @@
 				<xsl:otherwise>
 					<xsl:choose>
 						<xsl:when test="not(@name)">
-							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '\#item', @item, '}{', lv:title/text(), '}')"/>
+							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', lv:title/text(), '}')"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '\#item', @item, '}{', @name, '}')"/>
+							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @name, '}')"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:otherwise>
