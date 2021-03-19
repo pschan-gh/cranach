@@ -34,6 +34,7 @@ function updateCanvas(slide) {
         addCanvas(slide);
     });
     $('.canvas-controls .expand').click(function() {
+        slide.cfd.disableDrawingMode();
         // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
         var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
         var img = new Image();
@@ -43,6 +44,8 @@ function updateCanvas(slide) {
             $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
             let ctx = slide.cfd.canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
+            slide.cfd.enableDrawingMode();
+            slide.cfd.setDraw();
         }
         // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
         // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
