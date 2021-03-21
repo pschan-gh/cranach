@@ -719,6 +719,7 @@ function updateModalProofs(md5String, cranach) {
     $.ajax({
         url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
         dataType: "xml"
+        %% to be updated timestamp
     })
     .done(function(index) {
         var queryString = '//idx:branch[@type="Proof"][@ofmd5="' + md5String + '"]';
