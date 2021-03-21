@@ -155,7 +155,7 @@ function Stack(node, doc) {
 
     this.close = function() {
         if (this.parent != null) {
-            if (this.node.nodeName.match(/statement|figure/i)) {
+            if (this.node.nodeName.match(/statement|substatement|figure/i)) {
                 var strippedText = this.node.textContent.replace(/[^a-zA-Z0-9]/g, '')
                 if (strippedText != '') {
                     var textMD5 = md5(strippedText);

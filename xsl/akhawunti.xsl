@@ -71,7 +71,7 @@
                       <xsl:variable name="of" select="@of"/>
                       <xsl:attribute name="ofmd5">
                           <!-- <xsl:value-of select="(//idx:label[@name=$of]|//lv:label[@name=$of]|//idx:*[@md5=$of]|//lv:*[@md5=$of])/@md5"/> -->
-                          <xsl:value-of select="(//idx:statement[idx:label/@name = $of]|//lv:statement[lv:label/@name = $of]|//lv:*[@md5=$of])/@md5"/>
+                          <xsl:value-of select="@ofmd5|(//idx:statement[idx:label/@name = $of]|//lv:statement[lv:label/@name = $of]|//lv:*[@md5=$of])/@md5"/>
                       </xsl:attribute>
                   </xsl:if>
 		  <xsl:apply-templates select="idx:label|lv:label"/>

@@ -127,7 +127,7 @@ function updateModal(cranach) {
 
         updateModalRefby(md5String, cranach);
         updateModalProofs(md5String, cranach);
-
+        updateModalProofOf(this, cranach);
     });
 }
 

@@ -726,35 +726,52 @@ function updateModalProofs(md5String, cranach) {
     let indexDoc = cranach.attr['indexDoc'];
     console.log(indexDoc);
     // .done(function(indexDoc) {
-        var queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
-        console.log(queryString);
-        var iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
-        console.log(iterator);
-        try {
-            var thisNode = iterator.iterateNext();
-
-            var html = '';
-            var index = 1;
-            while (thisNode) {
-                if (html != '') {
-                    html += ', ';
-                }
-                html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
-                index++;
-                thisNode = iterator.iterateNext();
-            }
+    var queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
+    console.log(queryString);
+    var iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+    console.log(iterator);
+    try {
+        var thisNode = iterator.iterateNext();
+        
+        var html = '';
+        var index = 1;
+        while (thisNode) {
             if (html != '') {
-                $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
-            } else {
-                $('.modal_proofs').html(html).hide();
+                html += ', ';
             }
+            html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
+            index++;
+            thisNode = iterator.iterateNext();
         }
-        catch (e) {
-            alert( 'Error: Document tree modified during iteration ' + e );
+        if (html != '') {
+            $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
+        } else {
+            $('.modal_proofs').html(html).hide();
         }
+    }
+    catch (e) {
+        alert( 'Error: Document tree modified during iteration ' + e );
+    }
     // };
     // .fail(function() {
     //     console.log("INDEX FILE DOESN'T EXIST");
     //     return 0;
     // });
+}
+function updateModalProofOf(button, cranach) {
+    if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
+        $('.modal_proof_of').hide();
+        return 0;
+    }
+    var rootURL = cranach.attr['rootURL'];
+    let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
+    
+    $('.modal_proof_of a').attr('href', href);
+    if ($(button).find('.of-title').length) {
+        $('.modal_proof_of a').html($(button).find('.of-title').html());
+    } else {
+        $('.modal_proof_of a').html($(button).attr('of-type') + ' ' + $(button).attr('of-item'));
+    }
+    $('.modal_proof_of').show();
+    
 }

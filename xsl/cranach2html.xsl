@@ -589,7 +589,7 @@
 				<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 			</xsl:element>
 		</div>
-	</xsl:template>
+	</xsl:template>    
 
 	<xsl:template match="lv:statement/lv:title[text()='.']" />
 
@@ -622,12 +622,22 @@
 							<xsl:value-of select="'&#160;'"/>
 							<xsl:apply-templates select="lv:title"/>
 						</xsl:if>
+                        <xsl:if test="lv:of-title">
+							<xsl:value-of select="'&#160;'"/>
+							<xsl:apply-templates select="lv:of-title"/>
+						</xsl:if>
 						<xsl:value-of select="'.'"/>
 					</xsl:element>
 					<xsl:apply-templates select="lv:label"/>
 				</button>
-				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
+				<xsl:apply-templates select="*[not(self::lv:title)and not(self::lv:of-title) and not(self::lv:label)]"/>
 			</blockquote>
+		</div>
+	</xsl:template>
+
+    <xsl:template match="lv:of-title">
+		<div style="display:none" class="of-title">
+            <xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 		</div>
 	</xsl:template>
 
@@ -655,7 +665,7 @@
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
-
+    
 	<xsl:template match="lv:title[@scope='chapter']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
