@@ -402,7 +402,7 @@ function Cranach(url) {
         if (this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index').length) {
             docDom.appendChild(this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0]);
         }
-        console.log(docDom);
+        // console.log(docDom);
 
         var preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'preindex');
 
@@ -467,25 +467,24 @@ function Cranach(url) {
 
             // var labels = select('lv:label', newBranch);
             var labels = xmlDom.evaluate('./lv:label', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-            report('LABELS: ' + labels.snapshotLength);
-            for (var j = 0; j < labels.snapshotLength; j++) {
+            // console.log('LABELS: ' + labels.snapshotLength);
+            for (var j = labels.snapshotLength - 1; j >= 0 ; j--) {
                 var clone = labels.snapshotItem(j).cloneNode(true);
-                branch.appendChild(clone);
+                branch.appendChild(clone);                
             }
             preindexDom.appendChild(branch);
+            console.log(branch);
         }
-
+        
         var el = this;
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: 'xsl/akhawunti.xsl',
                 dataType: "xml"
             }).done(function(indexXsl) {
-                report(indexXsl);
                 var xsltProcessor = new XSLTProcessor();
                 xsltProcessor.importStylesheet(indexXsl);
-                report(preindexDom);
-
+                console.log(preindexDom);
                 var indexDoc = xsltProcessor.transformToDocument(preindexDom);
 
                 console.log(indexDoc);
