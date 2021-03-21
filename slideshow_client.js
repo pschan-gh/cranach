@@ -716,15 +716,19 @@ function updateModalRefby(md5String, cranach) {
 
 function updateModalProofs(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
-    $.ajax({
-        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-        dataType: "xml"
-        %% to be updated timestamp
-    })
-    .done(function(index) {
-        var queryString = '//idx:branch[@type="Proof"][@ofmd5="' + md5String + '"]';
+    // cranach.then(function(renderer) {
+        // let index = renderer.attr['indexDoc'];
+    // $.ajax({
+    //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
+    //     dataType: "xml"
+    //     // to be updated timestamp
+    // })    
+    let indexDoc = cranach.attr['indexDoc'];
+    console.log(indexDoc);
+    // .done(function(indexDoc) {
+        var queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
         console.log(queryString);
-        var iterator = index.evaluate(queryString, index, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+        var iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
         console.log(iterator);
         try {
             var thisNode = iterator.iterateNext();
@@ -748,9 +752,9 @@ function updateModalProofs(md5String, cranach) {
         catch (e) {
             alert( 'Error: Document tree modified during iteration ' + e );
         }
-    })
-    .fail(function() {
-        console.log("INDEX FILE DOESN'T EXIST");
-        return 0;
-    });
+    // };
+    // .fail(function() {
+    //     console.log("INDEX FILE DOESN'T EXIST");
+    //     return 0;
+    // });
 }
