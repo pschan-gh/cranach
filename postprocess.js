@@ -587,14 +587,15 @@ function postprocess(cranach) {
             
             batchRender($slide[0]);
             adjustHeight();
-            // if ($slide.find('canvas').length == 0) {
-            //     $('canvas-controls').hide();
-            // }
             updateCanvas($slide[0]);
         })
-        $('#output div.collapse').on('shown.bs.collapse', function() {
+        $('#output').on('shown.bs.collapse', 'div.collapse', function() {
             adjustHeight(); 
         });
+        $('#output').on('hidden.bs.collapse', 'div.collapse', function() {
+            adjustHeight(); 
+        });
+        
         $('input.lecture_mode').change(function() {
             if (this.checked) {
                 $('[data-lecture-skip="true"]').addClass('lecture_skip');

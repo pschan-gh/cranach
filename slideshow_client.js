@@ -146,6 +146,7 @@ function adjustHeight() {
     if (!$output.length) {
         return 0;
     }
+    $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
         $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
