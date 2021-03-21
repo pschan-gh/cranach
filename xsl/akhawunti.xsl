@@ -70,7 +70,7 @@
                   <xsl:if test="@of">
                       <xsl:variable name="of" select="@of"/>
                       <xsl:attribute name="ofmd5">
-                          <xsl:value-of select="(//idx:branch/idx:label[text()=$of]|//idx:*[@md5=$of])/@md5"/>
+                          <xsl:value-of select="(//idx:label[@name=$of]/@md5|//idx:*[@md5=$of])/@md5"/>
                       </xsl:attribute>
                   </xsl:if>
 		  <xsl:apply-templates select="idx:label|lv:label"/>
