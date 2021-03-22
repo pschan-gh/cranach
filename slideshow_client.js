@@ -764,7 +764,8 @@ function updateModalProofOf(button, cranach) {
         return 0;
     }
     var rootURL = cranach.attr['rootURL'];
-    let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
+    // let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
+    let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&item=" + $(button).attr('of');
     
     $('.modal_proof_of a').attr('href', href);
     if ($(button).find('.of-title').length) {
