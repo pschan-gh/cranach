@@ -636,7 +636,7 @@
 	</xsl:template>
 
     <xsl:template match="lv:of-title">
-		<div style="display:none" class="of-title">
+		<div wbtag="skip" style="display:none" class="of-title">
             <xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 		</div>
 	</xsl:template>
