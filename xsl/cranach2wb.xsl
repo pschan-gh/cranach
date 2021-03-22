@@ -85,6 +85,8 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
+    <xsl:template match="lv:of-title"/>
+
     <xsl:template match="lv:steps">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
