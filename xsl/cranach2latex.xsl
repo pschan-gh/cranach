@@ -342,6 +342,9 @@
 	<xsl:value-of select="." />
 </xsl:template>
 
+<xsl:template match="lv:comment" >
+</xsl:template>
+
 <xsl:template match="comment()" >
 </xsl:template>
 
