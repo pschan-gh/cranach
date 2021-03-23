@@ -708,11 +708,6 @@ function Stack(node, doc) {
                 if (options != null) {
                     child.loadOptions(options);
                 }
-                // if(matches[2]) {
-                //     child.node.setAttribute('name', matches[2].substring(1, matches[2].length-1));
-                // } else {
-                //     child.node.setAttribute('name', '');
-                // }
             }
             child.node.setAttribute('wbtag', 'ref');
             child = child.close();
