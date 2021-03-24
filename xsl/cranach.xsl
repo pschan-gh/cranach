@@ -32,6 +32,7 @@
         <xsl:param name="section" select="@section"/>
         <xsl:param name="subsection" select="@subsection"/>
         <xsl:param name="subsubsection" select="@subsubsection"/>
+        <xsl:param name="item" />
         <xsl:element name="{local-name()}" namespace="{$xh}">
             <xsl:copy-of select="@*[not(@environment) and not(@chapter_type)]"/>
             <!-- <xsl:copy-of select="@wbtag"/> -->
@@ -43,6 +44,7 @@
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
+                <xsl:with-param name="item" select="$item"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -55,6 +57,7 @@
         <xsl:param name="section" select="@section"/>
         <xsl:param name="subsection" select="@subsection"/>
         <xsl:param name="subsubsection" select="@subsubsection"/>
+        <xsl:param name="item" />
         <xsl:element name="{local-name()}" namespace="{$lv}">
             <xsl:attribute name="course">
                 <xsl:value-of select="$course"/>
@@ -83,6 +86,7 @@
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
+                <xsl:with-param name="item" select="$item"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -552,28 +556,25 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-            <xsl:choose>
-                <xsl:when test="@refnum">
-                    <xsl:attribute name="item">
+            <xsl:variable name="item">
+                <xsl:choose>
+                    <xsl:when test="@refnum">
                         <xsl:value-of select="@refnum"/>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:when test="ancestor::lv:chapter">
-                    <xsl:attribute name="item">
+                    </xsl:when>
+                    <xsl:when test="ancestor::lv:chapter">
                         <xsl:value-of select="concat($chapter, '.', $num)"/>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:when test="@chapter">
-                    <xsl:attribute name="item">
+                    </xsl:when>
+                    <xsl:when test="@chapter">
                         <xsl:value-of select="concat(@chapter, '.', @num)"/>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="item">
+                    </xsl:when>
+                    <xsl:otherwise>
                         <xsl:value-of select="$num"/>
-                    </xsl:attribute>
-                </xsl:otherwise>
-            </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:attribute name="item">
+                <xsl:value-of select="$item"/>
+            </xsl:attribute>
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
                 <xsl:with-param name="course" select="$course"/>
@@ -581,6 +582,7 @@
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
+                <xsl:with-param name="item" select="$item"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -901,6 +903,8 @@
         <xsl:param name="course"/>
         <xsl:param name="chapter"/>
         <xsl:param name="slide"/>
+        <xsl:param name="item"/>
+        
         <xsl:element name="ref" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="course">
@@ -921,7 +925,7 @@
                 </xsl:attribute>
                 <xsl:if test="ancestor::lv:statement">
                     <xsl:attribute name="referrer-item">
-                        <xsl:value-of select="(ancestor::lv:statement)[1]/@item"/>
+                        <xsl:value-of select="$item"/>
                     </xsl:attribute>
                 </xsl:if>
                 <xsl:if test="ancestor::lv:substatement[@type='Proof']">
