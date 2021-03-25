@@ -49,7 +49,7 @@
                     </xsl:choose>
                 </xsl:attribute>                
                 <xsl:choose>
-                    <xsl:when test="@referrer-environment='Proof'">
+                    <xsl:when test="@referrer-type='Proof'">
                         <xsl:variable name="referrer-md5">
                             <xsl:value-of select="./@referrer-md5"/>
                         </xsl:variable>

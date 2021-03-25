@@ -920,9 +920,6 @@
                 <xsl:attribute name="referrer-md5">
                     <xsl:value-of select="(ancestor::lv:statement|ancestor::lv:substatement)[1]/@md5"/>
                 </xsl:attribute>
-                <xsl:attribute name="referrer-environment">
-                    <xsl:value-of select="(ancestor::lv:statement|ancestor::lv:substatement)[1]/@type"/>
-                </xsl:attribute>
                 <!-- <xsl:if test="ancestor::lv:substatement[@type='Proof']">
                     <xsl:variable name="substatement" select="ancestor::lv:substatement"/>
                     <xsl:variable name="referrer-of">
