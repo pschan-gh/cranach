@@ -43,8 +43,7 @@
                 <xsl:with-param name="chapter_type" select="$chapter_type"/>
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
-                <xsl:with-param name="subsubsection" select="$subsubsection"/>
-                <xsl:with-param name="item" select="$item"/>
+                <xsl:with-param name="subsubsection" select="$subsubsection"/>                
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -86,7 +85,6 @@
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
-                <xsl:with-param name="item" select="$item"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -582,7 +580,6 @@
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="subsubsection" select="$subsubsection"/>
-                <xsl:with-param name="item" select="$item"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -796,7 +793,7 @@
         <xsl:param name="subsubsection" select="@subsubsection"/>
         <xsl:param name="subsubsection_title" select="@subsubsection_title"/>
         <xsl:param name="slide"/>
-        <xsl:param name="item"/>
+        
         <xsl:element name="{local-name()}" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="course">
@@ -903,7 +900,7 @@
         <xsl:param name="course"/>
         <xsl:param name="chapter"/>
         <xsl:param name="slide"/>
-        <xsl:param name="item"/>
+        
         
         <xsl:element name="ref" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
@@ -923,12 +920,10 @@
                 <xsl:attribute name="referrer-md5">
                     <xsl:value-of select="(ancestor::lv:statement|ancestor::lv:substatement)[1]/@md5"/>
                 </xsl:attribute>
-                <xsl:if test="ancestor::lv:statement">
-                    <xsl:attribute name="referrer-item">
-                        <xsl:value-of select="$item"/>
-                    </xsl:attribute>
-                </xsl:if>
-                <xsl:if test="ancestor::lv:substatement[@type='Proof']">
+                <xsl:attribute name="referrer-environment">
+                    <xsl:value-of select="(ancestor::lv:statement|ancestor::lv:substatement)[1]/@type"/>
+                </xsl:attribute>
+                <!-- <xsl:if test="ancestor::lv:substatement[@type='Proof']">
                     <xsl:variable name="substatement" select="ancestor::lv:substatement"/>
                     <xsl:variable name="referrer-of">
                         <xsl:choose>
@@ -946,7 +941,7 @@
                     <xsl:attribute name="referrer-of-item">
                         <xsl:value-of select="(//idx:label[@name=$referrer-of]/parent::node()|//idx:branch[@md5=$referrer-of])[1]/@item"/>
                     </xsl:attribute>
-                </xsl:if>
+                </xsl:if> -->
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">

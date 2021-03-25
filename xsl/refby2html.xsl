@@ -40,20 +40,28 @@
             <a target="_blank">
                 <xsl:attribute name="href">                    
                     <xsl:choose>
-                        <xsl:when test="@referrer-of or @referrer-item">
+                        <xsl:when test="@referrer-md5">
                             <xsl:value-of select="concat($root, '&amp;item=', @referrer-md5)" />
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="concat($root, '&amp;slide=', @slide)" />
                         </xsl:otherwise>
                     </xsl:choose>
-                </xsl:attribute>
+                </xsl:attribute>                
                 <xsl:choose>
-                    <xsl:when test="@referrer-of">
-                        <xsl:value-of select="concat(@course, ' Chapter ', @chapter, ' ', @referrer-type, ' of ', @referrer-of-item)" />
+                    <xsl:when test="@referrer-environment='Proof'">
+                        <xsl:variable name="referrer-md5">
+                            <xsl:value-of select="./@referrer-md5"/>
+                        </xsl:variable>
+                        <xsl:variable name="referrer" select="//*[@md5=$referrer-md5][1]"/>
+                        <xsl:value-of select="concat(@course, ' Chapter ', @chapter, ' ', $referrer/@type, ' of ', $referrer/@of-item)" />                        
                     </xsl:when>
-                    <xsl:when test="@referrer-item">
-                        <xsl:value-of select="concat(@course, ' Chapter ', @chapter, ' ', @referrer-type, ' ' , @referrer-item)" />
+                    <xsl:when test="@referrer-md5">
+                        <xsl:variable name="referrer-md5">
+                            <xsl:value-of select="./@referrer-md5"/>
+                        </xsl:variable>
+                        <xsl:variable name="referrer" select="//*[@md5=$referrer-md5][1]"/>
+                        <xsl:value-of select="concat(@course, ' Chapter ', @chapter, ' ', $referrer/@type, ' ' , $referrer/@item)" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="concat(@course, ' Chapter ', @chapter, ' Slide ', @slide)" />

@@ -687,32 +687,33 @@ function updateModalRefby(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
     var contentURL = cranach.attr['contentURL'];
     console.log('CONTENTURL ' + contentURL);
+    // $.ajax({
+    //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
+    //     dataType: "xml"
+    // })
+    // .done(function(index) {
+    let index = cranach.attr['indexDoc'];
     $.ajax({
-        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-        dataType: "xml"
+        url: 'xsl/refby2html.xsl'
     })
-    .done(function(index) {
-        $.ajax({
-            url: 'xsl/refby2html.xsl'
-        })
-        .done(function(xsl) {
-            var xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(xsl);
-            xsltProcessor.setParameter('', 'md5', md5String);
-            xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
-            xsltProcessor.setParameter('', 'contenturl', contentURL);
-            console.log('REFBY2HTML PRETRANSFORM');
-            fragment = xsltProcessor.transformToFragment(index,document);
-            console.log('REFBY2HTML');
-            fragmentStr = new XMLSerializer().serializeToString(fragment);
-            console.log(fragmentStr);
-            $('.modal_refby').html(fragmentStr).show();
-        })
-    })
-    .fail(function() {
-        console.log("INDEX FILE DOESN'T EXIST");
-        return 0;
+    .done(function(xsl) {
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsl);
+        xsltProcessor.setParameter('', 'md5', md5String);
+        xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+        xsltProcessor.setParameter('', 'contenturl', contentURL);
+        console.log('REFBY2HTML PRETRANSFORM');
+        fragment = xsltProcessor.transformToFragment(index,document);
+        console.log('REFBY2HTML');
+        fragmentStr = new XMLSerializer().serializeToString(fragment);
+        console.log(fragmentStr);
+        $('.modal_refby').html(fragmentStr).show();
     });
+    // })
+    // .fail(function() {
+    //     console.log("INDEX FILE DOESN'T EXIST");
+    //     return 0;
+    // });
 }
 
 function updateModalProofs(md5String, cranach) {
