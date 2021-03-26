@@ -140,20 +140,15 @@ function lcref_click_handler($el) {
             $output.html($("#".concat($el.attr("refid"))).html());
         } else {
             var url = lcref_id;
-            // var rootURL = url.match(/^(.*?)\/*(?:\?|$)/)[1];
             var params = url.match(/\?(.*?)(#|$)/);
             var urlParams = new URLSearchParams(params[1]);
             var pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
-            // var query = urlParams.get('query');
             if (pathname.match(/\/local$/)) {
                 baseRenderer.then(baseDoc => {
-                    // new Cranach('').setup({'query':query}).then(cranach => {
-                    //     cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($output[0]).render();
-                    // });
                     new Cranach(url).setup().then(cranach => {
                         return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($output[0]).render();
                     }).then(() => {
-                        typeset([$lcref[0]]);
+                        renderElement($lcref);
                     });
                 });
             } else {
@@ -161,7 +156,7 @@ function lcref_click_handler($el) {
                 new Cranach(url).setup().then(cranach => {
                     return cranach.setBare().xmlDocQueryAndRender($output[0]);
                 }).then(() => {
-                    typeset([$lcref[0]]);
+                    renderElement($lcref);
                 });
             }
         };
@@ -191,25 +186,21 @@ function lcref_click_handler($el) {
             lcref_focus_stack_uid.push(uid);
             lcref_focus_stack.push($el);
             $("a[lcref]").attr("href", "");
-            // MathJax.typesetPromise([output_id]).then(() => {
-            //     $lcref.removeClass("processing");
-            //     $lcref.slideDown("slow");
-            //
-            //     if($el.attr("replace")) {
-            //         var the_replaced_thing = $($el.attr("replace"));
-            //         the_replaced_thing.hide("slow");
-            //     }
-            //
-            //     var thislcrefid = 'kuid-'.concat(uid)
-            //     document.getElementById(thislcrefid).tabIndex=0;
-            //     document.getElementById(thislcrefid).focus();
-            //     lcref_focus_stack_uid.push(uid);
-            //     lcref_focus_stack.push($el);
-            //     $("a[lcref]").attr("href", "");
-            // });
         }
     }
 } //~~ end click handler for *[lcref] elements
+
+function renderElement($lcref) {
+    typeset([$lcref[0]]);
+    $lcref.find('img').each(function() {
+        imagePostprocess($(this));
+    });
+    $lcref.find('iframe:not([src])').each(function() {
+        $(this).attr('src', $(this).attr('data-src')).show();
+        var $iframe = $(this);
+        $(this).iFrameResize({checkOrigin:false});
+    });
+}
 
 /** register a click handler for each element with the lcref attribute
 * @see jquery's doc about 'live'! the handler function does the

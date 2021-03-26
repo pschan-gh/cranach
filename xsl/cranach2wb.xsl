@@ -7,9 +7,7 @@
     exclude-result-prefixes="xh"
     >
 
-
-    <!-- <xsl:strip-space elements="xh:span"/> -->
-    <xsl:strip-space elements="xh:* lv:title"/>
+    <xsl:strip-space elements="xh:* lv:title lv:*"/>
     <xsl:preserve-space elements="xh:textarea xh:pre lv:paragraphs"/>
     <xsl:output method="xml" />
 
@@ -143,16 +141,27 @@
         <xsl:value-of select="concat('@image', '{', @data-src , '}')"/>
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
-
-    <xsl:template match="lv:hc_keyword">
+    <xsl:template match="lv:figure">
         <xsl:text>&#xa;</xsl:text>
-        <xsl:value-of select="concat('@', 'keyword', '{')" /><xsl:value-of select="."/><xsl:text>} </xsl:text>
+        <xsl:value-of select="concat('@', @wbtag)"/>
+        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:choose>
+            <xsl:when test="./lv:caption">
+                <xsl:text>&#xa;</xsl:text>
+                <xsl:text>@caption{</xsl:text>
+                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
+                <xsl:apply-templates select="./lv:caption/*|./lv:caption/text()" />
+                <xsl:text>}</xsl:text>                
+            </xsl:when>
+        </xsl:choose>
+        <xsl:apply-templates select="*[not(self::lv:caption)]" />
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@end</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:ref">
         <xsl:value-of select="concat('@ref{', @label, '}')"/>
     </xsl:template>
-
 
     <xsl:template match="lv:course|lv:chapter|lv:section|lv:subsection|lv:subsubsection">
         <xsl:text>&#xa;</xsl:text>
@@ -239,6 +248,13 @@
         <xsl:value-of select="concat('@keyword{', ./text(), '}')"/>
     </xsl:template>
 
+    <xsl:template match="lv:hc_keyword">
+        <xsl:if test="not(preceding-sibling::lv:paragraphs) and not(preceding-sibling::xh:*)">
+            <xsl:text>&#xa;</xsl:text>
+        </xsl:if>
+        <xsl:value-of select="concat('@keyword*{', ./text(), '}')"/>
+    </xsl:template>
+
 
     <xsl:template match="xh:li|xh:hr">
         <xsl:text>&#xa;</xsl:text>
@@ -254,7 +270,7 @@
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <xsl:element name="{local-name()}">
-            <xsl:copy-of select="@*[name(.)!='environment']"/>
+            <xsl:copy-of select="@*[name(.)!='environment' and name(.)!='text']"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
         <!-- <xsl:if test="not(following-sibling::lv:inline_keyword) and not(following-sibling::lv:ref) and following-sibling::*[@wbtag]">
@@ -263,11 +279,17 @@
     </xsl:template>
 
     <xsl:template match="*[@wbtag='paragraphs']|lv:paragraphs">
-        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::lv:ref) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
+        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <!-- <xsl:apply-templates select="*|text()|comment()" /> -->
         <xsl:apply-templates select="text()" />
+    </xsl:template>
+    
+    <xsl:template match="lv:comment">
+        <xsl:text>&#xa;&lt;!--</xsl:text>
+        <xsl:apply-templates select="*|text()" />
+        <xsl:text>--&gt;&#xa;</xsl:text>
     </xsl:template>
 
 

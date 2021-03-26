@@ -830,6 +830,15 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="lv:label">
+        <xsl:element name="label" namespace="{$lv}">
+            <xsl:copy-of select="@wbtag"/>
+            <xsl:copy-of select="@label"/>
+            <xsl:copy-of select="@name"/>
+            <xsl:copy-of select="@type"/>
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="lv:ref">
         <xsl:param name="course"/>
         <xsl:param name="chapter"/>
@@ -932,12 +941,13 @@
         <xsl:value-of select="." disable-output-escaping="no" />
         <!-- <xsl:copy-of select="current()"/> -->
     </xsl:template>
+    
     <xsl:template match="comment()">
-        <xsl:element name="paragraphs" namespace="{$lv}">
+        <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
             <xsl:comment>
                 <xsl:value-of select="." disable-output-escaping="no" />
             </xsl:comment>
-        </xsl:element>
+        <!-- </xsl:element> -->
     </xsl:template>
 
 </xsl:stylesheet>

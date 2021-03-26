@@ -141,9 +141,6 @@
 
 	<xsl:template match="lv:bare">
 		<xsl:apply-templates select="*">
-			<!-- <xsl:with-param name="chapter" select="@num"/>
-			<xsl:with-param name="course" select="@course"/>
-			<xsl:with-param name="chapter" select="@chapter"/> -->
 		</xsl:apply-templates>
 	</xsl:template>
 
@@ -421,13 +418,12 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:variable name="item">
+		<xsl:variable name="serial">
 			<xsl:choose>
 				<xsl:when test="ancestor::chapter">
 					<xsl:choose>
 						<xsl:when test="ancestor::lv:chapter/@no_serial">
 							<xsl:value-of select="@item"/>
-
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:value-of select="concat(ancestor::lv:chapter/@num, '.', $num)"/>
@@ -450,24 +446,31 @@
 			<xsl:attribute name="wbname">
 				<xsl:value-of select="name()"/>
 			</xsl:attribute>
-			<xsl:attribute name="item">
-				<xsl:value-of select="$item"/>
+			<xsl:attribute name="serial">
+				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
 			<xsl:apply-templates select="lv:label"/>
 			<xsl:apply-templates select="*[not(self::lv:caption) and not(self::lv:label)]"/>
 			<xsl:apply-templates select="lv:caption">
-				<xsl:with-param name="item" select="$item"/>
+				<xsl:with-param name="serial" select="$serial"/>
 			</xsl:apply-templates>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:caption">
-		<xsl:param name="item" select="''"/>
-		<small class="caption">
+		<xsl:param name="serial" select="''"/>
+		<small class="caption" wbtag="ignore">
+			<!-- <xsl:attribute name="wbtag">
+				<xsl:value-of select="'caption'"/>
+			</xsl:attribute> -->
+			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+			<!-- <xsl:apply-templates select="text()"/> -->
+		</small>
+        <small class="caption">
 			<xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>
 			</xsl:attribute>
-			<xsl:value-of select="concat('Figure ', ancestor::lv:figure/@item, ' ')"/>
+			<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
 			<xsl:apply-templates select="text()"/>
 		</small>
 	</xsl:template>
@@ -493,7 +496,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:variable name="item">
+		<xsl:variable name="serial">
 			<xsl:choose>
 				<xsl:when test="ancestor::lv:chapter">
 					<xsl:choose>
@@ -523,27 +526,30 @@
 				<xsl:value-of select="name()"/>
 			</xsl:attribute>
 			<xsl:attribute name="id">
-				<xsl:value-of select="concat('item', $item)"/>
+				<xsl:value-of select="concat('item', $serial)"/>
 			</xsl:attribute>
-			<xsl:attribute name="item">
-				<xsl:value-of select="$item"/>
+			<xsl:attribute name="serial">
+				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
 			<xsl:attribute name="type">
 				<xsl:value-of select="@type"/>
 			</xsl:attribute>
-			<button class="plain_button item_button" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<button class="plain_button item_button item_title" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
 				<xsl:copy-of select="@*"/>
+				<xsl:attribute name="serial">
+					<xsl:value-of select="$serial"/>
+				</xsl:attribute>
 				<xsl:attribute name="wbtag">
 					<xsl:value-of select="'transparent'"/>
 				</xsl:attribute>
+				<!-- <xsl:attribute name="class">item_title</xsl:attribute> -->
 				<xsl:element name="h5">
-					<xsl:attribute name="class">item_title</xsl:attribute>
 					<xsl:attribute name="wbtag">ignore</xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="not(@typerefnum)">
 							<xsl:value-of select="@type"/>
 							<span wbtag="ignore">
-								<xsl:value-of select="concat(' ', $item, ' ')"/>
+								<xsl:value-of select="concat(' ', $serial, ' ')"/>
 							</span>
 						</xsl:when>
 						<xsl:otherwise>
@@ -553,9 +559,9 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:element>
+				<xsl:apply-templates select="lv:title"/>
+				<xsl:apply-templates select="lv:label"/>
 			</button>
-			<xsl:apply-templates select="lv:label"/>
-			<xsl:apply-templates select="lv:title"/>
 			<blockquote wbtag="skip">
 				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
 			</blockquote>
@@ -564,6 +570,7 @@
 
 	<xsl:template match="lv:label">
 		<span wbtag="label" style="display:none">
+            <xsl:attribute name="class">label</xsl:attribute>
 			<xsl:copy-of select="@*"/>
 		</span>
 	</xsl:template>
@@ -601,77 +608,103 @@
 			</xsl:attribute>
 			<xsl:copy-of select="@*"/>
 			<blockquote wbtag="skip">
-				<xsl:element name="h5">
-					<xsl:attribute name="wbtag">ignore</xsl:attribute>
-					<xsl:attribute name="class">item_title</xsl:attribute>
-					<xsl:value-of select="@type"/>
-					<xsl:if test="lv:title">
-						<xsl:value-of select="'&#160;'"/>
-						<xsl:apply-templates select="lv:title"/>
-					</xsl:if>
-					<xsl:value-of select="'.'"/>
-				</xsl:element>
-				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:label)]"/>
+				<button class="plain_button item_button item_title" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+					<xsl:copy-of select="@*"/>
+					<xsl:attribute name="wbtag">
+						<xsl:value-of select="'transparent'"/>
+					</xsl:attribute>
+					<xsl:element name="h5">
+						<xsl:attribute name="wbtag">ignore</xsl:attribute>
+						<xsl:attribute name="class">item_title</xsl:attribute>
+						<xsl:value-of select="@type"/>
+						<xsl:if test="lv:title">
+							<xsl:value-of select="'&#160;'"/>
+							<xsl:apply-templates select="lv:title"/>
+						</xsl:if>
+						<xsl:value-of select="'.'"/>
+					</xsl:element>
+					<xsl:apply-templates select="lv:label"/>
+				</button>
+				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:of-title) and not(self::lv:label)]"/>
 			</blockquote>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='course']">
-		<h1 class="course_title">
+		<button class="plain_button section_button section_title" type="Course" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<xsl:copy-of select="@*"/>
 			<xsl:attribute name="wbtag">
-				<xsl:value-of select="'course'"/>
+				<xsl:value-of select="'transparent'"/>
 			</xsl:attribute>
-			<xsl:attribute name="type">
-				<xsl:value-of select="'Course'"/>
-			</xsl:attribute>
-			<xsl:attribute name="course">
-				<xsl:value-of select="@title"/>
-			</xsl:attribute>
-			<span wbtag="title" class="title">
-				<xsl:apply-templates select="text()"/>
-			</span>
-		</h1>
+			<h1 class="course_title">
+				<xsl:attribute name="wbtag">
+					<xsl:value-of select="'course'"/>
+				</xsl:attribute>
+				<xsl:attribute name="type">
+					<xsl:value-of select="'Course'"/>
+				</xsl:attribute>
+				<xsl:attribute name="course">
+					<xsl:value-of select="@title"/>
+				</xsl:attribute>
+				<span wbtag="title" class="title">
+					<xsl:apply-templates select="text()"/>
+				</span>
+			</h1>
+			<xsl:apply-templates select="ancestor::lv:course/lv:label"/>
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='chapter']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
-		<xsl:choose>
-			<xsl:when test="ancestor::lv:chapter/@no_serial">
-				<h2 class="chapter_title title">
-					<span wbtag="title" class="title">
-						<xsl:apply-templates select="text()|*"/>
-					</span>
-				</h2>
-			</xsl:when>
-			<xsl:otherwise>
-				<h2 class="chapter_title title">
-					<xsl:attribute name="serial">
-						<xsl:value-of select="ancestor::lv:chapter/@num"/>
-					</xsl:attribute>
-					<xsl:attribute name="wbtag">
-						<xsl:value-of select="@wbtag"/>
-					</xsl:attribute>
-					<xsl:attribute name="type">
-						<xsl:value-of select="ancestor::lv:chapter/@chapter_type"/>
-					</xsl:attribute>
-					<xsl:attribute name="chapter">
-						<xsl:value-of select="@chapter"/>
-					</xsl:attribute>
-					<span class="type">
-						<xsl:value-of select="ancestor::lv:chapter/@chapter_type"/>
-					</span>
-					<xsl:text> </xsl:text>
-					<span class="num">
-						<xsl:value-of select="ancestor::lv:chapter/@num"/>
-					</span>
-					<br wbtag="ignore"/>
-					<span wbtag="title" class="title">
-						<xsl:apply-templates select="text()|*"/>
-					</span>
-				</h2>
-			</xsl:otherwise>
-		</xsl:choose>
+		<button class="plain_button section_button section_title" type="Chapter" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="wbtag">
+				<xsl:value-of select="'transparent'"/>
+			</xsl:attribute>
+			<xsl:attribute name="serial">
+				<xsl:value-of select="ancestor::lv:chapter/@num"/>
+			</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="ancestor::lv:chapter/@no_serial">
+					<h2 class="chapter_title title">
+						<span wbtag="title" class="title">
+							<xsl:apply-templates select="text()|*"/>
+						</span>
+					</h2>
+				</xsl:when>
+				<xsl:otherwise>
+					<h2 class="chapter_title title">
+						<xsl:attribute name="serial">
+							<xsl:value-of select="ancestor::lv:chapter/@num"/>
+						</xsl:attribute>
+						<xsl:attribute name="wbtag">
+							<xsl:value-of select="@wbtag"/>
+						</xsl:attribute>
+						<xsl:attribute name="type">
+							<xsl:value-of select="ancestor::lv:chapter/@chapter_type"/>
+						</xsl:attribute>
+						<xsl:attribute name="chapter">
+							<xsl:value-of select="@chapter"/>
+						</xsl:attribute>
+						<span class="type">
+							<xsl:value-of select="ancestor::lv:chapter/@chapter_type"/>
+						</span>
+						<xsl:text> </xsl:text>
+						<span class="num">
+							<xsl:value-of select="ancestor::lv:chapter/@num"/>
+						</span>
+						<br wbtag="ignore"/>
+						<span wbtag="title" class="title">
+							<xsl:apply-templates select="text()|*"/>
+						</span>
+					</h2>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:apply-templates select="ancestor::lv:chapter/lv:label"/>
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:topic[@scope='chapter']">
@@ -694,27 +727,39 @@
 		<xsl:param name="chapter_title" select="@chapter_title"/>
 		<xsl:param name="section" select="@section"/>
 		<xsl:param name="section_title" select="@section_title"/>
-		<h3 wbtag="section" class="title">
-			<xsl:variable name="serial">
-				<xsl:value-of select="$chapter"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$section"/>
-			</xsl:variable>
-			<xsl:attribute name="serial">
-				<xsl:value-of select="$serial"/>
-			</xsl:attribute>
-			<xsl:attribute name="type">
-				<xsl:value-of select="'Section'"/>
-			</xsl:attribute>
+		<xsl:variable name="serial">
 			<xsl:value-of select="$chapter"/>
 			<xsl:text>.</xsl:text>
 			<xsl:value-of select="$section"/>
-			<xsl:text> </xsl:text>
-			<span wbtag="title" class="title">
-				<xsl:apply-templates select="*|text()"/>
-			</span>
-		</h3>
+		</xsl:variable>
+		<button class="plain_button section_button section_title" type="Section" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="wbtag">
+				<xsl:value-of select="'transparent'"/>
+			</xsl:attribute>
+			<xsl:attribute name="serial">
+				<xsl:value-of select="$serial"/>
+			</xsl:attribute>
+			<h3 wbtag="section" class="title">
+				<xsl:attribute name="serial">
+					<xsl:value-of select="$serial"/>
+				</xsl:attribute>
+				<xsl:attribute name="type">
+					<xsl:value-of select="'Section'"/>
+				</xsl:attribute>
+				<xsl:value-of select="$chapter"/>
+				<xsl:text>.</xsl:text>
+				<xsl:value-of select="$section"/>
+				<xsl:text> </xsl:text>
+				<span wbtag="title" class="title">
+					<xsl:apply-templates select="*|text()"/>
+				</span>
+			</h3>
+			<xsl:apply-templates select="ancestor::lv:section/lv:label"/>
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
+
 	<xsl:template match="lv:title[@scope='subsection']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
@@ -724,23 +769,34 @@
 		<xsl:param name="section_title" select="@section_title"/>
 		<xsl:param name="subsection" select="@subsection"/>
 		<xsl:param name="subsection_title" select="@subsection_title"/>
-		<h4 wbtag="subsection" class="title">
-			<xsl:variable name="serial">
-				<xsl:value-of select="$chapter"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$section"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$subsection"/>
-			</xsl:variable>
+		<xsl:variable name="serial">
+			<xsl:value-of select="$chapter"/>
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$section"/>
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$subsection"/>
+		</xsl:variable>
+		<button class="plain_button section_button section_title" type="Section" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="wbtag">
+				<xsl:value-of select="'transparent'"/>
+			</xsl:attribute>
 			<xsl:attribute name="serial">
 				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
-			<xsl:value-of select="$serial"/>
-			<xsl:text> </xsl:text>
-			<span wbtag="title" class="title">
-				<xsl:apply-templates select="text()|*"/>
-			</span>
-		</h4>
+			<h4 wbtag="subsection" class="title">
+				<xsl:attribute name="serial">
+					<xsl:value-of select="$serial"/>
+				</xsl:attribute>
+				<xsl:value-of select="$serial"/>
+				<xsl:text> </xsl:text>
+				<span wbtag="title" class="title">
+					<xsl:apply-templates select="text()|*"/>
+				</span>
+			</h4>
+			<xsl:apply-templates select="ancestor::lv:subsection/lv:label"/>
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='subsubsection']">
@@ -754,24 +810,34 @@
 		<xsl:param name="subsection_title" select="@subsection_title"/>
 		<xsl:param name="subsubsection" select="@subsubsection"/>
 		<xsl:param name="subsubsection_title" select="@subsubsection_title"/>
-		<h5 wbtag="subsubsection" class="title">
-			<xsl:variable name="serial">
-				<xsl:value-of select="$chapter"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$section"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$subsection"/>
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$subsubsection"/>
-			</xsl:variable>
+		<xsl:variable name="serial">
+			<xsl:value-of select="$chapter"/>
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$section"/>
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$subsection"/>
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$subsubsection"/>
+		</xsl:variable>
+		<button class="plain_button section_button section_title" type="Section" onmouseover="this.style.backgroundColor=''" onmouseout="this.style.backgroundColor=''">
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="wbtag">
+				<xsl:value-of select="'transparent'"/>
+			</xsl:attribute>
 			<xsl:attribute name="serial">
 				<xsl:value-of select="$serial"/>
 			</xsl:attribute>
-			<span wbtag="title" class="title">
-				<xsl:apply-templates select="text()|*"/>
-			</span>
-		</h5>
-		<br/>
+			<h5 wbtag="subsubsection" class="title">
+				<xsl:attribute name="serial">
+					<xsl:value-of select="$serial"/>
+				</xsl:attribute>
+				<span wbtag="title" class="title">
+					<xsl:apply-templates select="text()|*"/>
+				</span>
+			</h5>
+			<xsl:apply-templates select="ancestor::lv:subsubsection/lv:label"/>
+		</button>
+		<br wbtag="ignore"/>
 	</xsl:template>
 
 	<xsl:template match="lv:href">
@@ -878,7 +944,7 @@
 						 <xsl:value-of select="@slide"/>
 					</xsl:attribute>
 					<xsl:attribute name="onclick">
-						 <xsl:value-of select="concat('focusOn(', @slide , ',&quot;' , $keyword , '&quot;)')"/>
+						 <xsl:value-of select="concat('focusOn($(&quot;#s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
 					</xsl:attribute>
 					<xsl:value-of select="concat('Slide ', @slide)"/>
 				</a>
@@ -924,7 +990,7 @@
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
 		</xsl:variable>
 		<!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
-		<a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore">
+		<a class="collapsea collapsed" contenteditable="false" data-toggle="" aria-expanded="false" wbtag="ignore">
 			<xsl:attribute name="aria-controls">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -934,7 +1000,7 @@
 			</xsl:attribute>
 			<!-- ► -->
 		</a>
-		<div class="collapse" xmlns="http://www.w3.org/1999/xhtml">
+		<div class="hidden_collapse" xmlns="http://www.w3.org/1999/xhtml">
 			<xsl:attribute name="id">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -1093,6 +1159,9 @@
 			</xsl:attribute>
 			<xsl:copy-of select="@*"/>
 			<strong class="webwork_label print">WeBWorK</strong>
+            <small class="light"> (powered by </small>
+            <small><a target="_blank" href="https://libretexts.org/">LibreTexts</a></small>
+            <small class="light">)</small>
 			<div class="ww" style="overflow:auto">
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
@@ -1101,11 +1170,14 @@
 				<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
 					<xsl:attribute name="rendered">0</xsl:attribute>
 					<xsl:attribute name="data-src">
-						<xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/>
+						<!-- <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/> -->
+                        <!-- https://webwork.libretexts.org/webwork2/html2xml?answersSubmitted=0&sourceFilePath=Library/Michigan/gateways/derivative/topic_powers_sums/prob10.pg&problemSeed=1234567&courseID=anonymous&userID=anonymous&course_password=anonymous&showSummary=1&displayMode=MathJax&problemIdentifierPrefix=102&language=en&outputformat=libretexts -->
+                        <xsl:value-of select="concat('https://webwork.libretexts.org/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=anonymous&amp;userID=anonymous&amp;course_password=anonymous&amp;showSummary=1&amp;language=en&amp;outputformat=libretexts')"/>
 					</xsl:attribute>
 				</iframe>
 			</div>
 		</div>
+		<br/>
 	</xsl:template>
 
 	<xsl:template match="lv:image">
@@ -1122,15 +1194,16 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- <xsl:template match="lv:paragraphs|*[@wbtag='paragraphs']"> -->
 	<xsl:template match="lv:paragraphs">
-		<!-- <xsl:text>&#x0A;</xsl:text> -->
-		<!-- <xsl:apply-templates select="text()"/> -->
-		<!-- <xsl:value-of select="normalize-space(./text())" disable-output-escaping="yes"/> -->
 		<span class="paragraphs">
 			<xsl:value-of select="text()" disable-output-escaping="yes"/>
 		</span>
-		<!-- <xsl:value-of select="text()" disable-output-escaping="yes"/> -->
+	</xsl:template>
+
+	<xsl:template match="lv:comment">
+		<div class="comment">
+			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:enumerate">
@@ -1194,7 +1267,12 @@
 </xsl:template>
 
 <xsl:template match="comment()">
-	<xsl:copy-of select="current()"/>
+	<xsl:element name="div" namespace="{$xh}">
+		<xsl:attribute name="style">
+			<xsl:value-of select="'display:none'"/>
+		</xsl:attribute>
+		<xsl:copy-of select="."/>
+	</xsl:element>
 	<!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
 </xsl:template>
 

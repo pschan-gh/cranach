@@ -13,12 +13,10 @@ function scrollToLine(editor, slide) {
 
         if (!isComment) {
             if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
-                // slideLine.push(i + 1);
                 slideCount++;
             }
         }
         if (slideCount == slide) {
-            // var line = slideLine[slide];
             editor.gotoLine(i + 1);
             break;
         }
@@ -43,12 +41,18 @@ function updateModal(cranach) {
         $('.current_course').text(course).show();
         $('.current_chapter').text(chapter).show();
         $('.current_chapter').text(chapterType + ' ' + chapter).show();
-        $('.current_slide').text(slide).show();
+        $('.current_slide').text('Slide ' + slide).show();
+
+        let url = cranach.attr['contentURL'];
+
+        let $labels = $(this).closest('div.slide').find('> .label');
+
+        let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
 
         if (cranach.attr['query']) {
-            var url = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
+            url += '&query=' + cranach.attr['query'] + '&slide=' + slideLabel;
         } else {
-            var url = cranach.attr['contentURL'] + '&slide=' + slide;
+            url += '&slide=' + slideLabel;
         }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
@@ -65,13 +69,15 @@ function updateModal(cranach) {
     });
 
 
-    $('.item_button').off();
-    $('.item_button').on('click', function() {
+    $('.item_button, .section_button').off();
+    $('.item_button, .section_button').on('click', function() {
         var course = $(this).attr('course');
         var md5String = $(this).attr('md5');
         var item_type = $(this).attr('type');
+        var chapterType = $(this).attr('chapter_type');
         var chapter = $(this).attr('chapter');
-        var item = $(this).attr('item');
+        var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
+        var serial = $(this).attr('serial');
         var slide = $(this).closest('.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
@@ -83,21 +89,38 @@ function updateModal(cranach) {
         $('#share_item span').hide();
 
         $('.current_course').text(course);
-        $('.current_chapter').text(chapter);
+        $('.current_chapter').text(chapterType + ' ' + chapter);
         $('.current_item_type').text(item_type);
-        $('.current_item').text(item);
+        $('.current_item').text($(this).attr('item') ? item : '');
         $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();
 
         // var slide = $(this).closest('.slide').attr('slide');
 
-        url = cranach.attr['contentURL'] + '&item=' + item;
-        console.log('ITEM CLICK URL: ' + url);
+        let url = cranach.attr['contentURL'];
+        let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
+
+        let $labels = $(this).closest('div').find('.label');
+
+        if ($labels.length) {
+            url += '&' + argName + '=' + $labels.first().attr('name');
+        } else {
+            url +=  '&' + argName + '=' + serial;
+        }
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
+        $('#item_modal').find('#share_url').text(url);
 
-        $('#item_modal').find('#share_url').html(url);
-        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + item_type + ' ' + item + '</a>');
-        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + item_type + ' ' + item + '}');
+        let title = '';
+
+        let titles = $(this).find('*[wbtag="title"]');
+         if (titles.length) {
+             title = titles.first().text();
+         } else {
+             title = $(this).attr('item') ? item_type + ' ' + item : item_type;
+         }
+
+        $('#item_modal').find('#share_hyperlink').text('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_hyperref').text('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
         $('#item_modal').find('.md5').first().html(md5String);
 
         updateModalRefby(md5String, cranach);
@@ -124,6 +147,7 @@ function updateSlideClickEvent(cranach) {
         }
 
         $('*[text]').removeClass('highlighted');
+        $('button').removeClass('highlighted');
         $('.item_button').css('background-color', '');
         $('[data-toggle="popover"]').popover('hide');
         $(this).find('.loading_icon').hide();
@@ -191,9 +215,6 @@ function updateRefs(cranach) {
         $('a.lcref').each(function() {
             $(this).attr('lcref', "");
 
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
             var label = $(this).attr('label');
             var md5 = $(this).attr('md5');
 
@@ -209,6 +230,9 @@ function updateRefs(cranach) {
             if ($(this).attr('type').match(/proof|solution|answer/i)) {
                 statementType = 'substatement';
             }
+            if ($(this).attr('type').match(/figure/i)) {
+                statementType = 'figure';
+            }
 
             var rootURL = cranach.attr['rootURL'];
             if ($(this).attr('filename') == 'self') {
@@ -217,7 +241,7 @@ function updateRefs(cranach) {
                 } else {
                     var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 }
-            } else {
+            } else if ($(this).attr('src-filename')) {
                 if ($(this).attr('src-filename').match(/\.xml$/)) {
                     var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
                 } else {
@@ -231,9 +255,6 @@ function updateRefs(cranach) {
 
         $('a.href').each(function() {
 
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
             var label = $(this).attr('label');
             var serial = $(this).attr('serial');
             var md5 = $(this).attr('md5');
@@ -321,10 +342,12 @@ function updateToc(cranach) {
                 statements[$(this).attr('type')] = '';
             }
 
-            var item = $(this).attr('item');
-            var slide = $('div[item="' + $(this).attr('item') + '"]').closest('.slide').attr('slide');
+            var serial = $(this).attr('item');
+            var $item = $('div[serial="' + $(this).attr('item') + '"]').closest('div.statement').first();
+            var slide = $item.closest('.slide').attr('slide');
 
-            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + item + "')\">" + item + "</a>";
+            // statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + serial + "')\">" + serial + "</a>";
+            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' serial='" + serial + "' href='javascript:void(0)'>" + serial + "</a>";
         });
         var html = '';
         for (var key in statements) {
@@ -332,12 +355,18 @@ function updateToc(cranach) {
         }
 
         $('#info_statements').append('<div class="statements chapter" chapter="' + chapter + '" style="display:none">' + html + '</div>');
+        let $item;
+        $('#info_statements').find('.info_statements_num').click(function() {
+            $item = $('.item_title[serial="' + $(this).attr('serial') + '"]').first();
+            focusOn($item, '');
+            highlight($(this).attr('serial'));
+        });
 
         var $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
             // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
-            $slide.click();
+            // $slide.click();
         });
     });
     console.log($('#info_statements')[0]);
@@ -472,6 +501,7 @@ function postprocess(cranach) {
         }).then(() => {
             // console.log(cranach.macrosString);
             return MathJax.tex2chtmlPromise(cranach.macrosString);
+            // return MathJax.tex2svgPromise(cranach.macrosString);
         }).then(() => {
             $('.slide').each(function() {
                 if (isElementInViewport(this)) {
@@ -516,66 +546,80 @@ function postprocess(cranach) {
             });
         });
 
+        // https://stackoverflow.com/questions/20466903/bootstrap-popover-hide-on-click-outside/27615920
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
-            var $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"]').first();
-            var $selectedSlide = $item.closest('.slide');
-            $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
-            $item.find('.item_title').addClass('highlighted');
-        } else if (cranach.attr['selectedSection']) {
-            var $section = $('.title[serial="' + cranach.attr['selectedSection'] + '"]').first();
-            var $selectedSlide = $section.closest('.slide');
-            $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
-            $section.addClass('highlighted');
 
+            // $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.statement, .substatement, ');
+            $item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
+
+            //  var $selectedSlide = $item.closest('.slide');
+            $('#output').scrollTo($item);
+            // $selectedSlide.click();
+            $item.addClass('highlighted');
+        } else if (cranach.attr['selectedSection']) {
+            var $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
+            var $selectedSlide = $section.closest('.slide');
+            $('#output').scrollTo($section);
+            $section.addClass('highlighted');
+            // $selectedSlide.click();
         } else {
-            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
+            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
             $('#output').scrollTo($selectedSlide);
+            $selectedSlide.click();
         }
 
         if (cranach.attr['selectedKeyword']) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
-            focusOn($selectedSlide.attr('slide'), cranach.attr['selectedKeyword'].replace(/\s/g, ''));
+            focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }
-
-
 
         // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
         var menu_timer = null;
+        $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
             menu_timer = setTimeout(function () {
-                $("#menu_container .navbar-nav, .controls, .present .slide_number").fadeOut();
+                $("#menu_container .navbar-nav, .controls, .present .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
-        $("#menu_container .navbar-nav, .present .slide_number").mouseover(function() {
+
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
         });
+        $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
+            clearTimeout(menu_timer);
+            $('#right_half').off('mousemove');
+            $('#right_half').mousemove(function() {
+                clearTimeout(menu_timer);
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                menu_timer = setTimeout(function () {
+                    $("#menu_container .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+                    $(".controls").hide();
+                }, 1000);
+            })
+        });
+
+        $('.controls').off();
         $('.controls').on('mouseover', function() {
             $('#progress_container').show();
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
-        });
-
-        $("#menu_container .navbar-nav, .present .slide_number").mouseout(function() {
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
-                menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
         });
         $('.controls').on('mouseout', function() {
             $('#progress_container').hide();
@@ -583,8 +627,7 @@ function postprocess(cranach) {
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
+                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
                 menu_timer = setTimeout(function () {
                     $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();

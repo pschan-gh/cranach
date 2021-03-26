@@ -51,21 +51,24 @@
 
 \newtheorem{thm}[statement]{Theorem}
 \newtheorem{prop}[statement]{Proposition}
-\newtheorem{defn}[statement]{Definition}
 \newtheorem{lemma}[statement]{Lemma}
 \newtheorem{claim}[statement]{Claim}
 \newtheorem{cor}[statement]{Corollary}
 \newtheorem{fact}[statement]{Fact}
+
+\numberwithin{equation}{chapter}
+\numberwithin{section}{chapter}
+\numberwithin{subsection}{section}
+
+\theoremstyle{definition}
+\newtheorem{defn}[statement]{Definition}
 \newtheorem{example}[statement]{\bf Example}
 \newtheorem{eg}[statement]{\bf Example}
 \newtheorem{ex}[statement]{\bf Exercise}
 \newtheorem*{notation}{\bf Notation}
 \newtheorem*{sol}{\bf Solution}
 \newtheorem*{remark}{\bf Remark}
-\numberwithin{equation}{chapter}
-\numberwithin{section}{chapter}
-\numberwithin{subsection}{section}
-<!-- \renewcommand{\thesubsection}{} -->
+
 \renewcommand{\thesection}{\thechapter.\arabic{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 
@@ -342,11 +345,11 @@
 <xsl:template match="comment()" >
 </xsl:template>
 
-<xsl:template match="xh:table[not(./xh:tbody)]|xh:tbody">
+<xsl:template match="xh:table|xh:tbody">
 	<xsl:text>\begin{center}&#10;</xsl:text>
 	<xsl:text>\begin{tabular}{|</xsl:text>
 
-	<xsl:for-each select="xh:thead/xh:tr[1]/*|xh:tr[1]/*">
+	<xsl:for-each select="xh:thead/xh:tr[1]/*|xh:tbody/xh:tr[1]/*|xh:tr[1]/*">
 		<xsl:choose>
 			<xsl:when test="@colspan">
 				<xsl:for-each select="(//*)[position()&lt;=current()/@colspan]">|c|</xsl:for-each>
@@ -370,35 +373,37 @@
 	</xsl:for-each>
 
 	<xsl:for-each select="xh:tr|xh:tbody/xh:tr">
-		<!-- <xsl:if test="position() != 1">
 		<xsl:text>\hline&#10;</xsl:text>
-	</xsl:if> -->
-
-	<xsl:text>\hline&#10;</xsl:text>
-
-	<xsl:for-each select="xh:td|xh:th">
-		<xsl:if test="self::th">\bfseries </xsl:if>
-		<xsl:apply-templates />
-		<xsl:if test="position() != last()">
-			<xsl:text>&amp;</xsl:text>
-		</xsl:if>
+		<xsl:for-each select="xh:td|xh:th">
+			<xsl:if test="self::th">\bfseries </xsl:if>
+			<xsl:apply-templates />
+			<xsl:if test="position() != last()">
+				<xsl:text>&amp;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+		<xsl:if test="position()!=last()"> \\&#10;</xsl:if>
 	</xsl:for-each>
 
-	<xsl:if test="position()!=last()"> \\&#10;</xsl:if>
-</xsl:for-each>
-
-<xsl:text>\\\hline&#10;</xsl:text>
-<xsl:text>&#xa;\end{tabular}&#10;</xsl:text>
-<xsl:text>&#xa;\end{center}</xsl:text>
+	<xsl:text>\\\hline&#10;</xsl:text>
+	<xsl:text>&#xa;\end{tabular}&#10;</xsl:text>
+	<xsl:text>&#xa;\end{center}</xsl:text>
 
 </xsl:template>
 
-<xsl:template match="xh:table[./xh:tbody]">
+<!-- <xsl:template match="xh:table[./xh:tbody]">
 	<xsl:apply-templates select="xh:tbody"/>
-</xsl:template>
+</xsl:template> -->
 
 <xsl:template match="xh:img">
 	<xsl:text>IMAGE</xsl:text>
+</xsl:template>
+
+<xsl:template match="xh:script">
+	<xsl:variable name="slide">
+		<xsl:value-of select="ancestor::lv:slide/@slide" />
+	</xsl:variable>
+	<xsl:text>&#xa;</xsl:text>
+	<xsl:value-of select="concat('\href{', $contenturl, '&amp;slide=', $slide , '}{Interactive Example}')"/>
 </xsl:template>
 
 </xsl:stylesheet>

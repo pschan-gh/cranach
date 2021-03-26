@@ -135,10 +135,11 @@ function Stack(node, doc) {
 
     this.addComment = function(text) {
         var parent = this;
-        while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
-            parent = parent.close();
-        }
-        var child = new Stack(this.doc.createComment(text));
+        // while (parent.node.nodeName.match(/PARAGRAPHS/i)) {
+        //     parent = parent.close();
+        // }
+
+        var child = new Stack(parent.doc.createComment(text));
 
         child.doc = parent.doc;
         child.words = parent.words;
@@ -252,7 +253,8 @@ function Stack(node, doc) {
             while (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
-            child = child.addComment('');
+            child = child.addChild("comment");
+            // child = child.addComment('');
             child.is_comment = true;
             return child;
         }
@@ -265,6 +267,7 @@ function Stack(node, doc) {
             return child;
         } else if (child.is_comment) {
             // report('APPENDING TO COMMENT: ' + originalWord);
+            console.log('COMMENT ' + originalWord);
             child.node.textContent += originalWord;
             return child;
         }
@@ -287,9 +290,18 @@ function Stack(node, doc) {
             }
 
             if (htmlMatches[1].match(/^tr|tbody|thead$/i)) {
-                var domString = '<table><' + htmlMatches[1]+ parameters + '></tr></table>';
+                let tag = htmlMatches[1].match(/^(tr|tbody|thead)$/i)[1];
+                // var domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
+                var domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
             } else if (htmlMatches[1].match(/^td|th$/i)) {
-                var domString = '<table><tr><' + htmlMatches[1]+ parameters + '></td></tr></table>';
+                let tag = htmlMatches[1].match(/^(td|th)$/i)[1];
+                var domString = '<table><tr><' + htmlMatches[1]+ parameters + '></' + tag + '></tr></table>';
+                // var domString = '<' + htmlMatches[1]+ parameters + '>';
+                // if ((htmlMatches[1].match(/^td$/i))) {
+                //     domString += '</td>';
+                // } else {
+                //     domString += '</th>';
+                // }
             } else {
                 var domString = '<' + xh_prefix + htmlMatches[1]+ parameters + '></' + xh_prefix + htmlMatches[1] + '>';
             }
@@ -491,6 +503,12 @@ function Stack(node, doc) {
             child.node.setAttribute("type", 'Figure');
             child.node.setAttribute("num", secNums['figure']++);
             break;
+            case "@endfigure":
+            if (!environs.includes(child.getEnvironment())) {
+                break;
+            }
+            child = child.closeTo(/figure/i).close();
+            break;
             case "@of":
             var match = originalWord.trim().match(/@of{(.*?)}/)[1];
             parent = child.closeTo(/substatement/i);
@@ -514,11 +532,7 @@ function Stack(node, doc) {
                 // child.node.setAttribute('scope', parent.node.nodeName);
                 child.node.setAttribute('wbtag', child.node.nodeName);
             }
-            // } else {
-            //     child = child.addChild("paragraphs");
-            //     child.node.textContent += "ERROR? " + originalWord;
-            //     child = child.close();
-            // }
+
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {
@@ -671,7 +685,6 @@ function Stack(node, doc) {
             break;
             case "@label":
             var parent = child.closeTo(/statement|course|chapter|section|subsection|subsubsection|figure/i);
-            // parent.node.setAttribute('label', argument);
             var label = parent.addChild("label");
             label.node.setAttribute('wbtag', tagname);
             label.node.setAttribute('name', argument);
@@ -777,13 +790,6 @@ function Stack(node, doc) {
                         child = child.close();
                         if (i < chunks.length - 1) {
                                 child = child.addChild('newline').close();
-                            // if (child.node.nodeName.match(new RegExp(htmlElements.source, 'i'))) {
-                            //     var htmlDom = new DOMParser().parseFromString('<br wbtag="newline"/>', 'text/html');
-                            //     var node = htmlDom.getElementsByTagName('br')[0];
-                            //     child = child.addNode(node).close();
-                            // } else {
-                            //     child = child.addChild('newline').close();
-                            // }
                         } else if (originalWord.match(/\n\s*\n\s*$/)) {
                             child = child.addChild('newline').close();
                         }

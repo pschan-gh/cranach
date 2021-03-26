@@ -1,7 +1,7 @@
 /** page wide defs for lcrefs, the *[lcref] is a selector for
  *  all elements, that have a lcref attribute set to any value */
 .lcref-content {
-//  padding: 10px 10px 0 10px;
+/*  padding: 10px 10px 0 10px; */
 padding:10px;
   border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
