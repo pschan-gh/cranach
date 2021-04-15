@@ -473,7 +473,7 @@ function Cranach(url) {
                 branch.appendChild(clone);                
             }
             preindexDom.appendChild(branch);
-            console.log(branch);
+            // console.log(branch);
         }
         
         var el = this;

@@ -238,9 +238,9 @@ function updateCarousel(slide) {
     for (let i = 0; i < numOfSlides; i++) {
         $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + i + '" aria-label="Slide ' + (i + 1) + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + (i + 1) + '">');
     }
-    $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
-    
+        
     $('.carousel-indicators button[data-bs-slide-to="' + (slide - 1) + '"]').addClass('active').attr('aria-current', "true");
+    $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
     
 }
 
@@ -249,23 +249,19 @@ function showDivs(n, cranach) {
     $('#right_half').addClass('slide');
     $('#output').addClass('carousel-inner');
     $('#output div.slide').addClass('carousel-item');
-    // $('div.progress_container').addClass('carousel-indicators');
-    // $('.controls_container').show();
-    // $('div.progress').show();
     
     updateCarousel(n);
     
     var $slides = $('#output > .slide');
-
-    if ($slides.length == null || $slides.length == null < 1) {
+    
+    if ($slides.length == null || $slides.length == 0) {
         return 0;
     }
-
-    let index = (parseInt(n) + $slides.length) % $slides.length;
-    index = index == 0 ? $slides.length : index;
-
-    var $slide = $('#s' + index);
     
+    let index = (parseInt(n) + $slides.length) % $slides.length;
+    index = index == 0 ? $slides.length : index;    
+
+    var $slide = $('#s' + index);    
     $slide.addClass('active');
 
     $('.carousel').carousel('pause');

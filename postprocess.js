@@ -451,25 +451,25 @@ function postprocess(cranach) {
     updateTitle($('#s' + cranach.slideIndex)[0]);    
     
     
-    $(function() {
-        console.log(cranach);        
+    console.log(cranach);        
 
-        MathJax.startup.promise.then(() => {
-            // MathJax.typesetClear();
-            MathJax.startup.document.state(0);
-            MathJax.texReset();
-            return;
-        }).then(() => {
-            // console.log(cranach.macrosString);
-            return MathJax.tex2chtmlPromise(cranach.macrosString);
-            // return MathJax.tex2svgPromise(cranach.macrosString);
-        }).then(() => {
-            $('.slide').each(function() {
-                if (isElementInViewport(this)) {
-                    batchRender(this);                    
-                }
-            });
+    MathJax.startup.promise.then(() => {
+        // MathJax.typesetClear();
+        MathJax.startup.document.state(0);
+        MathJax.texReset();
+        return;
+    }).then(() => {
+        // console.log(cranach.macrosString);
+        return MathJax.tex2chtmlPromise(cranach.macrosString);
+        // return MathJax.tex2svgPromise(cranach.macrosString);
+    }).then(() => {
+        $('.slide').each(function() {
+            if (isElementInViewport(this)) {
+                batchRender(this);                    
+            }
         });
+    });
+    $(function() {        
 
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
@@ -516,7 +516,7 @@ function postprocess(cranach) {
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
             $('#output').scrollTo($selectedSlide);
             $selectedSlide.click();
-        }
+        }        
 
         if (cranach.attr['selectedKeyword']) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
@@ -607,10 +607,12 @@ function postprocess(cranach) {
             console.log('LECTURE MODE');     
             $('[data-lecture-skip="true"]').addClass('lecture_skip');
         }
+        
+        $('#loading_icon').hide();
         if (cranach.attr['present']) {
+            console.log('PRESENT MODE');
             $('#present_button').click();
         }
-        $('#loading_icon').hide();
         
     });
     

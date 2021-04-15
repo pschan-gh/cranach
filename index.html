@@ -699,19 +699,6 @@ $(function() {
         }
     });
 
-    // $('#render_icon').click(function() {
-    //     $('.icon.latex, .icon.xml').hide();
-    //     baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
-    //         console.log(cranach);
-    //         return cranach.renderWb(editor.getValue(), document.getElementById('output'))
-    //         .then(cranach => {
-    //         return cranach.displayIndexDocToHtml(document.getElementById('index'))})
-    //         .then(renderer => {
-    //             postprocess(renderer); return renderer;
-    //         });
-    //     });
-    // });
-
     $('#render_sel').mouseover(function() {
         if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
             return;
