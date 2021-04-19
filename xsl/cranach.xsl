@@ -817,9 +817,6 @@
             <xsl:attribute name="slide">
                 <xsl:value-of select="$slide"/>
             </xsl:attribute>
-            <xsl:attribute name="item">
-                <xsl:value-of select="$item" />
-            </xsl:attribute>
             <xsl:apply-templates select="*|text()|comment()">
                 <xsl:with-param name="slide" select = "$slide" />
                 <xsl:with-param name="course" select="$course"/>
