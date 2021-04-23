@@ -324,6 +324,7 @@ function updateToc(cranach) {
         $(this).text(string.charAt(0).toUpperCase() + string.slice(1));
     });
 
+    $('#info_statements').html('');
     $('.toc').find('a.chapter').each(function() {
         let chapter = $(this).attr('chapter');
         let statements = new Array();
@@ -336,11 +337,9 @@ function updateToc(cranach) {
             var $item = $('div[serial="' + $(this).attr('item') + '"]').closest('div.statement').first();
             var slide = $item.closest('.slide').attr('slide');
 
-            // statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + serial + "')\">" + serial + "</a>";
             statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' serial='" + serial + "' href='javascript:void(0)'>" + serial + "</a>";
         });
-        var html = '';
-        $('#info_statements').html('');
+        var html = '';        
         for (var key in statements) {
             html += '<br/><a class="info_statements" target="_blank" href="' + url + '&query=//lv:statement[@chapter=' + chapter + ' and @type=%27' + key + '%27]">' + key + '</a><em> ' + statements[key] + '</em>';
         }
