@@ -109,9 +109,9 @@ iframe.webwork {
     background-color: #333;
 } */
 
-.dim .load_icon, .dim .paragraphs, .dim textarea, .dim table, .dim table * {
-    background-color: #222;
-    color: #bbb;
+.dim .menu_container, .dim .load_icon, .dim .paragraphs, .dim textarea, .dim table, .dim table * {
+    background-color: #222 !important;
+    color: #bbb !important;
 }
 
 .dim .lcref, .dim .lcref .paragraphs {
