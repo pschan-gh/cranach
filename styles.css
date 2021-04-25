@@ -487,7 +487,8 @@ select#render_sel option[value="Render"]
     background-image:url("icons/refresh-24px.svg");
 }
 
-select#render_sel option {
+#render_sel option {
+    color:#ddd;
     background-color:#444;
 }
 
