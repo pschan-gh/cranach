@@ -486,7 +486,8 @@ select#render_sel option[value="Render"]
 {
     background-image:url("icons/refresh-24px.svg");
 }
-select option {
+
+select#render_sel option {
     background-color:#444;
 }
 
@@ -612,7 +613,7 @@ display:none;
 
 #info_half .nav-tabs {
     position:fixed;
-    top:0;    
+    top:5px;    
 }
 
 .tab-content {
