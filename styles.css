@@ -17,6 +17,20 @@ body {
     height:100%;
 }
 
+.nav-tabs .nav-link.active {
+    font-weight:bold !important;
+    color:inherit !important;
+    background-color:inherit !important;
+    border:none !important;
+}
+.nav-tabs .nav-link {
+    color:#bbb !important;
+    background-color:inherit !important;
+}
+.nav-tabs {
+    border-color:#ccc !important;
+}
+
 #right_half .navbar {
     /* position:absolute !important; */
     top:0;

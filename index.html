@@ -193,88 +193,86 @@
         </div>
     </div>
     <div id="container" class="pane">
-        <div id="left_half" class="left pane overview" mode="overview">
+        <div id="left_half" class="left pane overview" mode="overview">            
             <div id="info_half">
-                <strong>Table of Contents</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="toc" href="#toc">
-                    <span class="material-icons expand_more">expand_more</span>
-        			<span class="material-icons expand_less">expand_less</span>
-                    <!-- ⊞ -->
-                </a>
-                <!-- ► -->
-                <div class="collapse toc" id="toc"></div>
-                <br/>
-                <strong>Index</strong>
-                <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="index" href="#index">
-                    <span class="material-icons expand_more">expand_more</span>
-        			<span class="material-icons expand_less">expand_less</span>
-                    <!-- ⊞ -->
-                </a>
-                <div class="collapse" id="index"></div>
-                <hr/>
-                <div id="info_title" class="title_box">
-                    <h2>
-                        <div class="current_course"></div>
-                    </h2>
-                    <strong>Keywords</strong>
-                    <a class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
-                        <span class="material-icons expand_more">expand_more</span>
-            			<span class="material-icons expand_less">expand_less</span>
-                        <!-- ⊞ -->
-                    </a>
-                    <div id="info_keywords_course" class="collapse"></div>
-                    <br/><br/>
-                    <h3>
-                        <div class="current_chapter"></div>
-                        <div class="current_chapter_title"></div>
-                        <div class="current_topics"></div>
-                    </h3>
-                    <strong>Chapter Keywords</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
-                        <span class="material-icons expand_more">expand_more</span>
-            			<span class="material-icons expand_less">expand_less</span>
-                        <!-- ⊞ -->
-                    </a>
-                    <div id="info_keywords_chapter" class="collapse"></div>
-                </div>
-                <div id="info_statements"></div>
-                <br/>
-                <hr>
-                <div id="slide_info" class=".slide_info" style="display:none">
-                    <h4 class="current_section"></h4>
-                    <h5 class="current_slide"></h5>
-                    <br/>
-                    <div id="slide_keywords"></div>
-                    <br/>
-                    <strong onclick='$(".slide_info.share").show();'>Share</strong>
-                    <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
-                        <span class="material-icons expand_more">expand_more</span>
-            			<span class="material-icons expand_less">expand_less</span>
-                        <!-- ⊞ -->
-                    </a>
-                    <div class="slide_info share collapse" id="slide_info_share" style="">
-                        <a style="text-decoration:none;color:LightBlue" target="_blank" id="url_open"><span>URL</span></a>
-                        <br><textarea class="url share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
-                        <p><br></p>
-                        <span>HTML Hyperlink</span><br/>
-                        <textarea class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
-                        <p><br></p>
-                        <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_lightblue.svg" class="exempt"/>Hyperref</span><br>
-                        <textarea class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
-                        <span id='modal_keywords'>
-                        </span>
-                    </div>
-                </div>
                 <div id="info_menu_container">
-                    <!-- <input type="image" src="icons/Edit_Notepad_Icon.svg" id="compose_icon" onclick="$('#compose_button').click();"> -->
                     <button class="plain_button icon" id="compose_icon" onclick="$('#compose_button').click();">
                         <i class="material-icons">edit</i>
                     </button>
                     <button class="plain_button icon hide" onclick="$('#container').addClass('wide');$('.pane').removeClass('compose').removeClass('info').addClass('overview')" data-bs-toggle="tooltip" data-bs-placement="right" title="Hide Side Panel">
                         <i class="material-icons">close</i>
                     </button>
-                    <!-- &times; -->
                 </div>
+                <ul class="nav nav-tabs" role="tablist">
+    				<li class="nav-item" role="presentation">
+    					<button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+    				</li>
+    				<li class="nav-item" role="presentation">
+    					<button class="nav-link" id="toc-tab" data-bs-toggle="tab" data-bs-target="#toc" type="button" role="tab" aria-controls="home" aria-selected="true">Table of Contents</button>
+    				</li>
+                    <li class="nav-item" role="presentation">
+    					<button class="nav-link" id="index-tab" data-bs-toggle="tab" data-bs-target="#index" type="button" role="tab" aria-controls="home" aria-selected="true">Index</button>
+    				</li>
+    			</ul>
+                <div class="tab-content" style="padding-top:1em">
+                    <div class="tab-pane fade show active" id="info">
+                        <div id="info_title" class="title_box">
+                            <h2>
+                                <div class="current_course"></div>
+                            </h2>
+                            <strong>Keywords</strong>
+                            <a class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
+                                <span class="material-icons expand_more">expand_more</span>
+                    			<span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div id="info_keywords_course" class="collapse"></div>
+                            <br/><br/>
+                            <h3>
+                                <div class="current_chapter"></div>
+                                <div class="current_chapter_title"></div>
+                                <div class="current_topics"></div>
+                            </h3>
+                            <strong>Chapter Keywords</strong>
+                            <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
+                                <span class="material-icons expand_more">expand_more</span>
+                    			<span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div id="info_keywords_chapter" class="collapse"></div>
+                        </div>
+                        <div id="info_statements"></div>
+                        <br/>
+                        <hr>
+                        <div id="slide_info" class=".slide_info" style="display:none">
+                            <h4 class="current_section"></h4>
+                            <h5 class="current_slide"></h5>
+                            <br/>
+                            <div id="slide_keywords"></div>
+                            <br/>
+                            <strong onclick='$(".slide_info.share").show();'>Share</strong>
+                            <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
+                                <span class="material-icons expand_more">expand_more</span>
+                    			<span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div class="slide_info share collapse" id="slide_info_share" style="">
+                                <a style="text-decoration:none;color:LightBlue" target="_blank" id="url_open"><span>URL</span></a>
+                                <br><textarea class="url share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
+                                <p><br></p>
+                                <span>HTML Hyperlink</span><br/>
+                                <textarea class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
+                                <p><br></p>
+                                <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_lightblue.svg" class="exempt"/>Hyperref</span><br>
+                                <textarea class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly"></textarea>
+                                <span id='modal_keywords'>
+                                </span>
+                            </div>
+                        </div>                        
+                    </div>
+                    <div class="tab-pane toc" class="toc" id="toc"></div>
+                    <div class="tab-pane" id="index"></div>
+                </div>                                                
             </div>
             <div id="input_container" style="display:flex;flex-direction:column;">
                 <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">                        
