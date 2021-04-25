@@ -609,7 +609,7 @@ display:none;
 }
 
 .tab-content {
-    padding-top:1em;
+    padding-top:0;
     padding-left:1em;
     padding-right:0;
     flex: 1 1 auto !important;
@@ -1200,6 +1200,7 @@ position:relative;
 }
 
 #info {
+    padding-top:1em;
     padding-right:1em;
     height:100%;
     overflow-y:auto;
@@ -1236,6 +1237,7 @@ h5.current_slide {
     height:100%;
     overflow-y:auto;
     padding-right:1em;
+    padding-top:1em;
     /* padding:10px; */
     /* border-radius:5px */
 }
@@ -1258,6 +1260,7 @@ h5.current_slide {
     height:100%;
     overflow-y:auto;
     padding-right:1em;
+    padding-top:1em;
 }
 
 .slide_info.share {
