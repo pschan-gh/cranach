@@ -486,6 +486,9 @@ select#render_sel option[value="Render"]
 {
     background-image:url("icons/refresh-24px.svg");
 }
+select option {
+    background-color:#444;
+}
 
 textarea {
     color:#000;
