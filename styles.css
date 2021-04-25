@@ -28,6 +28,7 @@ body {
     background-color:inherit !important;
 }
 .nav-tabs {
+    border-bottom:none;
     border-color:#ccc !important;
 }
 
@@ -1199,6 +1200,7 @@ position:relative;
 }
 
 #info {
+    padding-right:1em;
     height:100%;
     overflow-y:auto;
 }
