@@ -22,7 +22,10 @@
     <xsl:template match="lv:keywords" />
 
     <xsl:template match="lv:title">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@title{</xsl:text>
         <xsl:apply-templates select="*|text()" />
+        <xsl:text>}</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:slides" >
@@ -69,16 +72,18 @@
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>@skip</xsl:text>
         </xsl:if>
-        <xsl:choose>
-            <xsl:when test="./lv:title">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:text>@title{</xsl:text>
+        <!-- <xsl:choose> -->
+            <!-- <xsl:if test="./lv:title"> -->
+                <!-- <xsl:text>&#xa;</xsl:text>
+                <xsl:text>@title{</xsl:text> -->
                 <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
-                <xsl:apply-templates select="./lv:title/*|./lv:title/text()" />
-                <xsl:text>}</xsl:text>
+                <!-- <xsl:apply-templates select="./lv:title/*|./lv:title/text()" /> -->
+                <!-- <xsl:apply-templates select="./lv:title" /> -->
+                <!-- <xsl:text>}</xsl:text> -->
                 <!-- <xsl:text>&#xa;</xsl:text> -->
-            </xsl:when>
-        </xsl:choose>
+            <!-- </xsl:if>             -->
+        <!-- </xsl:choose> -->
+        <xsl:apply-templates select="./lv:title" />
         <xsl:apply-templates select="*[not(self::lv:title)]" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
@@ -158,7 +163,6 @@
             <xsl:when test="./lv:caption">
                 <xsl:text>&#xa;</xsl:text>
                 <xsl:text>@caption{</xsl:text>
-                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
                 <xsl:apply-templates select="./lv:caption/*|./lv:caption/text()" />
                 <xsl:text>}</xsl:text>                
             </xsl:when>
@@ -213,28 +217,12 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <!-- <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
-        <xsl:text>@</xsl:text>
-        <xsl:value-of select="@wbtag"/>
-        <xsl:if test="./lv:argument">
-            <xsl:text>{</xsl:text>
-            <xsl:value-of select="./lv:argument/text()|./lv:argument/*"/>
-            <xsl:text>}</xsl:text>
-        </xsl:if>
-        <xsl:text>&#xa;</xsl:text>
-        <xsl:apply-templates select="*|text()" />
-    </xsl:template> -->
 
     <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:choose>
-            <!-- <xsl:when test="./lv:title">
-                <xsl:text>{</xsl:text>
-                <xsl:value-of select="./lv:title/text()|./lv:title/*"/>
-                <xsl:text>}</xsl:text>
-            </xsl:when> -->
             <xsl:when test="@num">
                 <xsl:text>{</xsl:text>
                 <xsl:value-of select="@num"/>
