@@ -181,7 +181,7 @@
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:text>{</xsl:text>
-        <xsl:apply-templates select="./lv:title" />
+        <xsl:apply-templates select="./lv:title/*|./lv:title/text()" />
         <xsl:text>}</xsl:text>
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*[not(self::lv:title)]" />
