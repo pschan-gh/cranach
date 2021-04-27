@@ -608,6 +608,7 @@ function postprocess(cranach) {
         }
         
         $('#loading_icon').hide();
+        $('#right_half .navbar').show();
         if (cranach.attr['present']) {
             console.log('PRESENT MODE');
             $('#present_button').click();
