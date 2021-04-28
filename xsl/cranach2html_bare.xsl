@@ -109,6 +109,12 @@
                     <xsl:text>ignore</xsl:text>
                 </xsl:attribute>
                 <h5 wbtag="ignore">
+                    <span wbtag="ignore">
+                        <xsl:value-of select="@course"/>
+                    </span>
+                </h5>
+                <br/>
+                <h5 wbtag="ignore">
                     <xsl:value-of select="@type"/>
                     <span style="margin-left:0.5em" wbtag="ignore">
                         <xsl:value-of select="@item"/>
