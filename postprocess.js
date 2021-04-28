@@ -99,18 +99,25 @@ function updateModal(cranach) {
         // var slide = $(this).closest('.slide').attr('slide');
 
         let url = cranach.attr['contentURL'];
+        let lcref = '';
         let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
 
         let $labels = $(this).closest('div').find('.label');
 
         if ($labels.length) {
             url += '&' + argName + '=' + $labels.first().attr('name');
+            if (argName == 'item') {
+                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[./lv:label/@name='" + $labels.first().attr('name') + "'])[1]";
+            }
         } else {
             url +=  '&' + argName + '=' + serial;
+            if (argName == 'item') {
+                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
+            }
         }
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
-        $('#item_modal').find('#share_url').text(url);
+        $('#item_modal').find('#share_url').val(url);
 
         let title = '';
 
@@ -121,9 +128,10 @@ function updateModal(cranach) {
              title = $(this).attr('item') ? item_type + ' ' + item : item_type;
          }
 
-        $('#item_modal').find('#share_hyperlink').text('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_hyperref').text('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
-        $('#item_modal').find('.md5').first().html(md5String);
+        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+        $('#item_modal').find('.md5').val(md5String);
 
         updateModalRefby(md5String, cranach);
         updateModalProofs(md5String, cranach);

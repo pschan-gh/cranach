@@ -571,17 +571,20 @@
                     </span>
                     <hr/>
                     <strong>URL</strong>
-                    <br><textarea id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"></textarea>
+                    <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
                     <p><br></p>
-                    <stong>HTML Hyperlink</strong><br/>
-                    <textarea id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"><a href="" target="_blank" title=""></a></textarea>
-                    <p><br></p>
+                    <stong>HTML Hyperlink</strong>
+                    <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
+                    <p><br/></p>
+                    <stong>Knowl</strong><br/>
+                    <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
+                    <p><br/></p>
                     <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
                     <br/>
-                    <textarea id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly"></textarea>
+                    <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
                     <br/><br/>
                     <span>MD5</span><br/>
-                    <textarea class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly"></textarea>
+                    <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
                 </div>
                 <div class="modal-footer">
                     <div id="logo-box" class="pull-left">

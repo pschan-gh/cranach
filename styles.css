@@ -1174,7 +1174,7 @@ position:relative;
 
 .share_text {
     width:100%;
-    height:5em;
+    /* height:5em; */
     word-break:break-all;
     overflow-y:auto;
     font-family:Courier;
