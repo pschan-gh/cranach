@@ -96,6 +96,7 @@ function Cranach(url) {
     }
 
     this.setup = function(options) {
+        this.output = document.getElementById(this.attr['outputID']);
         var domparser = new DOMParser();
         if (this.params) {
             var params = this.params;
@@ -155,6 +156,10 @@ function Cranach(url) {
             if (urlParams.has('lecture')) {
                 this.attr['lectureMode'] = 1;
             }
+            if (urlParams.has('bare')) {
+                this.setBare();
+                console.log(this.bare);
+            }
         }
 
         if(options) {
@@ -167,7 +172,6 @@ function Cranach(url) {
 
         console.log(this.attr);
 
-        this.output = document.getElementById(this.attr['outputID']);
 
         var el = this;
 
@@ -305,6 +309,7 @@ function Cranach(url) {
         var xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
         var el = this;
         var output = this.output;
+        console.log(output);
         $(output).find('#loading_icon').show();
         $(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
         return new Promise((resolve, reject) => {

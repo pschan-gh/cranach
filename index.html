@@ -97,10 +97,19 @@
                     $('.icon.latex, .icon.xml').hide();
                     baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
                         console.log(cranach);
-                        return cranach.render(document.getElementById('output'))
+                        let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
+                        console.log(output);
+                        // return cranach.render(document.getElementById('output'))
+                        return cranach.render(output)
                         .then(renderer => {
+                            if (renderer.bare) {
+                                return renderer;
+                            }
                             return renderer.displayIndexDocToHtml(document.getElementById('index'))
                             .then(renderer => {
+                                if (renderer.bare) {
+                                    return renderer;
+                                }
                                 postprocess(renderer);
                                 convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
                                 $('#render_sel').prop('disabled', false);
