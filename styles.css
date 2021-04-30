@@ -507,6 +507,14 @@ iframe {
     background:transparent url("icons/Loading_icon.gif") center no-repeat;
 }
 
+.loading_icon {
+    text-align:center;
+    overflow-y:hidden;
+    height:3.5cm;
+    width:5cm;
+    margin:1cm auto    
+}
+
 ol {
     list-style-type: decimal;
 }

@@ -1048,7 +1048,7 @@
 	</xsl:template>
 
 	<xsl:template match="xh:iframe">
-        <div style="text-align:center;overflow-y:hidden;height:3.5cm;width:5cm;margin:5em auto" class="loading_icon">
+        <div class="loading_icon">
             <div class="spinner-border text-secondary" style="margin:2em" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -1220,7 +1220,7 @@
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
 				</xsl:attribute>
-				<div style="text-align:center;overflow-y:hidden;height:3.5cm;width:5cm" class="loading_icon">
+				<div class="loading_icon">
                     <!-- <img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/> -->
                     <div class="spinner-border text-secondary" style="margin:2em" role="status">
                         <span class="visually-hidden">Loading...</span>
