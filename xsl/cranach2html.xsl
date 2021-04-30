@@ -1034,11 +1034,11 @@
 							<xsl:value-of select="@src"/>
 						</xsl:attribute>
 					</xsl:when>
-					<xsl:otherwise>
+					<!-- <xsl:otherwise>
 						<xsl:attribute name="data-src">
 							<xsl:value-of select="concat($contentdir, '/', @src)"/>
 						</xsl:attribute>
-					</xsl:otherwise>
+					</xsl:otherwise> -->
 				</xsl:choose>
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>
