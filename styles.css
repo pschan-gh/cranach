@@ -23,6 +23,11 @@ body {
     background-color:inherit !important;
     border:none !important;
 }
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+    border-color:#aaa !important;
+}
+
 .nav-tabs .nav-link {
     color:#bbb !important;
     background-color:inherit !important;
