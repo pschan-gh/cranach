@@ -500,6 +500,7 @@ function highlight(item) {
 }
 function imagePostprocess(image) {
     
+    $(image).removeClass('loading');
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
             

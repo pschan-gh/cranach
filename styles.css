@@ -504,7 +504,7 @@ iframe {
     border:0;
     width: 1px;
     min-width: 100%;
-    background:transparent url(icons/Loading_icon.gif) center no-repeat;
+    background:transparent url("icons/Loading_icon.gif") center no-repeat;
 }
 
 ol {
@@ -952,9 +952,10 @@ max-width:600px;
 }
 
 
-#output img {
-    max-width:100%;
-    background:transparent url(icons/Loading_icon.gif) center no-repeat;
+#output img.loading {
+    max-width:10cm;
+    max-height:10cm;
+    background:transparent url("icons/Loading_icon.gif") center no-repeat !important;
 }
 
 .dual-left{
