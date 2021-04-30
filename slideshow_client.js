@@ -114,13 +114,13 @@ function renderSlide(slide) {
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
-
-    $(slide).find('iframe:not([src])').not(".webwork").each(function() {
-        $(this).attr('src', $(this).attr('data-src')).show();
-        var $iframe = $(this);
-        $(this).css('background', 'none');
-        $(this).iFrameResize({checkOrigin:false});
-    });
+     
+    // $(slide).find('iframe:not([src])').not(".webwork").each(function() {
+    //     $(this).attr('src', $(this).attr('data-src')).show();
+    //     var $iframe = $(this);
+    //     $(this).css('background', 'none');
+    //     $(this).iFrameResize({checkOrigin:false});
+    // });
 
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");
