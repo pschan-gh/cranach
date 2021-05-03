@@ -159,7 +159,7 @@ function showStep(el) {
     var $parent = $(el).closest('div[wbtag="steps"]');
     var $stepsClass = $parent.find('.steps');
 
-    if (typeof $parent.attr('stepId') == typeof undefined || $parent.attr('stepId') == null) {
+    if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
         $parent.attr('stepId', 0);
     }
     var whichStep = $parent.attr('stepId');
@@ -503,10 +503,11 @@ function imagePostprocess(image) {
     $(image).removeClass('loading');
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
-            
+        console.log($(image).attr('src'));
         if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
             $(image).css('background', 'none');
             $(image).show();
+            console.log($(image).attr('src') + ' OK');
             return 1;
         }
 
@@ -516,8 +517,12 @@ function imagePostprocess(image) {
         $(image).closest('.dual-left').css('height', '');
         $(image).closest('.dual-right').css('height', '');
     
-        var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
-                
+        // var override = !((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
+        
+        // console.log($(image).closest('.image').css('width'));
+        var override = ($(image).closest('.image').css('width') !== null && typeof $(image).closest('.image').css('width') !== 'undefined' && Number.parseInt($(image).closest('.image').css('width').replace(/px$/, '') < 600))
+        // var override = false;
+        
         if(/svg/.test($(image).attr('src'))) {
             if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
                 var width = 300;
@@ -532,6 +537,7 @@ function imagePostprocess(image) {
                 $(image).css('width', '100%');
             }
         } else if (!override) {
+            // console.log('Adjusting ' + $(image).attr('src') + ' ' + width + ' ' + height);
             $(image).removeAttr('style');
             $(image).removeAttr('width');
             $(image).removeAttr('height');
@@ -553,7 +559,7 @@ function imagePostprocess(image) {
                         $(image).css('width', '100%');
                         $(image).css('max-height', '100%');
                     } else {
-                        if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
+                        if((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
                             $(image).css('height', '560px');
                             $(image).css('width', 'auto');
                         } else {
@@ -562,7 +568,7 @@ function imagePostprocess(image) {
                         }
                     }
                 } else {
-                    if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
+                    if((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
                         $(image).css('max-width', '100%');
                         $(image).css('height', 'auto');
                     } else {
@@ -572,7 +578,7 @@ function imagePostprocess(image) {
                 }
             }
         } else {
-            if ($(image).css('width') == '' || typeof $(image).css('width') === typeof undefined || $(image).css('width') === false) {
+            if ($(image).css('width') == '' || typeof $(image).css('width') === 'undefined' || $(image).css('width') === false) {
                 $(image).css('width', '100%');
             }
         }
