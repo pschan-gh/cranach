@@ -312,10 +312,10 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:table[contains(concat(' ',@class,' '),' ltx_eqn_table')]">
+    <xsl:template match="xh:table[contains(@class, 'ltx_eqn_table')]">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>\begin{align*}&#10;</xsl:text>
-        <xsl:for-each select="xh:tr">
+        <xsl:for-each select=".//xh:tr">
             <xsl:for-each select="xh:td[position()!=last()]">
                 <xsl:if test="position() != 1 and position() != 2">
                     <xsl:text>&amp;</xsl:text>

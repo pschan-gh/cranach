@@ -37,13 +37,18 @@ function generateXML(source) {
     }
 
     source = source.replace(/@sep/g, '@slide')
+    .replace(/@example/g, '@eg')
+    .replace(/@definition/g, '@defn')
     .replace(/@def([^n]|$)/g, '@defn$1')
+    .replace(/@theorem/g, '@thm')
+    .replace(/@proposition/g, '@prop')
+    .replace(/@corollary/g, '@cor')
     .replace(/#(nstep|ref|label)/g, '@$1')
     .replace(/\<p\s*\>/g, '<p/>')
     .replace(/\<\/p\>/g, '')
-    .replace(/\<b\>(.*?)\<\/b\>/g, '@keyword{$1}')
     .replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-	.replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
+    .replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
+    
     // END LEGACY COMPATIBILITY
 
     var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', 'document', null);
