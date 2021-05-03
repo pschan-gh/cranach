@@ -630,7 +630,7 @@
 					</xsl:element>
 					<xsl:apply-templates select="lv:label"/>
 				</button>
-				<xsl:apply-templates select="*[not(self::lv:title)and not(self::lv:of-title) and not(self::lv:label)]"/>
+				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:of-title) and not(self::lv:label)]"/>
 			</blockquote>
 		</div>
 	</xsl:template>

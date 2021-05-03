@@ -536,7 +536,6 @@ function Stack(node, doc) {
                 // child.node.setAttribute('scope', parent.node.nodeName);
                 child.node.setAttribute('wbtag', child.node.nodeName);
             }
-
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {

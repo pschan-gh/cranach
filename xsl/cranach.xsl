@@ -670,14 +670,13 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:element>
-                            <xsl:if test="./lv:title">
+                            <!-- <xsl:if test="./lv:title">
                                 <xsl:element name="title" namespace="{$lv}">
-                                    <xsl:text>[</xsl:text>
-                                    <!-- <xsl:value-of select="concat('[', ./lv:title/text(), ']')"/> -->
-                                    <xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
+                                    <xsl:text>[</xsl:text> -->
+                                    <!-- <xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
                                     <xsl:text>]</xsl:text>
                                 </xsl:element>
-                            </xsl:if>
+                            </xsl:if> -->
                         </xsl:when>
                         <xsl:otherwise>
                         </xsl:otherwise>
