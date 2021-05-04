@@ -1048,7 +1048,7 @@
 	</xsl:template>
 
 	<xsl:template match="xh:iframe">
-        <div class="loading_icon">
+        <div class="loading_icon" wbtag="ignore">
             <div class="spinner-border text-secondary" style="margin:2em" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -1220,7 +1220,7 @@
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
 				</xsl:attribute>
-				<div class="loading_icon">
+				<div class="loading_icon" wbtag="ignore">
                     <!-- <img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/> -->
                     <div class="spinner-border text-secondary" style="margin:2em" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -1270,7 +1270,7 @@
 	<xsl:template match="lv:paragraphs">
 		<span class="paragraphs">
 			<!-- <xsl:value-of select="text()" disable-output-escaping="yes"/> -->
-			<xsl:apply-templates select="lv:newline|text()" />
+			<xsl:apply-templates select="lv:newline|*|text()" />
 		</span>
 	</xsl:template>
 
