@@ -320,8 +320,15 @@
                 <xsl:if test="position() != 1 and position() != 2">
                     <xsl:text>&amp;</xsl:text>
                 </xsl:if>
-                <xsl:variable name="length" select="string-length(.//text())"/>
-                <xsl:value-of select="substring(.//text(),2,($length - 2))"/>
+                <xsl:choose>
+                    <xsl:when test="./*[contains(@class, 'ltx_text')]">
+                        <xsl:value-of select="concat('\text{', .//text(), '}')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="length" select="string-length(.//text())"/>
+                        <xsl:value-of select="substring(.//text(),2,($length - 2))"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>
             <xsl:if test="position()!=last()"> \\&#10;</xsl:if>
         </xsl:for-each>
