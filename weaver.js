@@ -43,6 +43,7 @@ function generateXML(source) {
     .replace(/@theorem/g, '@thm')
     .replace(/@proposition/g, '@prop')
     .replace(/@corollary/g, '@cor')
+    .replace(/@solution/g, '@sol')
     .replace(/#(nstep|ref|label)/g, '@$1')
     .replace(/\<p\s*\>/g, '<p/>')
     .replace(/\<\/p\>/g, '')

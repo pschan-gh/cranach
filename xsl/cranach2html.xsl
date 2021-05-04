@@ -1269,7 +1269,8 @@
 
 	<xsl:template match="lv:paragraphs">
 		<span class="paragraphs">
-			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+			<!-- <xsl:value-of select="text()" disable-output-escaping="yes"/> -->
+			<xsl:apply-templates select="lv:newline|text()" />
 		</span>
 	</xsl:template>
 
