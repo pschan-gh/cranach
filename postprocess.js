@@ -172,6 +172,7 @@ function updateSlideClickEvent(cranach) {
         $(this).find('iframe:not([src])').each(function() {
             $(this).attr('src', $(this).attr('data-src')).show();
             $(this).iFrameResize({checkOrigin:false});
+            // iFrameResize({ log: true }, this);
         });
 
         if ($(this).attr('slide') != slideIndex) {
