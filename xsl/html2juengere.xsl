@@ -47,7 +47,7 @@
     <xsl:template match="*[@class='knowl-output']" priority='1'/>
     <xsl:template match="*[@class='lcref-output']"  priority='1'/>
 
-    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(@wbtag) and not(contains(@class, 'jxgbox')) and not(@class='comment')]">
+    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(self::xh:iframe) and not(@wbtag) and not(contains(@class, 'jxgbox')) and not(@class='comment')]">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates select="*|text()|comment()" />
@@ -60,7 +60,7 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:img|img">
+    <xsl:template match="xh:img|img|xh:iframe|iframe">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*[name()!='data-src']"/>
           <xsl:if test="not(@src) and @data-src">

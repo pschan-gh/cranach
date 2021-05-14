@@ -19,14 +19,14 @@ function saveWb(editor, promise) {
 function collectNewcommands(str) {
     var commandsStr = '';
     var obj = new Object();
-    var commands = str.match(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
+    var commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
     console.log(commands);
 
     if (commands == null || typeof commands == typeof undefined) {
         return '';
     }
     for (var i = 0; i < commands.length; i++) {
-        var matches = commands[i].match(/\\newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
+        var matches = commands[i].match(/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
         console.log(matches);
         obj[matches[1]] = matches[2];
     }

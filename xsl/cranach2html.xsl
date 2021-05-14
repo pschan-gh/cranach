@@ -1024,23 +1024,26 @@
 		</div>
 	</xsl:template>
 
-    <xsl:template match="xh:img">
+    <xsl:template match="xh:img|img">
         <xsl:element name="{local-name()}" namespace="{$xh}">
             <xsl:attribute name="class">loading</xsl:attribute>
 			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
 			<xsl:if test="@src">
-				<xsl:choose>
-					<xsl:when test="contains(@src, 'http')">
+				<xsl:attribute name="data-src">
+					<xsl:value-of select="@src"/>
+				</xsl:attribute>
+				<!-- <xsl:choose> -->
+					<!-- <xsl:when test="contains(@src, 'http')">
 						<xsl:attribute name="data-src">
 							<xsl:value-of select="@src"/>
 						</xsl:attribute>
-					</xsl:when>
+					</xsl:when> -->
 					<!-- <xsl:otherwise>
 						<xsl:attribute name="data-src">
 							<xsl:value-of select="concat($contentdir, '/', @src)"/>
 						</xsl:attribute>
 					</xsl:otherwise> -->
-				</xsl:choose>
+				<!-- </xsl:choose> -->
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>
 			<xsl:apply-templates select="text()|comment()|*"/>
