@@ -288,6 +288,18 @@
 	<xsl:text>&#xa;\end{center}</xsl:text>
 </xsl:template>
 
+<xsl:template match="xh:img">
+	<xsl:text>IMAGE</xsl:text>
+</xsl:template>
+<xsl:template match="lv:figure">
+	<xsl:text>&#xa;\begin{figure}[H]</xsl:text>
+	<xsl:apply-templates select="*|text()" />
+	<xsl:text>&#xa;\end{figure}</xsl:text>
+</xsl:template>
+<xsl:template match="lv:image">
+	<xsl:value-of select="concat('&#xa;\includegraphics{', @data-src ,'}')"/>
+</xsl:template>
+
 <xsl:template match="lv:href">
 	<xsl:value-of select="concat('\href{', @src, '}{', @name, '}')"/>
 </xsl:template>
@@ -397,9 +409,6 @@
 	<xsl:apply-templates select="xh:tbody"/>
 </xsl:template> -->
 
-<xsl:template match="xh:img">
-	<xsl:text>IMAGE</xsl:text>
-</xsl:template>
 
 <xsl:template match="xh:script">
 	<xsl:variable name="slide">
