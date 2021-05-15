@@ -522,7 +522,7 @@ function postprocess(cranach) {
             var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
             $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
+            // $selectedSlide.click();
         }        
 
         if (cranach.attr['selectedKeyword']) {
