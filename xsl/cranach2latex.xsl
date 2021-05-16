@@ -291,22 +291,22 @@
 
 <xsl:template match="xh:img">
 	<xsl:choose>
-		<xsl:when test="contains(@src, 'http')">
-			<xsl:value-of select="concat('&#xa;\href{', @src, '}{IMAGE}')"/>
+		<xsl:when test="contains(@data-src, 'http')">
+			<xsl:value-of select="concat('&#xa;\href{', @data-src, '}{IMAGE}')"/>
 		</xsl:when>
 		<xsl:otherwise>			
-			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @src, '}{IMAGE}')"/>
+			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @data-src, '}{IMAGE}')"/>
 		</xsl:otherwise>
 	</xsl:choose>
 	<xsl:text>&#xa;&#xa;</xsl:text>
 </xsl:template>
 <xsl:template match="xh:iframe">
 	<xsl:choose>
-		<xsl:when test="contains(@src, 'http')">			
-			<xsl:value-of select="concat('&#xa;\href{', @src, '}{IFRAME}')"/>			
+		<xsl:when test="contains(@data-src, 'http')">			
+			<xsl:value-of select="concat('&#xa;\href{', @data-src, '}{IFRAME}')"/>			
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @src, '}{IFRAME}')"/>
+			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @data-src, '}{IFRAME}')"/>
 		</xsl:otherwise>
 	</xsl:choose>
 	<xsl:text>&#xa;&#xa;</xsl:text>
