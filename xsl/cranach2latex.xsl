@@ -290,26 +290,46 @@
 </xsl:template>
 
 <xsl:template match="xh:img">
+    <xsl:variable name="url">
+        <xsl:choose>
+    		<xsl:when test="@data-src">
+                <xsl:value-of select="@data-src"/>			
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@src"/>
+            </xsl:otherwise>
+        </xsl:choose>
+	</xsl:variable>
 	<xsl:choose>
-		<xsl:when test="contains(@data-src, 'http')">
-			<xsl:value-of select="concat('&#xa;\href{', @data-src, '}{IMAGE}')"/>
+		<xsl:when test="contains($url, 'http')">
+			<xsl:value-of select="concat('&#xa;\href{', $url, '}{IMAGE}')"/>
 		</xsl:when>
 		<xsl:otherwise>			
-			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @data-src, '}{IMAGE}')"/>
+			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IMAGE}')"/>
 		</xsl:otherwise>
 	</xsl:choose>
 	<xsl:text>&#xa;&#xa;</xsl:text>
 </xsl:template>
 <xsl:template match="xh:iframe">
-	<xsl:choose>
-		<xsl:when test="contains(@data-src, 'http')">			
-			<xsl:value-of select="concat('&#xa;\href{', @data-src, '}{IFRAME}')"/>			
-		</xsl:when>
-		<xsl:otherwise>
-			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', @data-src, '}{IFRAME}')"/>
-		</xsl:otherwise>
-	</xsl:choose>
-	<xsl:text>&#xa;&#xa;</xsl:text>
+    <xsl:variable name="url">
+        <xsl:choose>
+    		<xsl:when test="@data-src">
+                <xsl:value-of select="@data-src"/>			
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@src"/>
+            </xsl:otherwise>
+        </xsl:choose>
+	</xsl:variable>
+    <xsl:choose>
+        <xsl:when test="contains($url, 'http')">			
+            <xsl:value-of select="concat('&#xa;\href{', $url, '}{IFRAME}')"/>			
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IFRAME}')"/>
+        </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>&#xa;&#xa;</xsl:text>
 </xsl:template>
 
 <xsl:template match="lv:figure">
