@@ -624,6 +624,7 @@
 						</xsl:if>
                         <xsl:if test="lv:of-title">
 							<xsl:value-of select="'&#160;'"/>
+							<span wbtag="skip">of </span>
 							<xsl:apply-templates select="lv:of-title"/>
 						</xsl:if>
 						<xsl:value-of select="'.'"/>
@@ -636,9 +637,9 @@
 	</xsl:template>
 
     <xsl:template match="lv:of-title">
-		<div wbtag="skip" style="display:none" class="of-title">
-            <xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
-		</div>
+		<span wbtag="skip" class="of-title">
+			<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
+		</span>
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='course']">
