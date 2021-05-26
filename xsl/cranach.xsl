@@ -613,14 +613,24 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
+            <xsl:variable name="hidden">
+                <xsl:choose>
+                    <xsl:when test="@of">
+                        <xsl:value-of select="'false'"/>
+                    </xsl:when>
+                    <xsl:otherwise>                                
+                        <xsl:value-of select="'true'"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>             
             <xsl:choose>
                 <xsl:when test="@type='Proof'">
                     <xsl:variable name="of">
                         <xsl:choose>
                             <xsl:when test="@of">
-                                <xsl:value-of select="@of"/>
+                                <xsl:value-of select="@of"/>                                
                             </xsl:when>
-                            <xsl:otherwise>
+                            <xsl:otherwise>                                
                                 <xsl:value-of select="preceding::lv:statement[1]/@md5[last()]"/>
                             </xsl:otherwise>
                         </xsl:choose>
@@ -661,22 +671,18 @@
                                 <xsl:value-of select="$branch/@serial"/>
                             </xsl:attribute>
                             <xsl:element name="of-title" namespace="{$lv}">
+                                <xsl:attribute name="hidden">
+                                    <xsl:value-of select="$hidden"/>
+                                </xsl:attribute>
                                 <xsl:choose>
                                     <xsl:when test="$branch/idx:title">
                                         <xsl:copy-of select="($branch/idx:title/*)|($branch/idx:title/text())"/>
                                     </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>
+                                    <xsl:otherwise>                                        
+                                            <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
-                            </xsl:element>
-                            <!-- <xsl:if test="./lv:title">
-                                <xsl:element name="title" namespace="{$lv}">
-                                    <xsl:text>[</xsl:text> -->
-                                    <!-- <xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
-                                    <xsl:text>]</xsl:text>
-                                </xsl:element>
-                            </xsl:if> -->
+                            </xsl:element>                            
                         </xsl:when>
                         <xsl:otherwise>
                         </xsl:otherwise>

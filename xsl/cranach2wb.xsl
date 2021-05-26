@@ -71,19 +71,12 @@
         <xsl:if test="@data-lecture-skip='true'">
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>@skip</xsl:text>
-        </xsl:if>
-        <!-- <xsl:choose> -->
-            <!-- <xsl:if test="./lv:title"> -->
-                <!-- <xsl:text>&#xa;</xsl:text>
-                <xsl:text>@title{</xsl:text> -->
-                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
-                <!-- <xsl:apply-templates select="./lv:title/*|./lv:title/text()" /> -->
-                <!-- <xsl:apply-templates select="./lv:title" /> -->
-                <!-- <xsl:text>}</xsl:text> -->
-                <!-- <xsl:text>&#xa;</xsl:text> -->
-            <!-- </xsl:if>             -->
-        <!-- </xsl:choose> -->
+        </xsl:if>        
         <xsl:apply-templates select="./lv:title" />
+        <xsl:if test="@of">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:value-of select="concat('@of{', @of, '}')"/>
+        </xsl:if>
         <xsl:apply-templates select="*[not(self::lv:title)]" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
