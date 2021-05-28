@@ -615,7 +615,7 @@
 						<xsl:value-of select="'transparent'"/>
 					</xsl:attribute>
 					<xsl:element name="h5">
-						<xsl:attribute name="wbtag">ignore</xsl:attribute>
+						<xsl:attribute name="wbtag">skip</xsl:attribute>
 						<xsl:attribute name="class">item_title</xsl:attribute>
 						<xsl:value-of select="@type"/>
 						<xsl:if test="lv:title">
@@ -626,7 +626,9 @@
 							<xsl:value-of select="'&#160;'"/>
 							<xsl:if test="not(lv:of-title/@hidden = 'true')">
 								<span wbtag="skip">of </span>
-								<xsl:apply-templates select="lv:of-title" />
+								<xsl:apply-templates select="lv:of-title">
+									<xsl:with-param name="of" select="@of"/>
+								</xsl:apply-templates>
 							</xsl:if>
 						</xsl:if>
 						<xsl:value-of select="'.'"/>
@@ -639,9 +641,19 @@
 	</xsl:template>
 
     <xsl:template match="lv:of-title">
-		<xsl:choose>
+		<xsl:param name="of" select="''"/>
+		<span wbtag="of" class="of-title">
+			<xsl:attribute name="of">
+				<xsl:value-of select="$of"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
+		</span>
+		<!-- <xsl:choose>
 			<xsl:when test="@hidden = 'true'">				
 				<span wbtag="skip" class="of-title">
+					<xsl:attribute name="of">
+						<xsl:value-of select="$of"/>
+					</xsl:attribute>
 					<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 				</span>
 			</xsl:when>
@@ -650,7 +662,7 @@
 					<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 				</span>
 			</xsl:otherwise>
-		</xsl:choose>
+		</xsl:choose> -->
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='course']">

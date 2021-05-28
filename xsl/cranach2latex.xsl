@@ -166,6 +166,12 @@
 			<xsl:value-of select="@title"/>
 			<xsl:text>]</xsl:text>
 		</xsl:when>
+		<xsl:when test="./lv:of-title">
+			<xsl:text>[</xsl:text>
+			<xsl:value-of select="@type"/>
+			<xsl:value-of select="concat(' of ', ./lv:of-title/text())"/>
+			<xsl:text>]</xsl:text>
+		</xsl:when>
 	</xsl:choose>
 	<!-- <xsl:text>&#xa;</xsl:text> -->
 	<xsl:choose>
@@ -175,7 +181,7 @@
 			<xsl:text>}</xsl:text>
 		</xsl:when>
 	</xsl:choose>
-	<xsl:apply-templates select="*|comment()" />
+	<xsl:apply-templates select="*[not(self::lv:of-title)]|comment()" />
 	<xsl:text>&#xa;\end{</xsl:text>
 	<xsl:value-of select="@wbtag"/>
 	<xsl:text>}</xsl:text>

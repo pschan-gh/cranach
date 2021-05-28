@@ -73,10 +73,10 @@
             <xsl:text>@skip</xsl:text>
         </xsl:if>        
         <xsl:apply-templates select="./lv:title" />
-        <xsl:if test="@of">
+        <!-- <xsl:if test="@of">
             <xsl:text>&#xa;</xsl:text>
             <xsl:value-of select="concat('@of{', @of, '}')"/>
-        </xsl:if>
+        </xsl:if> -->
         <xsl:apply-templates select="*[not(self::lv:title)]" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
@@ -245,6 +245,10 @@
         <xsl:value-of select="concat('@keyword*{', ./text(), '}')"/>
     </xsl:template>
 
+    <xsl:template match="lv:of">        
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@of{', @of, '}')"/>
+    </xsl:template>
 
     <xsl:template match="xh:li|xh:hr">
         <xsl:text>&#xa;</xsl:text>
