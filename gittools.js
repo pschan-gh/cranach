@@ -1,4 +1,4 @@
-import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
+import { Octokit } from "https://cdn.skypack.dev/@octokit/rest@18.5.3";
 import { createPullRequest } from "https://cdn.skypack.dev/octokit-plugin-create-pull-request";
 const MyOctokit = Octokit.plugin(createPullRequest);
 
