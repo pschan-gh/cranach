@@ -2,7 +2,7 @@ import { Octokit } from "https://cdn.skypack.dev/@octokit/rest@18.5.3";
 import { createPullRequest } from "https://cdn.skypack.dev/octokit-plugin-create-pull-request";
 const MyOctokit = Octokit.plugin(createPullRequest);
 
-function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
+function commitGh(ghRepoUsername, ghRepo, ghHead, ghAccessToken) {
 
 	$('#gh_modal .feedback .message').html('');
 	console.log( $('#index_text').val() );
@@ -19,12 +19,12 @@ function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
 		let octokit = new MyOctokit({
 			auth: ghAccessToken,
 		});
-		ghCommitFiles(octokit, ghRepoUsername, ghRepo, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
+		ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
 	}
 }
 window.commitGh = commitGh;
 
-function ghCommitFiles(octokit, owner, repo, branch, fileroot) {
+function ghCommitFiles(octokit, owner, repo, head, branch, fileroot) {
 
 	let wbFile = fileroot + '.wb';
 	let xmlFile = fileroot + '.xml';
@@ -38,7 +38,7 @@ function ghCommitFiles(octokit, owner, repo, branch, fileroot) {
     title: "Update " + fileroot,
     body: "",
     base: branch /* optional: defaults to default branch */,
-    head: "patch",
+    head: head,
     changes: [
 		{
 		  /* optional: if `files` is not passed, an empty commit is created instead */

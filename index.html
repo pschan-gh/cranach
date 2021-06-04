@@ -652,6 +652,12 @@
                         </div>
                         <div class="row">
                             <div class="col">
+                                <label for="ghHead">
+                                    Head
+                                </label>
+                                <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
+                            </div>
+                            <div class="col">
                                 <label for="ghAccessToken">
                                     Access Token
                                 </label>
@@ -689,7 +695,7 @@
 $(function() {
 
     $('#gh_modal button.commit').click(function(){
-	commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghAccessToken').val());warnClose = false;
+	commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
     });
 
     $('.dropdown-item.persist').on('click', function(e) {
