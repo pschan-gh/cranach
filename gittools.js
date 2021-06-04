@@ -13,7 +13,7 @@ function commitGh(ghRepoUsername, ghRepo, ghHead, ghAccessToken) {
 				auth: token,
 			});
 
-			ghCommitFiles(octokit, ghRepoUsername, ghRepo, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
+			ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
 		});
 	} else {
 		let octokit = new MyOctokit({
