@@ -273,6 +273,7 @@
 	    };
 	    CanvasFreeDrawing.prototype.draw = function (position) {
 	        var _this = this;
+			let eraseScale = 20;
 	        position.forEach(function (_a, i) {
 	            var x = _a.x, y = _a.y, moving = _a.moving;
 	            _this.context.beginPath();
@@ -290,7 +291,8 @@
 					_this.context.closePath();
 					_this.context.stroke();
 				} else {
-					_this.context.clearRect(x - 2.5*_this.lineWidth, y - 2.5*_this.lineWidth, 5*_this.lineWidth, 5*_this.lineWidth);
+					let eraseScale = 10;
+					_this.context.clearRect(x - 0.5*eraseScale*_this.lineWidth, y - 0.5*eraseScale*_this.lineWidth, eraseScale*_this.lineWidth, eraseScale*_this.lineWidth);
 				}
 	        });
 	    };
