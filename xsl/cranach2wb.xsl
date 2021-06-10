@@ -273,7 +273,7 @@
     </xsl:template>
 
     <xsl:template match="*[@wbtag='paragraphs']|lv:paragraphs">
-        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
+        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title) and not(preceding-sibling::lv:paragraphs)">
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <!-- <xsl:apply-templates select="*|text()|comment()" /> -->

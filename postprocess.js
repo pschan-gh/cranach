@@ -39,6 +39,8 @@ function updateModal(cranach) {
         $('.modal-title > span').hide();
         $('.md5.share_text').text('');
         $('.modal_refby').hide();
+        $('.modal_proofs').hide();
+        $('.modal_proof_of').hide();
 
         $('.current_course').text(course).show();
         $('.current_chapter').text(chapter).show();

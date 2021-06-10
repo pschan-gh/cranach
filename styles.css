@@ -1182,6 +1182,10 @@ position:relative;
     display:none;
 }
 
+.modal input {
+    color:#444 !important;
+}
+
 #wb_modal .modal-dialog {
     max-width:75%;
 }

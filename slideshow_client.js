@@ -712,22 +712,12 @@ function updateModalRefby(md5String, cranach) {
         console.log(fragmentStr);
         $('.modal_refby').html(fragmentStr).show();
     });
-    // })
-    // .fail(function() {
-    //     console.log("INDEX FILE DOESN'T EXIST");
-    //     return 0;
-    // });
+    
 }
 
 function updateModalProofs(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
-    // cranach.then(function(renderer) {
-        // let index = renderer.attr['indexDoc'];
-    // $.ajax({
-    //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-    //     dataType: "xml"
-    //     // to be updated timestamp
-    // })    
+
     let indexDoc = cranach.attr['indexDoc'];
     console.log(indexDoc);
     // .done(function(indexDoc) {
@@ -757,11 +747,7 @@ function updateModalProofs(md5String, cranach) {
     catch (e) {
         alert( 'Error: Document tree modified during iteration ' + e );
     }
-    // };
-    // .fail(function() {
-    //     console.log("INDEX FILE DOESN'T EXIST");
-    //     return 0;
-    // });
+    
 }
 function updateModalProofOf(button, cranach) {
     if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
