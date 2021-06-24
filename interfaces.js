@@ -83,7 +83,7 @@ function showLatex(promise) {
         console.log(el.macrosString);
         var tmp = el.macrosString + "\n" +  latex;
         latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
-        .replace(/\$\n+\$/g, '')
+        // .replace(/\$\n+\$/g, '')
         .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
 		$('#source_text').val(latex);
 	    });

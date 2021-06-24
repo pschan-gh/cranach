@@ -373,7 +373,7 @@ function Stack(node, doc) {
                 child = addSection('course', argument, child, options);
                 child.node.setAttribute('course', argument);
                 child.node.setAttribute('title', argument);
-                course = argument;
+                this.course = argument;
             }
             break;
             case '@setchapter':
@@ -550,13 +550,13 @@ function Stack(node, doc) {
             if (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
-            var match = originalWord.trim().match(/@caption{(.*?)}/);
-            if (match) {
-                // parent.node.setAttribute("title", match[1].replace(/[^a-z0-9\s\']/ig, ''));
-                child = child.addChild("caption");
-                child.node.textContent += match[1];
-                child = child.close();
-            }
+            // var match = originalWord.trim().match(/@caption{(.*?)}/);
+            // if (match) {
+            child = child.addChild("caption");
+            // child.node.textContent += match[1];
+            child.node.textContent += argument;
+            child = child.close();
+            // }
             break;
             case "@framebox":
             child = child.addChild("framebox");
