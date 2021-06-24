@@ -141,7 +141,7 @@
 		<xsl:apply-templates select="*|text()|comment()" />
 		<xsl:text>}</xsl:text>
 	</xsl:template>
-	<xsl:template match="xh:a[@lcref]">
+    <xsl:template match="xh:a[@lcref]">
 		<xsl:value-of select="concat('\href{',  @lcref, '}{')"/>
 		<xsl:apply-templates select="*|text()|comment()" />
 		<xsl:text>}</xsl:text>
