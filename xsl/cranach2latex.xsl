@@ -348,7 +348,7 @@
 </xsl:template>
 <xsl:template match="lv:image">
 	<xsl:text>&#xa;\begin{figure}[H]&#xa;\centering</xsl:text>
-	<xsl:value-of select="concat('&#xa;\includegraphics{', @data-src ,'}')"/>
+	<xsl:value-of select="concat('&#xa;\includegraphics[width=7cm]{', @data-src ,'}')"/>
 	<xsl:text>&#xa;\end{figure}&#xa;</xsl:text>
 </xsl:template>
 
