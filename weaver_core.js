@@ -368,12 +368,12 @@ function Stack(node, doc) {
             case "@course":
             // var re = new RegExp(word + '{(.*?)}');
             // var match = originalWord.trim().match(re)[1];
-            if (argument != this.course) {
+            if (argument.trim().toLowerCase() != this.course.trim().toLowerCase()) {
                 secNums['chapter'] = 1;
                 child = addSection('course', argument, child, options);
                 child.node.setAttribute('course', argument);
                 child.node.setAttribute('title', argument);
-                this.course = argument;
+                child.course = argument;
             }
             break;
             case '@setchapter':
