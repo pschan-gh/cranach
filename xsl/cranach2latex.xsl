@@ -333,10 +333,12 @@
         </xsl:choose>
 	</xsl:variable>
     <xsl:choose>
-        <xsl:when test="contains($url, 'http')">			
+        <xsl:when test="contains($url, 'http')">
+			<xsl:text>&#xa;</xsl:text>
             <xsl:value-of select="concat('&#xa;\href{', $url, '}{IFRAME}')"/>			
         </xsl:when>
         <xsl:otherwise>
+			<xsl:text>&#xa;</xsl:text>
             <xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IFRAME}')"/>
         </xsl:otherwise>
     </xsl:choose>
