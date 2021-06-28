@@ -131,6 +131,8 @@
 	</xsl:template>
 
 	<xsl:template match="lv:slide">
+		<xsl:text>&#xa;</xsl:text>
+		<xsl:text>&#xa;</xsl:text>
 		<xsl:apply-templates select="*[not(self::lv:topic)]" />
 	</xsl:template>
 
