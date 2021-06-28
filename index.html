@@ -724,28 +724,29 @@ $(function() {
         }
         $("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
 
-        var buffer = editor.getValue().replace(/@sep/g, '@slide')
-        .replace(/@@/g, '')
-        .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-        .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+        var buffer = editor.getValue()
+        .replace(/@sep/g, '@slide')
+        // .replace(/@@/g, '')
+        // .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+        // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
-
+        
         let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
 
         var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
         .replace(/@sep/g, '@slide')
-        .replace(/@@/g, '')
-        .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-        .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
+        // .replace(/@@/g, '')
+        // .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
+        // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]+)|(?:{(?:([^{}]+)|(?:{(?:([^{}]+)|(?:{[^{}]+}))+}))+}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
-        console.log(pastBuffer);
-
+        // console.log(pastBuffer);
+        
         let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
 
         var o = new Option(currentSlide.toString(), currentSlide);
         $("#render_sel").append(o);
         $("#render_sel").append('<hr/>');
-        for (i = numOfSlides; i >= 1; i--) {
+        for (let i = numOfSlides; i >= 1; i--) {
             var o = new Option(i.toString(), i);
             $("#render_sel").append(o);
         }
