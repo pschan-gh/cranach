@@ -334,14 +334,13 @@
             </xsl:otherwise>
         </xsl:choose>
 	</xsl:variable>
+	<xsl:text>&#xa;&#xa;</xsl:text>
     <xsl:choose>
         <xsl:when test="contains($url, 'http')">
-			<xsl:text>&#xa;</xsl:text>
-            <xsl:value-of select="concat('&#xa;\href{', $url, '}{IFRAME}')"/>			
-        </xsl:when>
+            <xsl:value-of select="concat('{\bf \href{', $url, '}{IFRAME}}')"/>
+		</xsl:when>
         <xsl:otherwise>
-			<xsl:text>&#xa;</xsl:text>
-            <xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IFRAME}')"/>
+            <xsl:value-of select="concat('{\bf \href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IFRAME}}')"/>
         </xsl:otherwise>
     </xsl:choose>
     <xsl:text>&#xa;&#xa;</xsl:text>
@@ -399,6 +398,13 @@
 	<xsl:apply-templates select="text()" />
 	<xsl:text>&#xa;\end{verbatim}</xsl:text>
 </xsl:template>
+
+<xsl:template match="xh:div[@class='framebox']">
+	<xsl:text>&#xa;&#xa;\borderedbox{</xsl:text>
+	<xsl:apply-templates select="*|text()" />
+	<xsl:text>}</xsl:text>
+</xsl:template>
+
 
 <xsl:template match="lv:escaped">
 	<xsl:text>@</xsl:text>
