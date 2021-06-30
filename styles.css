@@ -17,6 +17,10 @@ body {
     height:100%;
 }
 
+mjx-math {
+    padding:0.4em 0 !important;
+}
+
 .nav-tabs .nav-link.active {
     font-weight:bold !important;
     color:inherit !important;
