@@ -189,7 +189,14 @@
         <xsl:param name="chapter" select="@chapter"/>
         <xsl:param name="chapter_type" select="@chapter_type"/>
         <xsl:variable name="section">
-            <xsl:number level="any" count="lv:chapter//lv:section" from="lv:chapter"/>
+            <xsl:choose>
+                <xsl:when test="@num">
+                    <xsl:value-of select="@num" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:number level="any" count="lv:chapter//lv:section" from="lv:chapter"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
         <xsl:element name="section" namespace="{$lv}">
             <xsl:copy-of select="@*"/>

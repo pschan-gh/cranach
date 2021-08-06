@@ -177,9 +177,9 @@
 		<xsl:param name="chapter" select="@chapter"/>
 		<xsl:param name="chapter_type" select="@chapter_type"/>
 		<xsl:param name="chapter_title" select="@chapter_title"/>
-		<xsl:variable name="section">
+		<!-- <xsl:variable name="section">
 			<xsl:number level="any" count="lv:chapter//lv:section" from="lv:chapter"/>
-		</xsl:variable>
+		</xsl:variable> -->
 		<xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides">
 			<xsl:with-param name="course" select="@course"/>
 			<xsl:with-param name="chapter" select="@chapter"/>
