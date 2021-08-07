@@ -22,7 +22,10 @@
     <xsl:template match="lv:keywords" />
 
     <xsl:template match="lv:title">
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>@title{</xsl:text>
         <xsl:apply-templates select="*|text()" />
+        <xsl:text>}</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:slides" >
@@ -36,6 +39,10 @@
     <xsl:template match="lv:slide[@wbtag]" >
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', name())" />
+        <xsl:if test="@data-lecture-skip='true'">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:text>@skip</xsl:text>
+        </xsl:if>
         <xsl:apply-templates select="*" />
     </xsl:template>
 
@@ -61,22 +68,22 @@
     <xsl:template match="lv:statement|lv:substatement">
         <xsl:text>&#xa;</xsl:text>
         <xsl:value-of select="concat('@', @wbtag)"/>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
-        <xsl:choose>
-            <xsl:when test="./lv:title">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:text>@title{</xsl:text>
-                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
-                <xsl:apply-templates select="./lv:title/*|./lv:title/text()" />
-                <xsl:text>}</xsl:text>
-                <!-- <xsl:text>&#xa;</xsl:text> -->
-            </xsl:when>
-        </xsl:choose>
+        <xsl:if test="@data-lecture-skip='true'">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:text>@skip</xsl:text>
+        </xsl:if>        
+        <xsl:apply-templates select="./lv:title" />
+        <!-- <xsl:if test="@of">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:value-of select="concat('@of{', @of, '}')"/>
+        </xsl:if> -->
         <xsl:apply-templates select="*[not(self::lv:title)]" />
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@end</xsl:text>
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
+
+    <xsl:template match="lv:of-title"/>
 
     <xsl:template match="lv:steps">
         <xsl:text>&#xa;</xsl:text>
@@ -149,7 +156,6 @@
             <xsl:when test="./lv:caption">
                 <xsl:text>&#xa;</xsl:text>
                 <xsl:text>@caption{</xsl:text>
-                <!-- <xsl:value-of select="concat('@title{', ./lv:title/text(), '}')"/> -->
                 <xsl:apply-templates select="./lv:caption/*|./lv:caption/text()" />
                 <xsl:text>}</xsl:text>                
             </xsl:when>
@@ -168,7 +174,7 @@
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:text>{</xsl:text>
-        <xsl:apply-templates select="./lv:title" />
+        <xsl:apply-templates select="./lv:title/*|./lv:title/text()" />
         <xsl:text>}</xsl:text>
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:apply-templates select="*[not(self::lv:title)]" />
@@ -204,28 +210,12 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <!-- <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
-        <xsl:text>@</xsl:text>
-        <xsl:value-of select="@wbtag"/>
-        <xsl:if test="./lv:argument">
-            <xsl:text>{</xsl:text>
-            <xsl:value-of select="./lv:argument/text()|./lv:argument/*"/>
-            <xsl:text>}</xsl:text>
-        </xsl:if>
-        <xsl:text>&#xa;</xsl:text>
-        <xsl:apply-templates select="*|text()" />
-    </xsl:template> -->
 
     <xsl:template match="lv:chapter[@wbtag='week' or @wbtag='lecture']">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@</xsl:text>
         <xsl:value-of select="@wbtag"/>
         <xsl:choose>
-            <!-- <xsl:when test="./lv:title">
-                <xsl:text>{</xsl:text>
-                <xsl:value-of select="./lv:title/text()|./lv:title/*"/>
-                <xsl:text>}</xsl:text>
-            </xsl:when> -->
             <xsl:when test="@num">
                 <xsl:text>{</xsl:text>
                 <xsl:value-of select="@num"/>
@@ -255,6 +245,10 @@
         <xsl:value-of select="concat('@keyword*{', ./text(), '}')"/>
     </xsl:template>
 
+    <xsl:template match="lv:of">        
+        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of select="concat('@of{', @of, '}')"/>
+    </xsl:template>
 
     <xsl:template match="xh:li|xh:hr">
         <xsl:text>&#xa;</xsl:text>
@@ -279,7 +273,7 @@
     </xsl:template>
 
     <xsl:template match="*[@wbtag='paragraphs']|lv:paragraphs">
-        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title)">
+        <xsl:if test="(parent::*[@wbtag] or parent::lv:slide or preceding-sibling::*[@wbtag]) and not(preceding-sibling::lv:inline_keyword) and not(preceding-sibling::*[@wbtag='ref']) and not(preceding-sibling::xh:i) and not(preceding-sibling::xh:em) and not(preceding-sibling::xh:b) and not(preceding-sibling::xh:strong) and not(parent::lv:title) and not(preceding-sibling::lv:paragraphs)">
             <xsl:text>&#xa;</xsl:text>
         </xsl:if>
         <!-- <xsl:apply-templates select="*|text()|comment()" /> -->
@@ -315,21 +309,20 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:table[contains(concat(' ',@class,' '),' ltx_eqn_table')]">
+    <xsl:template match="xh:table[contains(@class, 'ltx_eqn_table')]">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>\begin{align*}&#10;</xsl:text>
-        <xsl:for-each select="xh:tr">
-            <xsl:for-each select="xh:td[position()!=last()]">
+        <xsl:for-each select=".//xh:tr">
+            <xsl:for-each select="./xh:td[position()!=last()]">
                 <xsl:if test="position() != 1 and position() != 2">
                     <xsl:text>&amp;</xsl:text>
                 </xsl:if>
-                <xsl:variable name="length" select="string-length(./text())"/>
-                <xsl:value-of select="substring(./text(),2,($length - 2))"/>
+                <xsl:variable name="length" select="string-length(.//text())"/>
+                <xsl:value-of select="substring(.//text(),2,($length - 2))"/>
             </xsl:for-each>
             <xsl:if test="position()!=last()"> \\&#10;</xsl:if>
         </xsl:for-each>
         <xsl:text>&#10;\end{align*}&#10;</xsl:text>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
     <xsl:template match="text()" >

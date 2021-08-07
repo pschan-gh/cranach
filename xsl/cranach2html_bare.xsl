@@ -109,6 +109,12 @@
                     <xsl:text>ignore</xsl:text>
                 </xsl:attribute>
                 <h5 wbtag="ignore">
+                    <span wbtag="ignore">
+                        <xsl:value-of select="@course"/>
+                    </span>
+                </h5>
+                <br/>
+                <h5 wbtag="ignore">
                     <xsl:value-of select="@type"/>
                     <span style="margin-left:0.5em" wbtag="ignore">
                         <xsl:value-of select="@item"/>
@@ -706,7 +712,10 @@
                 <xsl:attribute name="id">
                     <xsl:value-of select="concat('ww_inner_', @ww_id)" />
                 </xsl:attribute>
-                <img class="loading_icon exempt" src="icons/Loading_icon.gif"/>
+                <!-- <img class="loading_icon exempt" src="icons/Loading_icon.gif"/> -->
+                <div class="spinner-border text-secondary" style="margin:2em" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
                 <iframe style="overflow-x:auto;overflow-y:hidden;display:none">
                     <xsl:attribute name="rendered">0</xsl:attribute>
                     <xsl:attribute name="data-src">

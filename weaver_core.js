@@ -155,7 +155,7 @@ function Stack(node, doc) {
 
     this.close = function() {
         if (this.parent != null) {
-            if (this.node.nodeName.match(/statement|figure/i)) {
+            if (this.node.nodeName.match(/statement|substatement|figure/i)) {
                 var strippedText = this.node.textContent.replace(/[^a-zA-Z0-9]/g, '')
                 if (strippedText != '') {
                     var textMD5 = md5(strippedText);
@@ -246,6 +246,7 @@ function Stack(node, doc) {
         word = originalWord.trim();
 
         var word = originalWord.trim();
+        var parent;
         var child = this;
 
         if (word.match(/^\<\!\-\-/)) {
@@ -367,12 +368,12 @@ function Stack(node, doc) {
             case "@course":
             // var re = new RegExp(word + '{(.*?)}');
             // var match = originalWord.trim().match(re)[1];
-            if (argument != this.course) {
+            if (argument.trim().toLowerCase() != this.course.trim().toLowerCase()) {
                 secNums['chapter'] = 1;
                 child = addSection('course', argument, child, options);
                 child.node.setAttribute('course', argument);
                 child.node.setAttribute('title', argument);
-                course = argument;
+                child.course = argument;
             }
             break;
             case '@setchapter':
@@ -402,6 +403,9 @@ function Stack(node, doc) {
             parent = child.closeTo(/chapter/i);
             parent.node.setAttribute("chapter_type", argument);
             chapterType = argument;
+            break;
+            case '@skip':
+            child.node.setAttribute("data-lecture-skip", "true");
             break;
             case '@slide':
             child = child.closeTo(/SLIDES|section|chapter|course|root/i);
@@ -532,7 +536,6 @@ function Stack(node, doc) {
                 // child.node.setAttribute('scope', parent.node.nodeName);
                 child.node.setAttribute('wbtag', child.node.nodeName);
             }
-
             break;
             case "@endtitle":
             if (!environs.includes(child.getEnvironment())) {
@@ -547,13 +550,13 @@ function Stack(node, doc) {
             if (child.node.nodeName.match(/PARAGRAPHS/i)) {
                 child = child.close();
             }
-            var match = originalWord.trim().match(/@caption{(.*?)}/);
-            if (match) {
-                // parent.node.setAttribute("title", match[1].replace(/[^a-z0-9\s\']/ig, ''));
-                child = child.addChild("caption");
-                child.node.textContent += match[1];
-                child = child.close();
-            }
+            // var match = originalWord.trim().match(/@caption{(.*?)}/);
+            // if (match) {
+            child = child.addChild("caption");
+            // child.node.textContent += match[1];
+            child.node.textContent += argument;
+            child = child.close();
+            // }
             break;
             case "@framebox":
             child = child.addChild("framebox");

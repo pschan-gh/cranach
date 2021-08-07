@@ -17,6 +17,7 @@
 
 	<xsl:param name="timestamp" select="'0'" />
 	<xsl:param name="contenturl" select="''" />
+	<xsl:param name="contentdir" select="''" />
 
 	<xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
@@ -62,6 +63,9 @@
 		</xsl:variable>
 
 		<li>
+			<xsl:attribute name="class">
+				<xsl:value-of select="local-name()"/>
+			</xsl:attribute>
 			<a href="#">
 				<xsl:attribute name="class">
 					<xsl:value-of select="local-name()"/>
@@ -119,12 +123,6 @@
 		</li>
 	</xsl:template>
 
-	<!-- <xsl:template match="xh:*[not(self::xh:iframe) and not(self::xh:img) and not(self::xh:br) and not(self::xh:newline)]">
-		<xsl:element name="{local-name()}" namespace="{$xh}">
-			<xsl:copy-of select="@*[(name(.)!='environment') and (name(.)!='chapter_type')]"/>
-			<xsl:apply-templates select="text()|comment()|*"/>
-		</xsl:element>
-	</xsl:template> -->
 	<xsl:template match="xh:*[not(self::xh:iframe) and not(self::xh:img) and not(self::xh:br or self::xh:hr)]">
 		<xsl:element name="{local-name()}" namespace="{$xh}">
 			<xsl:copy-of select="@*[(name(.)!='environment') and (name(.)!='chapter_type')]"/>
@@ -179,9 +177,9 @@
 		<xsl:param name="chapter" select="@chapter"/>
 		<xsl:param name="chapter_type" select="@chapter_type"/>
 		<xsl:param name="chapter_title" select="@chapter_title"/>
-		<xsl:variable name="section">
+		<!-- <xsl:variable name="section">
 			<xsl:number level="any" count="lv:chapter//lv:section" from="lv:chapter"/>
-		</xsl:variable>
+		</xsl:variable> -->
 		<xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides">
 			<xsl:with-param name="course" select="@course"/>
 			<xsl:with-param name="chapter" select="@chapter"/>
@@ -280,6 +278,7 @@
 			<xsl:number format="1" level="any" count="lv:slide"/>
 		</xsl:variable>
 		<div class="slide collapsed tex2jax_ignore">
+			<xsl:copy-of select="@*"/>
 			<xsl:attribute name="id">
 				<xsl:text>s</xsl:text>
 				<xsl:value-of select="$slide"/>
@@ -342,13 +341,12 @@
 				<xsl:value-of select="@wbtag"/>
 			</xsl:attribute>
 			<div class="slide_container" wbtag="ignore">
-				<div class="slide_number">
+				<!-- <div class="slide_number">
 					<button class="plain_button slide_button">
-						<!-- <xsl:copy-of select="@*[name()!='wbtag']"/> -->
 						<xsl:text>Slide </xsl:text>
 						<xsl:value-of select="$slide"/>
 					</button>
-				</div>
+				</div> -->
 				<div class="separator" style="position:relative; width:100%; height:1.5em; text-align:center;" wbtag="ignore">
 					<xsl:attribute name="slide">
 						<xsl:value-of select="$slide"/>
@@ -393,7 +391,8 @@
 						<xsl:with-param name="slide" select="$slide"/>
 					</xsl:apply-templates>
 				</div>
-			</div>
+			</div>			
+			<span class="annotate redraw-count" style="display:none">0</span>		
 		</div>
 	</xsl:template>
 
@@ -459,20 +458,22 @@
 
 	<xsl:template match="lv:caption">
 		<xsl:param name="serial" select="''"/>
-		<small class="caption" wbtag="ignore">
-			<!-- <xsl:attribute name="wbtag">
+        <div wbtag="skip">
+			<small class="caption" wbtag="ignore">
+				<!-- <xsl:attribute name="wbtag">
 				<xsl:value-of select="'caption'"/>
-			</xsl:attribute> -->
-			<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
-			<!-- <xsl:apply-templates select="text()"/> -->
-		</small>
-        <small class="caption">
-			<xsl:attribute name="wbtag">
-				<xsl:value-of select="'caption'"/>
-			</xsl:attribute>
-			<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
-			<xsl:apply-templates select="text()"/>
-		</small>
+			    </xsl:attribute> -->
+				<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+				<!-- <xsl:apply-templates select="text()"/> -->
+			</small>
+			<small class="caption">
+				<xsl:attribute name="wbtag">
+					<xsl:value-of select="'caption'"/>
+				</xsl:attribute>
+				<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
+				<xsl:apply-templates select="text()"/>
+			</small>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="lv:statement">
@@ -588,7 +589,7 @@
 				<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
 			</xsl:element>
 		</div>
-	</xsl:template>
+	</xsl:template>    
 
 	<xsl:template match="lv:statement/lv:title[text()='.']" />
 
@@ -614,12 +615,21 @@
 						<xsl:value-of select="'transparent'"/>
 					</xsl:attribute>
 					<xsl:element name="h5">
-						<xsl:attribute name="wbtag">ignore</xsl:attribute>
+						<xsl:attribute name="wbtag">skip</xsl:attribute>
 						<xsl:attribute name="class">item_title</xsl:attribute>
 						<xsl:value-of select="@type"/>
 						<xsl:if test="lv:title">
 							<xsl:value-of select="'&#160;'"/>
 							<xsl:apply-templates select="lv:title"/>
+						</xsl:if>
+                        <xsl:if test="lv:of-title">
+							<xsl:value-of select="'&#160;'"/>
+							<xsl:if test="not(lv:of-title/@hidden = 'true')">
+								<span wbtag="skip">of </span>
+								<xsl:apply-templates select="lv:of-title">
+									<xsl:with-param name="of" select="@of"/>
+								</xsl:apply-templates>
+							</xsl:if>
 						</xsl:if>
 						<xsl:value-of select="'.'"/>
 					</xsl:element>
@@ -628,6 +638,31 @@
 				<xsl:apply-templates select="*[not(self::lv:title) and not(self::lv:of-title) and not(self::lv:label)]"/>
 			</blockquote>
 		</div>
+	</xsl:template>
+
+    <xsl:template match="lv:of-title">
+		<xsl:param name="of" select="''"/>
+		<span wbtag="of" class="of-title">
+			<xsl:attribute name="of">
+				<xsl:value-of select="$of"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
+		</span>
+		<!-- <xsl:choose>
+			<xsl:when test="@hidden = 'true'">				
+				<span wbtag="skip" class="of-title">
+					<xsl:attribute name="of">
+						<xsl:value-of select="$of"/>
+					</xsl:attribute>
+					<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
+				</span>
+			</xsl:when>
+			<xsl:otherwise>
+				<span wbtag="skip" class="of-title">
+					<xsl:apply-templates select="*[not(self::lv:label)]|text()"/>
+				</span>
+			</xsl:otherwise>
+		</xsl:choose> -->
 	</xsl:template>
 
 	<xsl:template match="lv:title[@scope='course']">
@@ -654,7 +689,7 @@
 		</button>
 		<br wbtag="ignore"/>
 	</xsl:template>
-
+    
 	<xsl:template match="lv:title[@scope='chapter']">
 		<xsl:param name="course" select="@course"/>
 		<xsl:param name="chapter" select="@chapter"/>
@@ -927,7 +962,7 @@
 
 	<xsl:template match="lv:keyword">
 		<xsl:param name="slide" select="'all'"/>
-		<button class="btn btn-outline-info btn-sm btn_keyword" style="margin-left:5px;margin-top:5px" data-html="true" data-container="body" data-toggle="popover"  data-placement="bottom" slide="{$slide}">
+		<xh:a tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword" style="margin:2.5px" data-bs-html="true" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="bottom" slide="{$slide}">
 			<xsl:attribute name="wbtag">
 				<xsl:text>ignore</xsl:text>
 			</xsl:attribute>
@@ -950,7 +985,7 @@
 				</a>
 			</xsl:for-each>
 			<xsl:value-of select="$keyword"/>
-		</button>
+		</xh:a>
 	</xsl:template>
 
 	<xsl:template match="lv:wiki">
@@ -990,7 +1025,7 @@
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
 		</xsl:variable>
 		<!-- <a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore" xmlns="http://www.w3.org/1999/xhtml"> -->
-		<a class="collapsea collapsed" contenteditable="false" data-toggle="" aria-expanded="false" wbtag="ignore">
+		<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 			<xsl:attribute name="aria-controls">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -998,9 +1033,11 @@
 				<xsl:value-of select="concat('#', $id)" />
 				<!-- <xsl:value-of select="'#'" /> -->
 			</xsl:attribute>
+			<span class="material-icons expand_more">play_arrow</span>
+			<span class="material-icons-outlined expand_less">play_arrow</span>
 			<!-- ► -->
 		</a>
-		<div class="hidden_collapse" xmlns="http://www.w3.org/1999/xhtml">
+		<div class="hidden_collapse">
 			<xsl:attribute name="id">
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
@@ -1011,13 +1048,56 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template match="xh:iframe|xh:img">
-		<xsl:element name="{local-name()}" namespace="{$xh}">
+    <xsl:template match="xh:img|img">
+        <xsl:element name="{local-name()}" namespace="{$xh}">
+            <xsl:attribute name="class">loading</xsl:attribute>
 			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
 			<xsl:if test="@src">
 				<xsl:attribute name="data-src">
 					<xsl:value-of select="@src"/>
 				</xsl:attribute>
+				<!-- <xsl:choose> -->
+					<!-- <xsl:when test="contains(@src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@src"/>
+						</xsl:attribute>
+					</xsl:when> -->
+					<!-- <xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @src)"/>
+						</xsl:attribute>
+					</xsl:otherwise> -->
+				<!-- </xsl:choose> -->
+			</xsl:if>
+			<xsl:attribute name="rendered">0</xsl:attribute>
+			<xsl:apply-templates select="text()|comment()|*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="xh:iframe">
+        <div class="loading_icon" wbtag="ignore">
+            <div class="spinner-border text-secondary" style="margin:2em" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <br/>
+            <div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
+        </div>
+		<xsl:element name="{local-name()}" namespace="{$xh}">
+			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
+            <xsl:attribute name="style">display:none</xsl:attribute>
+			<xsl:if test="@src">
+				<xsl:choose>
+					<xsl:when test="contains(@src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@src"/>
+						</xsl:attribute>
+					</xsl:when>
+					<!-- <xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @src)"/>
+						</xsl:attribute>
+					</xsl:otherwise> -->
+				</xsl:choose>
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>
 			<xsl:apply-templates select="text()|comment()|*"/>
@@ -1096,13 +1176,14 @@
 			<xsl:variable name="id">
 				<xsl:value-of select="concat('s', $timestamp, $li)" />
 			</xsl:variable>
-			<a class="collapsea collapsed" contenteditable="false" data-toggle="collapse" aria-expanded="false" wbtag="ignore">
+			<a class="collapsea collapsed" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" wbtag="ignore">
 				<xsl:attribute name="aria-controls"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="href">#<xsl:value-of select="$id" /></xsl:attribute>
-				<!-- <xsl:attribute name="href">#</xsl:attribute> -->
+				<span class="material-icons expand_more">play_arrow</span>
+				<span class="material-icons-outlined expand_less">play_arrow</span>
 				<!-- ► -->
 			</a>
-			<div class="collapse">
+			<div class="hidden_collapse">
 				<xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
 				<xsl:attribute name="wbtag">
 					<xsl:value-of select="@wbtag"/>
@@ -1166,7 +1247,14 @@
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('ww_inner_', @ww_id)" />
 				</xsl:attribute>
-				<div style="text-align:center;overflow-y:hidden;height:3.5cm;width:5cm" class="loading_icon"><img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/><br/><div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div></div>
+				<div class="loading_icon" wbtag="ignore">
+                    <!-- <img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/> -->
+                    <div class="spinner-border text-secondary" style="margin:2em" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <br/>
+                    <div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
+                </div>
 				<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
 					<xsl:attribute name="rendered">0</xsl:attribute>
 					<xsl:attribute name="data-src">
@@ -1185,18 +1273,32 @@
 			<xsl:attribute name="class">
 				<xsl:text>image</xsl:text>
 			</xsl:attribute>
-			<xsl:copy-of select="@*[name(.)!='src']"/>
+			<xsl:copy-of select="@*[name(.)!='src']"/>			
 			<xsl:element name="img">
 				<xsl:attribute name="wbtag">ignore</xsl:attribute>
 				<xsl:copy-of select="@*[name(.)!='src']"/>
 				<xsl:attribute name="rendered">0</xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="contains(@data-src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@data-src"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @data-src)"/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="lv:paragraphs">
 		<span class="paragraphs">
-			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+			<xsl:copy-of select="@*"/>
+			<!-- <xsl:value-of select="text()" disable-output-escaping="yes"/> -->
+			<xsl:apply-templates select="text()" />
 		</span>
 	</xsl:template>
 
@@ -1268,8 +1370,8 @@
 
 <xsl:template match="comment()">
 	<xsl:element name="div" namespace="{$xh}">
-		<xsl:attribute name="style">
-			<xsl:value-of select="'display:none'"/>
+		<xsl:attribute name="class">
+			<xsl:value-of select="hidden"/>
 		</xsl:attribute>
 		<xsl:copy-of select="."/>
 	</xsl:element>

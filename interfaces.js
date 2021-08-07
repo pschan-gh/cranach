@@ -19,14 +19,14 @@ function saveWb(editor, promise) {
 function collectNewcommands(str) {
     var commandsStr = '';
     var obj = new Object();
-    var commands = str.match(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
+    var commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
     console.log(commands);
 
     if (commands == null || typeof commands == typeof undefined) {
         return '';
     }
     for (var i = 0; i < commands.length; i++) {
-        var matches = commands[i].match(/\\newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
+        var matches = commands[i].match(/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
         console.log(matches);
         obj[matches[1]] = matches[2];
     }
@@ -83,7 +83,7 @@ function showLatex(promise) {
         console.log(el.macrosString);
         var tmp = el.macrosString + "\n" +  latex;
         latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
-        .replace(/\$\n+\$/g, '')
+        // .replace(/\$\n+\$/g, '')
         .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
 		$('#source_text').val(latex);
 	    });
@@ -239,6 +239,40 @@ function openXML(promise, filePath) {
                 convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
                 return renderer;
             });
+        });
+    }, false);
+
+    reader.readAsText(file);
+
+}
+
+function openHTML(promise, filePath) {
+    var file    = filePath.files[0];
+    var reader  = new FileReader();
+
+    if (file) {
+        // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
+        var fullPath = filePath.value;
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            console.log(fullPath);
+        }
+    }
+    var el = this;
+    reader.addEventListener("load", function () {
+        report('READER RESULT');
+        report(reader.result);
+        promise.then(renderer => {
+            var outputHTML = reader.result;
+            renderer.attr['localName'] = filename;
+            $('#output').remove();
+            $(outputHTML).prependTo($('#right_half'));
+            postprocess(renderer);
+            MathJax.typesetPromise($('#output'))
         });
     }, false);
 
