@@ -77,10 +77,11 @@ function Cranach(url) {
 
     this.loadIndex = function() {
         var el = this;
+        var url = el.attr['dir'] + '/' + el.attr['index'] + '?version='+ Math.random().toString();
+        console.log(url);
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: el.attr['dir'] + '/' + el.attr['index'] + '?version='+Math.random(),
-                // url: el.attr['dir'] + '/' + el.attr['index'],
+                url: url,
                 dataType: 'xml'
             })
             .done(function(indexDoc) {
@@ -110,7 +111,7 @@ function Cranach(url) {
                 if (match = pathname.match(/^(.*?)\/[^\/]+\.(?:wb|xml)/)) {
                     dir = match[1];
                 }
-                console.log('DIR: ' + dir);
+                // console.log('DIR: ' + dir);
                 this.attr['dir'] = dir;
                 this.hasWb = urlParams.has('wb');
                 this.hasXML = urlParams.has('xml');
@@ -139,7 +140,7 @@ function Cranach(url) {
             if (urlParams.has('slide')) {
                 // this.attr['slideIndex'] = urlParams.get('slide');;
                 this.attr['selectedSlide'] = urlParams.get('slide');
-                console.log('SLIDE: ' + this.attr['selectedSlide']);
+                // console.log('SLIDE: ' + this.attr['selectedSlide']);
             }
             if (urlParams.has('present')) {
                 this.attr['present'] = true;
@@ -170,7 +171,7 @@ function Cranach(url) {
             }
         }
 
-        console.log(this.attr);
+        // console.log(this.attr);
 
 
         var el = this;
@@ -210,7 +211,7 @@ function Cranach(url) {
                     .done(function(wb) {
                         // editor.setValue(wb, 1);
                         el.attr['preCranachDoc'] = domparser.parseFromString(generateXML(wb), "text/xml");
-                        console.log(el.attr['preCranachDoc']);
+                        // console.log(el.attr['preCranachDoc']);
                         resolve(el);
                     })
                     .fail(function(wb){
@@ -256,17 +257,17 @@ function Cranach(url) {
         var el = this;
         var xsltProcessor = new XSLTProcessor();
         var indexDom = this.attr['indexDoc'];
-        console.log(indexDom);
+        // console.log(indexDom);
 
         var preCranachDoc = this.attr['preCranachDoc'];
 
         if (indexDom.getElementsByTagName('index')[0]) {
             var index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
-            console.log(index);
+            // console.log(index);
             // index.setAttribute('xmlns', 'http://www.math.cuhk.edu.hk/~pschan/elephas_index');
             preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
         }
-        console.log(preCranachDoc);
+        // console.log(preCranachDoc);
 
         var el = this;
         return new Promise((resolve, reject) => {
@@ -284,9 +285,9 @@ function Cranach(url) {
                 // var preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
                 /* END FIREFOX WORK-AROUND */
 
-                console.log(preCranachDoc);
+                // console.log(preCranachDoc);
                 var cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
-                console.log(cranachDoc);
+                // console.log(cranachDoc);
                 el.attr['cranachDoc'] = cranachDoc;
 
                 resolve(el);
@@ -309,7 +310,7 @@ function Cranach(url) {
         var xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
         var el = this;
         var output = this.output;
-        console.log(output);
+        // console.log(output);
         $(output).find('#loading_icon').show();
         $(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
         return new Promise((resolve, reject) => {
@@ -322,17 +323,17 @@ function Cranach(url) {
                 setTimeout(function() {
                     xsltProcessor.importStylesheet(wbxslFile);
                     xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
-                    console.log(el.attr['contentURL']);
+                    // console.log(el.attr['contentURL']);
                     xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
                     xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
                     // xsltProcessor.setParameter('', 'contenturl', '');
-                    console.log('displayCranachDocToHtml');
+                    // console.log('displayCranachDocToHtml');
                     $(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
                     setTimeout(function() {
                         var cranachDoc = el.attr['cranachDoc'];
-                        console.log(cranachDoc);
+                        // console.log(cranachDoc);
                         var fragment = xsltProcessor.transformToFragment(cranachDoc, document);
-                        console.log(fragment);
+                        // console.log(fragment);
                         // var str = new XMLSerializer().serializeToString(fragment).replace(/\n+(,|\))/g, "$1"); // UGH!
                         $(output).html('');
                         // $(output).html(str);
@@ -350,7 +351,7 @@ function Cranach(url) {
 
         var cranachDoc = this.attr['cranachDoc'];
         var queryString = this.attr['query'];
-        console.log(queryString);
+        // console.log(queryString);
         if (queryString != '') {
             report('XML DOM');
             report(cranachDoc);
@@ -396,14 +397,14 @@ function Cranach(url) {
         });
     }
     this.updateIndex = function() {
-        console.log('UPDATEINDEXTOHTML');
+        // console.log('UPDATEINDEXTOHTML');
         var cranachDoc = this.attr['cranachDoc'];
         // var filename = 'local';
         var filename = this.attr['localName'];
         var contents = new XMLSerializer().serializeToString(cranachDoc);
 
         var docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
-        console.log(this.attr['indexDoc']);
+        // console.log(this.attr['indexDoc']);
         if (this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index').length) {
             docDom.appendChild(this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0]);
         }
@@ -489,10 +490,10 @@ function Cranach(url) {
             }).done(function(indexXsl) {
                 var xsltProcessor = new XSLTProcessor();
                 xsltProcessor.importStylesheet(indexXsl);
-                console.log(preindexDom);
+                // console.log(preindexDom);
                 var indexDoc = xsltProcessor.transformToDocument(preindexDom);
 
-                console.log(indexDoc);
+                // console.log(indexDoc);
                 el.attr['indexDoc'] = indexDoc;
 
                 resolve(el);
@@ -516,8 +517,8 @@ function Cranach(url) {
                 xsltProcessor.importStylesheet(wbxslFile);
                 xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
                 fragment = xsltProcessor.transformToFragment(indexDoc, document);
-                console.log('INDEX FRAGMENT');
-                console.log(fragment);
+                // console.log('INDEX FRAGMENT');
+                // console.log(fragment);
                 $(target).html('');
                 $(target).append(fragment);
                 resolve(el);
@@ -535,9 +536,9 @@ function Cranach(url) {
         });
 
         var xmlString = generateXML(wbString);
-        console.log(xmlString);
+        // console.log(xmlString);
         var preCranachDoc = new DOMParser().parseFromString(xmlString, 'text/xml');
-        console.log(preCranachDoc);
+        // console.log(preCranachDoc);
         this.attr['preCranachDoc'] = preCranachDoc;
         return this.displayPreCranachDocToHtml();
     }
