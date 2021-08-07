@@ -111,6 +111,9 @@ function renderSlide(slide) {
     $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
+    $(slide).find('a.collapsea').attr('data-toggle', 'collapse');
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
@@ -320,7 +323,6 @@ function print(promise) {
     $('#print_content').find('.collapsea').hide();
     $('#print_content').find('.collapse').show();
     $('#print_content').find('.hidden_collapse').show();
-
 }
 
 function removeTypeset() { // i.e. Show LaTeX source
