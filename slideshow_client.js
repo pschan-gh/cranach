@@ -1,26 +1,140 @@
+function annotate() {
+    
+    if ($('#output').hasClass('annotate')) {
+        $('canvas').hide();
+        $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('#output').removeClass('annotate')
+        $('#output').removeClass('annotate');
+    } else {
+        $('#output').addClass('annotate');
+        $('.carousel').attr('data-bs-touch', "false");
+    }
+    // let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
+    let slide = $('#output div.slide.active')[0];
+    updateCanvas(slide);
+    
+}
+
+function updateCanvas(slide) {    
+    if ($('#output').hasClass('annotate')) {        
+        $('.canvas-controls').show();
+        if (!$(slide).find('canvas').length) {
+            addCanvas(slide);
+        }   
+        $(slide.cfd.canvas).show();     
+    } else {
+        if ($(slide).find('canvas').length) {
+            $('.canvas-controls').hide();
+            $(slide).find('canvas').hide();            
+        }
+        return 1;
+    } 
+    $('.canvas-controls .annotate').off();    
+    $('.canvas-controls .clear').click(function() {
+        $(slide).find('canvas').remove();
+        addCanvas(slide);
+    });
+    $('.canvas-controls .expand').click(function() {
+        slide.cfd.disableDrawingMode();
+        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
+        var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+        var img = new Image();
+        img.src = oldCanvas;
+        img.onload = function (){
+            $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+            let ctx = slide.cfd.canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            slide.cfd.enableDrawingMode();
+            slide.cfd.setDraw();
+        }
+        // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
+        // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+        // addCanvas(slide, true);
+    });
+    $('.canvas-controls .disable').click(function() {
+        slide.cfd.disableDrawingMode();
+        $(slide.cfd.canvas).css('z-index', 0);
+        $('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+        $('.canvas-controls .enable').removeClass('disabled');
+        // $('.carousel').attr('data-bs-touch', "true");
+    });
+    $('.canvas-controls .erase').click(function() {
+        slide.cfd.setErase();
+        $('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
+    });
+    $('.canvas-controls .enable').click(function() {
+        slide.cfd.enableDrawingMode();
+        $(slide.cfd.canvas).show();
+        $(slide.cfd.canvas).css('z-index', 999);
+        slide.cfd.setDraw();
+        $('.canvas-controls .nav-link').removeClass('disabled');        
+        $(this).addClass('disabled');
+    });
+    $('.canvas-controls .undo').click(() => slide.cfd.undo());
+    $('.canvas-controls .redo').click(() => slide.cfd.redo());
+    $('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
+    $('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
+    $('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
+    $('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
+    $('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
+    
+    $('.canvas-controls .disable').click();
+}
+
+function addCanvas(slide) {
+    if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
+            return 0;
+    }
+    
+    let width = $('#output')[0].scrollWidth;
+    let height = $('#output')[0].scrollHeight;
+
+    slide.cfd = new CanvasFreeDrawing.default({
+      elementId: slide.id,
+      width: width,
+      height: height,
+      showWarnings: true,
+    });
+    slide.cfd.setLineWidth(2);
+    slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
+    slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
+      slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
+    });    
+
+}
+
+
 function renderSlide(slide) {
+    
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
+
+    $(slide).find('a.collapsea').attr('data-toggle', 'collapse');
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
-
-    $(slide).find('iframe:not([src])').not(".webwork").each(function() {
-        $(this).attr('src', $(this).attr('data-src')).show();
-        var $iframe = $(this);
-        $(this).css('background', 'none');
-        $(this).iFrameResize({checkOrigin:false});
-    });
+     
+    // $(slide).find('iframe:not([src])').not(".webwork").each(function() {
+    //     $(this).attr('src', $(this).attr('data-src')).show();
+    //     var $iframe = $(this);
+    //     $(this).css('background', 'none');
+    //     $(this).iFrameResize({checkOrigin:false});
+    // });
 
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");
         // MathJax.typesetPromise([slide]);
         typeset([slide]);
-    }
+    }    
+    
 }
 
 
 function batchRender(slide) {
-
     renderSlide(slide);
     $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
@@ -30,12 +144,25 @@ function batchRender(slide) {
     });
 }
 
+function adjustHeight() {
+    let $output = $('#right_half .carousel-inner');
+    if (!$output.length) {
+        return 0;
+    }
+    $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
+    if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
+        $output.css('display', 'block');
+        $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
+    } else {
+        $output.css('display', '');
+    }
+}
 
 function showStep(el) {
     var $parent = $(el).closest('div[wbtag="steps"]');
     var $stepsClass = $parent.find('.steps');
 
-    if (typeof $parent.attr('stepId') == typeof undefined || $parent.attr('stepId') == null) {
+    if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
         $parent.attr('stepId', 0);
     }
     var whichStep = $parent.attr('stepId');
@@ -88,98 +215,64 @@ function dim() {
     if ($('.dim').first().hasClass('dimmed')) {
         $(' #right_half, #right_half *, #output *').css('background-color', '').css('color', '');
         $('#right_half').removeClass('dim');
-        $('#progress_container').removeClass('dim');
-        // $('#slide_progress td').removeClass('dim');
-        // $('.separator a').css('background-color', 'white');
         $('.dim').first().removeClass('dimmed');
+        $('#right_half').addClass('carousel-dark');
     } else {
         $('#right_half, #output').css('background-color', '#222').css('color', '#bbb');
-        // $('#output').find('.paragraphs, textarea, table, table *').css('background-color', '#222').css('color', '#bbb');
         $('#right_half').addClass('dim');
-        $('#progress_container').addClass('dim');
-        // $('#slide_progress td').addClass('dim');
-        // $('.separator a').css('background-color', '#222');
+        // $('#progress_container').addClass('dim');
         $('.dim').first().addClass('dimmed');
+        $('#right_half').removeClass('carousel-dark');
     }
 }
 
 function resizeFont(multiplier) {
-    if (document.getElementById("output").style.fontSize == "") {
-        document.getElementById("output").style.fontSize = "1.0em";
+    if (document.getElementsByTagName("html")[0].style.fontSize == "") {
+        document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
     }
-    document.getElementById("output").style.fontSize = parseFloat(document.getElementById("output").style.fontSize) + 0.2*(multiplier) + "em";
+    document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
 }
 
-function plusDivs(n, promise) {
+function updateCarousel(slide) {
 
-    if(editMode) {
-        $('#edit_button').click();
+    var numOfSlides = $('#output div.slide').length;
+    
+    $(".carousel-indicators").html('');
+    for (let i = 0; i < numOfSlides; i++) {
+        $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + i + '" aria-label="Slide ' + (i + 1) + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + (i + 1) + '">');
     }
-
-    let index = parseInt(slideIndex) + parseInt(n);
-
-    promise.then(cranach => {
-        if (n > 0) {
-            $("#output").animate({marginLeft:"-100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(index, cranach);});
-        } else {
-            $("#output").animate({marginLeft:"100%"}, 150, "linear", function() {$("#output").css({marginLeft: ''});showDivs(index, cranach);});
-        }
-    });
-
+        
+    $('.carousel-indicators button[data-bs-slide-to="' + (slide - 1) + '"]').addClass('active').attr('aria-current', "true");
+    $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+    
 }
 
 function showDivs(n, cranach) {
 
-    $('.slide_mask').hide();
-
-    var i;
-    // var x = document.getElementsByClassName("slide");
+    $('#right_half').addClass('slide');
+    $('#output').addClass('carousel-inner');
+    $('#output div.slide').addClass('carousel-item');
+    
+    updateCarousel(n);
+    
     var $slides = $('#output > .slide');
-
-    if ($slides.length == null || $slides.length == null < 1) {
+    
+    if ($slides.length == null || $slides.length == 0) {
         return 0;
     }
-
+    
     let index = (parseInt(n) + $slides.length) % $slides.length;
-    index = index == 0 ? $slides.length : index;
+    index = index == 0 ? $slides.length : index;    
 
-    var $slide = $('#s' + index);
+    var $slide = $('#s' + index);    
+    $slide.addClass('active');
 
-    if ($slide.length > 0) {
-
-        // updateTitle($slide[0]);
-
-        if ($slide.hasClass('all')) {
-            $('#s' + index + ' .collapse').collapse('hide');
-            $slide.addClass('collapsed');
-            $slide.removeClass('all');
-        }
-
-        if ($('#s' + index).hasClass('collapsed')) {
-            $('#uncollapse_button').text('Uncollapse');
-        } else {
-            $('#uncollapse_button').text('Collapse');
-        }
-
-        $('.slide').hide();
-        $('.lcref .slide').show();
-
-        $slide.css('display', '');
-        $slide.css('vertical-align', '');
-
-        $slide.click();
-
-        // $slide.find('.loading_icon').hide();
-        // $slide.find('iframe:not([src])').each(function() {
-        //     $(this).attr('src', $(this).attr('data-src')).show();
-        //     $(this).iFrameResize({checkOrigin:false});
-        // });
-        //
-        // renderSlide($slide[0]);
-        // renderSlide($slide.prev('.slide')[0]);
-        // renderSlide($slide.next('.slide')[0]);
-
-    }
+    $('.carousel').carousel('pause');
+    adjustHeight();
+    $('#right_half .slide_number button').text('Slide ' + index);
+    $('#right_half .slide_number button').attr('slide', index);
+    
+    $('.lcref-output').remove();
 }
 
 
@@ -188,12 +281,10 @@ function print(promise) {
     $('html').css('position', 'relative');
 
     if($('#right_half').hasClass('overview') || $('#right_half').hasClass('compose') || $('#right_half').hasClass('info') ) {
-        // $('#print_content').html($('#output').html());
         $('#print_content').html('');
         $('#print_content').append($('#output').clone());
         promise.then(el => {
             $('#print_content').find('.slide.tex2jax_ignore').each(function() {
-                // renderSlide(this);
                 $(this).removeClass('tex2jax_ignore');
             });
             MathJax.typesetPromise().then(el => {
@@ -231,7 +322,7 @@ function print(promise) {
     });
     $('#print_content').find('.collapsea').hide();
     $('#print_content').find('.collapse').show();
-
+    $('#print_content').find('.hidden_collapse').show();
 }
 
 function removeTypeset() { // i.e. Show LaTeX source
@@ -239,32 +330,15 @@ function removeTypeset() { // i.e. Show LaTeX source
         console.log('removeTypset called ' + slideIndex);
         // var jax = MathJax.getAllJax('s' + slideIndex);
         var jax = MathJax.getAllJax();
-        for (var i = jax.length - 1, m = -1; i > m; i--) {
-            var jaxNode = jax[i].start.node, tex = jax[i].math;
-
-            if (jax[i].display) {
-                if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
-                tex = "\\["+tex+"\\]";
-            } else {tex = "$"+tex+"$"}
-
-            var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
-            $preview.html(tex);
-            if (jax[i].display) {
-                $preview.css('display', 'block');
-            }
-
-            jaxNode.parentNode.insertBefore($preview[0], jaxNode);
-            jaxNode.remove();
-        }
+        showTexFrom(jax);
         MathJax.typesetClear();
 }
 
-function showTexSource(show, editor) {
-
-    $('#output').attr('contentEditable', show);
+function showTexSource(showSource, editor) {
+    $('#output').attr('contentEditable', showSource);
     $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $('.paragraphs').css('color', '').css('font-family', '');
-    if (!show) {
+    if (!showSource) {
         MathJax.startup.document.state(0);
         MathJax.texReset();
 
@@ -281,11 +355,7 @@ function showTexSource(show, editor) {
         }
 
         $('.latexSource').remove();
-        // var doms = [];
-        // $('#output > .slide').not('.tex2jax_ignore').each(function() {
-        //     doms.push($(this)[0]);
-        // });
-        // typeset(doms);
+
         MathJax.startup.promise.then(() => {
             $('.slide').addClass('tex2jax_ignore');
             $('.slide').removeClass('edit');
@@ -316,16 +386,15 @@ function showXML(docCranach) {
 
 }
 
-function showJaxSource(outputId) {
-
-    var jax = MathJax.getAllJax(outputId);
-
+function showTexFrom(jax) {
     for (var i = jax.length - 1, m = -1; i > m; i--) {
         var jaxNode = jax[i].start.node, tex = jax[i].math;
 
         if (jax[i].display) {
-            if (!tex.match(/begin{equation}|begin{align}|begin{multline}/))
-            tex = "\\["+tex+"\\]";
+            if (!tex.match(/^\s*\\(begin{equation|(begin{align(\*)?})|begin{multline|begin{eqnarray)/)) {
+            // if (!tex.match(/^\s*\\begin(?!{split)/))  {
+                tex = "\\["+tex+"\\]";
+            }
         } else {tex = "$"+tex+"$"}
 
         var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
@@ -337,6 +406,14 @@ function showJaxSource(outputId) {
         jaxNode.parentNode.insertBefore($preview[0], jaxNode);
         jaxNode.remove();
     }
+}
+
+function showJaxSource(outputId) {
+
+    var jax = MathJax.getAllJax(outputId);
+
+    showTexFrom(jax);
+
     MathJax.typesetClear();
 
     var clone = document.getElementById(outputId).cloneNode(true);
@@ -361,9 +438,7 @@ function showJaxSource(outputId) {
     var body = new DOMParser().parseFromString(editedContent, 'text/html');
 
     var bodyString = new XMLSerializer().serializeToString(body);
-    // console.log(bodyString);
     var body = new DOMParser().parseFromString(bodyString, "application/xml");
-    // console.log(body);
     return body;
 }
 
@@ -376,37 +451,37 @@ function collapseToggle(slideIndex) {
     var $slide = $('#s' + slideIndex);
 
     if ($slide.hasClass('collapsed')) {
-	// $slide.find('.collapse').show();
-        $slide.find('.collapse').collapse('show');
         $slide.removeClass('collapsed');
-        $slide.find('a.collapsea').removeClass('collapsed');
-        $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        // $slide.find('.collapse').addClass('show');        
+        // $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        $slide.find('.collapse').collapse('show');        
         $('#uncollapse_button').text('Collapse');
     } else {
-	// $slide.find('.collapse').hide();
-        $slide.find('.collapse').collapse('hide');
         $slide.addClass('collapsed');
-        $slide.find('a.collapsea').addClass('collapsed');
+        // $slide.find('.collapse').removeClass('show');        
+        // $slide.find('a.collapsea').attr('aria-expanded', 'false');
+        $slide.find('.collapse').collapse('hide');
         $('#uncollapse_button').text('Uncollapse');
     }
-    // $slide.find('a.collapsea').each(function() { this.text = $slide.hasClass('collapsed') ? expchar : colchar; });
 }
 
-function focusOn(slide, text) {
-    if ($('#s' + slide).hasClass('collapsed')) {
-        collapseToggle(slide);
+function focusOn($item, text) {
+    let $slide = $item.closest('div.slide').first();
+    let slideNum = $slide.attr('slide');
+    if ($slide.hasClass('collapsed')) {
+        collapseToggle(slideNum);
     }
-    $('#s' + slide).click();
+    // $slide.click();
 
     if (text!= '') {
-        $('#output').scrollTo('#s' + slide);
-        $('#s' + slide + ' *[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
+        $('#output').scrollTo($item);
+        $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
     } else {
-        $('#output').scrollTo('#s' + slide, 150);
+        $('#output').scrollTo($item, 150);
     }
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
-            showDivs(slide, cranach);
+            showDivs(slideNum, cranach);
         });
     }
 }
@@ -425,92 +500,94 @@ function highlight(item) {
     $('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
 
 }
-
 function imagePostprocess(image) {
-
-    if ($(image).hasClass('exempt')) {
-        $(image).attr('src', $(image).attr('data-src'));
-        return 1;
-    }
-
+    
+    $(image).removeClass('loading');
     $(image).attr('src', $(image).attr('data-src'));
-
-    var image_width = $(image).closest('.image').css('width');
-
-    // $(image).closest('.image').css('background', '');
-    $(image).closest('.image').css('height', '');
-    // $(image).closest('.dual-left').css('background', '');
-    $(image).closest('.dual-left').css('height', '');
-    // $(image).closest('.dual-right').css('background', '');
-    $(image).closest('.dual-right').css('height', '');
-
-    var override = !((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
-
-    if ($(image).hasClass('exempt')) {
-        override = true;
-    }
-
-    if(/svg/.test($(image).attr('src'))) {
-        if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
-            var width = 300;
-            var height = 300;
-            $(image).attr('width', width);
-        } else if (!override) {
-            var width = 450;
-            var height = 450;
-            $(image).closest('.image').css('width', '450');
-            $(image).attr('width', width);
-        } else {
-            $(image).css('width', '100%');
+    $(image).on('load', function() {
+        console.log($(image).attr('src'));
+        if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
+            $(image).css('background', 'none');
+            $(image).show();
+            console.log($(image).attr('src') + ' OK');
+            return 1;
         }
-    } else if (!override) {
-        $(image).removeAttr('style');
-        $(image).removeAttr('width');
-        $(image).removeAttr('height');
-        var width = $(image).get(0).naturalWidth;
-        var height = $(image).get(0).naturalHeight;
 
-        if (width > height) {
-            if (width > 600) {
-                $(image).css('width', '100%');
-                $(image).css('max-height', '100%');
+        var image_width = $(image).closest('.image').css('width');
+        
+        $(image).closest('.image').css('height', '');
+        $(image).closest('.dual-left').css('height', '');
+        $(image).closest('.dual-right').css('height', '');
+    
+        // var override = !((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
+        
+        // console.log($(image).closest('.image').css('width'));
+        var override = ($(image).closest('.image').css('width') !== null && typeof $(image).closest('.image').css('width') !== 'undefined' && Number.parseInt($(image).closest('.image').css('width').replace(/px$/, '') < 600))
+        // var override = false;
+        
+        if(/svg/.test($(image).attr('src'))) {
+            if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+                var width = 300;
+                var height = 300;
+                $(image).attr('width', width);
+            } else if (!override) {
+                var width = 450;
+                var height = 450;
+                $(image).closest('.image').css('width', '450');
+                $(image).attr('width', width);
             } else {
-                $(image).css('max-width', '100%');
-                $(image).css('height', 'auto');
+                $(image).css('width', '100%');
             }
-        } else {
-            if (height > 560) {
-                if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+        } else if (!override) {
+            // console.log('Adjusting ' + $(image).attr('src') + ' ' + width + ' ' + height);
+            $(image).removeAttr('style');
+            $(image).removeAttr('width');
+            $(image).removeAttr('height');
+
+            var width = $(image).get(0).naturalWidth;
+            var height = $(image).get(0).naturalHeight;
+            
+            if (width > height) {
+                if (width > 600) {
                     $(image).css('width', '100%');
                     $(image).css('max-height', '100%');
                 } else {
-                    if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
-                        $(image).css('height', '560px');
-                        $(image).css('width', 'auto');
-                    } else {
-                        $(image).css('height', 'auto');
-                        $(image).css('max-width', '100%');
-                    }
+                    $(image).css('max-width', '100%');
+                    $(image).css('height', 'auto');
                 }
             } else {
-                if((typeof $(image).closest('.image').css('width') === typeof undefined)|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
-                    $(image).css('max-width', '100%');
-                    $(image).css('height', 'auto');
+                if (height > 560) {
+                    if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
+                        $(image).css('width', '100%');
+                        $(image).css('max-height', '100%');
+                    } else {
+                        if((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px')){
+                            $(image).css('height', '560px');
+                            $(image).css('width', 'auto');
+                        } else {
+                            $(image).css('height', 'auto');
+                            $(image).css('max-width', '100%');
+                        }
+                    }
                 } else {
-                    $(image).css('max-width', '100%');
-                    $(image).css('height', 'auto');
+                    if((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px')) {
+                        $(image).css('max-width', '100%');
+                        $(image).css('height', 'auto');
+                    } else {
+                        $(image).css('max-width', '100%');
+                        $(image).css('height', 'auto');
+                    }
                 }
             }
+        } else {
+            if ($(image).css('width') == '' || typeof $(image).css('width') === 'undefined' || $(image).css('width') === false) {
+                $(image).css('width', '100%');
+            }
         }
-    } else {
-        if ($(image).css('width') == '' || typeof $(image).css('width') === typeof undefined || $(image).css('width') === false) {
-            $(image).css('width', '100%');
-        }
-    }
 
-    $(image).css('background', 'none');
-    $(image).show();
-
+        $(image).css('background', 'none');
+        $(image).show();
+    });
 }
 
 function updateTitle(slide) {
@@ -615,70 +692,80 @@ function updateModalRefby(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
     var contentURL = cranach.attr['contentURL'];
     console.log('CONTENTURL ' + contentURL);
+    // $.ajax({
+    //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
+    //     dataType: "xml"
+    // })
+    // .done(function(index) {
+    let index = cranach.attr['indexDoc'];
     $.ajax({
-        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-        dataType: "xml"
+        url: 'xsl/refby2html.xsl'
     })
-    .done(function(index) {
-        $.ajax({
-            url: 'xsl/refby2html.xsl'
-        })
-        .done(function(xsl) {
-            var xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(xsl);
-            xsltProcessor.setParameter('', 'md5', md5String);
-            xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
-            xsltProcessor.setParameter('', 'contenturl', contentURL);
-            console.log('REFBY2HTML PRETRANSFORM');
-            fragment = xsltProcessor.transformToFragment(index,document);
-            console.log('REFBY2HTML');
-            fragmentStr = new XMLSerializer().serializeToString(fragment);
-            console.log(fragmentStr);
-            $('.modal_refby').html(fragmentStr).show();
-        })
-    })
-    .fail(function() {
-        console.log("INDEX FILE DOESN'T EXIST");
-        return 0;
+    .done(function(xsl) {
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsl);
+        xsltProcessor.setParameter('', 'md5', md5String);
+        xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+        xsltProcessor.setParameter('', 'contenturl', contentURL);
+        console.log('REFBY2HTML PRETRANSFORM');
+        fragment = xsltProcessor.transformToFragment(index,document);
+        console.log('REFBY2HTML');
+        fragmentStr = new XMLSerializer().serializeToString(fragment);
+        console.log(fragmentStr);
+        $('.modal_refby').html(fragmentStr).show();
     });
+    
 }
 
 function updateModalProofs(md5String, cranach) {
     var contentURLDir = cranach.attr['contentURLDir'];
-    $.ajax({
-        url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-        dataType: "xml"
-    })
-    .done(function(index) {
-        var queryString = '//idx:branch[@type="Proof"][@ofmd5="' + md5String + '"]';
-        console.log(queryString);
-        var iterator = index.evaluate(queryString, index, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
-        console.log(iterator);
-        try {
-            var thisNode = iterator.iterateNext();
 
-            var html = '';
-            var index = 1;
-            while (thisNode) {
-                if (html != '') {
-                    html += ', ';
-                }
-                html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
-                index++;
-                thisNode = iterator.iterateNext();
-            }
+    let indexDoc = cranach.attr['indexDoc'];
+    console.log(indexDoc);
+    // .done(function(indexDoc) {
+    var queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
+    console.log(queryString);
+    var iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+    console.log(iterator);
+    try {
+        var thisNode = iterator.iterateNext();
+        
+        var html = '';
+        var index = 1;
+        while (thisNode) {
             if (html != '') {
-                $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
-            } else {
-                $('.modal_proofs').html(html).hide();
+                html += ', ';
             }
+            html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
+            index++;
+            thisNode = iterator.iterateNext();
         }
-        catch (e) {
-            alert( 'Error: Document tree modified during iteration ' + e );
+        if (html != '') {
+            $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
+        } else {
+            $('.modal_proofs').html(html).hide();
         }
-    })
-    .fail(function() {
-        console.log("INDEX FILE DOESN'T EXIST");
+    }
+    catch (e) {
+        alert( 'Error: Document tree modified during iteration ' + e );
+    }
+    
+}
+function updateModalProofOf(button, cranach) {
+    if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
+        $('.modal_proof_of').hide();
         return 0;
-    });
+    }
+    var rootURL = cranach.attr['rootURL'];
+    // let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
+    let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&item=" + $(button).attr('of');
+    
+    $('.modal_proof_of a').attr('href', href);
+    if ($(button).find('.of-title').length) {
+        $('.modal_proof_of a').html($(button).find('.of-title').html());
+    } else {
+        $('.modal_proof_of a').html($(button).attr('of-type') + ' ' + $(button).attr('of-item'));
+    }
+    $('.modal_proof_of').show();
+    
 }

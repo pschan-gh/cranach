@@ -13,12 +13,10 @@ function scrollToLine(editor, slide) {
 
         if (!isComment) {
             if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
-                // slideLine.push(i + 1);
                 slideCount++;
             }
         }
         if (slideCount == slide) {
-            // var line = slideLine[slide];
             editor.gotoLine(i + 1);
             break;
         }
@@ -30,25 +28,35 @@ function updateModal(cranach) {
     $('.slide_button').off();
     $('.slide_button').on('click', function() {
         console.log('SLIDE BUTTON PRESSED');
-        var course = $(this).closest('.slide').attr('course');
+        let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
+        let slide = $slide.attr('slide');
+        
+        var course = $slide.attr('course');
 
-        var slide = $(this).closest('.slide').attr('slide');
-        var chapterType = $(this).closest('.slide').attr('chapter_type');
-        var chapter = $(this).closest('.slide').attr('chapter');
+        var chapterType = $slide.attr('chapter_type');
+        var chapter = $slide.attr('chapter');
 
         $('.modal-title > span').hide();
         $('.md5.share_text').text('');
         $('.modal_refby').hide();
+        $('.modal_proofs').hide();
+        $('.modal_proof_of').hide();
 
         $('.current_course').text(course).show();
         $('.current_chapter').text(chapter).show();
         $('.current_chapter').text(chapterType + ' ' + chapter).show();
-        $('.current_slide').text(slide).show();
+        $('.current_slide').text('Slide ' + slide).show();
+
+        let url = cranach.attr['contentURL'];
+
+        let $labels = $slide.find('> .label');
+
+        let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
 
         if (cranach.attr['query']) {
-            var url = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
+            url += '&query=' + cranach.attr['query'] + '&slide=' + slideLabel;
         } else {
-            var url = cranach.attr['contentURL'] + '&slide=' + slide;
+            url += '&slide=' + slideLabel;
         }
         console.log('SLIDE_BUTTON CLICKED: ' + url);
 
@@ -58,20 +66,22 @@ function updateModal(cranach) {
         $('#item_modal').find('#modal_keywords').html('<hr><b class="notkw">Keywords:</b>').append($('#slide_keywords').clone(true));
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
-        $('#item_modal').find('#share_url').html(url);
-        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '</a>');
-        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '}');
+        $('#item_modal').find('#share_url').val(url);
+        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '</a>');
+        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '}');
 
     });
 
 
-    $('.item_button').off();
-    $('.item_button').on('click', function() {
+    $('.item_button, .section_button').off();
+    $('.item_button, .section_button').on('click', function() {
         var course = $(this).attr('course');
         var md5String = $(this).attr('md5');
         var item_type = $(this).attr('type');
+        var chapterType = $(this).attr('chapter_type');
         var chapter = $(this).attr('chapter');
-        var item = $(this).attr('item');
+        var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
+        var serial = $(this).attr('serial');
         var slide = $(this).closest('.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
@@ -83,49 +93,76 @@ function updateModal(cranach) {
         $('#share_item span').hide();
 
         $('.current_course').text(course);
-        $('.current_chapter').text(chapter);
+        $('.current_chapter').text(chapterType + ' ' + chapter);
         $('.current_item_type').text(item_type);
-        $('.current_item').text(item);
+        $('.current_item').text($(this).attr('item') ? item : '');
         $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();
 
         // var slide = $(this).closest('.slide').attr('slide');
 
-        url = cranach.attr['contentURL'] + '&item=' + item;
-        console.log('ITEM CLICK URL: ' + url);
+        let url = cranach.attr['contentURL'];
+        let lcref = '';
+        let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
+
+        let $labels = $(this).closest('div').find('.label');
+
+        if ($labels.length) {
+            url += '&' + argName + '=' + $labels.first().attr('name');
+            if (argName == 'item') {
+                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[./lv:label/@name='" + $labels.first().attr('name') + "'])[1]";
+            }
+        } else {
+            url +=  '&' + argName + '=' + serial;
+            if (argName == 'item') {
+                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
+            }
+        }
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
+        $('#item_modal').find('#share_url').val(url);
 
-        $('#item_modal').find('#share_url').html(url);
-        $('#item_modal').find('#share_hyperlink').html('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + item_type + ' ' + item + '</a>');
-        $('#item_modal').find('#share_hyperref').html('\\href{' + url.replace('#', '\\#') + '}{' + item_type + ' ' + item + '}');
-        $('#item_modal').find('.md5').first().html(md5String);
+        let title = '';
+
+        let titles = $(this).find('*[wbtag="title"]');
+         if (titles.length) {
+             title = titles.first().text();
+         } else {
+             title = $(this).attr('item') ? item_type + ' ' + item : item_type;
+         }
+
+        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+        $('#item_modal').find('.md5').val(md5String);
 
         updateModalRefby(md5String, cranach);
         updateModalProofs(md5String, cranach);
-
+        updateModalProofOf(this, cranach);
     });
 }
 
 function updateSlideClickEvent(cranach) {
 
-    $('.slide').hover(function() {
-        $('#output_icon_container').show();
-    });
+    // $('.slide').hover(function() {
+    //     $('#output_icon_container').show();
+    // });
 
     $('.slide').off();
     $('.slide').click(function() {
-
-        console.log('SLIDE CLICKED');
-
+        
+        // console.log('SLIDE CLICKED');        
+        $('.slide').removeClass('selected');
+        $(this).addClass('selected');
         var slideElement = this;
 
+        
         if (typeof editor !== typeof undefined) {
             scrollToLine(editor, $(slideElement).attr('canon_num'));
         }
 
         $('*[text]').removeClass('highlighted');
+        $('button').removeClass('highlighted');
         $('.item_button').css('background-color', '');
-        $('[data-toggle="popover"]').popover('hide');
         $(this).find('.loading_icon').hide();
 
         $('.separator').css('font-weight', 'normal');
@@ -136,8 +173,8 @@ function updateSlideClickEvent(cranach) {
 
         $(this).find('iframe:not([src])').each(function() {
             $(this).attr('src', $(this).attr('data-src')).show();
-            var $iframe = $(this);
             $(this).iFrameResize({checkOrigin:false});
+            // iFrameResize({ log: true }, this);
         });
 
         if ($(this).attr('slide') != slideIndex) {
@@ -155,13 +192,7 @@ function updateSlideClickEvent(cranach) {
             var statements = new Array();
 
             updateTitle(slideElement);
-
-            if ($(this).hasClass('collapsed')) {
-                $('#uncollapse_button').text('Uncollapse');
-            } else {
-                $('#uncollapse_button').text('Collapse');
-            }
-
+            
             var url = cranach.attr['contentURL'];
             var urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
 
@@ -180,104 +211,105 @@ function updateSlideClickEvent(cranach) {
                 $('#info_statements .chapter[chapter="' + $(slideElement).attr('chapter') + '"]').show();
             }
 
-            updateSlideProgress(slideIndex, false);
+            if ($(this).find('a.collapsea[aria-expanded="false"]').length) {
+                $('#uncollapse_button').text('Uncollapse');
+            } else {
+                $('#uncollapse_button').text('Collapse');
+            }
+
         }
     });
 
 }
 
 function updateRefs(cranach) {
-
-        $('a.lcref').each(function() {
-            $(this).attr('lcref', "");
-
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
-            var label = $(this).attr('label');
-            var md5 = $(this).attr('md5');
-
-            var contentDir = cranach.attr['dir'];
-            var rootURL = cranach.attr['rootURL'];
+    
+    $('a.lcref').each(function() {
+        $(this).attr('lcref', "");
+        
+        var label = $(this).attr('label');
+        var md5 = $(this).attr('md5');
+        
+        var contentDir = cranach.attr['dir'];
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        let statementType = 'statement';
+        if ($(this).attr('type').match(/proof|solution|answer/i)) {
+            statementType = 'substatement';
+        }
+        if ($(this).attr('type').match(/figure/i)) {
+            statementType = 'figure';
+        }
+        
+        var rootURL = cranach.attr['rootURL'];
+        if ($(this).attr('filename') == 'self') {
             if (cranach.hasXML) {
-                contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-            } else if (cranach.hasWb) {
-                contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-            }
-
-            let statementType = 'statement';
-            if ($(this).attr('type').match(/proof|solution|answer/i)) {
-                statementType = 'substatement';
-            }
-
-            var rootURL = cranach.attr['rootURL'];
-            if ($(this).attr('filename') == 'self') {
-                if (cranach.hasXML) {
-                    var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                } else {
-                    var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                }
+                var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
             } else {
-                if ($(this).attr('src-filename').match(/\.xml$/)) {
-                    var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                } else {
-                    var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-                }
+                var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
             }
-
-            $(this).attr('lcref', lcref + '&version=' +Math.random());
-
-        });
-
-        $('a.href').each(function() {
-
-            var chapter = $(this).attr('chapter');
-            var num = $(this).attr('num');
-            var num = $(this).attr('item');
-            var label = $(this).attr('label');
-            var serial = $(this).attr('serial');
-            var md5 = $(this).attr('md5');
-            var contentDir = ''
-
-            var rootURL = cranach.attr['rootURL'];
+        } else if ($(this).attr('src-filename')) {
+            if ($(this).attr('src-filename').match(/\.xml$/)) {
+                var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        }
+        
+        $(this).attr('lcref', lcref + '&version=' +Math.random());
+        
+    });
+                    
+    $('a.href').each(function() {
+                    
+        var label = $(this).attr('label');
+        var serial = $(this).attr('serial');
+        var md5 = $(this).attr('md5');
+        var contentDir = ''
+        
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        if ($(this).attr('filename') == 'self') {
             if (cranach.hasXML) {
-                contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-            } else if (cranach.hasWb) {
-                contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-            }
-
-            if ($(this).attr('filename') == 'self') {
-                if (cranach.hasXML) {
-                    var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
-                } else {
-                    var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
-                }
+                var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
             } else {
-                if (cranach.hasXML) {
-                    var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-                } else {
-                    var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-                }
+                var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
             }
-
-            $(this).attr('target', '_blank');
-            $(this).attr('href', href);
-
-        });
-
+        } else {
+            if (cranach.hasXML) {
+                var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            } else {
+                var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            }
+        }
+        
+        $(this).attr('target', '_blank');
+        $(this).attr('href', href);
+        
+    });
+    
 }
 
 var timer = null;
 function updateScrollEvent(cranach) {
     $('#output').off();
+    
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
-
     $('#output').on('scroll', function() {
         if(timer !== null) {
             clearTimeout(timer);
         }
         timer = window.setTimeout(function() {
-            console.log('rendering slides');
             $('.slide.tex2jax_ignore').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);
@@ -285,17 +317,6 @@ function updateScrollEvent(cranach) {
             });
         }, 15*100);
     });
-
-    /*
-       $('#output').on("scroll", function() {
-       $('.slide.tex2jax_ignore').each(function() {
-            var slide = this;
-            if (isElementInViewport(slide) && ($(this).attr('slide') % 5 == 0)) {
-                window.setTimeout(function() {if (isElementInViewport(slide)) {batchRender(slide)}}, 1.5*1000);
-            }
-        });
-    });
-    */
 
 }
 
@@ -313,6 +334,7 @@ function updateToc(cranach) {
         $(this).text(string.charAt(0).toUpperCase() + string.slice(1));
     });
 
+    $('#info_statements').html('');
     $('.toc').find('a.chapter').each(function() {
         let chapter = $(this).attr('chapter');
         let statements = new Array();
@@ -321,26 +343,31 @@ function updateToc(cranach) {
                 statements[$(this).attr('type')] = '';
             }
 
-            var item = $(this).attr('item');
-            var slide = $('div[item="' + $(this).attr('item') + '"]').closest('.slide').attr('slide');
+            var serial = $(this).attr('item');
+            var $item = $('div[serial="' + $(this).attr('item') + '"]').closest('div.statement').first();
+            var slide = $item.closest('.slide').attr('slide');
 
-            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' href='javascript:void(0)' onclick=\"focusOn(" + slide + ", '');highlight('" + item + "')\">" + item + "</a>";
+            statements[$(this).attr('type')] += "<a style='margin:1px 10px 1px 10px;' class='info_statements_num' serial='" + serial + "' href='javascript:void(0)'>" + serial + "</a>";
         });
-        var html = '';
+        var html = '';        
         for (var key in statements) {
             html += '<br/><a class="info_statements" target="_blank" href="' + url + '&query=//lv:statement[@chapter=' + chapter + ' and @type=%27' + key + '%27]">' + key + '</a><em> ' + statements[key] + '</em>';
         }
 
         $('#info_statements').append('<div class="statements chapter" chapter="' + chapter + '" style="display:none">' + html + '</div>');
+        let $item;
+        $('#info_statements').find('.info_statements_num').click(function() {
+            $item = $('.item_title[serial="' + $(this).attr('serial') + '"]').first();
+            focusOn($item, '');
+            highlight($(this).attr('serial'));
+        });
 
         var $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
-            $slide.click();
         });
     });
-    console.log($('#info_statements')[0]);
+    // console.log($('#info_statements')[0]);
 
     $('.toc').find('a.section').each(function() {
         var $slide = $('.slide[section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
@@ -350,42 +377,14 @@ function updateToc(cranach) {
             $slide.click();
         });
     });
-    $('.toc').find('a.subsection').each(function() {
+    $('.toc a.subsection').each(function() {
         var $slide = $('.slide[subsection="' + $(this).attr('subsection') + '"][section="' + $(this).attr('section') + '"][chapter="' + $(this).attr('chapter') + '"]').first();
         $(this).click(function() {
-            // $('#output').scrollTo($slide);
             jumpToSlide($('#output'), $slide);
             $slide.click();
         });
     });
     MathJax.startup.promise = typeset([document.getElementById('toc')]);
-}
-
-function updateCollapseElements() {
-
-    $('#output .collapsea').click(function(event) {
-        if ($(this).hasClass('collapsed')) {
-            $(this).removeClass('collapsed');
-            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').show("slow");
-        } else {
-            $(this).addClass('collapsed');
-            // $('.collapse[id=' + $(this).attr('aria-controls') + ']').hide("slow");
-        }
-        // this.text = $(this).hasClass('collapsed') ? expchar : colchar;
-    });
-
-    // $('.collapse').each(function() {
-    //     var id = $(this).attr('id');
-    //     $(this).on('hide.bs.collapse', function() {
-    //         $('a.collapsea[aria-controls="' + id + '"]').text(expchar);
-    //     });
-    // });
-    // $('.collapse').each(function() {
-    //     var id = $(this).attr('id');
-    //     $(this).on('show.bs.collapse', function() {
-    //         $('a.collapsea[aria-controls="' + id + '"]').text(colchar);
-    //     });
-    // });
 }
 
 function updateKeywords() {
@@ -430,8 +429,11 @@ function updateEditor() {
 
 function updateSlideSelector(cranach) {
 
-    var numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
-    // $('#slide_sel').attr('max', numOfSlides);
+    try {
+        var numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
+    } catch(error) {
+        return 0;
+    }
     $("#slide_sel").html('');
     for (let i = 1; i <= numOfSlides; i++) {
         var o = new Option(i.toString(), i);
@@ -445,40 +447,38 @@ function updateSlideSelector(cranach) {
 
 function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
-    $('.icon.xml, .icon.latex').show();
+    $('.icon.xml, .icon.latex').show();    
 
-    $('.slide').find("table:not('.exempt'):not('.ltx_eqn_table')").addClass("table table-bordered");
-
-    // updateEditor();
     updateSlideClickEvent(cranach);
     updateRefs(cranach);
     updateModal(cranach);
     updateScrollEvent(cranach);
     updateToc(cranach);
-    updateCollapseElements();
     updateKeywords();
-    updateSlideProgress(cranach.slideIndex, true);
+    // updateSlideProgress(cranach.slideIndex, true);
     updateSlideSelector(cranach);
-    updateTitle($('#s' + cranach.slideIndex)[0]);
+    updateTitle($('#s' + cranach.slideIndex)[0]);    
+    
+    
+    console.log(cranach);        
 
-    $(function() {
-        console.log(cranach);
-
-        MathJax.startup.promise.then(() => {
-            // MathJax.typesetClear();
-            MathJax.startup.document.state(0);
-            MathJax.texReset();
-            return;
-        }).then(() => {
-            // console.log(cranach.macrosString);
-            return MathJax.tex2chtmlPromise(cranach.macrosString);
-        }).then(() => {
-            $('.slide').each(function() {
-                if (isElementInViewport(this)) {
-                    batchRender(this);
-                }
-            });
+    MathJax.startup.promise.then(() => {
+        // MathJax.typesetClear();
+        MathJax.startup.document.state(0);
+        MathJax.texReset();
+        return;
+    }).then(() => {
+        // console.log(cranach.macrosString);
+        return MathJax.tex2chtmlPromise(cranach.macrosString);
+        // return MathJax.tex2svgPromise(cranach.macrosString);
+    }).then(() => {
+        $('.slide').each(function() {
+            if (isElementInViewport(this)) {
+                batchRender(this);                    
+            }
         });
+    });
+    $(function() {        
 
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
@@ -486,23 +486,15 @@ function postprocess(cranach) {
         });
 
 
-        $('[data-toggle="popover"]').off();
-        $('[data-toggle="popover"]').on('click', function (e) {
-            $('[data-toggle="popover"]').each(function(){
-    	    $(this).popover('hide');
-    	});
-            $(this).popover('show');
-        });
-
-        https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
-        $("button.btn_keyword[data-toggle=popover]:not(.index)").popover({
+        // https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
+        $("[data-bs-toggle=popover]").popover({
             html : true,
             content: function() {
                 html = 'Loading...';
                 return html;
             }
         });
-        $('[data-toggle="popover"]:not(.index)').on('shown.bs.popover', function() {
+        $('[data-bs-toggle="popover"]').on('shown.bs.popover', function() {
             $('.popover-body').each(function() {
                 let id = $(this).closest('.popover').attr('id');
                 console.log(id);
@@ -518,84 +510,120 @@ function postprocess(cranach) {
 
         if (cranach.attr['selectedItem']) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
-            var $item = $('.statement[item="' + cranach.attr['selectedItem'] + '"], .statement[md5="' + cranach.attr['selectedItem'] + '"], .substatement[item="' + cranach.attr['selectedItem'] + '"], .substatement[md5="' + cranach.attr['selectedItem'] + '"]').first();
-            var $selectedSlide = $item.closest('.slide');
-            $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
-            $item.find('.item_title').addClass('highlighted');
-        } else if (cranach.attr['selectedSection']) {
-            var $section = $('.title[serial="' + cranach.attr['selectedSection'] + '"]').first();
-            var $selectedSlide = $section.closest('.slide');
-            $('#output').scrollTo($selectedSlide);
-            $selectedSlide.click();
-            $section.addClass('highlighted');
 
+            $item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
+
+            $('#output').scrollTo($item);
+            $item.addClass('highlighted');
+        } else if (cranach.attr['selectedSection']) {
+            var $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
+            var $selectedSlide = $section.closest('.slide');
+            $('#output').scrollTo($section);
+            $section.addClass('highlighted');
         } else {
-            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
+            var $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
             $('#output').scrollTo($selectedSlide);
-        }
+            // $selectedSlide.click();
+        }        
 
         if (cranach.attr['selectedKeyword']) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
-            focusOn($selectedSlide.attr('slide'), cranach.attr['selectedKeyword'].replace(/\s/g, ''));
+            focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }
-
-
 
         // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
         var menu_timer = null;
+        $('#right_half').off();
         $('#right_half').mousemove(function() {
             clearTimeout(menu_timer);
-            $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
+            $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+            $('.present .controls.carousel-indicators').css('display', 'flex');
             menu_timer = setTimeout(function () {
-                $("#menu_container .navbar-nav, .controls, .present .slide_number").fadeOut();
+                $(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+                $(".controls, .present .active .slide_number").not('.hidden').fadeOut();
             }, 1000);
         })
-        $("#menu_container .navbar-nav, .present .slide_number").mouseover(function() {
+        
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
             $('#right_half').off('mousemove');
             clearTimeout(menu_timer);
             $(this).show();
         });
-        $('.controls').on('mouseover', function() {
-            $('#progress_container').show();
-            $('#right_half').off('mousemove');
-            clearTimeout(menu_timer);
-            $(this).show();
-        });
-
-        $("#menu_container .navbar-nav, .present .slide_number").mouseout(function() {
+        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
             clearTimeout(menu_timer);
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
+                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
+        });
+
+        $('.controls').off();
+        $('.controls').on('mouseover', function() {
+            // $('#progress_container').show();
+            $('#right_half').off('mousemove');
+            clearTimeout(menu_timer);
+            $(this).show();
         });
         $('.controls').on('mouseout', function() {
-            $('#progress_container').hide();
+            // $('#progress_container').hide();
             clearTimeout(menu_timer);
             $('#right_half').off('mousemove');
             $('#right_half').mousemove(function() {
                 clearTimeout(menu_timer);
-                $("#menu_container .navbar-nav, .present .controls, .present .slide_number").fadeIn();
-                // $(".present .controls").css('display', 'table-cell');
+                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+                $('.present .controls.carousel-indicators').css('display', 'flex');
                 menu_timer = setTimeout(function () {
-                    $("#menu_container .navbar-nav, .present .slide_number").fadeOut();
+                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").fadeOut();
                     $(".controls").hide();
                 }, 1000);
             })
         });
+        
+        $('.carousel').on('slid.bs.carousel', function () {
+            $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
+            $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+            $('.carousel').carousel('pause');
+            let $slide = $('#output div.slide.active');
+            $slide.click();
+            
+            batchRender($slide[0]);
+            adjustHeight();
+            updateCanvas($slide[0]);
+        })
+        $('#output').on('shown.bs.collapse', 'div.collapse', function() {
+            adjustHeight(); 
+        });
+        $('#output').on('hidden.bs.collapse', 'div.collapse', function() {
+            adjustHeight(); 
+        });
+        
+        $('input.lecture_mode').change(function() {
+            if (this.checked) {
+                $('[data-lecture-skip="true"]').addClass('lecture_skip');
+            } else {
+                $('[data-lecture-skip="true"]').removeClass('lecture_skip');
+            }
+        });
+        if (cranach.attr['lectureMode'] || $('input.lecture_mode')[0].checked) {   
+            console.log('LECTURE MODE');     
+            $('[data-lecture-skip="true"]').addClass('lecture_skip');
+        }
+        
+        $('#loading_icon').hide();
+        $('#right_half .navbar').show();
+        if (cranach.attr['present']) {
+            console.log('PRESENT MODE');
+            $('#present_button').click();
+        }
+        
     });
-
-    if (cranach.attr['present']) {
-        $('#present_button').click();
-    }
-
-    $('#loading_icon').hide();
+    
 }

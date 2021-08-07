@@ -7,7 +7,7 @@ function saveText(text, promise, ext) {
 
     promise.then(el => {
 	var filename = el.attr['localName'];
-	dummyLink.setAttribute('download', filename + '.' + ext);
+	dummyLink.setAttribute('download', filename.replace(/\.[^\.]+$/, '') + '.' + ext);
 	dummyLink.click();
     });
 }
@@ -19,14 +19,14 @@ function saveWb(editor, promise) {
 function collectNewcommands(str) {
     var commandsStr = '';
     var obj = new Object();
-    var commands = str.match(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
+    var commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
     console.log(commands);
 
     if (commands == null || typeof commands == typeof undefined) {
         return '';
     }
     for (var i = 0; i < commands.length; i++) {
-        var matches = commands[i].match(/\\newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
+        var matches = commands[i].match(/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
         console.log(matches);
         obj[matches[1]] = matches[2];
     }
@@ -83,8 +83,8 @@ function showLatex(promise) {
         console.log(el.macrosString);
         var tmp = el.macrosString + "\n" +  latex;
         latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
-        .replace(/\$\n+\$/g, '')
-        .replace(/\s*}/g, '}');
+        // .replace(/\$\n+\$/g, '')
+        .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
 		$('#source_text').val(latex);
 	    });
     });
@@ -104,6 +104,9 @@ function showXML(promise) {
 }
 
 function initGhDialog(editor) {
+
+    $('#gh_modal .feedback .message').html('');
+
     let contentURL = window.location.href;
     let params = window.location.href.match(/\?(.*?)(#|$)/);
 
@@ -149,9 +152,6 @@ function initGhDialog(editor) {
         return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
     }).then(cranach => {
         postprocess(cranach);
-        // $('#s1').find('.collapse').collapse('show');
-        // $('#s1').find('.collapsea').removeClass('collapsed');
-        // $('#source_text').val(new XMLSerializer().serializeToString(cranach.attr['cranachDoc']));
         let cranach_text = new XMLSerializer().serializeToString(cranach.attr['cranachDoc']);
         let index_text = new XMLSerializer().serializeToString(cranach.attr['indexDoc']);
         $('#cranach_text').val(cranach_text);
@@ -161,58 +161,6 @@ function initGhDialog(editor) {
         $('#gh_modal button.commit').show();
     });
 
-}
-
-function commitGh(ghRepoUsername, ghRepo, ghAccessToken) {
-
-    $('#gh_modal .feedback .message').html('');
-    console.log( $('#index_text').val() );
-
-    if (ghAccessToken == "") {
-        $.post("tokens/index.php", { type: "github", username: ghRepoUsername } ).done(function(token) {
-            let gh = new GitHub({
-                token: token
-            });
-            // Creates an object representing the repository you want to work with
-            let repository = gh.getRepo(ghRepoUsername, ghRepo);
-
-            // Creates a new file (or updates it if the file already exists)
-            // with the content provided
-            ghCommitFile(repository, $('#ghRepoBranch').val(), $('#localFilenameRoot').text() + '.wb', editor.getValue());
-            ghCommitFile(repository, $('#ghRepoBranch').val(), $('#localFilenameRoot').text() + '.xml', $('#cranach_text').val());
-            ghCommitFile(repository, $('#ghRepoBranch').val(), 'index.xml', $('#index_text').val());
-        });
-    } else {
-        let gh = new GitHub({
-            token: ghAccessToken
-        });
-        let repository = gh.getRepo(ghRepoUsername, ghRepo);
-        ghCommitFile(repository, $('#ghRepoBranch').val(), $('#localFilenameRoot').text() + '.wb', editor.getValue());
-        ghCommitFile(repository, $('#ghRepoBranch').val(), $('#localFilenameRoot').text() + '.xml', $('#cranach_text').val());
-        ghCommitFile(repository, $('#ghRepoBranch').val(), 'index.xml', $('#index_text').val());
-    }
-}
-
-function ghCommitFile(repo, branch, filename, string) {
-    // console.log(repo);
-    // console.log(filename);
-    // console.log(string);
-
-    $('#gh_modal .loading').show();
-    repo.writeFile(
-        branch, // e.g. 'master'
-        filename, // e.g. 'blog/index.md'
-        string, // e.g. 'Hello world, this is my new content'
-        'update' + ' ' + filename, // e.g. 'Created new index'
-        function(err) {
-            if (err) {
-                $('#gh_modal .feedback .message').append('<div><code>' + err + '</code></div>');
-            } else {
-                $('#gh_modal .feedback .message').append('<div><code>' + filename + ' pushed.</code></div>');
-            }
-            $('#gh_modal .loading').hide();
-        }
-    );
 }
 
 function showIndex(promise) {
@@ -291,6 +239,40 @@ function openXML(promise, filePath) {
                 convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
                 return renderer;
             });
+        });
+    }, false);
+
+    reader.readAsText(file);
+
+}
+
+function openHTML(promise, filePath) {
+    var file    = filePath.files[0];
+    var reader  = new FileReader();
+
+    if (file) {
+        // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
+        var fullPath = filePath.value;
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            console.log(fullPath);
+        }
+    }
+    var el = this;
+    reader.addEventListener("load", function () {
+        report('READER RESULT');
+        report(reader.result);
+        promise.then(renderer => {
+            var outputHTML = reader.result;
+            renderer.attr['localName'] = filename;
+            $('#output').remove();
+            $(outputHTML).prependTo($('#right_half'));
+            postprocess(renderer);
+            MathJax.typesetPromise($('#output'))
         });
     }, false);
 

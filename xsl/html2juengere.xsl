@@ -16,13 +16,14 @@
     <xsl:variable name="lv" select="'http://www.math.cuhk.edu.hk/~pschan/cranach'"/>
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
-    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='webwork' and @wbtag!='wb_image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
+    <xsl:template match="*[@wbtag and @wbtag!='ignore' and @wbtag!='of' and @wbtag!='webwork' and @wbtag!='image' and @wbtag!='paragraphs' and @wbtag!='newline' and @wbtag!='skip' and @wbtag!='keyword' and @wbtag!='hc_keyword' and @wbtag!='transparent' and not(@metadata) and @wbtag!='qed' and @wbtag!='']">
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@label"/>
             <xsl:copy-of select="@name"/>
             <xsl:copy-of select="@id"/>
             <xsl:copy-of select="@href"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="*|text()" />
         </xsl:element>
     </xsl:template>
@@ -42,16 +43,31 @@
         <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:*[not(self::xh:body) and not(self::xh:img) and not(@wbtag)]">
+    <xsl:template match="*[@wbtag='ignore']" priority='1'/>
+    <xsl:template match="*[@class='knowl-output']" priority='1'/>
+    <xsl:template match="*[@class='lcref-output']"  priority='1'/>
+
+    <xsl:template match="*[not(self::xh:body) and not(self::xh:img) and not(self::xh:iframe) and not(@wbtag) and not(contains(@class, 'jxgbox')) and not(@class='comment')]">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates select="*|text()|comment()" />
       </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:img">
+    <xsl:template match="*[contains(@class, 'jxgbox')]">
+        <xsl:element name="xh:{local-name()}">
+            <xsl:copy-of select="@*"/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="xh:img|img|xh:iframe|iframe">
       <xsl:element name="xh:{local-name()}">
           <xsl:copy-of select="@*[name()!='data-src']"/>
+          <xsl:if test="not(@src) and @data-src">
+              <xsl:attribute name="src">
+                  <xsl:value-of select="@data-src"/>
+              </xsl:attribute>
+          </xsl:if>
           <xsl:apply-templates select="*|text()|comment()" />
       </xsl:element>
     </xsl:template>
@@ -65,17 +81,14 @@
             <xsl:copy-of select="@wbtag"/>
             <xsl:copy-of select="@slide"/>
             <xsl:copy-of select="@id"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="xh:div[@class='slide_container']/xh:div[@class='slide_content']/xh:*|xh:div[@class='slide_container']/xh:div[@class='slide_content']/text()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:span[@class='escaped']" >
+    <xsl:template match="*[@class='escaped']" >
         <xsl:value-of select="concat('@', normalize-space(text()))"/>
     </xsl:template>
-
-
-    <xsl:template match="*[@wbtag='ignore']" />
-    <xsl:template match="xh:*[@class='knowl-output']" />
 
     <xsl:template match="*[@wbtag='skip']">
         <xsl:apply-templates select="*|text()" />
@@ -125,7 +138,7 @@
       <xsl:element name="br" namespace="{$xh}"/>
     </xsl:template>
 
-    <xsl:template match="xh:span[@wbtag='paragraphs']" >
+    <xsl:template match="*[@wbtag='paragraphs']" >
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:attribute name="wbtag">
                 <xsl:text>paragraphs</xsl:text>
@@ -135,14 +148,14 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='center' or @wbtag='left' or @wbtag='right']" >
+    <xsl:template match="*[@wbtag='center' or @wbtag='left' or @wbtag='right']" >
          <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@wbtag"/>
             <xsl:apply-templates select="text()|comment()|*"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbname='statement' or @wbname='substatement']">
+    <xsl:template match="*[@wbname='statement' or @wbname='substatement']">
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="{@wbname}" namespace="{$lv}">
             <xsl:copy-of select="@course"/>
@@ -153,20 +166,20 @@
             <xsl:copy-of select="@type"/>
             <xsl:copy-of select="@title"/>
             <xsl:copy-of select="@wbtag"/>
+            <xsl:copy-of select="@of"/>
+            <xsl:copy-of select="@data-lecture-skip"/>
             <xsl:apply-templates select="text()|*"/>
             <!-- <xsl:text>&#xa;</xsl:text> -->
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='wb_image']" >
-        <!-- <xsl:text>&#xa;</xsl:text> -->
+    <xsl:template match="*[@wbtag='image']" >
         <xsl:element name="{@wbtag}" namespace="{$lv}">
             <xsl:copy-of select="@data-src"/>
         </xsl:element>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
     </xsl:template>
 
-    <xsl:template match="xh:div[@wbtag='qed']" >
+    <xsl:template match="*[@wbtag='qed']" >
         <!-- <xsl:text>&#xa;</xsl:text> -->
         <xsl:element name="qed" namespace="{$lv}"/>
         <!-- <xsl:text>&#xa;</xsl:text> -->
@@ -183,6 +196,17 @@
     <xsl:template match="*[@wbtag='keyword']">
         <xsl:element name="inline_keyword" namespace="{$lv}">
            <xsl:value-of select="./text()" disable-output-escaping="no"/>
+       </xsl:element>
+    </xsl:template>
+    <xsl:template match="*[@wbtag='hc_keyword']">
+        <xsl:element name="hc_keyword" namespace="{$lv}">
+           <xsl:value-of select="./text()" disable-output-escaping="no"/>
+       </xsl:element>
+    </xsl:template>
+    
+    <xsl:template match="*[@wbtag='of']">
+        <xsl:element name="of" namespace="{$lv}">
+           <xsl:copy-of select="@of"/>
        </xsl:element>
     </xsl:template>
 
@@ -203,5 +227,11 @@
         <xsl:comment>
             <xsl:value-of select="." disable-output-escaping="no"/>
         </xsl:comment>
+    </xsl:template>
+
+    <xsl:template match="*[@class='comment']">
+        <xsl:element name="comment" namespace="{$lv}">
+            <xsl:apply-templates select="*|text()" />
+        </xsl:element>
     </xsl:template>
 </xsl:stylesheet>
