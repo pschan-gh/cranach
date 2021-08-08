@@ -9,8 +9,8 @@
 
     <xsl:strip-space elements="xh:* lv:title lv:*"/>
     <xsl:preserve-space elements="xh:textarea xh:pre lv:paragraphs"/>
-    <xsl:output method="xml" />
-
+    <xsl:output method="xml" omit-xml-declaration="yes" />
+    
     <xsl:template match="/">
         <xsl:apply-templates select="lv:document" />
     </xsl:template>
