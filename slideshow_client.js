@@ -111,9 +111,6 @@ function renderSlide(slide) {
     $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
-    $(slide).find('a.collapsea').attr('data-toggle', 'collapse');
-    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
-
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
