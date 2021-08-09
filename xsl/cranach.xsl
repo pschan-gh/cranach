@@ -929,27 +929,11 @@
                 <xsl:attribute name="referrer-md5">
                     <xsl:value-of select="(ancestor::lv:statement|ancestor::lv:substatement)[1]/@md5"/>
                 </xsl:attribute>
-                <!-- <xsl:if test="ancestor::lv:substatement[@type='Proof']">
-                    <xsl:variable name="substatement" select="ancestor::lv:substatement"/>
-                    <xsl:variable name="referrer-of">
-                        <xsl:choose>
-                            <xsl:when test="$substatement/@of">
-                                <xsl:value-of select="$substatement/@of"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="$substatement/preceding::lv:statement[1]/@md5[last()]"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:variable>
-                    <xsl:attribute name="referrer-of">
-                        <xsl:value-of select="$referrer-of" />
-                    </xsl:attribute>
-                    <xsl:attribute name="referrer-of-item">
-                        <xsl:value-of select="(//idx:label[@name=$referrer-of]/parent::node()|//idx:branch[@md5=$referrer-of])[1]/@item"/>
-                    </xsl:attribute>
-                </xsl:if> -->
             </xsl:if>
             <xsl:choose>
+                <xsl:when test="./lv:title">
+                    <xsl:copy-of select="./lv:title"/>
+                </xsl:when>
                 <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
                     <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
                     <xsl:attribute name="src-course">
@@ -991,13 +975,6 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:element>
-                    <!-- <xsl:if test="$branch/lv:title">
-                        <xsl:element name="src-title" namespace="{$lv}">
-                            <xsl:text>[</xsl:text>
-                            <xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
-                            <xsl:text>]</xsl:text>
-                        </xsl:element>
-                    </xsl:if> -->
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:element name="title" namespace="{$lv}">

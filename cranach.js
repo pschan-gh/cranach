@@ -367,21 +367,17 @@ function Cranach(url) {
                 bare.appendChild(queries.snapshotItem(i));
             }
             queryDom.appendChild(bare);
-
-            report('QUERY DOM');
-            report(queryDom);
-            report('END QUERY DOM');
-
-            this.attr['preCranachDoc'] = queryDom;
-
+            
             $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
             var el = this;
-
+            
+            this.attr['preCranachDoc'] = queryDom;
             return this.updateIndex().then(cranach => {
                 return cranach.preCranachDocToCranachDoc().then(renderer => {
                     return renderer.displayCranachDocToHtml();
                 });
             });
+            
         } else {
             this.attr['cranachDoc'] = cranachDoc;
             $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
