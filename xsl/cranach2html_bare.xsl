@@ -221,36 +221,43 @@
     </xsl:template>
 
     <xsl:template match="lv:ref">
-        <xsl:element name="a">
-            <xsl:copy-of select="@*"/>
-            <xsl:attribute name="src-chapter">
-                <xsl:value-of select="@src-chapter"/>
-            </xsl:attribute>
-            <xsl:attribute name="item">
-                <xsl:value-of select="@item"/>
-            </xsl:attribute>
-            <xsl:attribute name="type">
-                <xsl:value-of select="@type"/>
-            </xsl:attribute>
-            <xsl:attribute name="class">
-                <xsl:choose>
-                    <xsl:when test="@item">
-                        <xsl:text>lcref</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>href</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:if test="@type='Section'">
-                <xsl:value-of select="concat('Section ', @serial, ' (')"/>
-            </xsl:if>
-            <xsl:apply-templates select="lv:title"/>
-            <xsl:if test="@type='Section'">
-                <xsl:value-of select="')'"/>
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
+		<xsl:element name="a">
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="src-chapter">
+				<xsl:value-of select="@src-chapter"/>
+			</xsl:attribute>
+			<xsl:attribute name="item">
+				<xsl:value-of select="@item"/>
+			</xsl:attribute>
+			<xsl:attribute name="type">
+				<xsl:value-of select="@type"/>
+			</xsl:attribute>
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<xsl:when test="@type!='Section'">
+						<xsl:text>lcref</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>href</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:if test="@type='Section'">
+				<xsl:value-of select="concat('Section ', @serial, ' (')"/>
+			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="@name">
+					<xsl:value-of select="@name" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="lv:title"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:if test="@type='Section'">
+				<xsl:value-of select="')'"/>
+			</xsl:if>
+		</xsl:element>
+	</xsl:template>
 
 
     <xsl:template match="lv:statement/lv:title">
