@@ -623,9 +623,9 @@
 							<xsl:apply-templates select="lv:title"/>
 						</xsl:if>
                         <xsl:if test="lv:of-title">
-							<xsl:value-of select="'&#160;'"/>
+							<!-- <xsl:value-of select="'&#160;'"/> -->
 							<xsl:if test="not(lv:of-title/@hidden = 'true')">
-								<span wbtag="skip">of </span>
+								<span wbtag="skip"> of </span>
 								<xsl:apply-templates select="lv:of-title">
 									<xsl:with-param name="of" select="@of"/>
 								</xsl:apply-templates>
