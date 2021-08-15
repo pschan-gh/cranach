@@ -29,11 +29,13 @@ function updateCanvas(slide) {
         }
         return 1;
     } 
-    $('.canvas-controls .annotate').off();    
+    $('.canvas-controls').find('*').off();
+    // $('.canvas-controls .annotate').off();    
     $('.canvas-controls .clear').click(function() {
         $(slide).find('canvas').remove();
         addCanvas(slide);
     });
+    // $('.canvas-controls .expand').off();
     $('.canvas-controls .expand').click(function() {
         slide.cfd.disableDrawingMode();
         // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
@@ -52,6 +54,7 @@ function updateCanvas(slide) {
         // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
         // addCanvas(slide, true);
     });
+    // $('.canvas-controls .disable').off();
     $('.canvas-controls .disable').click(function() {
         slide.cfd.disableDrawingMode();
         $(slide.cfd.canvas).css('z-index', 0);
@@ -59,11 +62,13 @@ function updateCanvas(slide) {
         $('.canvas-controls .enable').removeClass('disabled');
         // $('.carousel').attr('data-bs-touch', "true");
     });
+    // $('.canvas-controls .erase').off();
     $('.canvas-controls .erase').click(function() {
         slide.cfd.setErase();
         $('.canvas-controls .nav-link').removeClass('disabled');        
         $(this).addClass('disabled');
     });
+    // $('.canvas-controls .enable').off();
     $('.canvas-controls .enable').click(function() {
         slide.cfd.enableDrawingMode();
         $(slide.cfd.canvas).show();
@@ -107,9 +112,9 @@ function addCanvas(slide) {
 
 
 function renderSlide(slide) {
-    
-    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+            
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
@@ -132,24 +137,28 @@ function renderSlide(slide) {
 
 
 function batchRender(slide) {
-    renderSlide(slide);
+    // $('#output .collapse').addClass('hidden_collapse').removeClass('collapse');
+    $('.slide').not('.selected').find('a.collapsea').removeAttr('data-bs-toggle');    
     $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
     });
     $(slide).prevAll('.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
     });
+    renderSlide(slide);
 }
 
-function adjustHeight() {
+function adjustHeight(slide) {
     let $output = $('#right_half .carousel-inner');
     if (!$output.length) {
         return 0;
     }
-    $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
+    // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
+    $(slide).find('.slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
-        $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
+        // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
+        $(slide).find('.slide_content').css('padding-bottom', '15em');
     } else {
         $output.css('display', '');
     }
@@ -265,7 +274,7 @@ function showDivs(n, cranach) {
     $slide.addClass('active');
 
     $('.carousel').carousel('pause');
-    adjustHeight();
+    adjustHeight($slide[0]);
     $('#right_half .slide_number button').text('Slide ' + index);
     $('#right_half .slide_number button').attr('slide', index);
     

@@ -154,7 +154,6 @@ function updateSlideClickEvent(cranach) {
         $('.slide').removeClass('selected');
         $(this).addClass('selected');
         var slideElement = this;
-
         
         if (typeof editor !== typeof undefined) {
             scrollToLine(editor, $(slideElement).attr('canon_num'));
@@ -461,24 +460,24 @@ function postprocess(cranach) {
     
     
     console.log(cranach);        
-
-    MathJax.startup.promise.then(() => {
-        // MathJax.typesetClear();
-        MathJax.startup.document.state(0);
-        MathJax.texReset();
-        return;
-    }).then(() => {
-        // console.log(cranach.macrosString);
-        return MathJax.tex2chtmlPromise(cranach.macrosString);
-        // return MathJax.tex2svgPromise(cranach.macrosString);
-    }).then(() => {
-        $('.slide').each(function() {
-            if (isElementInViewport(this)) {
-                batchRender(this);                    
-            }
+    
+    $(function() {
+        MathJax.startup.promise.then(() => {
+            // MathJax.typesetClear();
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            return;
+        }).then(() => {
+            // console.log(cranach.macrosString);
+            return MathJax.tex2chtmlPromise(cranach.macrosString);
+            // return MathJax.tex2svgPromise(cranach.macrosString);
+        }).then(() => {
+            $('.slide').each(function() {
+                if (isElementInViewport(this)) {
+                    batchRender(this);                    
+                }
+            });
         });
-    });
-    $(function() {        
 
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             var text = $(this).text();
@@ -591,18 +590,20 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
             $('.carousel').carousel('pause');
-            let $slide = $('#output div.slide.active');
-            $slide.click();
+            let $slide = $('.carousel div.slide.active');
+            // $slide.click();
             
             batchRender($slide[0]);
-            adjustHeight();
+            adjustHeight($slide[0]);
             updateCanvas($slide[0]);
         })
-        $('#output').on('shown.bs.collapse', 'div.collapse', function() {
-            adjustHeight(); 
+        $('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
+            let $slide = $('.carousel div.slide.active');
+            adjustHeight($slide[0]); 
         });
-        $('#output').on('hidden.bs.collapse', 'div.collapse', function() {
-            adjustHeight(); 
+        $('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
+            let $slide = $('.carousel div.slide.active');
+            adjustHeight($slide[0]); 
         });
         
         $('input.lecture_mode').change(function() {
