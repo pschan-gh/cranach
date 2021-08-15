@@ -112,7 +112,7 @@ function addCanvas(slide) {
 
 
 function renderSlide(slide) {
-            
+
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
     $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 
@@ -137,7 +137,6 @@ function renderSlide(slide) {
 
 
 function batchRender(slide) {
-    // $('#output .collapse').addClass('hidden_collapse').removeClass('collapse');
     $('.slide').not('.selected').find('a.collapsea').removeAttr('data-bs-toggle');    
     $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
@@ -239,16 +238,24 @@ function resizeFont(multiplier) {
     document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
 }
 
-function updateCarousel(slide) {
+function updateCarousel(slideNum) {
 
-    var numOfSlides = $('#output div.slide').length;
+    let numOfSlides = $('#output div.slide').length;
+    
+    if (numOfSlides > 50) {
+        return 0;
+    }
     
     $(".carousel-indicators").html('');
-    for (let i = 0; i < numOfSlides; i++) {
+    // let firstSlide = Math.max(slideNum - 25, 0);
+    // let lastSlide = Math.min(slideNum + 25, numOfSlides);
+    let firstSlide = 0;
+    let lastSlide = numOfSlides;
+    for (let i = firstSlide; i < lastSlide; i++) {
         $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + i + '" aria-label="Slide ' + (i + 1) + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + (i + 1) + '">');
     }
         
-    $('.carousel-indicators button[data-bs-slide-to="' + (slide - 1) + '"]').addClass('active').attr('aria-current', "true");
+    $('.carousel-indicators button[data-bs-slide-to="' + (slideNum - 1) + '"]').addClass('active').attr('aria-current', "true");
     $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
     
 }
@@ -257,9 +264,6 @@ function showDivs(n, cranach) {
 
     $('#right_half').addClass('slide');
     $('#output').addClass('carousel-inner');
-    $('#output div.slide').addClass('carousel-item');
-    
-    updateCarousel(n);
     
     var $slides = $('#output > .slide');
     
@@ -267,13 +271,25 @@ function showDivs(n, cranach) {
         return 0;
     }
     
+    // if ($slides.length < 50) {
+    //     $('#output div.slide').addClass('carousel-item');
+    // } else {
+    //     $('#output div.slide[slide="' + (n - 1) + '"]').addClass('carousel-item');
+    //     $('#output div.slide[slide="' + n + '"]').addClass('carousel-item');
+    //     $('#output div.slide[slide="' + (n + 1) + '"]').addClass('carousel-item');
+    // }
+    
+    // $('#output div.slide').addClass('carousel-item');
+    updateCarousel(n);
+    $('.carousel').carousel('pause');
+    
     let index = (parseInt(n) + $slides.length) % $slides.length;
     index = index == 0 ? $slides.length : index;    
 
     var $slide = $('#s' + index);    
     $slide.addClass('active');
 
-    $('.carousel').carousel('pause');
+    
     adjustHeight($slide[0]);
     $('#right_half .slide_number button').text('Slide ' + index);
     $('#right_half .slide_number button').attr('slide', index);
