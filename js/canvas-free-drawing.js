@@ -42,7 +42,8 @@
 	        this.requiredParam(params, 'width');
 	        this.requiredParam(params, 'height');
 	        this.elementId = elementId;
-	        this.canvasNode = document.getElementById(this.elementId);
+	        // this.canvasNode = document.getElementById(this.elementId);
+			this.canvasNode = $('.output.present:visible').first().find('#' + this.elementId)[0];
 	        if (this.canvasNode instanceof HTMLCanvasElement) {
 	            this.canvas = this.canvasNode;
 	        }
@@ -176,10 +177,10 @@
 	    CanvasFreeDrawing.prototype.touchStart = function (event) {
 	        if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
 				event.preventDefault();
-				console.log($('#output')[0].scrollTop);
+				console.log($('.output.present:visible').first()[0].scrollTop);
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + $('#output')[0].scrollTop;
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + $('.output.present:visible').first()[0].scrollTop;
 	            this.touchIdentifier = identifier;
 	            this.drawPoint(x, y);
 				
@@ -190,7 +191,7 @@
 				event.preventDefault();
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + $('#output')[0].scrollTop;				
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + $('.output.present:visible').first()[0].scrollTop;				
 	            // check if is multi touch, if it is do nothing
 	            if (identifier != this.touchIdentifier)
 	                return;

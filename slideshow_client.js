@@ -1,22 +1,22 @@
 function annotate() {
     
-    if ($('.output:visible').hasClass('annotate')) {
+    if ($('.output.present:visible').first().hasClass('annotate')) {
         $('canvas').hide();
         $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
         $('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
         $('.output:visible').removeClass('annotate');
     } else {
-        $('.output:visible').addClass('annotate');
+        $('.output.present:visible').first().addClass('annotate');
         $('.carousel').attr('data-bs-touch', "false");
     }
     // let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
-    let slide = $('.output:visible div.slide.active')[0];
+    let slide = $('.output.present:visible div.slide.active')[0];
     updateCanvas(slide);
     
 }
 
 function updateCanvas(slide) {    
-    if ($('.output:visible').hasClass('annotate')) {        
+    if ($('.output.present:visible').first().hasClass('annotate')) {        
         $('.canvas-controls').show();
         if (!$(slide).find('canvas').length) {
             addCanvas(slide);
@@ -43,16 +43,13 @@ function updateCanvas(slide) {
         var img = new Image();
         img.src = oldCanvas;
         img.onload = function (){
-            $(slide.cfd.canvas).first()[0].width = $('.output:visible')[0].scrollWidth;
-            $(slide.cfd.canvas).first()[0].height = $('.output:visible')[0].scrollHeight;
+            $(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
             let ctx = slide.cfd.canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
             slide.cfd.enableDrawingMode();
             slide.cfd.setDraw();
-        }
-        // $(slide.cfd.canvas).first()[0].width = $('.output:visible')[0].scrollWidth;
-        // $(slide.cfd.canvas).first()[0].height = $('.output:visible')[0].scrollHeight;
-        // addCanvas(slide, true);
+        }        
     });
     // $('.canvas-controls .disable').off();
     $('.canvas-controls .disable').click(function() {
@@ -89,12 +86,12 @@ function updateCanvas(slide) {
 }
 
 function addCanvas(slide) {
-    if ($(slide).find('canvas').length || !$(slide).closest('.output:visible').hasClass('present')) {
+    if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
             return 0;
     }
     
-    let width = $('.output:visible')[0].scrollWidth;
-    let height = $('.output:visible')[0].scrollHeight;
+    let width = $('.output.present:visible').first()[0].scrollWidth;
+    let height = $('.output.present:visible').first()[0].scrollHeight;
 
     slide.cfd = new CanvasFreeDrawing.default({
       elementId: slide.id,
@@ -149,7 +146,7 @@ function batchRender(slide) {
 }
 
 function adjustHeight(slide) {
-    let $output = $('.carousel-inner:visible');
+    let $output = $('.output.present:visible');
     if (!$output.length) {
         return 0;
     }
