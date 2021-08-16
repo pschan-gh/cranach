@@ -304,12 +304,12 @@ function updateScrollEvent(cranach) {
     $('#output').off();
     
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
-    $('#output').on('scroll', function() {
+    $('#output:visible').on('scroll', function() {
         if(timer !== null) {
             clearTimeout(timer);
         }
         timer = window.setTimeout(function() {
-            $('.slide.tex2jax_ignore').each(function() {
+            $('#output:visible .slide.tex2jax_ignore').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);
                 };
@@ -472,7 +472,7 @@ function postprocess(cranach) {
             return MathJax.tex2chtmlPromise(cranach.macrosString);
             // return MathJax.tex2svgPromise(cranach.macrosString);
         }).then(() => {
-            $('.slide').each(function() {
+            $('#output:visible .slide').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);                    
                 }
@@ -590,7 +590,7 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
                         
-            let $slide = $('.carousel div.slide.active').first();            
+            let $slide = $('.output.present:visible div.slide.active').first();            
                         
             batchRender($slide[0]);
             adjustHeight($slide[0]);
@@ -608,22 +608,30 @@ function postprocess(cranach) {
             let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
             let nextNum = slideNum + 1 % $slides.length;
             
+            $('#carousel.present').removeClass('carousel-inner');
+            $('#carousel .slide').removeClass('carousel-item');
+            $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
+            // updateCarousel(parseInt(slideNum));
             if ($slides.length > 50) {
-                $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
-                $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');                
-                $('#output div.slide').not('.carousel-item').addClass('hidden');
+                if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
+                    $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
+                }
+                if ($('#carousel .slide[slide="' + nextNum + '"]').length == 0) {
+                    $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;        
+                }
             }
-            
+            $('#carousel .slide').removeClass('hidden').addClass('carousel-item');            
             updateCarousel(parseInt(slideNum));
+            // $('#carousel.present').addClass('carousel-inner');
             $('.carousel').carousel('pause');
             
         })
         $('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-            let $slide = $('.carousel div.slide.active');
+            let $slide = $('.output.present:visible div.slide.active');
             adjustHeight($slide[0]); 
         });
         $('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-            let $slide = $('.carousel div.slide.active');
+            let $slide = $('.output.present:visible div.slide.active');
             adjustHeight($slide[0]); 
         });
         

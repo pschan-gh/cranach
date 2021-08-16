@@ -1,22 +1,22 @@
 function annotate() {
     
-    if ($('#output').hasClass('annotate')) {
+    if ($('.output:visible').hasClass('annotate')) {
         $('canvas').hide();
         $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('#output').removeClass('annotate')
-        $('#output').removeClass('annotate');
+        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+        $('.output:visible').removeClass('annotate');
     } else {
-        $('#output').addClass('annotate');
+        $('.output:visible').addClass('annotate');
         $('.carousel').attr('data-bs-touch', "false");
     }
     // let slide = $('div.slide[slide="' + slideIndex + '"]')[0];
-    let slide = $('#output div.slide.active')[0];
+    let slide = $('.output:visible div.slide.active')[0];
     updateCanvas(slide);
     
 }
 
 function updateCanvas(slide) {    
-    if ($('#output').hasClass('annotate')) {        
+    if ($('.output:visible').hasClass('annotate')) {        
         $('.canvas-controls').show();
         if (!$(slide).find('canvas').length) {
             addCanvas(slide);
@@ -43,15 +43,15 @@ function updateCanvas(slide) {
         var img = new Image();
         img.src = oldCanvas;
         img.onload = function (){
-            $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
-            $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+            $(slide.cfd.canvas).first()[0].width = $('.output:visible')[0].scrollWidth;
+            $(slide.cfd.canvas).first()[0].height = $('.output:visible')[0].scrollHeight;
             let ctx = slide.cfd.canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
             slide.cfd.enableDrawingMode();
             slide.cfd.setDraw();
         }
-        // $(slide.cfd.canvas).first()[0].width = $('#output')[0].scrollWidth;
-        // $(slide.cfd.canvas).first()[0].height = $('#output')[0].scrollHeight;
+        // $(slide.cfd.canvas).first()[0].width = $('.output:visible')[0].scrollWidth;
+        // $(slide.cfd.canvas).first()[0].height = $('.output:visible')[0].scrollHeight;
         // addCanvas(slide, true);
     });
     // $('.canvas-controls .disable').off();
@@ -89,12 +89,12 @@ function updateCanvas(slide) {
 }
 
 function addCanvas(slide) {
-    if ($(slide).find('canvas').length || !$(slide).closest('#output').hasClass('present')) {
+    if ($(slide).find('canvas').length || !$(slide).closest('.output:visible').hasClass('present')) {
             return 0;
     }
     
-    let width = $('#output')[0].scrollWidth;
-    let height = $('#output')[0].scrollHeight;
+    let width = $('.output:visible')[0].scrollWidth;
+    let height = $('.output:visible')[0].scrollHeight;
 
     slide.cfd = new CanvasFreeDrawing.default({
       elementId: slide.id,
@@ -149,15 +149,16 @@ function batchRender(slide) {
 }
 
 function adjustHeight(slide) {
-    let $output = $('#right_half .carousel-inner');
+    let $output = $('.carousel-inner:visible');
     if (!$output.length) {
         return 0;
     }
     // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
+    console.log($output);
+    console.log(slide);
     $(slide).find('.slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
-        // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '15em');
         $(slide).find('.slide_content').css('padding-bottom', '15em');
     } else {
         $output.css('display', '');
@@ -219,12 +220,12 @@ function unhide() {
 
 function dim() {
     if ($('.dim').first().hasClass('dimmed')) {
-        $(' #right_half, #right_half *, #output *').css('background-color', '').css('color', '');
+        $(' #right_half, #right_half *, .output:visible *').css('background-color', '').css('color', '');
         $('#right_half').removeClass('dim');
         $('.dim').first().removeClass('dimmed');
         $('#right_half').addClass('carousel-dark');
     } else {
-        $('#right_half, #output').css('background-color', '#222').css('color', '#bbb');
+        $('#right_half, .output:visible').css('background-color', '#222').css('color', '#bbb');
         $('#right_half').addClass('dim');
         // $('#progress_container').addClass('dim');
         $('.dim').first().addClass('dimmed');
@@ -243,14 +244,14 @@ function updateCarousel(slideNum) {
 
     $('div.tooltip').remove();
 
-    let numOfSlides = $('#output div.slide').length;
+    let numOfSlides = $('#carousel div.slide').length;
         
     $(".carousel-indicators").html('');
     
     let i;
     let currentIndex = -1;
     console.log($('.carousel-item'));
-    $('#output .carousel-item').each(function(index) {
+    $('#carousel .carousel-item').each(function(index) {
         i = parseInt($(this).attr('slide'));
         // $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + (i - 1) + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
         $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + index + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
@@ -269,7 +270,7 @@ function updateCarousel(slideNum) {
 function showDivs(n, cranach) {
     
     $('#right_half').addClass('slide');
-    $('#output.present').addClass('carousel-inner');
+    
     // $('#output div.slide').addClass('carousel-item');
     
     let $slides = $('#output > .slide');
@@ -280,7 +281,6 @@ function showDivs(n, cranach) {
 
     let index = ((parseInt(n) - 1 + $slides.length) % $slides.length) + 1;
     // index = index == 0 ? $slides.length : index;    
-    updateCarousel(index);
     
     let slideNum = parseInt(n);
     
@@ -288,18 +288,28 @@ function showDivs(n, cranach) {
     let nextNum = slideNum + 1 % $slides.length;
 
     let $slide = $('.present #s' + index);
-    $slide.removeClass('hidden').addClass('carousel-item');
     
-    if ($slides.length > 50) {        
-        $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
-        $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');
-        $('#output div.slide').not('.carousel-item').addClass('hidden');
+    $('#carousel.present').removeClass('carousel-inner');
+    $('#carousel .slide').removeClass('carousel-item');
+    
+    if ($slides.length > 50) {
+        $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
+        // updateCarousel(parseInt(slideNum));
+        // $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
+        // $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');
+        // $('#output div.slide').not('.carousel-item').addClass('hidden');
+        $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));;
+        $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
+        $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;
     } else {
-        $('#output .slide').addClass('carousel-item');        
+        $('#carousel').html($('#output').html());        
     }
-    
+    $('#carousel .slide').removeClass('hidden').addClass('carousel-item');
+    $slide = $('#carousel #s' + index);
     updateCarousel(index);
     $slide.addClass('active');
+    
+    // $('#carousel.present').addClass('carousel-inner');
     
     batchRender($slide[0]);
     
@@ -370,7 +380,7 @@ function removeTypeset() { // i.e. Show LaTeX source
 }
 
 function showTexSource(showSource, editor) {
-    $('#output').attr('contentEditable', showSource);
+    $('.output:visible').attr('contentEditable', showSource);
     $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $('.paragraphs').css('color', '').css('font-family', '');
     if (!showSource) {
@@ -509,10 +519,10 @@ function focusOn($item, text) {
     // $slide.click();
 
     if (text!= '') {
-        $('#output').scrollTo($item);
+        $('.output:visible').scrollTo($item);
         $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
     } else {
-        $('#output').scrollTo($item, 150);
+        $('.output:visible').scrollTo($item, 150);
     }
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
@@ -714,7 +724,6 @@ function updateSlideProgress(index, refresh) {
         }
     }
     $('#slide_progress td').each(function() {
-        // $(this).css('background-color', $(this).attr('num') <= slideIndex ? '#ccc' : '#eee');
         if ($(this).attr('num') <= index) {
             $(this).removeClass('future').addClass('past');
         } else {

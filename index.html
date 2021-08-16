@@ -1,48 +1,35 @@
 <html xml:lang="en" lang="en" xmlns="http:/www.w3.org/1999/xhtml">
-
 <title>
     Cranach
 </title>
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta charset="UTF-8"/> 
+    <meta charset="UTF-8"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     <!-- <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" /> -->
     <link rel="stylesheet" type="text/css" href="js/jsxgraph.css" />
-
     <link href="js/knowlstyle.css" rel="stylesheet" type="text/css" />
     <link href="js/lcrefstyle.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="styles.css" media="all">
     <link rel="stylesheet" href="LaTeXML.css" media="all">
-
     <link rel="shortcut icon" href="#"/>
     <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.contentWindow.min.js" integrity="sha256-36C1/Kln8nS9OWK0+tTRIYQyhdp+eY117441VyJaj+o=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.min.js" integrity="sha256-uHN1/UDJzJX8BIapjeOIyykot3SXC8YDG38tH+rM718=" crossorigin="anonymous"></script>
-        
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
-
     <!-- <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script> -->
     <script type="text/javascript" src="js/jsxgraphcore.js"></script>
-
     <script src="js/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/jquery.scrollTo.min.js"></script>
-
     <script src="js/Base64.js" type="text/javascript"></script>
     <!-- <script type="text/javascript" src="https://aimath.org/knowl.js"></script> -->
     <script src="js/knowl.js" type="text/javascript" ></script>
     <script src="js/lcref.js" type="text/javascript" ></script>
-
-
     <script type="text/javascript">
-      function report() {}
+    function report() {}
     </script>
-
     <script type="module" src="gittools.js"></script>
     <script type="text/javascript" src="weaver_core.js"></script>
     <script type="text/javascript" src="weaver.js"></script>
@@ -51,7 +38,6 @@
     <script type="text/javascript" src="wb.js"></script>
     <script type="text/javascript" src="interfaces.js"></script>
     <script type="text/javascript" src="postprocess.js" ></script>
-
     <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
     <script src="https://tikzjax.com/v1/tikzjax.js"></script>
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
@@ -66,7 +52,6 @@
     var warnClose = false;
     var baseRenderer;
     </script>
-
     <script>
     MathJax = {
         startup: {
@@ -74,11 +59,10 @@
             ready() {
                 typeset = function (doms) {
                     MathJax.startup.promise = MathJax.startup.promise
-                      .then(() => {return MathJax.typesetPromise(doms)})
-                      .catch((err) => console.log('Typeset failed: ' + err.message));
+                    .then(() => {return MathJax.typesetPromise(doms)})
+                    .catch((err) => console.log('Typeset failed: ' + err.message));
                     return MathJax.startup.promise;
                 };
-
                 MathJax.getAllJax = function (name) {
                     var list = Array.from(MathJax.startup.document.math);
                     if (!name) return list;
@@ -123,7 +107,7 @@
             }
         },
         loader: {
-             load: ['output/svg', '[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil', '[tex]/color', '[tex]/mathtools']
+            load: ['output/svg', '[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil', '[tex]/color', '[tex]/mathtools']
         },
         tex: {
             inlineMath: [['$','$'], ['\\(','\\)']],
@@ -153,50 +137,41 @@
             titleID: 0                     // initial id number to use for aria-labeledby titles
         }
     };
-
     </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
     <script src="js/canvas-free-drawing.js"></script>
-    
-<style type="text/css">
-.ace_highlight-marker {
-    position: absolute; /* without this positions will be wrong */
-    background: #ddf; /* color */
-    z-index: 1000; /* in front of all other markers */
-}
-.ace_slide-marker {
-    position: absolute; /* without this positions will be erong */
-    background: #ffc; /* color */
-    z-index: 1000; /* in front of all other markers */
-}
-
-#right_half .dropdown-menu > a:hover {
-    background:SteelBlue;
-    color:white !important;
-}
-
-.navbar-nav li.advanced:hover {
-    position:relative;    
-}
-
-.navbar-nav li.advanced:hover > ul.dropdown-submenu {
-    display: block;
-}
-
-.dropdown-submenu {
-    position:absolute;
-}
-.dropdown-submenu {
-    top:-500%;
-    left:100%;
-    margin-top:-5px;
-}
-
+    <style type="text/css">
+    .ace_highlight-marker {
+        position: absolute; /* without this positions will be wrong */
+        background: #ddf; /* color */
+        z-index: 1000; /* in front of all other markers */
+    }
+    .ace_slide-marker {
+        position: absolute; /* without this positions will be erong */
+        background: #ffc; /* color */
+        z-index: 1000; /* in front of all other markers */
+    }
+    #right_half .dropdown-menu > a:hover {
+        background:SteelBlue;
+        color:white !important;
+    }
+    .navbar-nav li.advanced:hover {
+        position:relative;
+    }
+    .navbar-nav li.advanced:hover > ul.dropdown-submenu {
+        display: block;
+    }
+    .dropdown-submenu {
+        position:absolute;
+    }
+    .dropdown-submenu {
+        top:-500%;
+        left:100%;
+        margin-top:-5px;
+    }
 </style>
 </head>
-
 <body>
     <div id="print">
         <button id="back_icon" style="position:fixed;top:0;left:1%;font-size:2.5em" class="plain_button icon" onclick="$('#print').hide();$('#container').show();$('#print_content').html('');$('html').css('position', 'fixed');">&#8617;</button>
@@ -204,7 +179,7 @@
         </div>
     </div>
     <div id="container" class="pane">
-        <div id="left_half" class="left pane overview" mode="overview">            
+        <div id="left_half" class="left pane overview" mode="overview">
             <div id="info_half">
                 <div id="info_menu_container">
                     <button class="plain_button icon" id="compose_icon" onclick="$('#compose_button').click();">
@@ -215,16 +190,16 @@
                     </button>
                 </div>
                 <ul class="nav nav-tabs" role="tablist">
-    				<li class="nav-item" role="presentation">
-    					<button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
-    				</li>
-    				<li class="nav-item" role="presentation">
-    					<button class="nav-link" id="toc-tab" data-bs-toggle="tab" data-bs-target="#toc" type="button" role="tab" aria-controls="home" aria-selected="true">Table of Contents</button>
-    				</li>
                     <li class="nav-item" role="presentation">
-    					<button class="nav-link" id="index-tab" data-bs-toggle="tab" data-bs-target="#index" type="button" role="tab" aria-controls="home" aria-selected="true">Index</button>
-    				</li>
-    			</ul>
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="toc-tab" data-bs-toggle="tab" data-bs-target="#toc" type="button" role="tab" aria-controls="home" aria-selected="true">Table of Contents</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="index-tab" data-bs-toggle="tab" data-bs-target="#index" type="button" role="tab" aria-controls="home" aria-selected="true">Index</button>
+                    </li>
+                </ul>
                 <hr/>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="info">
@@ -235,7 +210,7 @@
                             <strong>Keywords</strong>
                             <a class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
                                 <span class="material-icons expand_more">expand_more</span>
-                    			<span class="material-icons expand_less">expand_less</span>
+                                <span class="material-icons expand_less">expand_less</span>
                                 <!-- ⊞ -->
                             </a>
                             <div id="info_keywords_course" class="collapse"></div>
@@ -248,7 +223,7 @@
                             <strong>Chapter Keywords</strong>
                             <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
                                 <span class="material-icons expand_more">expand_more</span>
-                    			<span class="material-icons expand_less">expand_less</span>
+                                <span class="material-icons expand_less">expand_less</span>
                                 <!-- ⊞ -->
                             </a>
                             <div id="info_keywords_chapter" class="collapse"></div>
@@ -265,7 +240,7 @@
                             <strong onclick='$(".slide_info.share").show();'>Share</strong>
                             <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
                                 <span class="material-icons expand_more">expand_more</span>
-                    			<span class="material-icons expand_less">expand_less</span>
+                                <span class="material-icons expand_less">expand_less</span>
                                 <!-- ⊞ -->
                             </a>
                             <div class="slide_info share collapse" id="slide_info_share" style="">
@@ -280,15 +255,15 @@
                                 <span id='modal_keywords'>
                                 </span>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div class="tab-pane toc" class="toc" id="toc"></div>
                     <div class="tab-pane" id="index"></div>
-                </div>                                                
+                </div>
             </div>
             <div id="input_container">
-                <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">                        
-                    <div class="navbar-collapse collapse">                        
+                <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">
+                    <div class="navbar-collapse collapse">
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link">
@@ -323,7 +298,6 @@
                         </ul>
                     </div>
                 </nav>
-
                 <div id="input">
                 </div>
             </div>
@@ -383,7 +357,7 @@
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <li>
                                     <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active').removeClass('hidden');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
-                                </li>                                
+                                </li>
                                 <li>
                                     <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
                                 </li>
@@ -414,295 +388,287 @@
                                     <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
                                 </li>
                                 <!-- <li>
-                                    <a class="menu_button dropdown-item" onclick="$('#htmlInput').click()">Open HTML</a>
-                                    <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
-                                </li> -->
-                                <li>
-                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
-                                    <input id="edit_box" type="checkbox" style="display:none" />
-                                </li>
-                                <li class="advanced">
-                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
-                                    <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
-                                        <li>
-                                            <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
-                                                <input type="checkbox" class="lecture_mode"/>
-                                                Lecture Mode
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
-                                        </li>
-                                        <li>
-                                            <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
-                                        </li>
-                                        <li>
-                                            <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
-                                        </li>
-                                        <li>
-                                            <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
-                                        </li>
-                                        <li>
-                                            <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
-                                        </li>
-                                        <li>
-                                            <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
-                                        </li>
-                                    </ul>
-                                </li>                                
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <div class="form-inline slide_sel">
-                                <div class="form-group">
-                                    <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
-                                    <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
-                                    <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
-                                    </select>
-                                </div>
+                                <a class="menu_button dropdown-item" onclick="$('#htmlInput').click()">Open HTML</a>
+                                <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
+                            </li> -->
+                            <li>
+                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                <input id="edit_box" type="checkbox" style="display:none" />
+                            </li>
+                            <li class="advanced">
+                                <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
+                                    <li>
+                                        <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
+                                            <input type="checkbox" class="lecture_mode"/>
+                                            Lecture Mode
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
+                                    </li>
+                                    <li>
+                                        <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
+                                    </li>
+                                    <li>
+                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                    </li>
+                                    <li>
+                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                    </li>
+                                    <li>
+                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
+                                    </li>
+                                    <li>
+                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <div class="form-inline slide_sel">
+                            <div class="form-group">
+                                <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
+                                <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
+                                <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
+                                </select>
                             </div>
-                        </li>
-                    </ul>
-                    <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
-                        <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
-                                <i class="material-icons">brightness_2</i>
-                            </button>
-                            <!-- ☾ -->
-                        </li>
-                        <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
-                                <i class="material-icons">edit</i>
-                            </button>
-                        </li>
-                        <li class="nav-item" style="width:auto">
-                            <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
-                                <i class="material-icons">
-                                    fullscreen
-                                </i>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
-                                <i class="material-icons">
-                                    fullscreen_exit
-                                </i>
-                            </button>
-                        </li>
-                    </ul>
+                        </div>
+                    </li>
+                </ul>
+                <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
+                    <li class="nav-item" style="width:auto">
+                        <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
+                            <i class="material-icons">brightness_2</i>
+                        </button>
+                        <!-- ☾ -->
+                    </li>
+                    <li class="nav-item" style="width:auto">
+                        <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                            <i class="material-icons">edit</i>
+                        </button>
+                    </li>
+                    <li class="nav-item" style="width:auto">
+                        <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
+                            <i class="material-icons">
+                                fullscreen
+                            </i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
+                            <i class="material-icons">
+                                fullscreen_exit
+                            </i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="output" class="output overview dual pane"></div>
+        <div id="carousel" class="output overview dual pane"></div>
+        <div class="controls carousel-indicators">
+        </div>
+        <div class="controls_container controls">
+            <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#right_half"  data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="canvas-controls">
+            <nav class="navbar navbar-collapse-lg navbar-light">
+                <div class="container-fluid">
+                    <div>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
+                            <li class="nav-item"><a class="nav-link annotate  expand" href="#"><span class="material-icons">expand</span></a></li>
+                            <!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
+                                <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
+                                    <li><a class="dropdown-item annotate red color" href="#">Red</a></li>
+                                    <li><a class="dropdown-item annotate green color" href="#">Green</a></li>
+                                    <li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
+                                    <li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
+                                    <li><a class="dropdown-item annotate black color" href="#">Black</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
+                            <li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
+                            <li class="nav-item"><a class="nav-link annotate disable" href="#"><span class="material-icons">edit_off</span></a></li>
+                            <li class="nav-item"><a class="nav-link annotate erase" href="#"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
+                            <li class="nav-item"><a class="nav-link annotate enable" href="#"><span class="material-icons">mode_edit</span></a></li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
-            <div id='output' class="overview dual pane"></div>            
-            <div class="controls carousel-indicators">
+        </div>
+        <div class="slide_number">
+            <button class="plain_button slide_button">
+            </button>
+        </div>
+    </div>
+    <div class="present title_box" style="display:none"></div>
+    <div id="cover_half" onclick="unhide();"></div>
+</div>
+<!-- Wb item modal -->
+<div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content">
+            <div class="modal-header" >
+                <a id="item_modal_link" href="" target="_blank">
+                    <h5 class="modal-title notkw"  id="share_item">
+                        <span class="current_course"></span> <span class="current_chapter"></span>
+                        <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
+                    </h5>
+                </a>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" >&times;</span>
+            </button> -->
+        </div>
+        <div class="modal-body">
+            <div class="modal_proofs">
             </div>
-            <div class="controls_container controls">
-                <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#right_half"  data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+            <div class="modal_proof_of">
+                <br/><strong>Of:</strong>
+                <a target="_blank" href></a>
             </div>
-            <div class="canvas-controls">
-				<nav class="navbar navbar-collapse-lg navbar-light">
-					<div class="container-fluid">
-						<div>
-							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
-								<li class="nav-item"><a class="nav-link annotate  expand" href="#"><span class="material-icons">expand</span></a></li>
-								<!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->								
-								<li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
-                                    <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
-                                        <li><a class="dropdown-item annotate red color" href="#">Red</a></li>
-                                        <li><a class="dropdown-item annotate green color" href="#">Green</a></li>
-                                        <li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
-                                        <li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
-                                        <li><a class="dropdown-item annotate black color" href="#">Black</a></li>
-                                    </ul>                                    
-								</li>
-								<li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
-								<li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
-								<li class="nav-item"><a class="nav-link annotate disable" href="#"><span class="material-icons">edit_off</span></a></li>
-								<li class="nav-item"><a class="nav-link annotate erase" href="#"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
-								<li class="nav-item"><a class="nav-link annotate enable" href="#"><span class="material-icons">mode_edit</span></a></li>								
-							</ul>
-						</div>
-					</div>
-				</nav>
+            <div class="modal_refby">
             </div>
-            <div class="slide_number">
-                <button class="plain_button slide_button">
-                </button>
+            <span id='modal_keywords'>
+            </span>
+            <hr/>
+            <span>URL</span>
+            <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
+            <p><br></p>
+            <span>HTML Hyperlink</span>
+            <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
+            <p><br/></p>
+            <span>Knowl</span><br/>
+            <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
+            <p><br/></p>
+            <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
+            <br/>
+            <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
+            <br/><br/>
+            <span>MD5</span><br/>
+            <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
+        </div>
+        <div class="modal-footer">
+            <div id="logo-box" class="pull-left">
             </div>
         </div>
-        <div class="present title_box" style="display:none"></div>
-
-        <div id="cover_half" onclick="unhide();"></div>
     </div>
-
-    <!-- Wb item modal -->
-    <div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
-        <div class="modal-dialog" role="document" >
-            <div class="modal-content">
-                <div class="modal-header" >
-                    <a id="item_modal_link" href="" target="_blank">
-                        <h5 class="modal-title notkw"  id="share_item">
-                            <span class="current_course"></span> <span class="current_chapter"></span>
-                            <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
-                        </h5>
-                    </a>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <!-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" >&times;</span>
-                    </button> -->
+</div>
+</div>
+<!-- Wb code window -->
+<div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
+        <div class="modal-content" style="height:100%">
+            <div class="modal-header">
+                <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height:100%" >
+                <textarea id="source_text"  name="content" style="height:100%"></textarea>
+            </div>
+            <div class="modal-footer" style="justify-content:flex-start;display:block">
+                <div style="float:left">
                 </div>
-                <div class="modal-body">
-                    <div class="modal_proofs">
-                    </div>
-                    <div class="modal_proof_of">
-                        <br/><strong>Of:</strong>
-                        <a target="_blank" href></a>
-                    </div>
-                    <div class="modal_refby">
-                    </div>
-                    <span id='modal_keywords'>
-                    </span>
-                    <hr/>
-                    <span>URL</span>
-                    <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
-                    <p><br></p>
-                    <span>HTML Hyperlink</span>
-                    <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
-                    <p><br/></p>
-                    <span>Knowl</span><br/>
-                    <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
-                    <p><br/></p>
-                    <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
-                    <br/>
-                    <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
-                    <br/><br/>
-                    <span>MD5</span><br/>
-                    <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
-                </div>
-                <div class="modal-footer">
-                    <div id="logo-box" class="pull-left">
-                    </div>
+                <div style="float:right">
+                    <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
+                    <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
+                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Wb code window -->
-    <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
-            <div class="modal-content" style="height:100%">
-                <div class="modal-header">
-                    <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="height:100%" >
-                    <textarea id="source_text"  name="content" style="height:100%"></textarea>
-                </div>
-                <div class="modal-footer" style="justify-content:flex-start;display:block">
-                    <div style="float:left">
+</div>
+<div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="github">
+                    <div class="row">
+                        <div class="col">
+                            <label for="ghRepoUsername">
+                                Username
+                            </label>
+                            <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" required="required" value=""/>
+                            <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
+                        </div>
+                        <div class="col">
+                            <label for="ghRepo">
+                                Github Repository
+                            </label>
+                            <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
+                        </div>
+                        <div class="col">
+                            <label for="ghBranch">
+                                Branch
+                            </label>
+                            <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="ghHead">
+                                Head
+                            </label>
+                            <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
+                        </div>
+                        <div class="col">
+                            <label for="ghAccessToken">
+                                Access Token
+                            </label>
+                            <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
+                        </div>
+                    </div>
+                    <div style="display:none">
+                        <textarea class="index_text" id="index_text"></textarea>
+                    </div>
+                    <div style="display:none">
+                        <textarea class="cranach_text" id="cranach_text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div style="width:100%">
+                    <div class="feedback" style="float:left;font-size:small">
+                        <div class="spinner-border text-secondary loading" role="status" style="float:left;display:none;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
+                        <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
                     </div>
                     <div style="float:right">
-                        <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
-                        <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
-                        <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
-                        <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
+                        <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
-        <div class="modal-dialog" role="dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="github">
-                        <div class="row">
-                            <div class="col">
-                                <label for="ghRepoUsername">
-                                    Username
-                                </label>
-                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" required="required" value=""/>
-                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
-                            </div>
-                            <div class="col">
-                                <label for="ghRepo">
-                                    Github Repository
-                                </label>
-                                <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
-                            </div>
-                            <div class="col">
-                                <label for="ghBranch">
-                                    Branch
-                                </label>
-                                <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
-                            </div>                            
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <label for="ghHead">
-                                    Head
-                                </label>
-                                <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
-                            </div>
-                            <div class="col">
-                                <label for="ghAccessToken">
-                                    Access Token
-                                </label>
-                                <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
-                            </div>
-                        </div>
-                        <div style="display:none">
-                            <textarea class="index_text" id="index_text"></textarea>
-                        </div>
-                        <div style="display:none">
-                            <textarea class="cranach_text" id="cranach_text"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div style="width:100%">
-                        <div class="feedback" style="float:left;font-size:small">
-                            <div class="spinner-border text-secondary loading" role="status" style="float:left;display:none;">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
-                            <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
-                        </div>
-                        <div style="float:right">
-                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+</div>
 <script>
 $(function() {
-
     $('#gh_modal button.commit').click(function(){
-	commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
+        commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
     });
-
     $('.dropdown-item.persist').on('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
     });
-
     $('#edit_box').change(function() {
         if ($(this).is(':checked')) {
             // $('#edit_button').removeClass('btn-outline-info');
@@ -717,22 +683,18 @@ $(function() {
             $('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
         }
     });
-
     $('#render_sel').mouseover(function() {
         if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
             return;
         }
         $("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
-
         var buffer = editor.getValue()
         .replace(/@sep/g, '@slide')
         // .replace(/@@/g, '')
         // .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
         // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
-        
         let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-
         var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
         .replace(/@sep/g, '@slide')
         // .replace(/@@/g, '')
@@ -740,9 +702,7 @@ $(function() {
         // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]+)|(?:{(?:([^{}]+)|(?:{(?:([^{}]+)|(?:{[^{}]+}))+}))+}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
         // console.log(pastBuffer);
-        
         let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-
         var o = new Option(currentSlide.toString(), currentSlide);
         $("#render_sel").append(o);
         $("#render_sel").append('<hr/>');
@@ -750,10 +710,7 @@ $(function() {
             var o = new Option(i.toString(), i);
             $("#render_sel").append(o);
         }
-
     });
-
-
     $('#render_sel').on('change', function() {
         let query;
         let slide = slideIndex;
@@ -787,7 +744,6 @@ $(function() {
             return cranach;
         });
     });
-
     $('#left_half .collapsea').click(function() {
         if ($(this).hasClass('collapsed')) {
             $(this).removeClass('collapsed')
@@ -795,23 +751,18 @@ $(function() {
             $(this).addClass('collapsed');
         }
     });
-
     // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
     window.addEventListener("beforeunload", function (e) {
         if (warnClose) {
             var confirmationMessage = 'It looks like you have been editing something. '
             + 'If you leave before saving, your changes will be lost.';
-
             (e || window.event).returnValue = confirmationMessage; //Gecko + IE
             return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
         } else {
             return undefined;
         }
-    });    
-
+    });
 });
-
 </script>
-
 </body>
 </html>
