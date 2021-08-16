@@ -589,13 +589,34 @@ function postprocess(cranach) {
         $('.carousel').on('slid.bs.carousel', function () {
             $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-            $('.carousel').carousel('pause');
-            let $slide = $('.carousel div.slide.active');
-            // $slide.click();
-            
+                        
+            let $slide = $('.carousel div.slide.active').first();            
+                        
             batchRender($slide[0]);
             adjustHeight($slide[0]);
             updateCanvas($slide[0]);
+            
+            // $(slide).nextAll('.slide:lt(1)').each(function() {
+            //     $(this).addClass('carousel-item');
+            // });
+            // $(slide).prevAll('.slide:lt(1)').each(function() {
+            //     $(this).addClass('carousel-item');
+            // });
+            
+            let $slides = $('#output > .slide');
+            let slideNum = parseInt($slide.attr('slide'));
+            let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
+            let nextNum = slideNum + 1 % $slides.length;
+            
+            if ($slides.length > 50) {
+                $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
+                $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');                
+                $('#output div.slide').not('.carousel-item').addClass('hidden');
+            }
+            
+            updateCarousel(parseInt(slideNum));
+            $('.carousel').carousel('pause');
+            
         })
         $('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
             let $slide = $('.carousel div.slide.active');

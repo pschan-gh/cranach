@@ -6,8 +6,8 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta charset="UTF-8"/> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     <!-- <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" /> -->
     <link rel="stylesheet" type="text/css" href="js/jsxgraph.css" />
 
@@ -382,7 +382,7 @@
                                 </li>
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <li>
-                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
+                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active').removeClass('hidden');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
                                 </li>                                
                                 <li>
                                     <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>

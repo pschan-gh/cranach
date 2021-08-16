@@ -110,11 +110,10 @@ function addCanvas(slide) {
 
 }
 
-
 function renderSlide(slide) {
 
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
-    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');    
 
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
@@ -132,19 +131,21 @@ function renderSlide(slide) {
         // MathJax.typesetPromise([slide]);
         typeset([slide]);
     }    
-    
 }
 
 
 function batchRender(slide) {
+    
+    
     $('.slide').not('.selected').find('a.collapsea').removeAttr('data-bs-toggle');    
     $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
-        renderSlide(this);
+        renderSlide(this);        
     });
     $(slide).prevAll('.slide.tex2jax_ignore:lt(1)').each(function() {
-        renderSlide(this);
+        renderSlide(this);        
     });
     renderSlide(slide);
+    
 }
 
 function adjustHeight(slide) {
@@ -240,55 +241,67 @@ function resizeFont(multiplier) {
 
 function updateCarousel(slideNum) {
 
+    $('div.tooltip').remove();
+
     let numOfSlides = $('#output div.slide').length;
-    
-    if (numOfSlides > 50) {
-        return 0;
-    }
-    
-    $(".carousel-indicators").html('');
-    // let firstSlide = Math.max(slideNum - 25, 0);
-    // let lastSlide = Math.min(slideNum + 25, numOfSlides);
-    let firstSlide = 0;
-    let lastSlide = numOfSlides;
-    for (let i = firstSlide; i < lastSlide; i++) {
-        $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + i + '" aria-label="Slide ' + (i + 1) + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + (i + 1) + '">');
-    }
         
-    $('.carousel-indicators button[data-bs-slide-to="' + (slideNum - 1) + '"]').addClass('active').attr('aria-current', "true");
+    $(".carousel-indicators").html('');
+    
+    let i;
+    let currentIndex = -1;
+    console.log($('.carousel-item'));
+    $('#output .carousel-item').each(function(index) {
+        i = parseInt($(this).attr('slide'));
+        // $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + (i - 1) + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
+        $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + index + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
+        if (i == slideNum) {
+            currentIndex = index;
+        }
+    });
+    console.log('indicator list updated');
+    if (currentIndex != -1) {
+        $('.carousel-indicators button[data-bs-slide-to="' + currentIndex + '"]').addClass('active').attr('aria-current', "true");
+    }
     $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
     
 }
 
 function showDivs(n, cranach) {
-
-    $('#right_half').addClass('slide');
-    $('#output').addClass('carousel-inner');
     
-    var $slides = $('#output > .slide');
+    $('#right_half').addClass('slide');
+    $('#output.present').addClass('carousel-inner');
+    // $('#output div.slide').addClass('carousel-item');
+    
+    let $slides = $('#output > .slide');
     
     if ($slides.length == null || $slides.length == 0) {
         return 0;
     }
-    
-    // if ($slides.length < 50) {
-    //     $('#output div.slide').addClass('carousel-item');
-    // } else {
-    //     $('#output div.slide[slide="' + (n - 1) + '"]').addClass('carousel-item');
-    //     $('#output div.slide[slide="' + n + '"]').addClass('carousel-item');
-    //     $('#output div.slide[slide="' + (n + 1) + '"]').addClass('carousel-item');
-    // }
-    
-    // $('#output div.slide').addClass('carousel-item');
-    updateCarousel(n);
-    $('.carousel').carousel('pause');
-    
-    let index = (parseInt(n) + $slides.length) % $slides.length;
-    index = index == 0 ? $slides.length : index;    
 
-    var $slide = $('#s' + index);    
+    let index = ((parseInt(n) - 1 + $slides.length) % $slides.length) + 1;
+    // index = index == 0 ? $slides.length : index;    
+    updateCarousel(index);
+    
+    let slideNum = parseInt(n);
+    
+    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
+    let nextNum = slideNum + 1 % $slides.length;
+
+    let $slide = $('.present #s' + index);
+    $slide.removeClass('hidden').addClass('carousel-item');
+    
+    if ($slides.length > 50) {        
+        $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
+        $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');
+        $('#output div.slide').not('.carousel-item').addClass('hidden');
+    } else {
+        $('#output .slide').addClass('carousel-item');        
+    }
+    
+    updateCarousel(index);
     $slide.addClass('active');
-
+    
+    batchRender($slide[0]);
     
     adjustHeight($slide[0]);
     $('#right_half .slide_number button').text('Slide ' + index);
