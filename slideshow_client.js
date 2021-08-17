@@ -124,7 +124,8 @@ function renderSlide(slide) {
     // });
 
     if ($(slide).hasClass("tex2jax_ignore")) {
-        $(slide).removeClass("tex2jax_ignore");        
+        $(slide).removeClass("tex2jax_ignore");
+        // console.log('typesetting slide ' + $(slide).attr('slide'));
         typeset([slide]);
     }    
 }
@@ -276,10 +277,8 @@ function showDivs(n, cranach) {
     }
 
     let index = ((parseInt(n) - 1 + $slides.length) % $slides.length) + 1;
-    // index = index == 0 ? $slides.length : index;    
-    
-    let slideNum = parseInt(n);
-    
+    // index = index == 0 ? $slides.length : index;        
+    let slideNum = index;    
     let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
     let nextNum = slideNum + 1 % $slides.length;
 
@@ -288,7 +287,7 @@ function showDivs(n, cranach) {
     $('#carousel.present').removeClass('carousel-inner');
     $('#carousel .slide').removeClass('carousel-item');
     // removeTypeset(document.getElementById('output'));
-    if ($slides.length > 50) {
+    if ($slides.length > 10) {
         $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
         $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));;
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
@@ -297,8 +296,6 @@ function showDivs(n, cranach) {
         $('#carousel').html($('#output').html());
     }
     $('#carousel .slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
-    $('#carousel .slide').find('.tex2jax_ignore').removeClass('tex2jax_ignore');
-    $('#carousel .slide').find('.latexSource').removeClass('latexSource');
     $slide = $('#carousel div.slide[slide="' + index + '"]');
     updateCarousel(index);
     $slide.addClass('active');
@@ -411,23 +408,28 @@ function showTexSource(showSource, editor) {
             $('#carousel').css('display', '');
             $('#carousel div.slide[slide="' + slideIndex + '"]').html($slide.html());
         }
-        MathJax.startup.document.state(0);
-        MathJax.texReset();
+        // MathJax.startup.document.state(0);
+        // MathJax.texReset();
 
         renderTexSource($slide[0]);
-        if ($('#carousel div.slide[slide="' + slideIndex + '"]').length) {
-            renderTexSource($('#carousel div.slide[slide="' + slideIndex + '"]')[0]);
-        }
+        $('#carousel div.slide[slide="' + slideIndex + '"]').each(function() {
+            renderTexSource(this);
+        });
         
         editor.container.style.pointerEvents="auto";
         editor.container.style.opacity = 1; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", false);
         editor.focus();
         
-        adjustHeight($('#carousel div.slide[slide="' + slideIndex + '"]')[0]);
+        $('#carousel div.slide[slide="' + slideIndex + '"]').each(function() {
+            adjustHeight(this);
+        });
+        
+        $('#output div.slide').addClass('tex2jax_ignore');
     } else {
         if ($('.carousel-item').length) {
             $('#output div.slide').hide();
+            $('#output div.slide').removeClass('tex2jax_ignore');
             $('#output').show();
             $('#carousel').hide();
             $slide.show();
@@ -702,7 +704,6 @@ function updateTitle(slide) {
 
     $('#info_half div.keywords[slide!="all"]').hide();
     $('#info_half div.keywords[chapter="' + chapter + '"][slide="' + index + '"]').show();
-    // typeset([document.getElementById('left_half')]);
 
 }
 

@@ -304,12 +304,12 @@ function updateScrollEvent(cranach) {
     $('#output').off();
     
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
-    $('#output:visible').on('scroll', function() {
+    $('.output:visible').on('scroll', function() {
         if(timer !== null) {
             clearTimeout(timer);
         }
         timer = window.setTimeout(function() {
-            $('#output:visible .slide.tex2jax_ignore').each(function() {
+            $('.output:visible .slide.tex2jax_ignore').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);
                 };
@@ -472,7 +472,7 @@ function postprocess(cranach) {
             return MathJax.tex2chtmlPromise(cranach.macrosString);
             // return MathJax.tex2svgPromise(cranach.macrosString);
         }).then(() => {
-            $('#output:visible .slide').each(function() {
+            $('.output:visible .slide').each(function() {
                 if (isElementInViewport(this)) {
                     batchRender(this);                    
                 }
