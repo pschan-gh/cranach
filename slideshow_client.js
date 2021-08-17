@@ -509,9 +509,9 @@ function destroyClickedElement(event) {
     document.body.removeChild(event.target);
 }
 
-function collapseToggle(slide) {
+function collapseToggle(slideNum) {
 
-    let $slide = $(slide);
+    let $slide = $('.output:visible div.slide[slide="' + slideNum + '"]');
 
     $slide.find('a.collapsea').attr('data-bs-toggle', 'collapse');
     $slide.find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
@@ -531,7 +531,7 @@ function focusOn($item, text) {
     let $slide = $item.closest('div.slide').first();
     let slideNum = $slide.attr('slide');
     if ($slide.hasClass('collapsed')) {
-        collapseToggle($slide[0]);
+        collapseToggle(slideNum);
     }
     
     if (text!= '') {
