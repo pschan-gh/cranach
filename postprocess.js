@@ -591,7 +591,6 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
                         
             let $slide = $('.output.present:visible div.slide.active').first();            
-                        
             batchRender($slide[0]);
             adjustHeight($slide[0]);
             updateCanvas($slide[0]);
@@ -605,14 +604,16 @@ function postprocess(cranach) {
             
             let $slides = $('#output > .slide');
             let slideNum = parseInt($slide.attr('slide'));
+            slideIndex = slideNum;
             let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
             let nextNum = slideNum + 1 % $slides.length;
             
             $('#carousel.present').removeClass('carousel-inner');
-            $('#carousel .slide').removeClass('carousel-item');
-            $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
+            
             // updateCarousel(parseInt(slideNum));
             if ($slides.length > 50) {
+                $('#carousel .slide').removeClass('carousel-item');
+                $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
                 if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
                     $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
                 }

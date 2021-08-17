@@ -349,14 +349,14 @@
                             <!-- &#9776; -->
                             <ul class="dropdown-menu" aria-labelledby="test_button">
                                 <li>
-                                    <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);">Full Screen</a>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#carousel').show();">Full Screen</a>
                                 </li>
                                 <li>
                                     <a id="presentation_button" class="dropdown-item menu_button fullscreen" onclick="if(document.fullscreenElement){document.exitFullscreen();} else {$('body')[0].requestFullscreen();}">Presentation Mode</a>
                                 </li>
                                 <!-- $('#right_half')[0].requestFullscreen(); -->
                                 <li>
-                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.pane').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('#output div.slide').removeClass('carousel-item').removeClass('active').removeClass('hidden');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));">Split Screen</a>
+                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="$('#container').removeClass('wide');$('.present').removeClass('present').removeClass('overview').addClass($('#left_half').attr('mode')); if($('#output').hasClass('annotate')){ annotate();} $('#output').removeClass('carousel-inner');$('.output div.slide').removeClass('carousel-item').removeClass('active').removeClass('hidden');$('.controls').hide();$('#output .slide_content').css('padding-bottom', '');$('#output').scrollTo($('.slide.selected'));$('#carousel').hide();$('#output div.slide').find('.tex2jax_ignore').removeClass('tex2jax_ignore').removeClass('latexSource');$('#output div.slide').addClass('tex2jax_ignore');">Split Screen</a>
                                 </li>
                                 <li>
                                     <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>

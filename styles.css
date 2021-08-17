@@ -292,11 +292,11 @@ display:block;
     flex:0 1 auto;
     height:100%;
 }
-#right_half.dual #carousel, #right_half.overview #carousel {
+#right_half.dual #carousel, #right_half.overview #carousel, #right_half.compose #carousel , #right_half.info #carousel{
     display:none;
 }
 
-#right_half.present #output {
+#output.present {
     display:none;
 }
 #right_half.present #full_screen_icon {

@@ -39,8 +39,8 @@ function updateCanvas(slide) {
     $('.canvas-controls .expand').click(function() {
         slide.cfd.disableDrawingMode();
         // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-        var oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-        var img = new Image();
+        let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+        let img = new Image();
         img.src = oldCanvas;
         img.onload = function (){
             $(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
@@ -118,14 +118,13 @@ function renderSlide(slide) {
      
     // $(slide).find('iframe:not([src])').not(".webwork").each(function() {
     //     $(this).attr('src', $(this).attr('data-src')).show();
-    //     var $iframe = $(this);
+    //     let $iframe = $(this);
     //     $(this).css('background', 'none');
     //     $(this).iFrameResize({checkOrigin:false});
     // });
 
     if ($(slide).hasClass("tex2jax_ignore")) {
-        $(slide).removeClass("tex2jax_ignore");
-        // MathJax.typesetPromise([slide]);
+        $(slide).removeClass("tex2jax_ignore");        
         typeset([slide]);
     }    
 }
@@ -163,13 +162,13 @@ function adjustHeight(slide) {
 }
 
 function showStep(el) {
-    var $parent = $(el).closest('div[wbtag="steps"]');
-    var $stepsClass = $parent.find('.steps');
+    let $parent = $(el).closest('div[wbtag="steps"]');
+    let $stepsClass = $parent.find('.steps');
 
     if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
         $parent.attr('stepId', 0);
     }
-    var whichStep = $parent.attr('stepId');
+    let whichStep = $parent.attr('stepId');
     console.log('STEP: ' + whichStep + ', class LENGTH: ' + $stepsClass.length);
 
     if (whichStep < $stepsClass.length) {
@@ -284,25 +283,23 @@ function showDivs(n, cranach) {
     let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
     let nextNum = slideNum + 1 % $slides.length;
 
-    let $slide = $('.present #s' + index);
+    let $slide = $('.output.present:visible div.slide[slide="' + index + '"]');
     
     $('#carousel.present').removeClass('carousel-inner');
     $('#carousel .slide').removeClass('carousel-item');
-    
+    // removeTypeset(document.getElementById('output'));
     if ($slides.length > 50) {
         $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-        // updateCarousel(parseInt(slideNum));
-        // $('#output .slide[slide="' + prevNum + '"]').first().removeClass('hidden').addClass('carousel-item');
-        // $('#output .slide[slide="' + nextNum + '"]').first().removeClass('hidden').addClass('carousel-item');
-        // $('#output div.slide').not('.carousel-item').addClass('hidden');
         $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));;
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
         $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;
     } else {
-        $('#carousel').html($('#output').html());        
+        $('#carousel').html($('#output').html());
     }
-    $('#carousel .slide').removeClass('hidden').addClass('carousel-item');
-    $slide = $('#carousel #s' + index);
+    $('#carousel .slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
+    $('#carousel .slide').find('.tex2jax_ignore').removeClass('tex2jax_ignore');
+    $('#carousel .slide').find('.latexSource').removeClass('latexSource');
+    $slide = $('#carousel div.slide[slide="' + index + '"]');
     updateCarousel(index);
     $slide.addClass('active');
     
@@ -367,51 +364,78 @@ function print(promise) {
     $('#print_content').find('.hidden_collapse').show();
 }
 
-function removeTypeset() { // i.e. Show LaTeX source
+function removeTypeset(el) { // i.e. Show LaTeX source
 
         console.log('removeTypset called ' + slideIndex);
-        // var jax = MathJax.getAllJax('s' + slideIndex);
-        var jax = MathJax.getAllJax();
+        // let jax = MathJax.getAllJax();
+        let jax = MathJax.startup.document.getMathItemsWithin(el);
+        console.log(jax);
         showTexFrom(jax);
-        MathJax.typesetClear();
+        MathJax.typesetClear([el]);
 }
 
-function showTexSource(showSource, editor) {
-    $('.output:visible').attr('contentEditable', showSource);
-    $('.slide_content *, .paragraphs').css('border', '').css('padding', '');
-    $('.paragraphs').css('color', '').css('font-family', '');
+function renderTexSource(slide) {
+    let oldElems = slide.getElementsByClassName("latexSource");
+    
+    for(let i = oldElems.length - 1; i >= 0; i--) {
+        let oldElem = oldElems.item(i);
+        let parentElem = oldElem.parentNode;
+        let innerElem;
+
+        let textNode = document.createTextNode(oldElem.textContent);
+        parentElem.insertBefore(textNode, oldElem);
+        parentElem.removeChild(oldElem);
+    }
+            
+    $(slide).find('.latexSource').remove();
+    MathJax.startup.promise.then(() => {            
+        $(slide).removeClass('edit');
+        $(slide).addClass('tex2jax_ignore');
+        renderSlide(slide);
+    });
+}
+
+function showTexSource(showSource, editor) {    
+    
+    // let $slide = $('.output:visible div.slide[slide="' + slideIndex + '"]');
+    let $slide = $('#output div.slide[slide="' + slideIndex + '"]');
+    
+    $slide.attr('contentEditable', showSource);
+    $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
+    $slide.find('.paragraphs').css('color', '').css('font-family', '');
+    
     if (!showSource) {
+        if ($('.carousel-item').length) {
+            $('#output').css('display', '');            
+            $('#output div.slide').css('display', '');
+            $('#carousel').css('display', '');
+            $('#carousel div.slide[slide="' + slideIndex + '"]').html($slide.html());
+        }
         MathJax.startup.document.state(0);
         MathJax.texReset();
 
-        var oldElems = document.getElementById('output').getElementsByClassName("latexSource");
-        // var oldElems = document.getElementById('s' + slideIndex).getElementsByClassName("latexSource");
-
-        for(var i = oldElems.length - 1; i >= 0; i--) {
-            var oldElem = oldElems.item(i);
-            var parentElem = oldElem.parentNode;
-            var innerElem;
-
-            var textNode = document.createTextNode(oldElem.textContent);
-            parentElem.insertBefore(textNode, oldElem);
+        renderTexSource($slide[0]);
+        if ($('#carousel div.slide[slide="' + slideIndex + '"]').length) {
+            renderTexSource($('#carousel div.slide[slide="' + slideIndex + '"]')[0]);
         }
-
-        $('.latexSource').remove();
-
-        MathJax.startup.promise.then(() => {
-            $('.slide').addClass('tex2jax_ignore');
-            $('.slide').removeClass('edit');
-            renderSlide($('#s' + slideIndex)[0]);
-        });
+        
         editor.container.style.pointerEvents="auto";
         editor.container.style.opacity = 1; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", false);
         editor.focus();
+        
+        adjustHeight($('#carousel div.slide[slide="' + slideIndex + '"]')[0]);
     } else {
-        $('.slide[slide="' + slideIndex + '"]').find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
-        $('.slide[slide="' + slideIndex + '"]').find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
-        removeTypeset();
-        $('.slide[slide="' + slideIndex + '"]').addClass('edit');
+        if ($('.carousel-item').length) {
+            $('#output div.slide').hide();
+            $('#output').show();
+            $('#carousel').hide();
+            $slide.show();
+        }
+        $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
+        $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
+        removeTypeset($slide[0]);
+        $slide.addClass('edit').addClass('tex2jax_ignore');
         editor.container.style.pointerEvents="none";
         editor.container.style.opacity=0.5; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", true);
@@ -429,17 +453,16 @@ function showXML(docCranach) {
 }
 
 function showTexFrom(jax) {
-    for (var i = jax.length - 1, m = -1; i > m; i--) {
-        var jaxNode = jax[i].start.node, tex = jax[i].math;
+    for (let i = jax.length - 1, m = -1; i > m; i--) {
+        let jaxNode = jax[i].start.node, tex = jax[i].math;
 
         if (jax[i].display) {
             if (!tex.match(/^\s*\\(begin{equation|(begin{align(\*)?})|begin{multline|begin{eqnarray)/)) {
-            // if (!tex.match(/^\s*\\begin(?!{split)/))  {
                 tex = "\\["+tex+"\\]";
             }
         } else {tex = "$"+tex+"$"}
 
-        var $preview = $('<span class="latexSource tex2jax_ignore"></span>');
+        let $preview = $('<span class="latexSource tex2jax_ignore"></span>');
         $preview.html(tex);
         if (jax[i].display) {
             $preview.css('display', 'block');
@@ -452,20 +475,19 @@ function showTexFrom(jax) {
 
 function showJaxSource(outputId) {
 
-    var jax = MathJax.getAllJax(outputId);
-
+    let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById(outputId));
     showTexFrom(jax);
 
     MathJax.typesetClear();
+    
+    let clone = document.getElementById(outputId).cloneNode(true);
 
-    var clone = document.getElementById(outputId).cloneNode(true);
+    let oldElems = clone.getElementsByClassName("latexSource");
 
-    var oldElems = clone.getElementsByClassName("latexSource");
-
-    for(var i = oldElems.length - 1; i >= 0; i--) {
-        var oldElem = oldElems.item(i);
-        var parentElem = oldElem.parentNode;
-        var innerElem;
+    for(let i = oldElems.length - 1; i >= 0; i--) {
+        let oldElem = oldElems.item(i);
+        let parentElem = oldElem.parentNode;
+        let innerElem;
 
         while (innerElem = oldElem.firstChild)
         {
@@ -475,12 +497,12 @@ function showJaxSource(outputId) {
         parentElem.removeChild(oldElem);
     }
 
-    var editedContent = clone.innerHTML;
+    let editedContent = clone.innerHTML;
 
-    var body = new DOMParser().parseFromString(editedContent, 'text/html');
+    let body = new DOMParser().parseFromString(editedContent, 'text/html');
 
-    var bodyString = new XMLSerializer().serializeToString(body);
-    var body = new DOMParser().parseFromString(bodyString, "application/xml");
+    let bodyString = new XMLSerializer().serializeToString(body);
+    body = new DOMParser().parseFromString(bodyString, "application/xml");
     return body;
 }
 
@@ -490,18 +512,14 @@ function destroyClickedElement(event) {
 
 function collapseToggle(slideIndex) {
 
-    var $slide = $('#s' + slideIndex);
+    let $slide = $('#s' + slideIndex);
 
     if ($slide.hasClass('collapsed')) {
         $slide.removeClass('collapsed');
-        // $slide.find('.collapse').addClass('show');        
-        // $slide.find('a.collapsea').attr('aria-expanded', 'true');
         $slide.find('.collapse').collapse('show');        
         $('#uncollapse_button').text('Collapse');
     } else {
         $slide.addClass('collapsed');
-        // $slide.find('.collapse').removeClass('show');        
-        // $slide.find('a.collapsea').attr('aria-expanded', 'false');
         $slide.find('.collapse').collapse('hide');
         $('#uncollapse_button').text('Uncollapse');
     }
@@ -513,8 +531,7 @@ function focusOn($item, text) {
     if ($slide.hasClass('collapsed')) {
         collapseToggle(slideNum);
     }
-    // $slide.click();
-
+    
     if (text!= '') {
         $('.output:visible').scrollTo($item);
         $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
@@ -555,26 +572,23 @@ function imagePostprocess(image) {
             return 1;
         }
 
-        var image_width = $(image).closest('.image').css('width');
+        let image_width = $(image).closest('.image').css('width');
         
         $(image).closest('.image').css('height', '');
         $(image).closest('.dual-left').css('height', '');
         $(image).closest('.dual-right').css('height', '');
     
-        // var override = !((typeof $(image).closest('.image').css('width') === 'undefined')|| ($(image).closest('.image').css('width') === false) || ($(image).closest('.image').css('width') === '0px') || (image_width == '600px'));
-        
-        // console.log($(image).closest('.image').css('width'));
-        var override = ($(image).closest('.image').css('width') !== null && typeof $(image).closest('.image').css('width') !== 'undefined' && Number.parseInt($(image).closest('.image').css('width').replace(/px$/, '') < 600))
-        // var override = false;
+        let override = ($(image).closest('.image').css('width') !== null && typeof $(image).closest('.image').css('width') !== 'undefined' && Number.parseInt($(image).closest('.image').css('width').replace(/px$/, '') < 600))
+        // let override = false;
         
         if(/svg/.test($(image).attr('src'))) {
             if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
-                var width = 300;
-                var height = 300;
+                let width = 300;
+                let height = 300;
                 $(image).attr('width', width);
             } else if (!override) {
-                var width = 450;
-                var height = 450;
+                let width = 450;
+                let height = 450;
                 $(image).closest('.image').css('width', '450');
                 $(image).attr('width', width);
             } else {
@@ -586,8 +600,8 @@ function imagePostprocess(image) {
             $(image).removeAttr('width');
             $(image).removeAttr('height');
 
-            var width = $(image).get(0).naturalWidth;
-            var height = $(image).get(0).naturalHeight;
+            let width = $(image).get(0).naturalWidth;
+            let height = $(image).get(0).naturalHeight;
             
             if (width > height) {
                 if (width > 600) {
@@ -634,16 +648,16 @@ function imagePostprocess(image) {
 
 function updateTitle(slide) {
 
-    var index = $(slide).attr('slide');
+    let index = $(slide).attr('slide');
 
-    var course = $(slide).attr('course') ? $(slide).attr('course') : '';
-    var chapterType = $(slide).attr('chapter_type') ? $(slide).attr('chapter_type'):'';
-    var chapter = $(slide).attr('chapter') ? $(slide).attr('chapter') : '';
-    var section = $(slide).attr('section') ? $(slide).attr('section') : '';
-    var subsection = $(slide).attr('subsection') ? $(slide).attr('subsection') : '';
-    var subsubsection = $(slide).attr('subsubsection') ? $(slide).attr('subsubsection') : '';
+    let course = $(slide).attr('course') ? $(slide).attr('course') : '';
+    let chapterType = $(slide).attr('chapter_type') ? $(slide).attr('chapter_type'):'';
+    let chapter = $(slide).attr('chapter') ? $(slide).attr('chapter') : '';
+    let section = $(slide).attr('section') ? $(slide).attr('section') : '';
+    let subsection = $(slide).attr('subsection') ? $(slide).attr('subsection') : '';
+    let subsubsection = $(slide).attr('subsubsection') ? $(slide).attr('subsubsection') : '';
 
-    var topics = '';
+    let topics = '';
 
     $('#toc a').removeClass('highlighted');
     $('#toc a.chapter[chapter="' + chapter + '"]').addClass('highlighted');
@@ -658,13 +672,13 @@ function updateTitle(slide) {
         topics += $(this).html();
     });
 
-    var chapterTitle = $(slide).attr('chapter_title') ? $(slide).attr('chapter_title') : $(slide).prevAll('[chapter_title!=""]:first').attr('chapter_title');
+    let chapterTitle = $(slide).attr('chapter_title') ? $(slide).attr('chapter_title') : $(slide).prevAll('[chapter_title!=""]:first').attr('chapter_title');
 
     chapterTitle = chapterTitle ? chapterTitle : '';
 
-    var section = $(slide).attr('section') ?  chapter + '.' + $(slide).attr('section') : '';
+    section = $(slide).attr('section') ?  chapter + '.' + $(slide).attr('section') : '';
 
-    var sectionTitle = $('a.section.highlighted').find('span.title').html();
+    let sectionTitle = $('a.section.highlighted').find('span.title').html();
 
     sectionTitle = sectionTitle ? sectionTitle : '';
 
@@ -695,7 +709,7 @@ function updateTitle(slide) {
 // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
 function isElementInViewport (el) {
 
-    var rect = el.getBoundingClientRect();
+    let rect = el.getBoundingClientRect();
 
     return (
         (
@@ -714,9 +728,9 @@ function isElementInViewport (el) {
 function updateSlideProgress(index, refresh) {
     if (refresh) {
         $('#slide_progress tbody tr').html('');
-        var numSlides = document.getElementsByClassName('slide').length;
-        var spacing = Math.min(3, 5*20/numSlides);
-        for (var i = 0; i < numSlides; i++) {
+        let numSlides = document.getElementsByClassName('slide').length;
+        let spacing = Math.min(3, 5*20/numSlides);
+        for (let i = 0; i < numSlides; i++) {
             $('#slide_progress tbody tr').append('<td num="' + (+i + 1) + '" style="border-left-width:' + spacing + 'px; border-right-width: ' + spacing + 'px;"></td>');
         }
     }
@@ -730,8 +744,8 @@ function updateSlideProgress(index, refresh) {
 }
 
 function updateModalRefby(md5String, cranach) {
-    var contentURLDir = cranach.attr['contentURLDir'];
-    var contentURL = cranach.attr['contentURL'];
+    let contentURLDir = cranach.attr['contentURLDir'];
+    let contentURL = cranach.attr['contentURL'];
     console.log('CONTENTURL ' + contentURL);
     // $.ajax({
     //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
@@ -743,7 +757,7 @@ function updateModalRefby(md5String, cranach) {
         url: 'xsl/refby2html.xsl'
     })
     .done(function(xsl) {
-        var xsltProcessor = new XSLTProcessor();
+        let xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xsl);
         xsltProcessor.setParameter('', 'md5', md5String);
         xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
@@ -759,20 +773,20 @@ function updateModalRefby(md5String, cranach) {
 }
 
 function updateModalProofs(md5String, cranach) {
-    var contentURLDir = cranach.attr['contentURLDir'];
+    let contentURLDir = cranach.attr['contentURLDir'];
 
     let indexDoc = cranach.attr['indexDoc'];
     console.log(indexDoc);
     // .done(function(indexDoc) {
-    var queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
+    let queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
     console.log(queryString);
-    var iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+    let iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
     console.log(iterator);
     try {
-        var thisNode = iterator.iterateNext();
+        let thisNode = iterator.iterateNext();
         
-        var html = '';
-        var index = 1;
+        let html = '';
+        let index = 1;
         while (thisNode) {
             if (html != '') {
                 html += ', ';
@@ -797,7 +811,7 @@ function updateModalProofOf(button, cranach) {
         $('.modal_proof_of').hide();
         return 0;
     }
-    var rootURL = cranach.attr['rootURL'];
+    let rootURL = cranach.attr['rootURL'];
     // let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
     let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&item=" + $(button).attr('of');
     
@@ -807,6 +821,5 @@ function updateModalProofOf(button, cranach) {
     } else {
         $('.modal_proof_of a').html($(button).attr('of-type') + ' ' + $(button).attr('of-item'));
     }
-    $('.modal_proof_of').show();
-    
+    $('.modal_proof_of').show();    
 }
