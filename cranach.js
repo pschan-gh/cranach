@@ -98,7 +98,16 @@ function Cranach(url) {
 
     this.setup = function(options) {
         this.output = document.getElementById(this.attr['outputID']);
-        var domparser = new DOMParser();
+        var domparser = new DOMParser();        
+        
+        if(options) {
+            for (let key in options){
+                if(options.hasOwnProperty(key)){
+                    this.attr[key] = options[key];
+                }
+            }
+        }
+        
         if (this.params) {
             var params = this.params;
             var urlParams = new URLSearchParams(params[1]);
@@ -160,17 +169,6 @@ function Cranach(url) {
                 console.log(this.bare);
             }
         }
-
-        if(options) {
-            for (let key in options){
-                if(options.hasOwnProperty(key)){
-                    this.attr[key] = options[key];
-                }
-            }
-        }
-
-        // console.log(this.attr);
-
 
         var el = this;
 
