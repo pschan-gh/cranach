@@ -110,8 +110,8 @@ function addCanvas(slide) {
 function renderSlide(slide) {
 
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
-    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');    
-
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
@@ -132,13 +132,17 @@ function renderSlide(slide) {
 
 
 function batchRender(slide) {
-    
-    
-    $('.slide').not('.selected').find('a.collapsea').removeAttr('data-bs-toggle');    
-    $(slide).nextAll('.slide.tex2jax_ignore:lt(1)').each(function() {
+        
+    // $('.output:visible div.slide').not('.selected').find('a.collapsea').removeAttr('data-bs-toggle');
+    // $('.output:visible div.slide').find('a.collapsea').each(function() {
+    //     if ($(this).closest('div.collapse').length == 0) {
+    //         $(this).removeAttr('data-bs-toggle');
+    //     }
+    // });
+    $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);        
     });
-    $(slide).prevAll('.slide.tex2jax_ignore:lt(1)').each(function() {
+    $(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);        
     });
     renderSlide(slide);
