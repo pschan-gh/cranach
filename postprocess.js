@@ -591,7 +591,7 @@ function postprocess(cranach) {
             $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
             $('.carousel').carousel('pause');
             let $slide = $('.carousel div.slide.active');
-            // $slide.click();
+            $slide.click();
             
             batchRender($slide[0]);
             adjustHeight($slide[0]);

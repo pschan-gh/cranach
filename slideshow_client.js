@@ -271,15 +271,7 @@ function showDivs(n, cranach) {
         return 0;
     }
     
-    // if ($slides.length < 50) {
-    //     $('#output div.slide').addClass('carousel-item');
-    // } else {
-    //     $('#output div.slide[slide="' + (n - 1) + '"]').addClass('carousel-item');
-    //     $('#output div.slide[slide="' + n + '"]').addClass('carousel-item');
-    //     $('#output div.slide[slide="' + (n + 1) + '"]').addClass('carousel-item');
-    // }
-    
-    // $('#output div.slide').addClass('carousel-item');
+    $('#output div.slide').addClass('carousel-item');
     updateCarousel(n);
     $('.carousel').carousel('pause');
     
@@ -288,7 +280,6 @@ function showDivs(n, cranach) {
 
     var $slide = $('#s' + index);    
     $slide.addClass('active');
-
     
     adjustHeight($slide[0]);
     $('#right_half .slide_number button').text('Slide ' + index);
