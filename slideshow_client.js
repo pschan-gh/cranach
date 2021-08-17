@@ -518,8 +518,11 @@ function destroyClickedElement(event) {
 
 function collapseToggle(slideIndex) {
 
-    let $slide = $('#s' + slideIndex);
+    let $slide = $('.output:visible #s' + slideIndex);
 
+    $slide.find('a.collapsea').attr('data-bs-toggle', 'collapse');
+    $slide.find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    
     if ($slide.hasClass('collapsed')) {
         $slide.removeClass('collapsed');
         $slide.find('.collapse').collapse('show');        
