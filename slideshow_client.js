@@ -287,7 +287,7 @@ function showDivs(n, cranach) {
     $('#carousel.present').removeClass('carousel-inner');
     $('#carousel .slide').removeClass('carousel-item');
     // removeTypeset(document.getElementById('output'));
-    if ($slides.length > 10) {
+    if ($slides.length > 50) {
         $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
         $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));;
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
