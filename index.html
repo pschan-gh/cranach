@@ -43,11 +43,6 @@
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     <script>
     // console.clear();
-    var editMode = false;
-    var slideIndex = 1;
-    var slideCount = 0;
-    var slideLine = [];
-    var mode = 'dual';
     var Range = ace.require('ace/range').Range; // get reference to ace/range
     var warnClose = false;
     var baseRenderer;
@@ -349,7 +344,7 @@
                             <!-- &#9776; -->
                             <ul class="dropdown-menu" aria-labelledby="test_button">
                                 <li>
-                                    <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs(slideIndex, baseRenderer);$('#carousel').show();">Full Screen</a>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="$('.pane').removeClass('info').removeClass('overview').removeClass('compose').addClass('present');mode='present';showDivs($('#output div.slide.selected')[0] || $('#output div.slide:lt(1)')[0], baseRenderer);$('#carousel').show();">Full Screen</a>
                                 </li>
                                 <li>
                                     <a id="presentation_button" class="dropdown-item menu_button fullscreen" onclick="if(document.fullscreenElement){document.exitFullscreen();} else {$('body')[0].requestFullscreen();}">Presentation Mode</a>
@@ -365,7 +360,7 @@
                                     <a id='canvas' class="menu_button dropdown-item canvas" onclick="annotate();">Annotate</a>
                                 </li>
                                 <li>
-                                    <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle(slideIndex);">Uncollapse</a>
+                                    <a id="uncollapse_button" class="menu_button dropdown-item" onclick="collapseToggle($('.output:visible div.slide.selected'));">Uncollapse</a>
                                 </li>
                                 <li>
                                     <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
@@ -392,7 +387,7 @@
                                 <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
                             </li> -->
                             <li>
-                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();editMode = box.checked;showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();showTexSource(box.checked, editor);warnClose = true">Edit</a>
                                 <input id="edit_box" type="checkbox" style="display:none" />
                             </li>
                             <li class="advanced">
@@ -429,8 +424,6 @@
                     <li class="nav-item">
                         <div class="form-inline slide_sel">
                             <div class="form-group">
-                                <!-- <label for="slide_sel" style="margin:10 5 10 10"><small>Jump to slide:</small></label> -->
-                                <!-- <input class="form-control" style="color:#888;border:none" type="number" id="slide_sel" name="slide_sel" min="1" max="100" value="1"/> -->
                                 <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
                                 </select>
                             </div>
@@ -528,44 +521,41 @@
                     </h5>
                 </a>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                <!-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" >&times;</span>
-            </button> -->
-        </div>
-        <div class="modal-body">
-            <div class="modal_proofs">
             </div>
-            <div class="modal_proof_of">
-                <br/><strong>Of:</strong>
-                <a target="_blank" href></a>
+            <div class="modal-body">
+                <div class="modal_proofs">
+                </div>
+                <div class="modal_proof_of">
+                    <br/><strong>Of:</strong>
+                    <a target="_blank" href></a>
+                </div>
+                <div class="modal_refby">
+                </div>
+                <span id='modal_keywords'>
+                </span>
+                <hr/>
+                <span>URL</span>
+                <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
+                <p><br></p>
+                <span>HTML Hyperlink</span>
+                <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
+                <p><br/></p>
+                <span>Knowl</span><br/>
+                <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
+                <p><br/></p>
+                <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
+                <br/>
+                <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
+                <br/><br/>
+                <span>MD5</span><br/>
+                <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
             </div>
-            <div class="modal_refby">
-            </div>
-            <span id='modal_keywords'>
-            </span>
-            <hr/>
-            <span>URL</span>
-            <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
-            <p><br></p>
-            <span>HTML Hyperlink</span>
-            <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
-            <p><br/></p>
-            <span>Knowl</span><br/>
-            <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
-            <p><br/></p>
-            <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
-            <br/>
-            <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
-            <br/><br/>
-            <span>MD5</span><br/>
-            <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
-        </div>
-        <div class="modal-footer">
-            <div id="logo-box" class="pull-left">
+            <div class="modal-footer">
+                <div id="logo-box" class="pull-left">
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 <!-- Wb code window -->
 <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
@@ -671,13 +661,10 @@ $(function() {
     });
     $('#edit_box').change(function() {
         if ($(this).is(':checked')) {
-            // $('#edit_button').removeClass('btn-outline-info');
-            // $('#edit_button').addClass('btn-danger');
             $('#edit_button').css('background-color', 'red');
             $('#edit_button').css('color', 'white');
             $('#edit_icon').attr('src', 'icons/Editting_Icon.svg');
         } else {
-            // $('#edit_button').removeClass('btn-danger');
             $('#edit_button').css('background-color', '');
             $('#edit_button').css('color', '');
             $('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
@@ -690,18 +677,11 @@ $(function() {
         $("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
         var buffer = editor.getValue()
         .replace(/@sep/g, '@slide')
-        // .replace(/@@/g, '')
-        // .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-        // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
         let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
         var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
         .replace(/@sep/g, '@slide')
-        // .replace(/@@/g, '')
-        // .replace(/@slide(?:\n|\s)*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-        // .replace(/@(section|subsection|subsubsection){\n*((?:([^{}]+)|(?:{(?:([^{}]+)|(?:{(?:([^{}]+)|(?:{[^{}]+}))+}))+}))+)\n*}/g, "@$1\n@title\n$2\n@endtitle")
         .replace(/\<!--(.|\n)*?--\>/g, '');
-        // console.log(pastBuffer);
         let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
         var o = new Option(currentSlide.toString(), currentSlide);
         $("#render_sel").append(o);
@@ -712,19 +692,13 @@ $(function() {
         }
     });
     $('#render_sel').on('change', function() {
-        let query;
-        let slide = slideIndex;
-        if ($(this).val() != 'all') {
-            let slideNum = $(this).val();
-            query = '//lv:slide[@slide=' + slideNum + ']';
-        } else {
-            query = '';
-        }
+        let query = $(this).val() == 'all' ? '' : '//lv:slide[@slide=' + $(this).val() + ']';
+        let selectedSlideNum = $('.output:visible div.slide.selected').length > 0 ? $('.output:visible div.slide.selected').attr('slide') : 1;
         console.log(query);
         $("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
         baseRenderer.then(cranach => {
             let dir = cranach.attr['dir'];
-            baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':slideIndex, 'indexDoc':cranach.attr['indexDoc']});
+            baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']});
             return baseRenderer;
         })
         .then(cranach => {
@@ -739,8 +713,6 @@ $(function() {
                 $('#s1').find('.collapsea').removeClass('collapsed');
                 // ▽⊟
             }
-            // console.log(slide);
-            // jumpToSlide($('#output'), $('.slide[slide="' + slide + '"]').first());
             return cranach;
         });
     });

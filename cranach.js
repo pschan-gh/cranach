@@ -138,9 +138,7 @@ function Cranach(url) {
             }
 
             if (urlParams.has('slide')) {
-                // this.attr['slideIndex'] = urlParams.get('slide');;
                 this.attr['selectedSlide'] = urlParams.get('slide');
-                // console.log('SLIDE: ' + this.attr['selectedSlide']);
             }
             if (urlParams.has('present')) {
                 this.attr['present'] = true;
