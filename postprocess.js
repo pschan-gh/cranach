@@ -630,7 +630,10 @@ function postprocess(cranach) {
         })
         $('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
             let $slide = $('.output.present:visible div.slide.active');
-            adjustHeight($slide[0]); 
+            // $('.canvas-controls:visible .expand').each(function() {
+            //     $(this).click();
+            // });
+            adjustHeight($slide[0]);             
         });
         $('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
             let $slide = $('.output.present:visible div.slide.active');
