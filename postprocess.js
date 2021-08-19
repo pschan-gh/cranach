@@ -460,14 +460,11 @@ function postprocess(cranach) {
     
     $(function() {
         MathJax.startup.promise.then(() => {
-            // MathJax.typesetClear();
             MathJax.startup.document.state(0);
             MathJax.texReset();
             return;
         }).then(() => {
-            // console.log(cranach.macrosString);
             return MathJax.tex2chtmlPromise(cranach.macrosString);
-            // return MathJax.tex2svgPromise(cranach.macrosString);
         }).then(() => {
             $('.output:visible .slide').each(function() {
                 if (isElementInViewport(this)) {
@@ -480,7 +477,6 @@ function postprocess(cranach) {
             var text = $(this).text();
             $(this).attr('text', text.replace(/[^a-zA-Z0-9À-ÿ\-]/g, ''));
         });
-
 
         // https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
         $("[data-bs-toggle=popover]").popover({
@@ -526,139 +522,13 @@ function postprocess(cranach) {
         if (cranach.attr['selectedKeyword']) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
             focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
-        }
-
-        // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-        var menu_timer = null;
-        $('#right_half').off();
-        $('#right_half').mousemove(function() {
-            clearTimeout(menu_timer);
-            $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-            $('.present .controls.carousel-indicators').css('display', 'flex');
-            menu_timer = setTimeout(function () {
-                $(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
-                $(".controls, .present .active .slide_number").not('.hidden').fadeOut();
-            }, 1000);
-        })
-        
-        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').off();
-        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
-            $('#right_half').off('mousemove');
-            clearTimeout(menu_timer);
-            $(this).show();
-        });
-        $(".present #menu_container .navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-                $('.present .controls.carousel-indicators').css('display', 'flex');
-                menu_timer = setTimeout(function () {
-                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
-        });
-
-        $('.controls').off();
-        $('.controls').on('mouseover', function() {
-            // $('#progress_container').show();
-            $('#right_half').off('mousemove');
-            clearTimeout(menu_timer);
-            $(this).show();
-        });
-        $('.controls').on('mouseout', function() {
-            // $('#progress_container').hide();
-            clearTimeout(menu_timer);
-            $('#right_half').off('mousemove');
-            $('#right_half').mousemove(function() {
-                clearTimeout(menu_timer);
-                $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-                $('.present .controls.carousel-indicators').css('display', 'flex');
-                menu_timer = setTimeout(function () {
-                    $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").fadeOut();
-                    $(".controls").hide();
-                }, 1000);
-            })
-        });
-        
-        $('.carousel').on('slid.bs.carousel', function () {
-            $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-            $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-                        
-            let $slide = $('.output.present:visible div.slide.active').first();
-            let slideNum = parseInt($slide.attr('slide'));
-            
-            $('#output .slide.selected').removeClass('selected');
-            $('#output div.slide[slide="' + slideNum + '"]').addClass('selected');
-            
-            batchRender($slide[0]);
-            adjustHeight($slide[0]);
-            updateCanvas($slide[0]);
-            
-            // $(slide).nextAll('.slide:lt(1)').each(function() {
-            //     $(this).addClass('carousel-item');
-            // });
-            // $(slide).prevAll('.slide:lt(1)').each(function() {
-            //     $(this).addClass('carousel-item');
-            // });
-            
-            let $slides = $('#output > .slide');
-            
-            let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-            let nextNum = slideNum + 1 % $slides.length;
-            
-            $('#carousel.present').removeClass('carousel-inner');
-            
-            // updateCarousel(parseInt(slideNum));
-            if ($slides.length > 50) {
-                $('#carousel .slide').removeClass('carousel-item');
-                $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-                if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
-                    $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
-                }
-                if ($('#carousel .slide[slide="' + nextNum + '"]').length == 0) {
-                    $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;        
-                }
-            }
-            $('#carousel .slide').removeClass('hidden').addClass('carousel-item');            
-            updateCarousel(parseInt(slideNum));
-            // $('#carousel.present').addClass('carousel-inner');
-            $('.carousel').carousel('pause');
-            
-        })
-        $('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-            let $slide = $('.output.present:visible div.slide.active');
-            // $('.canvas-controls:visible .expand').each(function() {
-            //     $(this).click();
-            // });
-            adjustHeight($slide[0]);             
-        });
-        $('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-            let $slide = $('.output.present:visible div.slide.active');
-            adjustHeight($slide[0]); 
-        });
-        
-        $('input.lecture_mode').change(function() {
-            if (this.checked) {
-                $('[data-lecture-skip="true"]').addClass('lecture_skip');
-            } else {
-                $('[data-lecture-skip="true"]').removeClass('lecture_skip');
-            }
-        });
-        if (cranach.attr['lectureMode'] || $('input.lecture_mode')[0].checked) {   
-            console.log('LECTURE MODE');     
-            $('[data-lecture-skip="true"]').addClass('lecture_skip');
-        }
+        }                
         
         $('#loading_icon').hide();
         $('#right_half .navbar').show();
         if (cranach.attr['present']) {
-            console.log('PRESENT MODE');
-            $('#present_button').click();
+        	console.log('PRESENT MODE');
+        	$('#present_button').click();
         }
-        
-    });
-    
+    });    
 }

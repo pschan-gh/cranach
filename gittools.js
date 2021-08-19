@@ -98,3 +98,13 @@ function ghCommitFile(octokit, owner, repo, branch, filename, string) {
 		});
 	});
 }
+
+$(function() {
+	$('#gh_modal button.commit').click(function(){
+		commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
+	});
+	$('.dropdown-item.persist').on('click', function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+	});
+});

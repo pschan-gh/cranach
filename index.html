@@ -30,112 +30,25 @@
     <script type="text/javascript">
     function report() {}
     </script>
-    <script type="module" src="gittools.js"></script>
-    <script type="text/javascript" src="weaver_core.js"></script>
-    <script type="text/javascript" src="weaver.js"></script>
-    <script type="text/javascript" src="cranach.js"></script>
-    <script type="text/javascript" src="slideshow_client.js"></script>
-    <script type="text/javascript" src="wb.js"></script>
-    <script type="text/javascript" src="interfaces.js"></script>
-    <script type="text/javascript" src="postprocess.js" ></script>
+    <script src="weaver_core.js"></script>
+    <script src="weaver.js"></script>
+    <script src="cranach.js"></script>
+    <script src="slideshow_client.js"></script>    
+    <script src="interfaces.js"></script>
+    <script src="postprocess.js" ></script>
     <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
     <script src="https://tikzjax.com/v1/tikzjax.js"></script>
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-    <script>
-    // console.clear();
+    <script src="js/canvas-free-drawing.js"></script>
+    <script> 
     var Range = ace.require('ace/range').Range; // get reference to ace/range
     var warnClose = false;
-    var baseRenderer;
+    var baseRenderer;    
     </script>
-    <script>
-    MathJax = {
-        startup: {
-            typeset: false,
-            ready() {
-                typeset = function (doms) {
-                    MathJax.startup.promise = MathJax.startup.promise
-                    .then(() => {return MathJax.typesetPromise(doms)})
-                    .catch((err) => console.log('Typeset failed: ' + err.message));
-                    return MathJax.startup.promise;
-                };
-                MathJax.getAllJax = function (name) {
-                    var list = Array.from(MathJax.startup.document.math);
-                    if (!name) return list;
-                    var container = document.getElementById(name);
-                    if (!container) return list;
-                    // console.log(list);
-                    var filtered = list.filter((node) => container.contains(node.start.node));
-                    // console.log(filtered);
-                    return filtered;
-                };
-                MathJax.startup.defaultReady();
-                // MathJax.startup.document.state(0);
-                // MathJax.texReset();
-                MathJax.startup.promise.then(() => {
-                    console.log('MathJax initial typesetting complete');
-                    // var cranach is now a promise
-                    $('.icon.latex, .icon.xml').hide();
-                    baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
-                        console.log(cranach);
-                        let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
-                        console.log(output);
-                        // return cranach.render(document.getElementById('output'))
-                        return cranach.render(output)
-                        .then(renderer => {
-                            if (renderer.bare) {
-                                return renderer;
-                            }
-                            return renderer.displayIndexDocToHtml(document.getElementById('index'))
-                            .then(renderer => {
-                                if (renderer.bare) {
-                                    return renderer;
-                                }
-                                postprocess(renderer);
-                                convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
-                                $('#render_sel').prop('disabled', false);
-                                $('#wb_button').prop('disabled', false);
-                                return renderer;
-                            })
-                        });
-                    });
-                });
-            }
-        },
-        loader: {
-            load: ['output/svg', '[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil', '[tex]/color', '[tex]/mathtools']
-        },
-        tex: {
-            inlineMath: [['$','$'], ['\\(','\\)']],
-            processEnvironments: true,
-            processEscapes: true,
-            processRefs: true,
-            tags: "ams",
-            packages: ['base', 'ams', 'newcommand', 'html', 'extpfeil', 'color', 'mathtools']
-        },
-        options: {
-            ignoreHtmlClass: "tex2jax_ignore",
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'annotation', 'annotation-xml']
-        },
-        svg: {
-            scale: 1,                      // global scaling factor for all expressions
-            minScale: .5,                  // smallest scaling factor to use
-            mtextInheritFont: false,       // true to make mtext elements use surrounding font
-            merrorInheritFont: true,       // true to make merror text use surrounding font
-            mathmlSpacing: false,          // true for MathML spacing rules, false for TeX rules
-            skipAttributes: {},            // RFDa and other attributes NOT to copy to the output
-            exFactor: .5,                  // default size of ex in em units
-            displayAlign: 'center',        // default for indentalign when set to 'auto'
-            displayIndent: '0',            // default for indentshift when set to 'auto'
-            fontCache: 'local',            // or 'global' or 'none'
-            localID: null,                 // ID to use for local font cache (for single equation processing)
-            internalSpeechTitles: true,    // insert <title> tags with speech content
-            titleID: 0                     // initial id number to use for aria-labeledby titles
-        }
-    };
-    </script>
+    <script src="mathjax_setup.js" ></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>    
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="js/canvas-free-drawing.js"></script>
+    
     <style type="text/css">
     .ace_highlight-marker {
         position: absolute; /* without this positions will be wrong */
@@ -293,34 +206,10 @@
                         </ul>
                     </div>
                 </nav>
-                <div id="input">
+                <div id="input" class="editor">
                 </div>
-            </div>
-            <script>
-            var editor = ace.edit("input");
-            editor.setTheme("ace/theme/cranach");
-            editor.session.setMode("ace/mode/cranach");
-            editor.getSession().setUseWrapMode(true);
-            // editor.setValue($('#wb').html(), 1);
-            editor.setShowPrintMargin(false);
-            editor.commands.addCommand({
-                name: 'saveFile',
-                bindKey: {
-                    win: 'Ctrl-S',
-                    mac: 'Cmd-S',
-                    sender: 'editor|cli'
-                },
-                exec: function(env, args, request) {
-                    var dummyLink = document.createElement('a');
-                    // uriContent = "data:application/octet-stream," + encodeURIComponent(editor.session.getValue());
-                    uriContent = "data:application/octet-stream," + encodeURIComponent(editor.getValue());
-                    dummyLink.setAttribute('href', uriContent);
-                    console.log($("base").attr('wb-src'));
-                    dummyLink.setAttribute('download', $("base").attr('wb-src').match(/(((?!\/).)*?\.wb)$/)[0]);
-                    dummyLink.click();
-                }
-            });
-            </script>
+                <script src="editor.js"></script>
+            </div>            
         </div>
         <div id="right_half" class='right pane overview carousel carousel-dark' data-bs-touch="false" data-bs-keyboard="false">
             <div id="loading_icon" style="position:absolute;top:0;display:table;height:100%;width:100%;background-color:hsla(0, 0%, 100%, 0.8);z-index:999;">
@@ -340,7 +229,9 @@
                 <div class="container-fluid" onmouseover="$('#slide_sel').show()" onmouseout="$('#slide_sel').hide()">
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">menu</i></a>
+                            <a id="test_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">menu</i>
+                            </a>
                             <!-- &#9776; -->
                             <ul class="dropdown-menu" aria-labelledby="test_button">
                                 <li>
@@ -381,360 +272,290 @@
                                 <li>
                                     <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
                                     <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
+                                </li>                            
+                                <li>
+                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                    <input id="edit_box" type="checkbox" style="display:none" />
                                 </li>
-                                <!-- <li>
-                                <a class="menu_button dropdown-item" onclick="$('#htmlInput').click()">Open HTML</a>
-                                <input id="htmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openHTML(baseRenderer, this);" style="display:none">
-                            </li> -->
-                            <li>
-                                <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();showTexSource(box.checked, editor);warnClose = true">Edit</a>
-                                <input id="edit_box" type="checkbox" style="display:none" />
-                            </li>
-                            <li class="advanced">
-                                <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
-                                <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
-                                    <li>
-                                        <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
-                                            <input type="checkbox" class="lecture_mode"/>
-                                            Lecture Mode
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
-                                    </li>
-                                    <li>
-                                        <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
-                                    </li>
-                                    <li>
-                                        <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
-                                    </li>
-                                    <li>
-                                        <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
-                                    </li>
-                                    <li>
-                                        <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
-                                    </li>
-                                    <li>
-                                        <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <div class="form-inline slide_sel">
-                            <div class="form-group">
-                                <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
-                                </select>
+                                <li class="advanced">
+                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                    <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
+                                        <li>
+                                            <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
+                                                <input type="checkbox" class="lecture_mode"/>
+                                                Lecture Mode
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);$('#compose_button').click();">Export to Wb</a>
+                                        </li>
+                                        <li>
+                                            <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
+                                        </li>
+                                        <li>
+                                            <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                        </li>
+                                        <li>
+                                            <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                        </li>
+                                        <li>
+                                            <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
+                                        </li>
+                                        <li>
+                                            <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <div class="form-inline slide_sel">
+                                <div class="form-group">
+                                    <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
-                <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
-                    <li class="nav-item" style="width:auto">
-                        <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
-                            <i class="material-icons">brightness_2</i>
-                        </button>
-                        <!-- ☾ -->
-                    </li>
-                    <li class="nav-item" style="width:auto">
-                        <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
-                            <i class="material-icons">edit</i>
-                        </button>
-                    </li>
-                    <li class="nav-item" style="width:auto">
-                        <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
-                            <i class="material-icons">
-                                fullscreen
-                            </i>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
-                            <i class="material-icons">
-                                fullscreen_exit
-                            </i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div id="output" class="output overview dual pane"></div>
-        <div id="carousel" class="output overview dual pane"></div>
-        <div class="controls carousel-indicators">
-        </div>
-        <div class="controls_container controls">
-            <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#right_half"  data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-        <div class="canvas-controls">
-            <nav class="navbar navbar-collapse-lg navbar-light">
-                <div class="container-fluid">
-                    <div>
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
-                            <li class="nav-item"><a class="nav-link annotate  expand" href="#"><span class="material-icons">expand</span></a></li>
-                            <!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
-                                <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
-                                    <li><a class="dropdown-item annotate red color" href="#">Red</a></li>
-                                    <li><a class="dropdown-item annotate green color" href="#">Green</a></li>
-                                    <li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
-                                    <li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
-                                    <li><a class="dropdown-item annotate black color" href="#">Black</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
-                            <li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
-                            <li class="nav-item"><a class="nav-link annotate disable" href="#"><span class="material-icons">edit_off</span></a></li>
-                            <li class="nav-item"><a class="nav-link annotate erase" href="#"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
-                            <li class="nav-item"><a class="nav-link annotate enable" href="#"><span class="material-icons">mode_edit</span></a></li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
+                    <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
+                                <i class="material-icons">brightness_2</i>
+                            </button>
+                            <!-- ☾ -->
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#edit_button').click();">
+                                <i class="material-icons">edit</i>
+                            </button>
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#present_button').click();">
+                                <i class="material-icons">
+                                    fullscreen
+                                </i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="$('#info_button').click()">
+                                <i class="material-icons">
+                                    fullscreen_exit
+                                </i>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </nav>
+            <script src="menu.js"></script>
+            <div id="output" class="output overview dual pane"></div>
+            <div id="carousel" class="output overview dual pane"></div>        
+            <div class="controls carousel-indicators">
+            </div>
+            <script src="carousel.js" ></script>
+            <div class="controls_container controls">
+                <button class="carousel-control-prev" type="button" data-bs-target="#right_half"  data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#right_half"  data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <div class="canvas-controls">
+                <nav class="navbar navbar-collapse-lg navbar-light">
+                    <div class="container-fluid">
+                        <div>
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
+                                <li class="nav-item"><a class="nav-link annotate  expand" href="#"><span class="material-icons">expand</span></a></li>
+                                <!-- <li class="nav-item"><a class="nav-link restore">Restore canvas</a></li> -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
+                                    <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
+                                        <li><a class="dropdown-item annotate red color" href="#">Red</a></li>
+                                        <li><a class="dropdown-item annotate green color" href="#">Green</a></li>
+                                        <li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
+                                        <li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
+                                        <li><a class="dropdown-item annotate black color" href="#">Black</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
+                                <li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
+                                <li class="nav-item"><a class="nav-link annotate disable" href="#"><span class="material-icons">edit_off</span></a></li>
+                                <li class="nav-item"><a class="nav-link annotate erase" href="#"><span class="material-icons-outlined">mode_edit_outline</span></a></li>
+                                <li class="nav-item"><a class="nav-link annotate enable" href="#"><span class="material-icons">mode_edit</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="slide_number">
+                <button class="plain_button slide_button">
+                </button>
+            </div>
         </div>
-        <div class="slide_number">
-            <button class="plain_button slide_button">
-            </button>
+        <div class="present title_box" style="display:none"></div>
+        <div id="cover_half" onclick="unhide();"></div>
+    </div>
+    <!-- Wb item modal -->
+    <div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
+        <div class="modal-dialog" role="document" >
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <a id="item_modal_link" href="" target="_blank">
+                        <h5 class="modal-title notkw"  id="share_item">
+                            <span class="current_course"></span> <span class="current_chapter"></span>
+                            <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
+                        </h5>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal_proofs">
+                    </div>
+                    <div class="modal_proof_of">
+                        <br/><strong>Of:</strong>
+                        <a target="_blank" href></a>
+                    </div>
+                    <div class="modal_refby">
+                    </div>
+                    <span id='modal_keywords'>
+                    </span>
+                    <hr/>
+                    <span>URL</span>
+                    <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
+                    <p><br></p>
+                    <span>HTML Hyperlink</span>
+                    <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
+                    <p><br/></p>
+                    <span>Knowl</span><br/>
+                    <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
+                    <p><br/></p>
+                    <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
+                    <br/>
+                    <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
+                    <br/><br/>
+                    <span>MD5</span><br/>
+                    <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
+                </div>
+                <div class="modal-footer">
+                    <div id="logo-box" class="pull-left">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="present title_box" style="display:none"></div>
-    <div id="cover_half" onclick="unhide();"></div>
-</div>
-<!-- Wb item modal -->
-<div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
-    <div class="modal-dialog" role="document" >
-        <div class="modal-content">
-            <div class="modal-header" >
-                <a id="item_modal_link" href="" target="_blank">
-                    <h5 class="modal-title notkw"  id="share_item">
-                        <span class="current_course"></span> <span class="current_chapter"></span>
-                        <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
-                    </h5>
-                </a>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="modal_proofs">
+    <!-- Wb code window -->
+    <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
+            <div class="modal-content" style="height:100%">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal_proof_of">
-                    <br/><strong>Of:</strong>
-                    <a target="_blank" href></a>
+                <div class="modal-body" style="height:100%" >
+                    <textarea id="source_text"  name="content" style="height:100%"></textarea>
                 </div>
-                <div class="modal_refby">
-                </div>
-                <span id='modal_keywords'>
-                </span>
-                <hr/>
-                <span>URL</span>
-                <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
-                <p><br></p>
-                <span>HTML Hyperlink</span>
-                <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
-                <p><br/></p>
-                <span>Knowl</span><br/>
-                <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
-                <p><br/></p>
-                <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
-                <br/>
-                <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
-                <br/><br/>
-                <span>MD5</span><br/>
-                <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
-            </div>
-            <div class="modal-footer">
-                <div id="logo-box" class="pull-left">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Wb code window -->
-<div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
-        <div class="modal-content" style="height:100%">
-            <div class="modal-header">
-                <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="height:100%" >
-                <textarea id="source_text"  name="content" style="height:100%"></textarea>
-            </div>
-            <div class="modal-footer" style="justify-content:flex-start;display:block">
-                <div style="float:left">
-                </div>
-                <div style="float:right">
-                    <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
-                    <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
-                    <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
-                    <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
-    <div class="modal-dialog" role="dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="github">
-                    <div class="row">
-                        <div class="col">
-                            <label for="ghRepoUsername">
-                                Username
-                            </label>
-                            <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" required="required" value=""/>
-                            <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
-                        </div>
-                        <div class="col">
-                            <label for="ghRepo">
-                                Github Repository
-                            </label>
-                            <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
-                        </div>
-                        <div class="col">
-                            <label for="ghBranch">
-                                Branch
-                            </label>
-                            <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="ghHead">
-                                Head
-                            </label>
-                            <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
-                        </div>
-                        <div class="col">
-                            <label for="ghAccessToken">
-                                Access Token
-                            </label>
-                            <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
-                        </div>
-                    </div>
-                    <div style="display:none">
-                        <textarea class="index_text" id="index_text"></textarea>
-                    </div>
-                    <div style="display:none">
-                        <textarea class="cranach_text" id="cranach_text"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div style="width:100%">
-                    <div class="feedback" style="float:left;font-size:small">
-                        <div class="spinner-border text-secondary loading" role="status" style="float:left;display:none;">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
-                        <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
+                <div class="modal-footer" style="justify-content:flex-start;display:block">
+                    <div style="float:left">
                     </div>
                     <div style="float:right">
-                        <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
+                        <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                        <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
+                        <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
+                        <button class="btn btn-outline-info btn-sm save" ext="" onclick="saveText($('#source_text').val(), baseRenderer, $(this).attr('ext'));">Save</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-$(function() {
-    $('#gh_modal button.commit').click(function(){
-        commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
-    });
-    $('.dropdown-item.persist').on('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-    });
-    $('#edit_box').change(function() {
-        if ($(this).is(':checked')) {
-            $('#edit_button').css('background-color', 'red');
-            $('#edit_button').css('color', 'white');
-            $('#edit_icon').attr('src', 'icons/Editting_Icon.svg');
-        } else {
-            $('#edit_button').css('background-color', '');
-            $('#edit_button').css('color', '');
-            $('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
-        }
-    });
-    $('#render_sel').mouseover(function() {
-        if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-            return;
-        }
-        $("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
-        var buffer = editor.getValue()
-        .replace(/@sep/g, '@slide')
-        .replace(/\<!--(.|\n)*?--\>/g, '');
-        let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-        var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
-        .replace(/@sep/g, '@slide')
-        .replace(/\<!--(.|\n)*?--\>/g, '');
-        let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-        var o = new Option(currentSlide.toString(), currentSlide);
-        $("#render_sel").append(o);
-        $("#render_sel").append('<hr/>');
-        for (let i = numOfSlides; i >= 1; i--) {
-            var o = new Option(i.toString(), i);
-            $("#render_sel").append(o);
-        }
-    });
-    $('#render_sel').on('change', function() {
-        let query = $(this).val() == 'all' ? '' : '//lv:slide[@slide=' + $(this).val() + ']';
-        let selectedSlideNum = $('.output:visible div.slide.selected').length > 0 ? $('.output:visible div.slide.selected').attr('slide') : 1;
-        console.log(query);
-        $("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
-        baseRenderer.then(cranach => {
-            let dir = cranach.attr['dir'];
-            baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']});
-            return baseRenderer;
-        })
-        .then(cranach => {
-            console.log(cranach);
-            MathJax.typesetClear();
-            return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
-        })
-        .then(cranach => {
-            postprocess(cranach);
-            if (query != '') {
-                $('#s1').find('.collapse').collapse('show');
-                $('#s1').find('.collapsea').removeClass('collapsed');
-                // ▽⊟
+    <script src="wb.js"></script>
+    <!-- Github modal -->
+    <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="github">
+                        <div class="row">
+                            <div class="col">
+                                <label for="ghRepoUsername">
+                                    Username
+                                </label>
+                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" required="required" value=""/>
+                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
+                            </div>
+                            <div class="col">
+                                <label for="ghRepo">
+                                    Github Repository
+                                </label>
+                                <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
+                            </div>
+                            <div class="col">
+                                <label for="ghBranch">
+                                    Branch
+                                </label>
+                                <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="ghHead">
+                                    Head
+                                </label>
+                                <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
+                            </div>
+                            <div class="col">
+                                <label for="ghAccessToken">
+                                    Access Token
+                                </label>
+                                <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
+                            </div>
+                        </div>
+                        <div style="display:none">
+                            <textarea class="index_text" id="index_text"></textarea>
+                        </div>
+                        <div style="display:none">
+                            <textarea class="cranach_text" id="cranach_text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div style="width:100%">
+                        <div class="feedback" style="float:left;font-size:small">
+                            <div class="spinner-border text-secondary loading" role="status" style="float:left;display:none;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
+                            <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
+                        </div>
+                        <div style="float:right">
+                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="gittools.js"></script>    
+    <script>
+    $(function() {        
+        // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
+        window.addEventListener("beforeunload", function (e) {
+            if (warnClose) {
+                var confirmationMessage = 'It looks like you have been editing something. '
+                + 'If you leave before saving, your changes will be lost.';
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            } else {
+                return undefined;
             }
-            return cranach;
         });
     });
-    $('#left_half .collapsea').click(function() {
-        if ($(this).hasClass('collapsed')) {
-            $(this).removeClass('collapsed')
-        } else {
-            $(this).addClass('collapsed');
-        }
-    });
-    // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
-    window.addEventListener("beforeunload", function (e) {
-        if (warnClose) {
-            var confirmationMessage = 'It looks like you have been editing something. '
-            + 'If you leave before saving, your changes will be lost.';
-            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-        } else {
-            return undefined;
-        }
-    });
-});
 </script>
 </body>
 </html>
