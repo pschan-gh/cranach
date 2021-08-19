@@ -309,54 +309,54 @@ function showDivs(slide, cranach) {
 }
 
 
-function print(promise) {
-
-    $('html').css('position', 'relative');
-
-    if($('#right_half').hasClass('overview') || $('#right_half').hasClass('compose') || $('#right_half').hasClass('info') ) {
-        $('#print_content').html('');
-        $('#print_content').append($('#output').clone());
-        promise.then(el => {
-            $('#print_content').find('.slide.tex2jax_ignore').each(function() {
-                $(this).removeClass('tex2jax_ignore');
-            });
-            MathJax.typesetPromise().then(el => {
-                $('#print_content').find('.steps').css('visibility', 'visible');
-            });
-        });
-    } else if($('#right_half').hasClass('present')){
-        $('.title_box').first().clone().appendTo($('#print_content'));
-        $('#print_content').find('.title_box').css('font-size', '0.5em');
-        $('#print_content').find('.title_box').css('padding-bottom', '1em');
-        $('#print_content').find('.title_box').find('h3').css('color', '#888');
-        $('#print_content').append($('.output:visible div.slide.selected').html());
-    }
-
-    $('#print').show();
-
-    $('#container').hide();
-
-    $('#print_content').removeClass('text');
-    $('#print_content').addClass('output_dual');
-    $('#print_content').find('.slide').css('display', 'block');
-    $('#print_content').find('.slide').css('height', 'auto');
-    $('#print_content').find('img:not([src])').each(function() {
-        imagePostprocess(this);
-    });
-    $('#print_content').find('.slide').show();
-
-    $('#print_content').find('.statement').after('<hr/>');
-    $('#print_content').find('.substatement').after('<hr/>');
-
-    $('#print_content').find('.separator').html(".&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.");
-    $('#print_content').find('blockquote').each(function() {
-        $(this).after($(this).html());
-        $(this).remove();
-    });
-    $('#print_content').find('.collapsea').hide();
-    $('#print_content').find('.collapse').show();
-    $('#print_content').find('.hidden_collapse').show();
-}
+// function print(promise) {
+// 
+//     $('html').css('position', 'relative');
+// 
+//     if($('#right_half').hasClass('overview') || $('#right_half').hasClass('compose') || $('#right_half').hasClass('info') ) {
+//         $('#print_content').html('');
+//         $('#print_content').append($('#output').clone());
+//         promise.then(el => {
+//             $('#print_content').find('.slide.tex2jax_ignore').each(function() {
+//                 $(this).removeClass('tex2jax_ignore');
+//             });
+//             MathJax.typesetPromise().then(el => {
+//                 $('#print_content').find('.steps').css('visibility', 'visible');
+//             });
+//         });
+//     } else if($('#right_half').hasClass('present')){
+//         $('.title_box').first().clone().appendTo($('#print_content'));
+//         $('#print_content').find('.title_box').css('font-size', '0.5em');
+//         $('#print_content').find('.title_box').css('padding-bottom', '1em');
+//         $('#print_content').find('.title_box').find('h3').css('color', '#888');
+//         $('#print_content').append($('.output:visible div.slide.selected').html());
+//     }
+// 
+//     $('#print').show();
+// 
+//     $('#container').hide();
+// 
+//     $('#print_content').removeClass('text');
+//     $('#print_content').addClass('output_dual');
+//     $('#print_content').find('.slide').css('display', 'block');
+//     $('#print_content').find('.slide').css('height', 'auto');
+//     $('#print_content').find('img:not([src])').each(function() {
+//         imagePostprocess(this);
+//     });
+//     $('#print_content').find('.slide').show();
+// 
+//     $('#print_content').find('.statement').after('<hr/>');
+//     $('#print_content').find('.substatement').after('<hr/>');
+// 
+//     $('#print_content').find('.separator').html(".&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.");
+//     $('#print_content').find('blockquote').each(function() {
+//         $(this).after($(this).html());
+//         $(this).remove();
+//     });
+//     $('#print_content').find('.collapsea').hide();
+//     $('#print_content').find('.collapse').show();
+//     $('#print_content').find('.hidden_collapse').show();
+// }
 
 function removeTypeset(el) { // i.e. Show LaTeX source
 

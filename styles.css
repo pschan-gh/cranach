@@ -1107,35 +1107,32 @@ font-weight:bolder;
 }
 @media print {
     html {
+        height: 100%;
     }
     body {
-	background: #fff;
+    background: #fff;
 	font-size: 12pt;
-	position:relative;
-    width:100%;
-    height:100%;
-    /* overflow-y:auto; */
+	}
+    html, body, #container, #right_half, #output {
+        height:100% !important;
+        width:100% !important;
     }
+    
+    #left_half, #menu_container {
+        visibility:hidden;
+        display:none;
+    }
+
     #print {
         padding: 0;
     }
     blockquote {
 	border:none;
     }
-    .statement {
-        /* padding: 1em 0;
-        border-bottom: 1px dotted #bbb; */
-    }
     #title, .title_box {
         display:block;
         font-size:0.5em;
         padding:0;
-    }
-    .slide_number {
-    /* display:none; */
-    position:fixed;
-    top:0;
-    right:0;
     }
     .break {
 	display:block !important;
@@ -1151,58 +1148,7 @@ font-weight:bolder;
     }
     .collapse {
         display:block;
-    }
-    #container {
-        position:relative;
-        width:100%;
-        height:auto;
-        overflow-x:visible;
-        overflow-y:visible;
-    }
-    .page {
-        position:relative;
-        width:100%;
-        height:auto;
-        overflow-y:visible;
-    }
-    .text, output {
-        /* position:absolute; */
-        /* top:0cm; */
-        /* left:0cm; */
-        width:auto;
-        height:auto;
-        background:#fff;
-        text-align: justify;
-        font-size:1em;
-        overflow-y:visible;
-        display:block;
-        /* page-break-after:always; */
-    }
-    .print {
-        display:block;
-    }
-    .ww {
-        display:none;
-    }
-    @page
-    {
-	/* size: auto; */  /* auto is the initial value */
-    size: A4 portrait;
-	/* this affects the margin in the printer settings */
-	margin: 2cm;
-    }
-    #fontsel {
-	display:none;
-    }
-    #menu_container {
-	display:none;
-    }
-    .icon {
-        display:none;
-    }
-    b {
-	text-decoration:underline;
-    }
+    }    
 }
 @media screen
 and (min-width : 320px)
