@@ -288,9 +288,8 @@ function showDivs(slide, cranach) {
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
         $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));
     } else {
-        $('#carousel').html($('#output').html());
-        // $('#output div.slide').clone(true).appendTo($('#carousel'));;
-        
+        // $('#carousel').html($('#output').html());
+        $('#output div.slide').clone(true).appendTo($('#carousel'));;        
     }
     $('#carousel div.slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
     $slide = $('#carousel div.slide[slide="' + slideNum + '"]');
