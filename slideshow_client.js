@@ -264,9 +264,7 @@ function updateCarousel(slideNum) {
 function showDivs(slide, cranach) {
     
     $('#right_half').addClass('slide').addClass('present');
-    
-    // $('#output div.slide').addClass('carousel-item');
-    
+        
     console.log(slide);
     let $slide = $(slide);
     
@@ -290,8 +288,8 @@ function showDivs(slide, cranach) {
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
         $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));
     } else {
-        // $('#carousel').html($('#output').html());
-        $('#output div.slide').clone(true).appendTo($('#carousel'));;
+        $('#carousel').html($('#output').html());
+        // $('#output div.slide').clone(true).appendTo($('#carousel'));;
         
     }
     $('#carousel div.slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
@@ -363,7 +361,7 @@ function print(promise) {
 
 function removeTypeset(el) { // i.e. Show LaTeX source
 
-        console.log('removeTypset called ' + el.attr('slide'));
+        // console.log('removeTypset called ' + $(el).attr('slide'));
         // let jax = MathJax.getAllJax();
         let jax = MathJax.startup.document.getMathItemsWithin(el);
         console.log(jax);
