@@ -4,6 +4,7 @@ $(function() {
 		$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
 		
 		let $slide = $('.output.present:visible div.slide.active').first();
+		$slide.addClass('selected');
 		let slideNum = parseInt($slide.attr('slide'));
 		
 		$('#output .slide.selected').removeClass('selected');
@@ -12,8 +13,7 @@ $(function() {
 		batchRender($slide[0]);
 		adjustHeight($slide[0]);
 		updateCanvas($slide[0]);
-		
-		
+				
 		let $slides = $('#output > .slide');
 		
 		let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
@@ -26,10 +26,10 @@ $(function() {
 			$('#carousel .slide').removeClass('carousel-item');
 			$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
 			if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
-				$('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
+				$('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone(true));
 			}
 			if ($('#carousel .slide[slide="' + nextNum + '"]').length == 0) {
-				$('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;        
+				$('#output .slide[slide="' + nextNum + '"]').first().clone(true).appendTo($('#carousel'));;        
 			}
 		}
 		$('#carousel .slide').removeClass('hidden').addClass('carousel-item');            

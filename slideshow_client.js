@@ -148,8 +148,7 @@ function adjustHeight(slide) {
         return 0;
     }
     // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
-    console.log($output);
-    console.log(slide);
+    
     $(slide).find('.slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
@@ -247,7 +246,6 @@ function updateCarousel(slideNum) {
     console.log($('.carousel-item'));
     $('#carousel .carousel-item').each(function(index) {
         i = parseInt($(this).attr('slide'));
-        // $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + (i - 1) + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
         $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + index + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
         if (i == slideNum) {
             currentIndex = index;
@@ -274,24 +272,26 @@ function showDivs(slide, cranach) {
         return 0;
     }
 
-    let slideNum = $slide.attr('slide');    
+    let slideNum = parseInt($slide.attr('slide'));
     let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
     let nextNum = slideNum + 1 % $slides.length;
 
     // let $slide = $('.output.present:visible div.slide[slide="' + index + '"]');
-        
+    
     $('#carousel.present').removeClass('carousel-inner');
     $('#carousel .slide').removeClass('carousel-item');
     if ($slides.length > 50) {
-        $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-        $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));
-        $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
-        $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));
+        // $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
+        $('#carousel div.slide').remove();
+        $('#output .slide[slide="' + slideNum + '"]').first().clone(true).appendTo($('#carousel'));
+        $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone(true));
+        $('#output .slide[slide="' + nextNum + '"]').first().clone(true).appendTo($('#carousel'));
     } else {
         // $('#carousel').html($('#output').html());
         $('#output div.slide').clone(true).appendTo($('#carousel'));;        
     }
     $('#carousel div.slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
+        
     $slide = $('#carousel div.slide[slide="' + slideNum + '"]');
     console.log($slide);
     updateCarousel(slideNum);
@@ -510,20 +510,23 @@ function destroyClickedElement(event) {
 
 function collapseToggle(slideNum) {
 
-    let $slide = $('.output:visible div.slide[slide="' + slideNum + '"]');
-
-    $slide.find('a.collapsea').attr('data-bs-toggle', 'collapse');
-    $slide.find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    let $slides = $('.output div.slide[slide="' + slideNum + '"]');
     
-    if ($slide.hasClass('collapsed')) {
-        $slide.removeClass('collapsed');
-        $slide.find('.collapse').collapse('show');        
-        $('#uncollapse_button').text('Collapse');
-    } else {
-        $slide.addClass('collapsed');
-        $slide.find('.collapse').collapse('hide');
-        $('#uncollapse_button').text('Uncollapse');
-    }
+    $slides.find('a.collapsea').attr('data-bs-toggle', 'collapse');
+    $slides.find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    
+    $slides.each(function() {
+        let $slide = $(this);
+        if ($slide.hasClass('collapsed')) {
+            $slide.removeClass('collapsed');
+            $slide.find('.collapse').collapse('show');
+            $('#uncollapse_button').text('Collapse');
+        } else {
+            $slide.addClass('collapsed');
+            $slide.find('.collapse').collapse('hide');
+            $('#uncollapse_button').text('Uncollapse');
+        }
+    });
 }
 
 function focusOn($item, text) {
