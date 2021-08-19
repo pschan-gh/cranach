@@ -22,29 +22,28 @@ editor.commands.addCommand({
 	}
 });
 
-$('#render_sel').mouseover(function() {
-	if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-		return;
-	}
-	$("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
-	var buffer = editor.getValue()
-	.replace(/@sep/g, '@slide')
-	.replace(/\<!--(.|\n)*?--\>/g, '');
-	let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-	var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
-	.replace(/@sep/g, '@slide')
-	.replace(/\<!--(.|\n)*?--\>/g, '');
-	let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-	var o = new Option(currentSlide.toString(), currentSlide);
-	$("#render_sel").append(o);
-	$("#render_sel").append('<hr/>');
-	for (let i = numOfSlides; i >= 1; i--) {
-		var o = new Option(i.toString(), i);
-		$("#render_sel").append(o);
-	}
-});
-
 $(function() {
+	$('#render_sel').mouseover(function() {
+		if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
+			return;
+		}
+		$("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
+		var buffer = editor.getValue()
+		.replace(/@sep/g, '@slide')
+		.replace(/\<!--(.|\n)*?--\>/g, '');
+		let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
+		var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
+		.replace(/@sep/g, '@slide')
+		.replace(/\<!--(.|\n)*?--\>/g, '');
+		let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
+		var o = new Option(currentSlide.toString(), currentSlide);
+		$("#render_sel").append(o);
+		$("#render_sel").append('<hr/>');
+		for (let i = numOfSlides; i >= 1; i--) {
+			var o = new Option(i.toString(), i);
+			$("#render_sel").append(o);
+		}
+	});	
 	$('#render_sel').on('change', function() {
 		let query = $(this).val() == 'all' ? '' : '//lv:slide[@slide=' + $(this).val() + ']';
 		let selectedSlideNum = $('.output:visible div.slide.selected').length > 0 ? $('.output:visible div.slide.selected').attr('slide') : 1;

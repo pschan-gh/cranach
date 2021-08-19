@@ -56,17 +56,11 @@ $(function() {
 		})
 	});
 	
-	$('input.lecture_mode').first().each(function() {
-		$('input.lecture_mode').change(function() {
-			if (this.checked) {
-				$('[data-lecture-skip="true"]').addClass('lecture_skip');
-			} else {
-				$('[data-lecture-skip="true"]').removeClass('lecture_skip');
-			}
-		});        
-		if (baseRenderer.attr['lectureMode'] || $('input.lecture_mode')[0].checked) {   
-			console.log('LECTURE MODE');     
+	$('input.lecture_mode').change(function() {
+		if (this.checked) {
 			$('[data-lecture-skip="true"]').addClass('lecture_skip');
+		} else {
+			$('[data-lecture-skip="true"]').removeClass('lecture_skip');
 		}
 	});
 });

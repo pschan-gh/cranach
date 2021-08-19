@@ -286,11 +286,13 @@ function showDivs(slide, cranach) {
     $('#carousel .slide').removeClass('carousel-item');
     if ($slides.length > 50) {
         $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-        $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));;
+        $('#output .slide[slide="' + slideNum + '"]').first().clone().appendTo($('#carousel'));
         $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone());
-        $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));;
+        $('#output .slide[slide="' + nextNum + '"]').first().clone().appendTo($('#carousel'));
     } else {
-        $('#carousel').html($('#output').html());
+        // $('#carousel').html($('#output').html());
+        $('#output div.slide').clone(true).appendTo($('#carousel'));;
+        
     }
     $('#carousel div.slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
     $slide = $('#carousel div.slide[slide="' + slideNum + '"]');
@@ -742,85 +744,4 @@ function updateSlideProgress(index, refresh) {
             $(this).removeClass('past').addClass('future');
         }
     });
-}
-
-function updateModalRefby(md5String, cranach) {
-    let contentURLDir = cranach.attr['contentURLDir'];
-    let contentURL = cranach.attr['contentURL'];
-    console.log('CONTENTURL ' + contentURL);
-    // $.ajax({
-    //     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-    //     dataType: "xml"
-    // })
-    // .done(function(index) {
-    let index = cranach.attr['indexDoc'];
-    $.ajax({
-        url: 'xsl/refby2html.xsl'
-    })
-    .done(function(xsl) {
-        let xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(xsl);
-        xsltProcessor.setParameter('', 'md5', md5String);
-        xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
-        xsltProcessor.setParameter('', 'contenturl', contentURL);
-        console.log('REFBY2HTML PRETRANSFORM');
-        fragment = xsltProcessor.transformToFragment(index,document);
-        console.log('REFBY2HTML');
-        fragmentStr = new XMLSerializer().serializeToString(fragment);
-        console.log(fragmentStr);
-        $('.modal_refby').html(fragmentStr).show();
-    });
-    
-}
-
-function updateModalProofs(md5String, cranach) {
-    let contentURLDir = cranach.attr['contentURLDir'];
-
-    let indexDoc = cranach.attr['indexDoc'];
-    console.log(indexDoc);
-    // .done(function(indexDoc) {
-    let queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
-    console.log(queryString);
-    let iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
-    console.log(iterator);
-    try {
-        let thisNode = iterator.iterateNext();
-        
-        let html = '';
-        let index = 1;
-        while (thisNode) {
-            if (html != '') {
-                html += ', ';
-            }
-            html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
-            index++;
-            thisNode = iterator.iterateNext();
-        }
-        if (html != '') {
-            $('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
-        } else {
-            $('.modal_proofs').html(html).hide();
-        }
-    }
-    catch (e) {
-        alert( 'Error: Document tree modified during iteration ' + e );
-    }
-    
-}
-function updateModalProofOf(button, cranach) {
-    if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
-        $('.modal_proof_of').hide();
-        return 0;
-    }
-    let rootURL = cranach.attr['rootURL'];
-    // let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
-    let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&item=" + $(button).attr('of');
-    
-    $('.modal_proof_of a').attr('href', href);
-    if ($(button).find('.of-title').length) {
-        $('.modal_proof_of a').html($(button).find('.of-title').html());
-    } else {
-        $('.modal_proof_of a').html($(button).attr('of-type') + ' ' + $(button).attr('of-item'));
-    }
-    $('.modal_proof_of').show();    
 }

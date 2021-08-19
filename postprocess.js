@@ -24,122 +24,6 @@ function scrollToLine(editor, slide) {
 
 }
 
-function updateModal(cranach) {
-    $('.slide_button').off();
-    $('.slide_button').on('click', function() {
-        console.log('SLIDE BUTTON PRESSED');
-        let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
-        let slide = $slide.attr('slide');
-        
-        var course = $slide.attr('course');
-
-        var chapterType = $slide.attr('chapter_type');
-        var chapter = $slide.attr('chapter');
-
-        $('.modal-title > span').hide();
-        $('.md5.share_text').text('');
-        $('.modal_refby').hide();
-        $('.modal_proofs').hide();
-        $('.modal_proof_of').hide();
-
-        $('.current_course').text(course).show();
-        $('.current_chapter').text(chapter).show();
-        $('.current_chapter').text(chapterType + ' ' + chapter).show();
-        $('.current_slide').text('Slide ' + slide).show();
-
-        let url = cranach.attr['contentURL'];
-
-        let $labels = $slide.find('> .label');
-
-        let slideLabel = $labels.length ? $labels.first().attr('name') : slide;
-
-        if (cranach.attr['query']) {
-            url += '&query=' + cranach.attr['query'] + '&slide=' + slideLabel;
-        } else {
-            url += '&slide=' + slideLabel;
-        }
-        console.log('SLIDE_BUTTON CLICKED: ' + url);
-
-        $('#item_modal').find('#modal_keywords').html('');
-        $('#item_modal').modal('toggle');
-
-        $('#item_modal').find('#modal_keywords').html('<hr><b class="notkw">Keywords:</b>').append($('#slide_keywords').clone(true));
-
-        $('#item_modal').find('#item_modal_link').attr('href', url);
-        $('#item_modal').find('#share_url').val(url);
-        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '</a>');
-        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '}');
-
-    });
-
-
-    $('.item_button, .section_button').off();
-    $('.item_button, .section_button').on('click', function() {
-        var course = $(this).attr('course');
-        var md5String = $(this).attr('md5');
-        var item_type = $(this).attr('type');
-        var chapterType = $(this).attr('chapter_type');
-        var chapter = $(this).attr('chapter');
-        var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
-        var serial = $(this).attr('serial');
-        var slide = $(this).closest('.slide').attr('slide');
-
-        $('#item_modal').find('#modal_keywords').html('');
-        $('#item_modal').modal('toggle');
-
-
-        console.log('ITEM CLICKED COURSE: ' + course);
-
-        $('#share_item span').hide();
-
-        $('.current_course').text(course);
-        $('.current_chapter').text(chapterType + ' ' + chapter);
-        $('.current_item_type').text(item_type);
-        $('.current_item').text($(this).attr('item') ? item : '');
-        $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();
-
-        // var slide = $(this).closest('.slide').attr('slide');
-
-        let url = cranach.attr['contentURL'];
-        let lcref = '';
-        let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
-
-        let $labels = $(this).closest('div').find('.label');
-
-        if ($labels.length) {
-            url += '&' + argName + '=' + $labels.first().attr('name');
-            if (argName == 'item') {
-                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[./lv:label/@name='" + $labels.first().attr('name') + "'])[1]";
-            }
-        } else {
-            url +=  '&' + argName + '=' + serial;
-            if (argName == 'item') {
-                lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
-            }
-        }
-
-        $('#item_modal').find('#item_modal_link').attr('href', url);
-        $('#item_modal').find('#share_url').val(url);
-
-        let title = '';
-
-        let titles = $(this).find('*[wbtag="title"]');
-         if (titles.length) {
-             title = titles.first().text();
-         } else {
-             title = $(this).attr('item') ? item_type + ' ' + item : item_type;
-         }
-
-        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
-        $('#item_modal').find('.md5').val(md5String);
-
-        updateModalRefby(md5String, cranach);
-        updateModalProofs(md5String, cranach);
-        updateModalProofOf(this, cranach);
-    });
-}
 
 function updateSlideClickEvent(cranach) {
 
@@ -218,84 +102,6 @@ function updateSlideClickEvent(cranach) {
         }        
     });
 
-}
-
-function updateRefs(cranach) {
-    
-    $('a.lcref').each(function() {
-        $(this).attr('lcref', "");
-        
-        var label = $(this).attr('label');
-        var md5 = $(this).attr('md5');
-        
-        var contentDir = cranach.attr['dir'];
-        var rootURL = cranach.attr['rootURL'];
-        if (cranach.hasXML) {
-            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-        } else if (cranach.hasWb) {
-            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-        }
-        
-        let statementType = 'statement';
-        if ($(this).attr('type').match(/proof|solution|answer/i)) {
-            statementType = 'substatement';
-        }
-        if ($(this).attr('type').match(/figure/i)) {
-            statementType = 'figure';
-        }
-        
-        var rootURL = cranach.attr['rootURL'];
-        if ($(this).attr('filename') == 'self') {
-            if (cranach.hasXML) {
-                var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-            } else {
-                var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-            }
-        } else if ($(this).attr('src-filename')) {
-            if ($(this).attr('src-filename').match(/\.xml$/)) {
-                var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-            } else {
-                var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
-            }
-        }
-        
-        $(this).attr('lcref', lcref + '&version=' +Math.random());
-        
-    });
-                    
-    $('a.href').each(function() {
-                    
-        var label = $(this).attr('label');
-        var serial = $(this).attr('serial');
-        var md5 = $(this).attr('md5');
-        var contentDir = ''
-        
-        var rootURL = cranach.attr['rootURL'];
-        if (cranach.hasXML) {
-            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
-        } else if (cranach.hasWb) {
-            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
-        }
-        
-        if ($(this).attr('filename') == 'self') {
-            if (cranach.hasXML) {
-                var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
-            } else {
-                var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
-            }
-        } else {
-            if (cranach.hasXML) {
-                var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-            } else {
-                var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
-            }
-        }
-        
-        $(this).attr('target', '_blank');
-        $(this).attr('href', href);
-        
-    });
-    
 }
 
 var timer = null;
@@ -416,15 +222,6 @@ function updateKeywords() {
     }
 }
 
-function updateEditor() {
-    if (editor) {
-        editor.container.style.pointerEvents="auto";
-        editor.container.style.opacity=1; // or use svg filter to make it gray
-        editor.renderer.setStyle("disabled", false);
-        editor.focus();
-    }
-}
-
 function updateSlideSelector(cranach) {
 
     try {
@@ -443,13 +240,90 @@ function updateSlideSelector(cranach) {
     });
 }
 
+function updateRefs(cranach) {
+    
+    $('a.lcref').each(function() {
+        $(this).attr('lcref', "");
+        
+        var label = $(this).attr('label');
+        var md5 = $(this).attr('md5');
+        
+        var contentDir = cranach.attr['dir'];
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        let statementType = 'statement';
+        if ($(this).attr('type').match(/proof|solution|answer/i)) {
+            statementType = 'substatement';
+        }
+        if ($(this).attr('type').match(/figure/i)) {
+            statementType = 'figure';
+        }
+        
+        var rootURL = cranach.attr['rootURL'];
+        if ($(this).attr('filename') == 'self') {
+            if (cranach.hasXML) {
+                var lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                var lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        } else if ($(this).attr('src-filename')) {
+            if ($(this).attr('src-filename').match(/\.xml$/)) {
+                var lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                var lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        }
+        
+        $(this).attr('lcref', lcref + '&version=' +Math.random());
+        
+    });
+                    
+    $('a.href').each(function() {
+                    
+        var label = $(this).attr('label');
+        var serial = $(this).attr('serial');
+        var md5 = $(this).attr('md5');
+        var contentDir = ''
+        
+        var rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        if ($(this).attr('filename') == 'self') {
+            if (cranach.hasXML) {
+                var href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
+            } else {
+                var href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
+            }
+        } else {
+            if (cranach.hasXML) {
+                var href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            } else {
+                var href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            }
+        }
+        
+        $(this).attr('target', '_blank');
+        $(this).attr('href', href);
+        
+    });
+    
+}
+
 function postprocess(cranach) {
     console.log('POSTPROCESS CALLED');
     $('.icon.xml, .icon.latex').show();    
 
     updateSlideClickEvent(cranach);
-    updateRefs(cranach);
-    updateModal(cranach);
+    updateRefs(cranach);    
     updateScrollEvent(cranach);
     updateToc(cranach);
     updateKeywords();
@@ -523,6 +397,11 @@ function postprocess(cranach) {
             console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
             focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }                
+        
+        if (cranach.attr['lectureMode']) {   
+			console.log('LECTURE MODE');     
+			$('[data-lecture-skip="true"]').addClass('lecture_skip');
+		}
         
         $('#loading_icon').hide();
         $('#right_half .navbar').show();
