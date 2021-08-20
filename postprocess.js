@@ -59,13 +59,14 @@ function updateSlideClickEvent(cranach) {
             // iFrameResize({ log: true }, this);
         });
 
-        if (!$(this).hasClass('selected')) {
-            if (cranach.attr['editMode']) {
-                $('#edit_button').click();
-            }
-            if (!$(slideElement).hasClass('edit')) {
-                batchRender(slideElement);
-            }
+        if (!$(this).hasClass('selected') || $(this).hasClass('tex2jax_ignore')) {
+            batchRender(slideElement);
+            // if (cranach.attr['editMode']) {
+            //     $('#edit_button').click();
+            // }
+            // if (!$(slideElement).hasClass('edit')) {
+            //     batchRender(slideElement);
+            // }
             var course = $(this).attr('course');
             var chapterType = $(this).attr('chapter_type');
             var chapter = $(this).attr('chapter');
@@ -105,7 +106,7 @@ function updateSlideClickEvent(cranach) {
 }
 
 var timer = null;
-function updateScrollEvent(cranach) {
+function updateScrollEvent() {
     $('#output').off();
     
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
@@ -324,7 +325,7 @@ function postprocess(cranach) {
 
     updateSlideClickEvent(cranach);
     updateRefs(cranach);    
-    updateScrollEvent(cranach);
+    updateScrollEvent();
     updateToc(cranach);
     updateKeywords();
     updateSlideSelector(cranach);

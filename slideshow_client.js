@@ -1,111 +1,3 @@
-function annotate() {
-    
-    if ($('.output.present:visible').first().hasClass('annotate')) {
-        $('canvas').hide();
-        $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
-        $('.output:visible').removeClass('annotate');
-    } else {
-        $('.output.present:visible').first().addClass('annotate');
-        $('.carousel').attr('data-bs-touch', "false");
-    }
-    let slide = $('.output.present:visible div.slide.active')[0];
-    updateCanvas(slide);
-    
-}
-
-function updateCanvas(slide) {    
-    if ($('.output.present:visible').first().hasClass('annotate')) {        
-        $('.canvas-controls').show();
-        if (!$(slide).find('canvas').length) {
-            addCanvas(slide);
-        }   
-        $(slide.cfd.canvas).show();     
-    } else {
-        if ($(slide).find('canvas').length) {
-            $('.canvas-controls').hide();
-            $(slide).find('canvas').hide();            
-        }
-        return 1;
-    } 
-    $('.canvas-controls').find('*').off();
-    // $('.canvas-controls .annotate').off();    
-    $('.canvas-controls .clear').click(function() {
-        $(slide).find('canvas').remove();
-        addCanvas(slide);
-    });
-    // $('.canvas-controls .expand').off();
-    $('.canvas-controls .expand').click(function() {
-        slide.cfd.disableDrawingMode();
-        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-        let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-        let img = new Image();
-        img.src = oldCanvas;
-        img.onload = function (){
-            $(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
-            $(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
-            let ctx = slide.cfd.canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            slide.cfd.enableDrawingMode();
-            slide.cfd.setDraw();
-        }        
-    });
-    // $('.canvas-controls .disable').off();
-    $('.canvas-controls .disable').click(function() {
-        slide.cfd.disableDrawingMode();
-        $(slide.cfd.canvas).css('z-index', 0);
-        $('.canvas-controls .nav-link').not('.enable').addClass('disabled');
-        $('.canvas-controls .enable').removeClass('disabled');
-        // $('.carousel').attr('data-bs-touch', "true");
-    });
-    // $('.canvas-controls .erase').off();
-    $('.canvas-controls .erase').click(function() {
-        slide.cfd.setErase();
-        $('.canvas-controls .nav-link').removeClass('disabled');        
-        $(this).addClass('disabled');
-    });
-    // $('.canvas-controls .enable').off();
-    $('.canvas-controls .enable').click(function() {
-        slide.cfd.enableDrawingMode();
-        $(slide.cfd.canvas).show();
-        $(slide.cfd.canvas).css('z-index', 999);
-        slide.cfd.setDraw();
-        $('.canvas-controls .nav-link').removeClass('disabled');        
-        $(this).addClass('disabled');
-    });
-    $('.canvas-controls .undo').click(() => slide.cfd.undo());
-    $('.canvas-controls .redo').click(() => slide.cfd.redo());
-    $('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
-    $('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
-    $('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
-    $('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
-    $('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
-    
-    $('.canvas-controls .disable').click();
-}
-
-function addCanvas(slide) {
-    if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
-            return 0;
-    }
-    
-    let width = $('.output.present:visible').first()[0].scrollWidth;
-    let height = $('.output.present:visible').first()[0].scrollHeight;
-
-    slide.cfd = new CanvasFreeDrawing.default({
-      elementId: slide.id,
-      width: width,
-      height: height,
-      showWarnings: true,
-    });
-    slide.cfd.setLineWidth(2);
-    slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
-    slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
-      slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-    });    
-
-}
-
 function renderSlide(slide) {
 
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
@@ -122,10 +14,12 @@ function renderSlide(slide) {
     //     $(this).iFrameResize({checkOrigin:false});
     // });
 
+    renderTexSource(slide);
+    $(slide).find('.latexSource').remove();
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");
-        // console.log('typesetting slide ' + $(slide).attr('slide'));
-        typeset([slide]);
+        // console.log('typesetting slide ' + $(slide).attr('slide'));        
+        typeset([slide]).then(() => {adjustHeight(slide);});
     }    
 }
 
@@ -133,17 +27,20 @@ function renderSlide(slide) {
 function batchRender(slide) {
         
     $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
-        renderSlide(this);        
+        renderSlide(this);
+        // renderTexSource(this);
     });
     $(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
-        renderSlide(this);        
+        renderSlide(this);
+        // renderTexSource(this);
     });
     renderSlide(slide);
-    
+    // renderTexSource(this);    
 }
 
 function adjustHeight(slide) {
-    let $output = $('.output.present:visible');
+    // let $output = $('.output.present:visible');
+    let $output = $('#carousel');
     if (!$output.length) {
         return 0;
     }
@@ -233,82 +130,6 @@ function resizeFont(multiplier) {
     document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
 }
 
-function updateCarousel(slideNum) {
-
-    $('div.tooltip').remove();
-
-    let numOfSlides = $('#carousel div.slide').length;
-        
-    $(".carousel-indicators").html('');
-    
-    let i;
-    let currentIndex = -1;
-    console.log($('.carousel-item'));
-    $('#carousel .carousel-item').each(function(index) {
-        i = parseInt($(this).attr('slide'));
-        $(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + index + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
-        if (i == slideNum) {
-            currentIndex = index;
-        }
-    });
-    console.log('indicator list updated');
-    if (currentIndex != -1) {
-        $('.carousel-indicators button[data-bs-slide-to="' + currentIndex + '"]').addClass('active').attr('aria-current', "true");
-    }
-    $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
-    
-}
-
-function showDivs(slide, cranach) {
-    
-    $('#right_half').addClass('slide').addClass('present');
-        
-    console.log(slide);
-    let $slide = $(slide);
-    
-    let $slides = $('#output > .slide');
-    
-    if ($slides.length == null || $slides.length == 0) {
-        return 0;
-    }
-
-    let slideNum = parseInt($slide.attr('slide'));
-    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-    let nextNum = slideNum + 1 % $slides.length;
-
-    // let $slide = $('.output.present:visible div.slide[slide="' + index + '"]');
-    
-    $('#carousel.present').removeClass('carousel-inner');
-    $('#carousel .slide').removeClass('carousel-item');
-    if ($slides.length > 50) {
-        // $('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-        $('#carousel div.slide').remove();
-        $('#output .slide[slide="' + slideNum + '"]').first().clone(true).appendTo($('#carousel'));
-        $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone(true));
-        $('#output .slide[slide="' + nextNum + '"]').first().clone(true).appendTo($('#carousel'));
-    } else {
-        // $('#carousel').html($('#output').html());
-        $('#output div.slide').clone(true).appendTo($('#carousel'));;        
-    }
-    $('#carousel div.slide').removeClass('hidden').addClass('carousel-item').addClass('tex2jax_ignore');
-        
-    $slide = $('#carousel div.slide[slide="' + slideNum + '"]');
-    console.log($slide);
-    updateCarousel(slideNum);
-    $slide.addClass('active');
-    
-    // $('#carousel.present').addClass('carousel-inner');
-    
-    batchRender($slide[0]);
-    
-    adjustHeight($slide[0]);
-    $('#right_half .slide_number button').text('Slide ' + slideNum);
-    $('#right_half .slide_number button').attr('slide', slideNum);
-    
-    $('.lcref-output').remove();
-}
-
-
 // function print(promise) {
 // 
 //     $('html').css('position', 'relative');
@@ -362,10 +183,11 @@ function removeTypeset(el) { // i.e. Show LaTeX source
 
         // console.log('removeTypset called ' + $(el).attr('slide'));
         // let jax = MathJax.getAllJax();
-        let jax = MathJax.startup.document.getMathItemsWithin(el);
+        let jax = MathJax.startup.document.getMathItemsWithin($('#output')[0]);
         console.log(jax);
         showTexFrom(jax);
-        MathJax.typesetClear([el]);
+        // MathJax.typesetClear([el]);
+        MathJax.typesetClear();
 }
 
 function renderTexSource(slide) {
@@ -382,46 +204,53 @@ function renderTexSource(slide) {
     }
             
     $(slide).find('.latexSource').remove();
-    MathJax.startup.promise.then(() => {            
-        $(slide).removeClass('edit');
-        $(slide).addClass('tex2jax_ignore');
-        renderSlide(slide);
-    });
+    // MathJax.startup.promise.then(() => {            
+    //     $(slide).removeClass('edit');
+    //     $(slide).addClass('tex2jax_ignore');
+    //     renderSlide(slide);
+    // });
 }
 
 function showTexSource(showSource, editor) {    
-    
-    let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected') : $('#output div.slide').first();
+    console.log('showTexSource');
+    let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
     
     $slide.attr('contentEditable', showSource);
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $slide.find('.paragraphs').css('color', '').css('font-family', '');
     
     if (!showSource) {
-        if ($('.carousel-item').length) {
+        
+        MathJax.startup.document.state(0);
+        MathJax.texReset();
+        // MathJax.typesetClear();
+        // renderTexSource($slide[0]);
+        
+        $('#output div.slide').addClass('tex2jax_ignore');
+        if ($('.carousel-item').length > 0) {
             $('#output').css('display', '');            
             $('#output div.slide').css('display', '');
             $('#carousel').css('display', '');
             $('#carousel div.slide.selected').html($slide.html());
+            $('#carousel div.slide.selected').addClass('tex2jax_ignore');
+            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {            
+                // renderTexSource(this);
+                renderSlide(this);
+            });
+        } else {
+            // $('#output div.slide').addClass('tex2jax_ignore');
+            // renderTexSource($slide[0]);
+            renderSlide($slide[0]);
         }
-        // MathJax.startup.document.state(0);
-        // MathJax.texReset();
-
-        renderTexSource($slide[0]);
-        $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').each(function() {
-            renderTexSource(this);
-        });
-        
+            
         editor.container.style.pointerEvents="auto";
         editor.container.style.opacity = 1; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", false);
         editor.focus();
         
-        $('#carousel div.slide.selected').each(function() {
-            adjustHeight(this);
-        });
-        
-        $('#output div.slide').addClass('tex2jax_ignore');
+        // $('#carousel div.slide.active').each(function() {
+        //     adjustHeight(this);
+        // });
     } else {
         if ($('.carousel-item').length) {
             $('#output div.slide').hide();
@@ -433,7 +262,7 @@ function showTexSource(showSource, editor) {
         $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
         $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
         removeTypeset($slide[0]);
-        $slide.addClass('edit').addClass('tex2jax_ignore');
+        $slide.addClass('edit').addClass('tex2jax_ignore');        
         editor.container.style.pointerEvents="none";
         editor.container.style.opacity=0.5; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", true);
@@ -726,22 +555,4 @@ function isElementInViewport (el) {
         )
 
     );
-}
-
-function updateSlideProgress(index, refresh) {
-    if (refresh) {
-        $('#slide_progress tbody tr').html('');
-        let numSlides = document.getElementsByClassName('slide').length;
-        let spacing = Math.min(3, 5*20/numSlides);
-        for (let i = 0; i < numSlides; i++) {
-            $('#slide_progress tbody tr').append('<td num="' + (+i + 1) + '" style="border-left-width:' + spacing + 'px; border-right-width: ' + spacing + 'px;"></td>');
-        }
-    }
-    $('#slide_progress td').each(function() {
-        if ($(this).attr('num') <= index) {
-            $(this).removeClass('future').addClass('past');
-        } else {
-            $(this).removeClass('past').addClass('future');
-        }
-    });
 }
