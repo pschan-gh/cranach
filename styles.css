@@ -18,6 +18,25 @@ body {
 mjx-math {
     padding:0.4em 0 !important;
 }
+
+#loading_icon {
+    position:absolute;
+    top:0;
+    display:table;
+    height:100%;
+    width:100%;
+    background-color:hsla(0, 0%, 100%, 0.8);
+    z-index:999;    
+}
+#loading_icon > div {
+    display:table-cell;
+    vertical-align:middle;
+    width:100%;
+    height:5em;
+    margin:0 auto;
+    text-align:center;
+}
+
 .nav-tabs .nav-link.active {
     font-weight:bold !important;
     color:inherit !important;
@@ -702,14 +721,7 @@ display: none;
 .present .slide_sel {
     display:none;
 }
-.present.title_box {
-    font-size:0.5em;
-    position:fixed;
-    left:1em;
-    bottom:1em;
-    display:block;
-    color:#aaa;
-}
+
 #cover_half {
 display:none;
 position:fixed;
@@ -1064,14 +1076,7 @@ h5.current_slide {
     border:1px solid;
     border-radius:5px
 }
-.title_box h3 {
-    font-size:2em;
-    color:#eee;
-}
-.present.title_box h3 {
-    font-size:2em;
-    color:SteelBlue;
-}
+
 #print {
     display:none;
     overflow-y:visible;
@@ -1129,7 +1134,7 @@ font-weight:bolder;
     blockquote {
 	border:none;
     }
-    #title, .title_box {
+    #title {
         display:block;
         font-size:0.5em;
         padding:0;
@@ -1181,7 +1186,7 @@ and (max-width : 1024px) {
     .present .slide_container {
         width:17cm;
     }
-    #title, .title_box.present {
+    #title {
 	position:relative;
 	left:2%;
 	top:0%;
