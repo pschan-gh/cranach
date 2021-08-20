@@ -1,3 +1,133 @@
+function removeTypeset(el) { // i.e. Show LaTeX source
+
+        let jax = MathJax.startup.document.getMathItemsWithin($('#output')[0]);
+        showTexFrom(jax);
+        // MathJax.typesetClear([el]);
+        MathJax.typesetClear();
+}
+
+function renderTexSource(slide) {
+    let oldElems = slide.getElementsByClassName("latexSource");
+    
+    for(let i = oldElems.length - 1; i >= 0; i--) {
+        let oldElem = oldElems.item(i);
+        let parentElem = oldElem.parentNode;
+        let innerElem;
+
+        let textNode = document.createTextNode(oldElem.textContent);
+        parentElem.insertBefore(textNode, oldElem);
+        parentElem.removeChild(oldElem);
+    }
+            
+    $(slide).find('.latexSource').remove();
+}
+
+function showTexSource(showSource, editor) {    
+    let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
+    
+    $slide.attr('contentEditable', showSource);
+    $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
+    $slide.find('.paragraphs').css('color', '').css('font-family', '');
+    
+    if (!showSource) {
+        
+        MathJax.startup.document.state(0);
+        MathJax.texReset();
+        // MathJax.typesetClear();
+        // renderTexSource($slide[0]);
+        
+        $('#output div.slide').addClass('tex2jax_ignore');
+        if ($('.carousel-item').length > 0) {
+            $('#output').css('display', '');            
+            $('#output div.slide').css('display', '');
+            $('#carousel').css('display', '');
+            $('#carousel div.slide.selected').html($slide.html());
+            $('#carousel div.slide.selected').addClass('tex2jax_ignore');
+            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {            
+                renderSlide(this);
+            });
+        } else {
+            renderSlide($slide[0]);
+        }
+            
+        editor.container.style.pointerEvents="auto";
+        editor.container.style.opacity = 1; // or use svg filter to make it gray
+        editor.renderer.setStyle("disabled", false);
+        editor.focus();
+        
+    } else {
+        if ($('.carousel-item').length) {
+            $('#output div.slide').hide();
+            $('#output div.slide').removeClass('tex2jax_ignore');
+            $('#output').show();
+            $('#carousel').hide();
+            $slide.show();
+        }
+        $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
+        $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
+        removeTypeset($slide[0]);
+        $slide.addClass('edit').addClass('tex2jax_ignore');        
+        editor.container.style.pointerEvents="none";
+        editor.container.style.opacity=0.5; // or use svg filter to make it gray
+        editor.renderer.setStyle("disabled", true);
+        editor.blur();
+    }
+
+}
+
+function showTexFrom(jax) {
+    for (let i = jax.length - 1, m = -1; i > m; i--) {
+        let jaxNode = jax[i].start.node, tex = jax[i].math;
+
+        if (jax[i].display) {
+            if (!tex.match(/^\s*\\(begin{equation|(begin{align(\*)?})|begin{multline|begin{eqnarray)/)) {
+                tex = "\\["+tex+"\\]";
+            }
+        } else {tex = "$"+tex+"$"}
+
+        let $preview = $('<span class="latexSource tex2jax_ignore"></span>');
+        $preview.html(tex);
+        if (jax[i].display) {
+            $preview.css('display', 'block');
+        }
+
+        jaxNode.parentNode.insertBefore($preview[0], jaxNode);
+        jaxNode.remove();
+    }
+}
+
+function showJaxSource(outputId) {
+
+    let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById(outputId));
+    
+    showTexFrom(jax);
+
+    let clone = document.getElementById(outputId).cloneNode(true);
+
+    let oldElems = clone.getElementsByClassName("latexSource");
+
+    for(let i = oldElems.length - 1; i >= 0; i--) {
+        let oldElem = oldElems.item(i);
+        let parentElem = oldElem.parentNode;
+        let innerElem;
+
+        while (innerElem = oldElem.firstChild)
+        {
+            // insert all our children before ourselves.
+            parentElem.insertBefore(innerElem, oldElem);
+        }
+        parentElem.removeChild(oldElem);
+    }
+
+    let editedContent = clone.innerHTML;
+
+    let body = new DOMParser().parseFromString(editedContent, 'text/html');
+
+    let bodyString = new XMLSerializer().serializeToString(body);
+    body = new DOMParser().parseFromString(bodyString, "application/xml");
+    return body;
+}
+
 function renderSlide(slide) {
 
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
@@ -17,25 +147,21 @@ function renderSlide(slide) {
     renderTexSource(slide);
     $(slide).find('.latexSource').remove();
     if ($(slide).hasClass("tex2jax_ignore")) {
-        $(slide).removeClass("tex2jax_ignore");
-        // console.log('typesetting slide ' + $(slide).attr('slide'));        
-        typeset([slide]).then(() => {adjustHeight(slide);});
+        $(slide).removeClass("tex2jax_ignore");        
+        typeset([slide]).then(() => {
+            adjustHeight(slide);
+        });
     }    
 }
 
-
-function batchRender(slide) {
-        
+function batchRender(slide) {        
     $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
-        // renderTexSource(this);
     });
     $(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
-        // renderTexSource(this);
     });
     renderSlide(slide);
-    // renderTexSource(this);    
 }
 
 function adjustHeight(slide) {
@@ -44,7 +170,6 @@ function adjustHeight(slide) {
     if (!$output.length) {
         return 0;
     }
-    // $('.carousel-item.active .slide_container > .slide_content').css('padding-bottom', '');
     
     $(slide).find('.slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
@@ -63,10 +188,8 @@ function showStep(el) {
         $parent.attr('stepId', 0);
     }
     let whichStep = $parent.attr('stepId');
-    console.log('STEP: ' + whichStep + ', class LENGTH: ' + $stepsClass.length);
-
+    
     if (whichStep < $stepsClass.length) {
-        // stepsClass[whichStep].style.visibility = "visible";
         $parent.find('#step' + whichStep).css('visibility', 'visible');
         whichStep++;
     }
@@ -85,10 +208,9 @@ function showStep(el) {
 //  Hide the steps.
 //
 function resetSteps(el) {
-    $parent = $(el).closest('div[wbtag="steps"]');
+    let $parent = $(el).closest('div[wbtag="steps"]');
     $parent.find('button.next').attr('disabled', false);
     $parent.find('button.reset').attr('disabled', true);
-    // $('.' + stepsId).css('visibility', 'hidden');
     $parent.find('.steps').css('visibility', 'hidden');
     $parent.attr('stepId', 0);
 }
@@ -117,7 +239,6 @@ function dim() {
     } else {
         $('#right_half, .output:visible').css('background-color', '#222').css('color', '#bbb');
         $('#right_half').addClass('dim');
-        // $('#progress_container').addClass('dim');
         $('.dim').first().addClass('dimmed');
         $('#right_half').removeClass('carousel-dark');
     }
@@ -179,163 +300,7 @@ function resizeFont(multiplier) {
 //     $('#print_content').find('.hidden_collapse').show();
 // }
 
-function removeTypeset(el) { // i.e. Show LaTeX source
 
-        // console.log('removeTypset called ' + $(el).attr('slide'));
-        // let jax = MathJax.getAllJax();
-        let jax = MathJax.startup.document.getMathItemsWithin($('#output')[0]);
-        console.log(jax);
-        showTexFrom(jax);
-        // MathJax.typesetClear([el]);
-        MathJax.typesetClear();
-}
-
-function renderTexSource(slide) {
-    let oldElems = slide.getElementsByClassName("latexSource");
-    
-    for(let i = oldElems.length - 1; i >= 0; i--) {
-        let oldElem = oldElems.item(i);
-        let parentElem = oldElem.parentNode;
-        let innerElem;
-
-        let textNode = document.createTextNode(oldElem.textContent);
-        parentElem.insertBefore(textNode, oldElem);
-        parentElem.removeChild(oldElem);
-    }
-            
-    $(slide).find('.latexSource').remove();
-    // MathJax.startup.promise.then(() => {            
-    //     $(slide).removeClass('edit');
-    //     $(slide).addClass('tex2jax_ignore');
-    //     renderSlide(slide);
-    // });
-}
-
-function showTexSource(showSource, editor) {    
-    console.log('showTexSource');
-    let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
-    
-    $slide.attr('contentEditable', showSource);
-    $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
-    $slide.find('.paragraphs').css('color', '').css('font-family', '');
-    
-    if (!showSource) {
-        
-        MathJax.startup.document.state(0);
-        MathJax.texReset();
-        // MathJax.typesetClear();
-        // renderTexSource($slide[0]);
-        
-        $('#output div.slide').addClass('tex2jax_ignore');
-        if ($('.carousel-item').length > 0) {
-            $('#output').css('display', '');            
-            $('#output div.slide').css('display', '');
-            $('#carousel').css('display', '');
-            $('#carousel div.slide.selected').html($slide.html());
-            $('#carousel div.slide.selected').addClass('tex2jax_ignore');
-            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {            
-                // renderTexSource(this);
-                renderSlide(this);
-            });
-        } else {
-            // $('#output div.slide').addClass('tex2jax_ignore');
-            // renderTexSource($slide[0]);
-            renderSlide($slide[0]);
-        }
-            
-        editor.container.style.pointerEvents="auto";
-        editor.container.style.opacity = 1; // or use svg filter to make it gray
-        editor.renderer.setStyle("disabled", false);
-        editor.focus();
-        
-        // $('#carousel div.slide.active').each(function() {
-        //     adjustHeight(this);
-        // });
-    } else {
-        if ($('.carousel-item').length) {
-            $('#output div.slide').hide();
-            $('#output div.slide').removeClass('tex2jax_ignore');
-            $('#output').show();
-            $('#carousel').hide();
-            $slide.show();
-        }
-        $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
-        $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
-        removeTypeset($slide[0]);
-        $slide.addClass('edit').addClass('tex2jax_ignore');        
-        editor.container.style.pointerEvents="none";
-        editor.container.style.opacity=0.5; // or use svg filter to make it gray
-        editor.renderer.setStyle("disabled", true);
-        editor.blur();
-    }
-
-}
-
-function showXML(docCranach) {
-    $('#source_text').val('');
-    $('#source_text').val(new XMLSerializer().serializeToString(docCranach));
-    $('#wb_modal').find('button.save').attr('ext', 'xml');
-    $('#wb_modal').find('.modal-title').html('Cranach XML');
-
-}
-
-function showTexFrom(jax) {
-    for (let i = jax.length - 1, m = -1; i > m; i--) {
-        let jaxNode = jax[i].start.node, tex = jax[i].math;
-
-        if (jax[i].display) {
-            if (!tex.match(/^\s*\\(begin{equation|(begin{align(\*)?})|begin{multline|begin{eqnarray)/)) {
-                tex = "\\["+tex+"\\]";
-            }
-        } else {tex = "$"+tex+"$"}
-
-        let $preview = $('<span class="latexSource tex2jax_ignore"></span>');
-        $preview.html(tex);
-        if (jax[i].display) {
-            $preview.css('display', 'block');
-        }
-
-        jaxNode.parentNode.insertBefore($preview[0], jaxNode);
-        jaxNode.remove();
-    }
-}
-
-function showJaxSource(outputId) {
-
-    let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById(outputId));
-    showTexFrom(jax);
-
-    MathJax.typesetClear();
-    
-    let clone = document.getElementById(outputId).cloneNode(true);
-
-    let oldElems = clone.getElementsByClassName("latexSource");
-
-    for(let i = oldElems.length - 1; i >= 0; i--) {
-        let oldElem = oldElems.item(i);
-        let parentElem = oldElem.parentNode;
-        let innerElem;
-
-        while (innerElem = oldElem.firstChild)
-        {
-            // insert all our children before ourselves.
-            parentElem.insertBefore(innerElem, oldElem);
-        }
-        parentElem.removeChild(oldElem);
-    }
-
-    let editedContent = clone.innerHTML;
-
-    let body = new DOMParser().parseFromString(editedContent, 'text/html');
-
-    let bodyString = new XMLSerializer().serializeToString(body);
-    body = new DOMParser().parseFromString(bodyString, "application/xml");
-    return body;
-}
-
-function destroyClickedElement(event) {
-    document.body.removeChild(event.target);
-}
 
 function collapseToggle(slideNum) {
 
@@ -477,65 +442,6 @@ function imagePostprocess(image) {
         $(image).css('background', 'none');
         $(image).show();
     });
-}
-
-function updateTitle(slide) {
-
-    let index = $(slide).attr('slide');
-
-    let course = $(slide).attr('course') ? $(slide).attr('course') : '';
-    let chapterType = $(slide).attr('chapter_type') ? $(slide).attr('chapter_type'):'';
-    let chapter = $(slide).attr('chapter') ? $(slide).attr('chapter') : '';
-    let section = $(slide).attr('section') ? $(slide).attr('section') : '';
-    let subsection = $(slide).attr('subsection') ? $(slide).attr('subsection') : '';
-    let subsubsection = $(slide).attr('subsubsection') ? $(slide).attr('subsubsection') : '';
-
-    let topics = '';
-
-    $('#toc a').removeClass('highlighted');
-    $('#toc a.chapter[chapter="' + chapter + '"]').addClass('highlighted');
-    $('#toc a.section[chapter="' + chapter + '"][section="' + section + '"]').addClass('highlighted');
-    $('#toc a.subsection[chapter="' + chapter + '"][section="' + section + '"][subsection="' + subsection + '"]').addClass('highlighted');
-    $('#toc a.subsubsection[chapter="' + chapter + '"][section="' + section + '"][subsection="' + subsection + '"][subsubsection="' + subsubsection + '"]').addClass('highlighted');
-
-    $('.topic[chapter="' + chapter + '"]').each(function(index, element) {
-        if (index > 0) {
-            topics += ', ';
-        }
-        topics += $(this).html();
-    });
-
-    let chapterTitle = $(slide).attr('chapter_title') ? $(slide).attr('chapter_title') : $(slide).prevAll('[chapter_title!=""]:first').attr('chapter_title');
-
-    chapterTitle = chapterTitle ? chapterTitle : '';
-
-    section = $(slide).attr('section') ?  chapter + '.' + $(slide).attr('section') : '';
-
-    let sectionTitle = $('a.section.highlighted').find('span.title').html();
-
-    sectionTitle = sectionTitle ? sectionTitle : '';
-
-    $('.current_course').html(course);
-    $('.current_chapter').html(chapterType + ' ' + chapter);
-    $('.current_chapter_title').html(chapterTitle);
-    $('.current_topics').html(topics);
-
-    if (section != '') {
-        $('.current_section').html('Section ' + section + '<br/>' + sectionTitle);
-    } else {
-        $('.current_section').html('');
-    }
-    $('.current_slide').html('Slide ' + index);
-    if (course != '' || chapter != '' || topics != '') {
-        $('title').text(course);
-    }
-
-    $('#info_half div.keywords[environ="course"], div.keywords[environ="root"]').show();
-    $('#info_half div.keywords[environ="chapter"][chapter="' + chapter + '"][slide="all"]').show();
-
-    $('#info_half div.keywords[slide!="all"]').hide();
-    $('#info_half div.keywords[chapter="' + chapter + '"][slide="' + index + '"]').show();
-
 }
 
 // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433

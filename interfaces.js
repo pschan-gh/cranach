@@ -245,37 +245,3 @@ function openXML(promise, filePath) {
     reader.readAsText(file);
 
 }
-
-function openHTML(promise, filePath) {
-    var file    = filePath.files[0];
-    var reader  = new FileReader();
-
-    if (file) {
-        // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
-        var fullPath = filePath.value;
-        if (fullPath) {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-                filename = filename.substring(1);
-            }
-            console.log(fullPath);
-        }
-    }
-    var el = this;
-    reader.addEventListener("load", function () {
-        report('READER RESULT');
-        report(reader.result);
-        promise.then(renderer => {
-            var outputHTML = reader.result;
-            renderer.attr['localName'] = filename;
-            $('#output').remove();
-            $(outputHTML).prependTo($('#right_half'));
-            postprocess(renderer);
-            MathJax.typesetPromise($('#output'))
-        });
-    }, false);
-
-    reader.readAsText(file);
-
-}

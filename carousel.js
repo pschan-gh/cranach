@@ -56,7 +56,6 @@ function showDivs(slide, cranach) {
 	MathJax.startup.document.state(0);
 	MathJax.texReset();
 	MathJax.typesetClear();
-	$slide.addClass('tex2jax_ignore');
 	
 	$('#carousel div.slide').remove();    
 	if ($slides.length > 50) {
@@ -76,7 +75,6 @@ function showDivs(slide, cranach) {
 		
 	batchRender($slide[0]);
 	
-	// adjustHeight($slide[0]);
 	$('#right_half .slide_number button').text('Slide ' + slideNum);
 	$('#right_half .slide_number button').attr('slide', slideNum);
 	
@@ -242,7 +240,6 @@ $(function() {
 		
 		$('#carousel.present').removeClass('carousel-inner');
 		
-		// updateCarousel(parseInt(slideNum));
 		if ($slides.length > 50) {
 			$('#carousel .slide').removeClass('carousel-item');
 			$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();

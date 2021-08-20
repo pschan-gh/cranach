@@ -9,23 +9,20 @@ MathJax = {
 				return MathJax.startup.promise;
 			};
 			MathJax.getAllJax = function (name) {
-				var list = Array.from(MathJax.startup.document.math);
+				let list = Array.from(MathJax.startup.document.math);
 				if (!name) return list;
-				var container = document.getElementById(name);
+				let container = document.getElementById(name);
 				if (!container) return list;
-				var filtered = list.filter((node) => container.contains(node.start.node));
+				let filtered = list.filter((node) => container.contains(node.start.node));
 				return filtered;
 			};
 			MathJax.startup.defaultReady();
 			MathJax.startup.promise.then(() => {
 		        console.log('MathJax initial typesetting complete');
-		        // var cranach is now a promise
+		        // let cranach is now a promise
 		        $('.icon.latex, .icon.xml').hide();
 		        baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
-		            console.log(cranach);
 		            let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
-		            console.log(output);
-		            // return cranach.render(document.getElementById('output'))
 		            return cranach.render(output)
 		            .then(renderer => {
 		                if (renderer.bare) {

@@ -86,11 +86,10 @@ function Cranach(url) {
             })
             .done(function(indexDoc) {
                 el.attr['indexDoc'] = indexDoc;
-                console.log(indexDoc);
                 resolve(el);
             })
             .fail(function() {
-                report("INDEX FILE DOESN'T EXIST");
+                console.log("INDEX FILE DOESN'T EXIST");
                 resolve(el);
             })
         });
