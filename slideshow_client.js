@@ -66,7 +66,7 @@ function showTexSource(showSource, editor) {
         $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
         $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
         removeTypeset($slide[0]);
-        $slide.addClass('edit').addClass('tex2jax_ignore');        
+        $slide.addClass('edit').removeClass('tex2jax_ignore');
         editor.container.style.pointerEvents="none";
         editor.container.style.opacity=0.5; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", true);
