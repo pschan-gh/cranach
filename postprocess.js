@@ -101,7 +101,8 @@ function updateSlideContent(slide) {
 	$('#uncollapse_button').off();
 	$('#uncollapse_button').click(function() {
 		collapseToggle(slideNum);
-	});	  
+	});
+    $(slide).find('.loading_icon').hide();    
 }
 
 function updateSlideInfo(slide, cranach) {
@@ -114,8 +115,7 @@ function updateSlideInfo(slide, cranach) {
 
     $('*[text]').removeClass('highlighted');
     $('button').removeClass('highlighted');
-    $('.item_button').css('background-color', '');
-    $(slide).find('.loading_icon').hide();
+    $('.item_button').css('background-color', '');    
 
     $('.separator').css('font-weight', 'normal');
     $('.separator').find('a').css('color', 'pink');
