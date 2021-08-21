@@ -266,9 +266,8 @@ $(function() {
 		
 		$('.carousel').carousel('pause');
 		
-		$slide.click();
 		updateCarousel(parseInt(slideNum));
-		batchRender($slide[0]);
+		updateSlideContent($slide[0]);
 		adjustHeight($slide[0]);
 		updateCanvas($slide[0]);
 		if ($slide.find('a.collapsea[aria-expanded="false"]').length) {

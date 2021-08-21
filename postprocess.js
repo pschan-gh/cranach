@@ -83,6 +83,27 @@ function updateTitle(slide) {
 
 }
 
+function updateSlideContent(slide) {
+    if ( $(slide).hasClass('tex2jax_ignore') ) {
+        batchRender(slide);
+    }
+    $(slide).find('iframe:not([src])').each(function() {
+        $(this).attr('src', $(this).attr('data-src')).show();
+        $(this).iFrameResize({checkOrigin:false});
+        // iFrameResize({ log: true }, slide);
+    });
+    
+    if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
+		$('#uncollapse_button').text('Uncollapse');
+	} else {
+		$('#uncollapse_button').text('Collapse');
+	}
+	$('#uncollapse_button').off();
+	$('#uncollapse_button').click(function() {
+		collapseToggle(slideNum);
+	});	  
+}
+
 function updateSlideInfo(slide, cranach) {
     
     let slideNum = +$(slide).attr('slide');
@@ -101,16 +122,6 @@ function updateSlideInfo(slide, cranach) {
 
     $(slide).find('.separator').css('font-weight', 'bold');
     $(slide).find('.separator').find('a').css('color', 'red');
-
-    $(slide).find('iframe:not([src])').each(function() {
-        $(slide).attr('src', $(slide).attr('data-src')).show();
-        $(slide).iFrameResize({checkOrigin:false});
-        // iFrameResize({ log: true }, slide);
-    });
-
-    if ( $(slide).hasClass('tex2jax_ignore') ) {
-        batchRender(slide);
-    }
 
     if ( !$(slide).hasClass('selected') ) {
         let course = $(slide).attr('course');
@@ -138,30 +149,16 @@ function updateSlideInfo(slide, cranach) {
             $('#info_statements .chapter[chapter="' + $(slide).attr('chapter') + '"]').show();
         }
 
-        if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
-            $('#uncollapse_button').text('Uncollapse');
-        } else {
-            $('#uncollapse_button').text('Collapse');
-        }
         $('#output div.slide').removeClass('selected');
         $(slide).addClass('selected');
     }
-    
-    if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
-		$('#uncollapse_button').text('Uncollapse');
-	} else {
-		$('#uncollapse_button').text('Collapse');
-	}
-	$('#uncollapse_button').off();
-	$('#uncollapse_button').click(function() {
-		collapseToggle(slideNum);
-	});	
 }
 
 function updateSlideClickEvent(cranach) {
     $('.slide').off();
     $('.slide').click(function() {
-         updateSlideInfo(this, cranach);
+        updateSlideContent(this);
+        updateSlideInfo(this, cranach);
     });
 }
 
