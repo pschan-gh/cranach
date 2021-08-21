@@ -266,6 +266,7 @@ $(function() {
 		
 		$('.carousel').carousel('pause');
 		
+        $slide.addClass('tex2jax_ignore');
 		updateCarousel(parseInt(slideNum));
 		updateSlideContent($slide[0]);
 		adjustHeight($slide[0]);
