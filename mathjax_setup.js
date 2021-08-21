@@ -34,7 +34,9 @@ MathJax = {
 		                        return renderer;
 		                    }
 		                    postprocess(renderer);
-		                    convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+							if ($('.editor.ace_editor').length > 0) {
+								convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+							}
 		                    $('#render_sel').prop('disabled', false);
 		                    $('#wb_button').prop('disabled', false);
 		                    return renderer;
