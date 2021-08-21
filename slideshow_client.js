@@ -337,7 +337,10 @@ function collapseToggle(slideNum, forced = '') {
 }
 
 function focusOn($item, text = '') {
-    let $slide = $item.closest('div.slide').first();
+    if ($item.closest('div.slide').length == 0) {
+        return 0;
+    }
+    let $slide = $item.closest('div.slide').first();    
     let slideNum = $slide.attr('slide');
     renderSlide($slide[0]);
     collapseToggle(slideNum, 'show');
