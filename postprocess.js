@@ -83,73 +83,86 @@ function updateTitle(slide) {
 
 }
 
+function updateSlideInfo(slide, cranach) {
+    
+    let slideNum = +$(slide).attr('slide');
+    
+    if (typeof editor !== typeof undefined) {
+        scrollToLine(editor, $(slide).attr('canon_num'));
+    }
 
+    $('*[text]').removeClass('highlighted');
+    $('button').removeClass('highlighted');
+    $('.item_button').css('background-color', '');
+    $(slide).find('.loading_icon').hide();
+
+    $('.separator').css('font-weight', 'normal');
+    $('.separator').find('a').css('color', 'pink');
+
+    $(slide).find('.separator').css('font-weight', 'bold');
+    $(slide).find('.separator').find('a').css('color', 'red');
+
+    $(slide).find('iframe:not([src])').each(function() {
+        $(slide).attr('src', $(slide).attr('data-src')).show();
+        $(slide).iFrameResize({checkOrigin:false});
+        // iFrameResize({ log: true }, slide);
+    });
+
+    if ( $(slide).hasClass('tex2jax_ignore') ) {
+        batchRender(slide);
+    }
+
+    if ( !$(slide).hasClass('selected') ) {
+        let course = $(slide).attr('course');
+        let chapterType = $(slide).attr('chapter_type');
+        let chapter = $(slide).attr('chapter');        
+        let statements = new Array();
+
+        updateTitle(slide);
+        
+        let url = cranach.attr['contentURL'];
+        let urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slideNum;
+
+        $('.url.share_text.slide_info').html(urlSlide);
+
+        $('#url_open').attr('href', urlSlide);
+
+        $('.hyperlink.share_text.slide_info').html('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slideNum + '</a>');
+
+        $('.hyperref.share_text.slide_info').html('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slideNum + '}');
+
+        $('#slide_info').show();
+
+        if ($('.current_chapter').first().text() != $(slide).attr('chapter')) {
+            $('#info_statements .chapter').hide();
+            $('#info_statements .chapter[chapter="' + $(slide).attr('chapter') + '"]').show();
+        }
+
+        if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
+            $('#uncollapse_button').text('Uncollapse');
+        } else {
+            $('#uncollapse_button').text('Collapse');
+        }
+        $('#output div.slide').removeClass('selected');
+        $(slide).addClass('selected');
+    }
+    
+    if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
+		$('#uncollapse_button').text('Uncollapse');
+	} else {
+		$('#uncollapse_button').text('Collapse');
+	}
+	$('#uncollapse_button').off();
+	$('#uncollapse_button').click(function() {
+		collapseToggle(slideNum);
+	});	
+}
 
 function updateSlideClickEvent(cranach) {
     $('.slide').off();
     $('.slide').click(function() {
-        let slideElement = this;
-        
-        if (typeof editor !== typeof undefined) {
-            scrollToLine(editor, $(slideElement).attr('canon_num'));
-        }
-
-        $('*[text]').removeClass('highlighted');
-        $('button').removeClass('highlighted');
-        $('.item_button').css('background-color', '');
-        $(this).find('.loading_icon').hide();
-
-        $('.separator').css('font-weight', 'normal');
-        $('.separator').find('a').css('color', 'pink');
-
-        $(this).find('.separator').css('font-weight', 'bold');
-        $(this).find('.separator').find('a').css('color', 'red');
-
-        $(this).find('iframe:not([src])').each(function() {
-            $(this).attr('src', $(this).attr('data-src')).show();
-            $(this).iFrameResize({checkOrigin:false});
-            // iFrameResize({ log: true }, this);
-        });
-
-        if (!$(this).hasClass('selected') || $(this).hasClass('tex2jax_ignore')) {
-            batchRender(slideElement);
-            
-            let course = $(this).attr('course');
-            let chapterType = $(this).attr('chapter_type');
-            let chapter = $(this).attr('chapter');
-            let slide = +$(this).attr('slide');
-            let statements = new Array();
-
-            updateTitle(slideElement);
-            
-            let url = cranach.attr['contentURL'];
-            let urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slide;
-
-            $('.url.share_text.slide_info').html(urlSlide);
-
-            $('#url_open').attr('href', urlSlide);
-
-            $('.hyperlink.share_text.slide_info').html('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slide + '</a>');
-
-            $('.hyperref.share_text.slide_info').html('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slide + '}');
-
-            $('#slide_info').show();
-
-            if ($('.current_chapter').first().text() != $(slideElement).attr('chapter')) {
-                $('#info_statements .chapter').hide();
-                $('#info_statements .chapter[chapter="' + $(slideElement).attr('chapter') + '"]').show();
-            }
-
-            if ($(this).find('a.collapsea[aria-expanded="false"]').length) {
-                $('#uncollapse_button').text('Uncollapse');
-            } else {
-                $('#uncollapse_button').text('Collapse');
-            }
-            $('#output div.slide').removeClass('selected');
-            $(this).addClass('selected');
-        }        
+         updateSlideInfo(this, cranach);
     });
-
 }
 
 let timer = null;

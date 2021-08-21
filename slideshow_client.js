@@ -303,24 +303,26 @@ function resizeFont(multiplier) {
 
 
 function collapseToggle(slideNum) {
-
-    let $slides = $('.output div.slide[slide="' + slideNum + '"]');
     
-    $slides.find('a.collapsea').attr('data-bs-toggle', 'collapse');
-    $slides.find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    let $slides = $('.output div.slide[slide="' + slideNum + '"]');
     
     $slides.each(function() {
         let $slide = $(this);
+        
         if ($slide.hasClass('collapsed')) {
             $slide.removeClass('collapsed');
             $slide.find('.collapse').collapse('show');
+            // $slide.find('.collapse').show();
+            $slide.find('a.collapsea').attr('aria-expanded', 'true');
             $('#uncollapse_button').text('Collapse');
         } else {
             $slide.addClass('collapsed');
             $slide.find('.collapse').collapse('hide');
+            // $slide.find('.collapse').hide();
+            $slide.find('a.collapsea').attr('aria-expanded', 'false');
             $('#uncollapse_button').text('Uncollapse');
         }
-    });
+    });        
 }
 
 function focusOn($item, text) {
@@ -443,6 +445,7 @@ function imagePostprocess(image) {
         $(image).show();
     });
 }
+
 
 // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
 function isElementInViewport (el) {
