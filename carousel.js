@@ -89,7 +89,10 @@ function showDivs(slide, cranach) {
 	$('#uncollapse_button').click(function() {
 		collapseToggle(slideNum);
 	});	
-	clone.remove();
+	// clone.remove();
+	cranach.then(renderer => {
+		updateModal(renderer);
+	});
 }
 
 function hideDivs() {
@@ -111,7 +114,8 @@ function hideDivs() {
 		.addClass('tex2jax_ignore');
 	$('.controls').hide();
 	$('#output .slide_content').css('padding-bottom', '');
-	$('#output').scrollTo($('.slide.selected'));
+	// $('#output').scrollTo($('.slide.selected'));
+	$('.slide.selected')[0].scrollIntoView();
 	$('#carousel div.slide').remove();
 	$('#carousel').hide();
 	MathJax.startup.document.state(0);

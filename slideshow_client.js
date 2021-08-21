@@ -302,42 +302,60 @@ function resizeFont(multiplier) {
 
 
 
-function collapseToggle(slideNum) {
+function collapseToggle(slideNum, forced = '') {
     
     let $slides = $('.output div.slide[slide="' + slideNum + '"]');
     
     $slides.each(function() {
         let $slide = $(this);
-        
-        if ($slide.hasClass('collapsed')) {
-            $slide.removeClass('collapsed');
-            $slide.find('.collapse').collapse('show');
-            // $slide.find('.collapse').show();
-            $slide.find('a.collapsea').attr('aria-expanded', 'true');
-            $('#uncollapse_button').text('Collapse');
-        } else {
-            $slide.addClass('collapsed');
-            $slide.find('.collapse').collapse('hide');
-            // $slide.find('.collapse').hide();
-            $slide.find('a.collapsea').attr('aria-expanded', 'false');
-            $('#uncollapse_button').text('Uncollapse');
+        console.log('collapseToggle ' + forced);
+        if (forced == '') {
+            if ($slide.hasClass('collapsed')) {
+                $slide.removeClass('collapsed');
+                $slide.find('.collapse').collapse('show');
+                // $slide.find('.collapse').show();
+                $slide.find('a.collapsea').attr('aria-expanded', 'true');
+                $('#uncollapse_button').text('Collapse');
+            } else {
+                $slide.addClass('collapsed');
+                $slide.find('.collapse').collapse('hide');
+                // $slide.find('.collapse').hide();
+                $slide.find('a.collapsea').attr('aria-expanded', 'false');
+                $('#uncollapse_button').text('Uncollapse');
+            } 
+        } else {            
+            $slide.find('.collapse').collapse(forced);
+            $slide.find('a.collapsea').attr('aria-expanded', forced == 'show' ? 'true' : 'false');
+            $('#uncollapse_button').text(forced == 'show' ? 'Collapse' : 'Uncollapse');
+            if (forced == 'show') {
+                $slide.removeClass('collapsed');
+            } else {
+                $slide.addClass('collapsed');
+            }
         }
     });        
 }
 
-function focusOn($item, text) {
+function focusOn($item, text = '') {
     let $slide = $item.closest('div.slide').first();
     let slideNum = $slide.attr('slide');
-    if ($slide.hasClass('collapsed')) {
-        collapseToggle(slideNum);
-    }
+    renderSlide($slide[0]);
+    collapseToggle(slideNum, 'show');
+    $slide.on('shown.bs.collapse', 'div.collapse', function() {
+        $item[0].scrollIntoView();     
+    });
+    $item[0].scrollIntoView();
     
-    if (text!= '') {
-        $('.output:visible').scrollTo($item);
+    if (text != '') {
+        // $('.output:visible').scrollTo($item);
+        // $item[0].scrollIntoView();
         $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
     } else {
-        $('.output:visible').scrollTo($item, 150);
+        $item.addClass('highlighted');
     }
+    // else {
+    //     $('.output:visible').scrollTo($item, 150);
+    // }
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
             showDivs($slide[0], cranach);
@@ -346,7 +364,8 @@ function focusOn($item, text) {
 }
 
 function jumpToSlide($output, $slide) {
-    $output.scrollTo($slide);
+    // $output.scrollTo($slide);
+    $slide[0].scrollIntoView();
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
             showDivs($slide[0], cranach);
@@ -364,7 +383,6 @@ function imagePostprocess(image) {
     $(image).removeClass('loading');
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
-        console.log($(image).attr('src'));
         if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
             $(image).css('background', 'none');
             $(image).show();
