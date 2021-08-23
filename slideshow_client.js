@@ -466,13 +466,13 @@ function collapseToggle(slideIndex) {
     if ($slide.hasClass('collapsed')) {
         $slide.removeClass('collapsed');
         // $slide.find('.collapse').addClass('show');        
-        // $slide.find('a.collapsea').attr('aria-expanded', 'true');
+        $slide.find('a.collapsea').attr('aria-expanded', 'true');
         $slide.find('.collapse').collapse('show');        
         $('#uncollapse_button').text('Collapse');
     } else {
         $slide.addClass('collapsed');
         // $slide.find('.collapse').removeClass('show');        
-        // $slide.find('a.collapsea').attr('aria-expanded', 'false');
+        $slide.find('a.collapsea').attr('aria-expanded', 'false');
         $slide.find('.collapse').collapse('hide');
         $('#uncollapse_button').text('Uncollapse');
     }
