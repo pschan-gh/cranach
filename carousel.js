@@ -35,10 +35,12 @@ function showDivs(slide, cranach) {
 	let $slide = $(slide);
 	
 	let $slides = $('#output > .slide');
-	
+		
 	if ($slides.length == null || $slides.length == 0) {
 		return 0;
 	}
+	
+	$('#output a.collapsea').removeAttr('data-bs-toggle');
 
 	let slideNum = parseInt($slide.attr('slide'));
 	let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
