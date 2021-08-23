@@ -131,8 +131,8 @@ function updateSlideInfo(slide, cranach) {
 }
 
 function updateSlideClickEvent(cranach) {
-    $('.slide').off();
-    $('.slide').click(function() {
+    $('.output .slide').off();
+    $('.output .slide').click(function() {
         updateSlideContent(this);
         updateSlideInfo(this, cranach);
     });
