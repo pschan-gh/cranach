@@ -297,7 +297,7 @@
     <xsl:template match="xh:br[@wbtag='newline']|lv:newline|xh:newline|newline">
         <xsl:text>&#xa;</xsl:text>
         <xsl:text>@newline</xsl:text>
-        <!-- <xsl:text>&#xa;</xsl:text> -->
+        <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:center|lv:left|lv:right" >
