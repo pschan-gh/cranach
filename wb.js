@@ -55,6 +55,6 @@ function convertCranachDocToWb(cranachDoc, editor) {
             .replace(/ *\n/g, "\n")
         , 1);
         $('#output div.slide').addClass('tex2jax_ignore');
-        showTexSource(false, editor);
+        inlineEdit(false, editor);
     });
 }

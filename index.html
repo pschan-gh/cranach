@@ -272,7 +272,7 @@
                                     <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
                                 </li>                            
                                 <li>
-                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();showTexSource(box.checked, editor);warnClose = true">Edit</a>
+                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();inlineEdit(box.checked, editor);warnClose = true">Edit</a>
                                     <input id="edit_box" type="checkbox" style="display:none" />
                                 </li>
                                 <li class="advanced">

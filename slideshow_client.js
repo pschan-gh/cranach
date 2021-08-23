@@ -22,7 +22,7 @@ function renderTexSource(slide) {
     $(slide).find('.latexSource').remove();
 }
 
-function showTexSource(showSource, editor) {    
+function inlineEdit(showSource, editor) {    
     let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
     
     $slide.attr('contentEditable', showSource);
