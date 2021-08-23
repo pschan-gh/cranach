@@ -180,6 +180,28 @@ function adjustHeight(slide) {
     }
 }
 
+function updateSlideContent(slide) {
+    if ( $(slide).hasClass('tex2jax_ignore') ) {
+        batchRender(slide);
+    }
+    $(slide).find('iframe:not([src])').each(function() {
+        $(this).attr('src', $(this).attr('data-src')).show();
+        $(this).iFrameResize({checkOrigin:false});
+        // iFrameResize({ log: true }, slide);
+    });
+    
+    if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
+		$('#uncollapse_button').text('Uncollapse');
+	} else {
+		$('#uncollapse_button').text('Collapse');
+	}
+	$('#uncollapse_button').off();
+	$('#uncollapse_button').click(function() {
+		collapseToggle(slideNum);
+	});
+    $(slide).find('.loading_icon').hide();    
+}
+
 function showStep(el) {
     let $parent = $(el).closest('div[wbtag="steps"]');
     let $stepsClass = $parent.find('.steps');
@@ -343,22 +365,21 @@ function focusOn($item, text = '') {
     let $slide = $item.closest('div.slide').first();    
     let slideNum = $slide.attr('slide');
     renderSlide($slide[0]);
-    collapseToggle(slideNum, 'show');
-    $slide.on('shown.bs.collapse', 'div.collapse', function() {
-        $item[0].scrollIntoView();     
-    });
-    $item[0].scrollIntoView();
     
     if (text != '') {
-        // $('.output:visible').scrollTo($item);
-        // $item[0].scrollIntoView();
-        $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
+        let $textItem = $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
+        if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
+            collapseToggle(slideNum, 'show');
+            $slide.on('shown.bs.collapse', 'div.collapse', function() {
+                $textItem[0].scrollIntoView();
+            });
+        }
+        $textItem[0].scrollIntoView();
     } else {
         $item.addClass('highlighted');
+        $item[0].scrollIntoView();
     }
-    // else {
-    //     $('.output:visible').scrollTo($item, 150);
-    // }
+    
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
             showDivs($slide[0], cranach);

@@ -273,6 +273,9 @@ $(function() {
         $slide.addClass('tex2jax_ignore');
 		updateCarousel(parseInt(slideNum));
 		updateSlideContent($slide[0]);
+		baseRenderer.then(cranach => {
+			updateSlideInfo($slide[0], cranach);
+		});
 		adjustHeight($slide[0]);
 		updateCanvas($slide[0]);
 		if ($slide.find('a.collapsea[aria-expanded="false"]').length) {

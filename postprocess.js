@@ -83,28 +83,6 @@ function updateTitle(slide) {
 
 }
 
-function updateSlideContent(slide) {
-    if ( $(slide).hasClass('tex2jax_ignore') ) {
-        batchRender(slide);
-    }
-    $(slide).find('iframe:not([src])').each(function() {
-        $(this).attr('src', $(this).attr('data-src')).show();
-        $(this).iFrameResize({checkOrigin:false});
-        // iFrameResize({ log: true }, slide);
-    });
-    
-    if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
-		$('#uncollapse_button').text('Uncollapse');
-	} else {
-		$('#uncollapse_button').text('Collapse');
-	}
-	$('#uncollapse_button').off();
-	$('#uncollapse_button').click(function() {
-		collapseToggle(slideNum);
-	});
-    $(slide).find('.loading_icon').hide();    
-}
-
 function updateSlideInfo(slide, cranach) {
     
     let slideNum = +$(slide).attr('slide');
@@ -134,13 +112,11 @@ function updateSlideInfo(slide, cranach) {
         let url = cranach.attr['contentURL'];
         let urlSlide = cranach.attr['contentURL'] +  '&query=' + cranach.attr['query'] + '&slide=' + slideNum;
 
-        $('.url.share_text.slide_info').html(urlSlide);
-
         $('#url_open').attr('href', urlSlide);
+        $('.url.share_text').val(urlSlide);
+        $('.hyperlink.share_text').val('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slideNum + '</a>');
 
-        $('.hyperlink.share_text.slide_info').html('<a href="' + urlSlide + '" target="_blank" title="Course:' + course + '">' + 'Chapter ' + chapter + ' Slide ' + slideNum + '</a>');
-
-        $('.hyperref.share_text.slide_info').html('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slideNum + '}');
+        $('.hyperref.share_text').val('\\href{' + urlSlide.replace('#', '\\#') + '}{Chapter ' + chapter + ' Slide ' + slideNum + '}');
 
         $('#slide_info').show();
 
