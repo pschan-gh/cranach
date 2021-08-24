@@ -149,6 +149,16 @@ function renderSlide(slide) {
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");        
         typeset([slide]).then(() => {
+            let doc = MathJax.startup.document;
+            for (const node of slide.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = {node: text, delim: '', n: 0};
+                math.end = {node: text, delim: '', n: 0};
+                doc.math.push(math);
+            }
             adjustHeight(slide);
         });
     }    
