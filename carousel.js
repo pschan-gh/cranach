@@ -49,15 +49,13 @@ function showDivs(slide, cranach) {
 	$('#carousel.present').removeClass('carousel-inner');
 	$('#carousel .slide').removeClass('carousel-item');
 		
-	let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById('output'));
-	
-	showTexFrom(jax);
+	// let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById('output'));	
+	// showTexFrom(jax);
 			
 	let clone = document.getElementById('output').cloneNode(true);
-	MathJax.startup.document.state(0);
-	MathJax.texReset();
-	MathJax.typesetClear();
-	
+	// MathJax.startup.document.state(0);
+	// MathJax.texReset();
+	// MathJax.typesetClear();	
 	$('#carousel div.slide').remove();
 	if ($slides.length > 50) {
 		$(clone).find('.slide[slide="' + slideNum + '"]').first().appendTo($('#carousel'));
@@ -120,10 +118,9 @@ function hideDivs() {
 	$('.slide.selected')[0].scrollIntoView();
 	$('#carousel div.slide').remove();
 	$('#carousel').hide();
-	MathJax.startup.document.state(0);
-	MathJax.texReset();
-	MathJax.typesetClear();
-	// updateScrollEvent();
+	// MathJax.startup.document.state(0);
+	// MathJax.texReset();
+	// MathJax.typesetClear();
 }
 
 function annotate() {
