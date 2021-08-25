@@ -186,8 +186,9 @@
 
     <xsl:template match="lv:section">
         <xsl:param name="course" select="@course"/>
-        <xsl:param name="chapter" select="@chapter"/>
+        <xsl:param name="chapter" select="@chapter"/>        
         <xsl:param name="chapter_type" select="@chapter_type"/>
+        <xsl:param name="serial" select="@serial"/>
         <xsl:variable name="section">
             <xsl:choose>
                 <xsl:when test="@num">
@@ -210,7 +211,7 @@
                 <xsl:value-of select="$section"/>
             </xsl:attribute>
             <xsl:variable name="serial">
-                <xsl:value-of select="$chapter"/>
+                <xsl:value-of select="$serial"/>
                 <xsl:text>.</xsl:text>
                 <xsl:value-of select="$section"/>
             </xsl:variable>
@@ -245,6 +246,7 @@
         <xsl:param name="chapter" select="@chapter"/>
         <xsl:param name="chapter_type" select="@chapter_type"/>
         <xsl:param name="section" select="@section"/>
+        <xsl:param name="serial" select="@serial"/>
         <xsl:variable name="subsection">
             <xsl:number level="any" count="lv:section//lv:subsection" from="lv:section"/>
         </xsl:variable>
@@ -263,9 +265,7 @@
                 <xsl:value-of select="$subsection"/>
             </xsl:attribute>
             <xsl:variable name="serial">
-                <xsl:value-of select="$chapter"/>
-                <xsl:text>.</xsl:text>
-                <xsl:value-of select="$section"/>
+                <xsl:value-of select="$serial"/>
                 <xsl:text>.</xsl:text>
                 <xsl:value-of select="$subsection"/>
             </xsl:variable>
@@ -287,6 +287,7 @@
             <xsl:apply-templates select="lv:subsubsection|lv:slides|lv:bare|lv:keywords|lv:label|lv:title|text()">
                 <xsl:with-param name="course" select="$course"/>
                 <xsl:with-param name="chapter" select="$chapter"/>
+                <xsl:with-param name="chapter_type" select="$chapter_type"/>
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
                 <xsl:with-param name="serial" select="$serial"/>
@@ -301,6 +302,7 @@
         <xsl:param name="chapter_type" select="@chapter_type"/>
         <xsl:param name="section" select="@section"/>
         <xsl:param name="subsection" select="@subsection"/>
+        <xsl:param name="serial" select="@serial"/>
         <xsl:variable name="subsubsection">
             <xsl:number level="any" count="lv:subsection//lv:subsubsection" from="lv:subsection"/>
         </xsl:variable>
@@ -313,11 +315,7 @@
                 <xsl:value-of select="$chapter"/>
             </xsl:attribute>
             <xsl:variable name="serial">
-                <xsl:value-of select="$chapter"/>
-                <xsl:text>.</xsl:text>
-                <xsl:value-of select="$section"/>
-                <xsl:text>.</xsl:text>
-                <xsl:value-of select="$subsection"/>
+                <xsl:value-of select="$serial"/>
                 <xsl:text>.</xsl:text>
                 <xsl:value-of select="$subsubsection"/>
             </xsl:variable>

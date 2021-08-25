@@ -85,10 +85,10 @@ function updateModal(cranach) {
         let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
         let slide = $slide.attr('slide');
         
-        var course = $slide.attr('course');
+        let course = $slide.attr('course');
 
-        var chapterType = $slide.attr('chapter_type');
-        var chapter = $slide.attr('chapter');
+        let chapterType = $slide.attr('chapter_type');
+        let chapter = $slide.attr('chapter');
 
         $('.modal-title > span').hide();
         $('.md5.share_text').text('');
@@ -128,15 +128,14 @@ function updateModal(cranach) {
 
     $('.item_button, .section_button').off();
     $('.item_button, .section_button').on('click', function() {
-        console.log('item_button clicked');
-        var course = $(this).attr('course');
-        var md5String = $(this).attr('md5');
-        var item_type = $(this).attr('type');
-        var chapterType = $(this).attr('chapter_type');
-        var chapter = $(this).attr('chapter');
-        var item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
-        var serial = $(this).attr('serial');
-        var slide = $(this).closest('.slide').attr('slide');
+        let course = $(this).attr('course');
+        let md5String = $(this).attr('md5');
+        let item_type = $(this).attr('type');
+        let chapterType = $(this).attr('chapter_type');
+        let chapter = $(this).attr('chapter');
+        let item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
+        let serial = $(this).attr('serial');
+        let slide = $(this).closest('.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
         $('#item_modal').modal('toggle');
@@ -149,7 +148,7 @@ function updateModal(cranach) {
         $('.current_course').text(course);
         $('.current_chapter').text(chapterType + ' ' + chapter);
         $('.current_item_type').text(item_type);
-        $('.current_item').text($(this).attr('item') ? item : '');
+        $('.current_item').text(serial);
         $('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').show();
 
         let url = cranach.attr['contentURL'];
@@ -192,9 +191,3 @@ function updateModal(cranach) {
         updateModalProofOf(this, cranach);
     });
 }
-
-$(function() {
-    baseRenderer.then(cranach => {
-        updateModal(cranach);
-    });
-});
