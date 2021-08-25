@@ -149,7 +149,7 @@ function renderSlide(slide) {
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");        
         typeset([slide]).then(() => {
-            renderScriptMath(slide);            
+            // renderScriptMath(slide);            
             adjustHeight(slide);
         });
     }    
@@ -368,7 +368,9 @@ function focusOn($item, text = '') {
     renderSlide($slide[0]);
     
     if (text != '') {
-        let $textItem = $item.find('*[text=' + text.replace(/[^a-zA-Z0-9\-]/g, '') + ']').addClass('highlighted');
+        console.log(text);
+        // let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
+        let $textItem = $item.find('*[text="' + text + '"]').addClass('highlighted');
         if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
             collapseToggle(slideNum, 'show');
             $slide.on('shown.bs.collapse', 'div.collapse', function() {

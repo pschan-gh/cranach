@@ -16,37 +16,48 @@ MathJax = {
 				let filtered = list.filter((node) => container.contains(node.start.node));
 				return filtered;
 			};
-			MathJax.startup.defaultReady();
-			MathJax.startup.promise.then(() => {
-		        console.log('MathJax initial typesetting complete');
-		        // let cranach is now a promise
-		        $('.icon.latex, .icon.xml').hide();
-		        baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
-		            let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
-		            return cranach.render(output)
-		            .then(renderer => {
-		                if (renderer.bare) {
-		                    return renderer;
-		                }
-		                return renderer.displayIndexDocToHtml(document.getElementById('index'))
-		                .then(renderer => {
-		                    if (renderer.bare) {
-		                        return renderer;
-		                    }
-		                    postprocess(renderer);
-							if ($('.editor.ace_editor').length > 0) {
-								convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
-							}
-							if ($('#item_modal').length > 0) {								
-								updateModal(renderer);
-							}
-		                    $('#render_sel').prop('disabled', false);
-		                    $('#wb_button').prop('disabled', false);
-		                    return renderer;
-		                })
-		            });
-		        });
-		    });	
+			// MathJax.startup.defaultReady();
+            // MathJax.startup.promise.then(() => {
+            //     MathJax.startup.document.state(0);
+            //     MathJax.texReset();
+            //     return;
+            // }).then(() => {
+            //     return MathJax.tex2chtmlPromise(cranach.macrosString);
+            // }).then(() => {
+            // console.log('MathJax initial typesetting complete');
+            // let cranach is now a promise
+            $('.icon.latex, .icon.xml').hide();
+            baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
+                let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
+                return cranach.render(output)
+                .then(renderer => {
+                    if (renderer.bare) {
+                        return renderer;
+                    }
+                    return renderer.displayIndexDocToHtml(document.getElementById('index'))
+                })
+                .then(renderer => {
+                    // postprocess(renderer);
+                    if ($('.editor.ace_editor').length > 0) {
+                        convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+                    }
+                    if ($('#item_modal').length > 0) {								
+                        updateModal(renderer);
+                    }
+                    $('#render_sel').prop('disabled', false);
+                    $('#wb_button').prop('disabled', false);
+                    return renderer;
+                }).then(renderer => {
+                    MathJax.startup.defaultReady();
+                    MathJax.startup.promise.then(() => {
+                        MathJax.startup.document.state(0);
+                        MathJax.texReset();
+                        return MathJax.tex2chtmlPromise(renderer.macrosString);
+                    }).then(() => {
+                        postprocess(renderer);
+                    });
+                });
+            });
 		}
 	},
 	loader: {
@@ -94,15 +105,15 @@ MathJax = {
 	}
 };
 
-function renderScriptMath(el) {
-	let doc = MathJax.startup.document;
-	for (const node of el.querySelectorAll('script[type^="math/tex"]')) {
-		const display = !!node.type.match(/; *mode=display/);
-		const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-		const text = document.createTextNode('');
-		node.parentNode.replaceChild(text, node);
-		math.start = {node: text, delim: '', n: 0};
-		math.end = {node: text, delim: '', n: 0};
-		doc.math.push(math);
-	}
-}
+// function renderScriptMath(el) {
+// 	let doc = MathJax.startup.document;
+// 	for (const node of el.querySelectorAll('script[type^="math/tex"]')) {
+// 		const display = !!node.type.match(/; *mode=display/);
+// 		const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+// 		const text = document.createTextNode('');
+// 		node.parentNode.replaceChild(text, node);
+// 		math.start = {node: text, delim: '', n: 0};
+// 		math.end = {node: text, delim: '', n: 0};
+// 		doc.math.push(math);
+// 	}
+// }

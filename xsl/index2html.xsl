@@ -28,10 +28,6 @@
         <xsl:if test="string-length($string)">
 
             <xsl:variable name="char" select="substring($string, 1, 1)" />
-            <!-- <xsl:if test="$char!='a'">
-                <br/><br/>
-            </xsl:if> -->
-
             <strong><xsl:value-of select="translate($char, $lowercase, $uppercase)" /></strong>
             <br/>
             <xsl:apply-templates select="idx:entry[@keyword and contains($char, substring(@keyword, 1, 1))]">
@@ -46,11 +42,8 @@
 
     <xsl:template match="idx:entry[@keyword]">
         <xsl:if test="position()!=1">
-            <!-- <br/> -->
         </xsl:if>
         <xh:a namespace="http://www.w3.org/1999/xhtml" tabindex="0" role="button" class="btn btn-outline-info btn-sm btn_keyword index" data-bs-trigger="focus" data-bs-html="true" data-bs-toggle="popover" data-bs-placement="bottom" style="margin:2.5px">
-            <!-- <xsl:attribute name="data-bs-content">                
-            </xsl:attribute> -->
             <xsl:apply-templates select="idx:branch[@keyword]"/>
             <xsl:value-of select="idx:branch[1]/text()"/>
         </xh:a>
@@ -58,16 +51,6 @@
     </xsl:template>
 
     <xsl:template match="idx:branch[@keyword]">
-            <!-- <xsl:if test="position()!=1"><xsl:text>&lt;br/&gt;</xsl:text></xsl:if> -->
-            <!-- <xsl:text>&lt;a target="_blank" href ="</xsl:text><xsl:value-of select='$contenturldir' />/<xsl:value-of select="./@filename" /><xsl:text>&amp;slide=</xsl:text><xsl:value-of select="@slide"/><xsl:text>"&gt;Chapter </xsl:text><xsl:value-of select="@chapter" /><xsl:text>&lt;/a&gt;</xsl:text> -->
-	    <!-- <xsl:text>&lt;a target="_blank" href="</xsl:text>
-	    <xsl:value-of select='$contenturldir' />
-	    <xsl:value-of select="concat('/', @filename)" />
-	    <xsl:text>&amp;slide=</xsl:text><xsl:value-of select="@slide"/>
-	    <xsl:text>&amp;keyword=</xsl:text><xsl:value-of select="@keyword"/>
-	    <xsl:text>"&gt;Chapter </xsl:text><xsl:value-of select="@chapter" />
-	    <xsl:text>&lt;/a&gt;</xsl:text>
-         -->
         <xsl:variable name="apos">&apos;</xsl:variable>
         <xsl:variable name="keyword">
             <xsl:value-of select="@keyword"/>
@@ -80,10 +63,6 @@
                 <xsl:value-of select="concat($contenturldir, '/', ./@filename, '&amp;slide=', @slide, '&amp;keyword=', @keyword)"/>
             </xsl:attribute>
             <xsl:value-of select="concat('Chapter ', @chapter)"/>
-            <!-- <xsl:attribute name="onclick">
-                <xsl:value-of select="concat('focusOn($(&quot;#s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
-            </xsl:attribute>
-            <xsl:value-of select="concat('Slide ', @slide)"/> -->
         </a>
     </xsl:template>
 
