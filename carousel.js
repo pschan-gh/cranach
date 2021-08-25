@@ -22,7 +22,7 @@ function updateCarousel(slideNum) {
 	
 }
 
-function showDivs(slide, cranach) {
+function showSlide(slide, cranach) {
 	$('.pane').removeClass('info')
 		.removeClass('overview')
 		.removeClass('compose')
@@ -89,10 +89,10 @@ function showDivs(slide, cranach) {
 	$('#uncollapse_button').click(function() {
 		collapseToggle(slideNum);
 	});	
-	// clone.remove();
 	cranach.then(renderer => {
 		updateModal(renderer);
 	});
+	clone.remove();	
 }
 
 function hideDivs() {

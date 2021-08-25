@@ -233,7 +233,7 @@
                             <!-- &#9776; -->
                             <ul class="dropdown-menu" aria-labelledby="test_button">
                                 <li>
-                                    <a id="present_button" class="dropdown-item menu_button present" onclick="showDivs($('#output div.slide.selected')[0] || $('#output div.slide:lt(1)')[0], baseRenderer);$('#carousel').show();">Full Screen</a>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="showSlide($('#output div.slide.selected')[0] || $('#output div.slide:lt(1)')[0], baseRenderer);$('#carousel').show();">Full Screen</a>
                                 </li>
                                 <li>
                                     <a id="presentation_button" class="dropdown-item menu_button fullscreen" onclick="if(document.fullscreenElement){document.exitFullscreen();} else {$('body')[0].requestFullscreen();}">Presentation Mode</a>

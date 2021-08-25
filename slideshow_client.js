@@ -392,7 +392,7 @@ function focusOn($item, text = '') {
     
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
-            showDivs($slide[0], cranach);
+            showSlide($slide[0], cranach);
         });
     }
 }
@@ -402,7 +402,7 @@ function jumpToSlide($output, $slide) {
     $slide[0].scrollIntoView();
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
-            showDivs($slide[0], cranach);
+            showSlide($slide[0], cranach);
         });
     }
 }
