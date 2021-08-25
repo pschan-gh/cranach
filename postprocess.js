@@ -432,6 +432,25 @@ function postprocess(cranach) {
             console.log('PRESENT MODE');
             $('#present_button').click();
         }
+        
+        $('#latex_icon').click(function() {
+            $('#wb_modal').modal('toggle');
+            console.log(cranach);
+            showLatex(cranach);
+        });
+        $('#xml_icon').click(function() {
+            $('#wb_modal').modal('toggle');
+            showXML(cranach);
+        });
+        
+        $('#save_icon').click(function() {
+            saveWb(editor, cranach);
+        });
+        
+        $('.ace_editor').each(function() {
+            updateEditor(cranach);
+        });
+        
     });
         
     // });    

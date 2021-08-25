@@ -190,7 +190,7 @@
                                 <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="save_icon" onclick="saveWb(editor, baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
+                                <a class="nav-link" id="save_icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
                             </li>
                             <li class="nav-item" style="width:5em">
                                 <select name="render" class="nav-link plain_button form-control" id="render_sel" style="margin-top:10px" disabled>
@@ -300,14 +300,14 @@
                                             <a id="compose_button" style="width:100%" class="menu_button dropdown-item"  function="compose" onclick="$('#container').removeClass('wide');$('.pane').removeClass('overview').removeClass('info').removeClass('present').addClass('compose');$('.slide').show();$('.slide').removeAttr('style');$('#left_half').attr('mode', 'compose'); editor.resize()">Compose</a>
                                         </li>
                                         <li>
-                                            <a id="latex_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showLatex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                            <a id="latex_icon" class="menu_button dropdown-item" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
                                         </li>
                                         <li>
-                                            <a id="xml_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showXML(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                            <a id="xml_icon" class="menu_button dropdown-item" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
                                         </li>
-                                        <li>
+                                        <!-- <li>
                                             <a id="index_icon" class="menu_button dropdown-item" onclick="$('#wb_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
-                                        </li>
+                                        </li> -->
                                         <li>
                                             <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); $('#gh_modal').modal('toggle')" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
                                         </li>
@@ -454,7 +454,7 @@
     </div>
     <script src="item_modal.js"></script>
     <!-- Wb code window -->
-    <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+    <!-- <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
             <div class="modal-content" style="height:100%">
                 <div class="modal-header">
@@ -476,7 +476,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <script src="wb.js"></script>
     <!-- Github modal -->
     <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">

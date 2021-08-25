@@ -22,11 +22,11 @@ editor.commands.addCommand({
 	}
 });
 
-$(function() {
-	$('#render_sel').mouseover(function() {
-		if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-			return;
-		}
+function updateEditor(cranach) {
+    $('#render_sel').mouseover(function() {
+        if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
+            return;
+        }
 		$("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
 		var buffer = editor.getValue()
 		.replace(/@sep/g, '@slide')
@@ -49,12 +49,9 @@ $(function() {
 		let selectedSlideNum = $('.output:visible div.slide.selected').length > 0 ? $('.output:visible div.slide.selected').attr('slide') : 1;
 		console.log(query);
 		$("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
+        let dir = cranach.attr['dir'];
+        baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']});
 		baseRenderer.then(cranach => {
-			let dir = cranach.attr['dir'];
-			baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']});
-			return baseRenderer;
-		})
-		.then(cranach => {
 			console.log(cranach);
 			MathJax.typesetClear();
 			return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
@@ -80,4 +77,4 @@ $(function() {
 			$('#edit_icon').attr('src', 'icons/Edit_Notepad_Icon.svg');
 		}
 	});
-});
+}
