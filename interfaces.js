@@ -202,7 +202,7 @@ function openWb(filePath) {
 }
 
 
-function openXML(promise, filePath) {
+function openXML(renderer, filePath) {
     var file    = filePath.files[0];
     var reader  = new FileReader();
     
@@ -224,11 +224,11 @@ function openXML(promise, filePath) {
     reader.addEventListener("load", function () {
         report('READER RESULT');
         report(reader.result);
-        promise.then(renderer => {
-            var cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
-            renderer.attr['localName'] = filename;
-            renderer.attr['cranachDoc'] = cranachDoc;
-            baseRenderer = renderer.displayCranachDocToHtml().then(renderer => {
+        let cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
+        renderer.then(cranach => {
+            cranach.attr['localName'] = filename;
+            cranach.attr['cranachDoc'] = cranachDoc;
+            baseRenderer = cranach.displayCranachDocToHtml().then(renderer => {
                 postprocess(renderer);
                 convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
                 return renderer;

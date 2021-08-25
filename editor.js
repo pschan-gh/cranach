@@ -78,3 +78,15 @@ function updateEditor(cranach) {
 		}
 	});
 }
+
+$(function() {
+    baseRenderer.then(cranach => {        
+        $('#save_icon').click(function() {
+            saveWb(editor, cranach);
+        });
+        
+        $('.ace_editor').each(function() {
+            updateEditor(cranach);
+        });
+    });
+});

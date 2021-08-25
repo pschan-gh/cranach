@@ -63,4 +63,21 @@ $(function() {
 			$('[data-lecture-skip="true"]').removeClass('lecture_skip');
 		}
 	});
+    
+    baseRenderer.then(cranach => {
+        $('#latex_icon').click(function() {
+            $('#wb_modal').modal('toggle');
+            console.log(cranach);
+            showLatex(cranach);
+        });
+        $('#xmlInput').change(function() {
+            baseRenderer = openXML(baseRenderer, this);
+        });
+        $('#xml_icon').click(function() {
+            $('#wb_modal').modal('toggle');
+            showXML(cranach);
+        });
+        
+    });
+    
 });

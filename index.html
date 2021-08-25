@@ -51,7 +51,7 @@
     <script> 
     var Range = ace.require('ace/range').Range; // get reference to ace/range
     var warnClose = false;
-    var baseRenderer;    
+    var baseRenderer = new Cranach(window.location.href).setup();
     </script>
     <script src="mathjax_setup.js" ></script>    
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>    

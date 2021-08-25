@@ -27,7 +27,7 @@ MathJax = {
             // console.log('MathJax initial typesetting complete');
             // let cranach is now a promise
             $('.icon.latex, .icon.xml').hide();
-            baseRenderer = new Cranach(window.location.href).setup().then(cranach => {
+            baseRenderer.then(cranach => {
                 let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
                 return cranach.render(output)
                 .then(renderer => {
