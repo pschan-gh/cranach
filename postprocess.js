@@ -414,25 +414,18 @@ function postprocess(cranach) {
             console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
             $item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
-
-            // $('#output').scrollTo($item);
-            // $item.addClass('highlighted');
             focusOn($item);            
         } else if (cranach.attr['selectedSection']) {
             let $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
             let $selectedSlide = $section.closest('.slide');            
-            // $('#output').scrollTo($section);
-            // $section.addClass('highlighted');
             focusOn($section);
         } else {
-            let $selectedSlide = $('.slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
-            console.log('SCROLLING TO SLIDE ' + cranach.attr['selectedSlide']);
-            // $('#output').scrollTo($selectedSlide);
+            let $selectedSlide = $('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
             focusOn($selectedSlide);
         }        
 
         if (cranach.attr['selectedKeyword']) {
-            console.log('SELECTED KEYWORD: ' + cranach.attr['selectedKeyword']);
+            let $selectedSlide = $('.output:visible div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
             focusOn($selectedSlide, cranach.attr['selectedKeyword'].replace(/\s/g, ''));
         }                
         
