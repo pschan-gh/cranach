@@ -217,6 +217,7 @@
                 <div id="input" class="editor">
                 </div>
                 <script src="editor.js"></script>
+                <script src="wb.js"></script>
             </div>            
         </div>
         <div id="right_half" class='right pane overview carousel carousel-dark' data-bs-touch="false" data-bs-keyboard="false">
@@ -278,7 +279,7 @@
                                 </li>
                                 <li>
                                     <a class="menu_button dropdown-item" onclick="$('#xmlInput').click()">Open XML</a>
-                                    <input id="xmlInput" type="file" onclick="this.value = null" onchange="baseRenderer = openXML(baseRenderer, this);" style="display:none">
+                                    <input id="xmlInput" type="file" onclick="this.value = null" style="display:none">
                                 </li>                            
                                 <li>
                                     <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="var box = document.getElementById('edit_box'); $(box).click();inlineEdit(box.checked, editor);warnClose = true">Edit</a>
@@ -454,7 +455,7 @@
     </div>
     <script src="item_modal.js"></script>
     <!-- Wb code window -->
-    <!-- <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+    <div id="wb_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
             <div class="modal-content" style="height:100%">
                 <div class="modal-header">
@@ -476,8 +477,8 @@
                 </div>
             </div>
         </div>
-    </div> -->
-    <script src="wb.js"></script>
+    </div>
+    
     <!-- Github modal -->
     <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
         <div class="modal-dialog" role="dialog">

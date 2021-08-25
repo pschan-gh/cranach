@@ -5,20 +5,19 @@ function commitWb(editor) {
         let xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xsl);
         console.log(body);
-        var preCranachDoc = xsltProcessor.transformToDocument(body,document);
-        console.log(preCranachDoc);
-        console.log('HTML2PRELOVU');
+        let preCranachDoc = xsltProcessor.transformToDocument(body,document);        
 
         $('#source_text').val('');
-
         // // DEBUG
         // preCranachStr = new XMLSerializer().serializeToString(preCranachDoc);
         // console.log(preCranachStr);
         // preCranachDoc = new DOMParser().parseFromString(preCranachStr, 'text/xml');
         $.ajax({url: 'xsl/cranach.xsl'}).done(function(xsl) {
-            let xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(xsl);
-            let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc, document);
+            let xsltProcessor2 = new XSLTProcessor();
+            xsltProcessor2.importStylesheet(xsl);
+            console.log('HTML2PRELOVU');
+            console.log(preCranachDoc);
+            let cranachDoc = xsltProcessor2.transformToDocument(preCranachDoc, document);
             console.log(cranachDoc);
             convertCranachDocToWb(cranachDoc, editor);
         });

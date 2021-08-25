@@ -438,6 +438,9 @@ function postprocess(cranach) {
             console.log(cranach);
             showLatex(cranach);
         });
+        $('#xmlInput').change(function() {
+            baseRenderer = openXML(cranach, this);
+        });
         $('#xml_icon').click(function() {
             $('#wb_modal').modal('toggle');
             showXML(cranach);
