@@ -203,17 +203,17 @@ function openWb(filePath) {
 
 
 function openXML(renderer, filePath) {
-    var file    = filePath.files[0];
-    var reader  = new FileReader();
-    
-    report('READER');
-    report(file);
+    let file    = filePath.files[0];
+    let filename = '';
+    let reader  = new FileReader();
+    $('.progress-bar').css('width', '20%').attr('aria-valuenow', '20');
+    $('#loading_icon').show();
     if (file) {
         // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
-        var fullPath = filePath.value;
+        let fullPath = filePath.value;
         if (fullPath) {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename = fullPath.substring(startIndex);
+            let startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            let filename = fullPath.substring(startIndex);
             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
                 filename = filename.substring(1);
             }
@@ -222,17 +222,21 @@ function openXML(renderer, filePath) {
     }
     var el = this;
     reader.addEventListener("load", function () {
-        report('READER RESULT');
-        report(reader.result);
+        $('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
         let cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
-        renderer.then(cranach => {
+        baseRenderer = renderer.then(cranach => {
+            $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');            
             cranach.attr['localName'] = filename;
             cranach.attr['cranachDoc'] = cranachDoc;
-            baseRenderer = cranach.displayCranachDocToHtml().then(renderer => {
-                postprocess(renderer);
-                convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
-                return renderer;
-            });
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typesetClear();
+            return cranach.displayCranachDocToHtml();            
+        }).then(cranach => {
+            postprocess(cranach);            
+            convertCranachDocToWb(cranach.attr['cranachDoc'], editor);
+            $('#loading_icon').show();
+            return cranach;
         });
     }, false);
     

@@ -200,9 +200,11 @@ function updateToc(cranach) {
             highlight($(this).attr('serial'));
         });
 
-        let $slide = $('.slide[chapter="' + $(this).attr('chapter') + '"]').first();
+        let $slide = $('.output:visible .slide[chapter="' + $(this).attr('chapter') + '"]').first();
+        $(this).off();
         $(this).click(function() {
-            jumpToSlide($('#output'), $slide);
+            console.log($slide);
+            jumpToSlide($('.output:visible').first(), $slide);
         });
     });
     // console.log($('#info_statements')[0]);

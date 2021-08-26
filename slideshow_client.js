@@ -368,9 +368,9 @@ function focusOn($item, text = '') {
     
     $item[0].scrollIntoView();
     if (text != '') {
-        console.log(text);
+        console.log(text.toLowerCase().replace(/[^a-z0-9]/g, ''));
         // let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-        let $textItem = $item.find('*[text="' + text + '"]').addClass('highlighted');
+        let $textItem = $item.find('*[text="' + text.toLowerCase().replace(/[^a-z0-9]/g, '') + '"]').addClass('highlighted');
         if ($textItem.length) {
             $textItem[0].scrollIntoView();
             if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
