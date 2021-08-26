@@ -274,6 +274,7 @@ $(function() {
 		updateSlideContent($slide[0]);
 		baseRenderer.then(cranach => {
 			updateSlideInfo($slide[0], cranach);
+			updateModal(cranach);
 		});
 		adjustHeight($slide[0]);
 		updateCanvas($slide[0]);
