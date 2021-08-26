@@ -366,17 +366,20 @@ function focusOn($item, text = '') {
     let slideNum = $slide.attr('slide');
     renderSlide($slide[0]);
     
+    $item[0].scrollIntoView();
     if (text != '') {
         console.log(text);
         // let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
         let $textItem = $item.find('*[text="' + text + '"]').addClass('highlighted');
-        if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
-            collapseToggle(slideNum, 'show');
-            $slide.on('shown.bs.collapse', 'div.collapse', function() {
-                $textItem[0].scrollIntoView();
-            });
+        if ($textItem.length) {
+            $textItem[0].scrollIntoView();
+            if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
+                collapseToggle(slideNum, 'show');
+                $slide.on('shown.bs.collapse', 'div.collapse', function() {
+                    $textItem[0].scrollIntoView();
+                });
+            }            
         }
-        $textItem[0].scrollIntoView();
     } else {
         $item.addClass('highlighted');
         $item[0].scrollIntoView();
