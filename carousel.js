@@ -270,7 +270,7 @@ $(function() {
 		$('.carousel').carousel('pause');
 		
         $slide.addClass('tex2jax_ignore');
-		updateCarousel(parseInt(slideNum));
+		updateCarousel(slideNum);
 		updateSlideContent($slide[0]);
 		baseRenderer.then(cranach => {
 			updateSlideInfo($slide[0], cranach);
