@@ -41,8 +41,8 @@ function showLatex(el) {
     $('.modal-footer').find('.btn.save').show();
     
     var xsltProcessor = new XSLTProcessor();
-    $('#wb_modal').find('button.save').attr('ext', 'tex');
-    $('#wb_modal').find('.modal-title').html('LaTeX');
+    $('#text_modal button.save').attr('ext', 'tex');
+    $('#text_modal .modal-title').html('LaTeX');
     
     var docCranach = el.attr['cranachDoc'];
     var contentURLDir = el.attr['contentURLDir'];
@@ -91,8 +91,8 @@ function showXML(el) {
     $('.modal-footer').find('.btn.render').show();
     
     $('#source_text').val('');
-    $('#wb_modal').find('button.save').attr('ext', 'xml');
-    $('#wb_modal').find('.modal-title').text('Cranach XML');
+    $('#text_modal').find('button.save').attr('ext', 'xml');
+    $('#text_modal').find('.modal-title').text('Cranach XML');
     $('#source_text').val(new XMLSerializer().serializeToString(el.attr['cranachDoc']));
 }
 
@@ -161,8 +161,8 @@ function initGhDialog(editor) {
 //     $('.modal-footer').find('.btn.save').show();
 //     $('.modal-footer').find('.btn.update-index').show();
 //     $('.modal-footer').find('.btn.load-index').show();
-//     $('#wb_modal').find('button.save').attr('ext', 'xml');
-//     $('#wb_modal').find('.modal-title').text('Index XML');
+//     $('#text_modal').find('button.save').attr('ext', 'xml');
+//     $('#text_modal').find('.modal-title').text('Index XML');
 // 
 //     $('#source_text').val('');
 //     promise.then(el => {

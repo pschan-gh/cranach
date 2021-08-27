@@ -65,14 +65,14 @@ $(function() {
 	});
     
     $('#latex_icon').click(function() {
-        $('#wb_modal').modal('toggle');
+        $('#text_modal').modal('toggle');
         baseRenderer.then(cranach => {
             showLatex(cranach);
         });
     });
     $('#xml_icon').click(function() {
         baseRenderer.then(cranach => {
-            $('#wb_modal').modal('toggle');
+            $('#text_modal').modal('toggle');
             showXML(cranach);
         });
     });
