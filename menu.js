@@ -67,7 +67,6 @@ $(function() {
     baseRenderer.then(cranach => {
         $('#latex_icon').click(function() {
             $('#wb_modal').modal('toggle');
-            console.log(cranach);
             showLatex(cranach);
         });
         $('#xmlInput').change(function() {
