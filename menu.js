@@ -64,19 +64,21 @@ $(function() {
 		}
 	});
     
-    baseRenderer.then(cranach => {
-        $('#latex_icon').click(function() {
-            $('#wb_modal').modal('toggle');
+    $('#latex_icon').click(function() {
+        $('#wb_modal').modal('toggle');
+        baseRenderer.then(cranach => {
             showLatex(cranach);
         });
-        $('#xmlInput').change(function() {
-            baseRenderer = openXML(baseRenderer, this);
-        });
-        $('#xml_icon').click(function() {
+    });
+    $('#xml_icon').click(function() {
+        baseRenderer.then(cranach => {
             $('#wb_modal').modal('toggle');
             showXML(cranach);
         });
-        
     });
     
+    $('#xmlInput').change(function() {
+        baseRenderer = openXML(baseRenderer, this);
+    });
+        
 });
