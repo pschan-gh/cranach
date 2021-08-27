@@ -1,17 +1,16 @@
-function saveText(text, el, ext) {
+function saveText(text, renderer, ext) {
     var dummyLink = document.createElement('a');
     uriContent = "data:application/octet-stream," + encodeURIComponent(text);
-    console.log('URICONTENT');
-    console.log(uriContent);
     dummyLink.setAttribute('href', uriContent);
-
-    var filename = el.attr['localName'];
+    
+    var filename = renderer.attr['localName'];
+    console.log(filename);
     dummyLink.setAttribute('download', filename.replace(/\.[^\.]+$/, '') + '.' + ext);
     dummyLink.click();
 }
 
-function saveWb(editor, el) {
-    saveText(editor.session.getValue(), el, 'wb');
+function saveWb(editor, renderer) {
+    saveText(editor.session.getValue(), renderer, 'wb');
 }
 
 function collectNewcommands(str) {
@@ -208,19 +207,19 @@ function openXML(renderer, filePath) {
     let reader  = new FileReader();
     $('.progress-bar').css('width', '20%').attr('aria-valuenow', '20');
     $('#loading_icon').show();
+    console.log(filePath);
     if (file) {
         // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
         let fullPath = filePath.value;
         if (fullPath) {
             let startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            let filename = fullPath.substring(startIndex);
+            filename = fullPath.substring(startIndex);
             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
                 filename = filename.substring(1);
             }
-            console.log(fullPath);
         }
     }
-    var el = this;
+    console.log(filename);
     reader.addEventListener("load", function () {
         $('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
         let cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
@@ -235,7 +234,8 @@ function openXML(renderer, filePath) {
         }).then(cranach => {
             postprocess(cranach);            
             convertCranachDocToWb(cranach.attr['cranachDoc'], editor);
-            $('#loading_icon').show();
+            
+            $('#loading_icon').hide();
             return cranach;
         });
     }, false);
@@ -243,3 +243,11 @@ function openXML(renderer, filePath) {
     reader.readAsText(file);
     
 }
+
+$(function() {
+    baseRenderer.then(cranach => {        
+        $('.modal .btn.save').click(function() {
+            saveText($('#source_text').val(), cranach, $(this).attr('ext'));
+        });
+    });
+});
