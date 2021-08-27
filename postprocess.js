@@ -253,8 +253,6 @@ function updateKeywords() {
     });
     if ($('#slide_keywords')) {
         $('#slide_keywords').html('').append($('div.keywords[slide!="all"]'));
-    } else {
-        $(this).hide();
     }
 }
 
