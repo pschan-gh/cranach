@@ -162,7 +162,7 @@
         </xsl:choose>
         <xsl:apply-templates select="*[not(self::lv:caption)]" />
         <xsl:text>&#xa;</xsl:text>
-        <xsl:text>@end</xsl:text>
+        <xsl:text>@endfigure</xsl:text>
     </xsl:template>
 
     <xsl:template match="lv:ref">
