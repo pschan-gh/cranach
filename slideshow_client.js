@@ -385,8 +385,13 @@ function focusOn($item, text = '') {
             }            
         }
     } else {
+        if ($item.closest('.collapse, .hidden_collapse').length > 0) {
+            collapseToggle(slideNum, 'show');
+            $slide.on('shown.bs.collapse', 'div.collapse', function() {
+                $item[0].scrollIntoView();
+            });
+        }
         $item.addClass('highlighted');
-        $item[0].scrollIntoView();
     }
     
     if($('#right_half').hasClass('present')) {
