@@ -1050,8 +1050,7 @@
 	</xsl:template>
 
     <xsl:template match="xh:img|img">
-        <xsl:element name="{local-name()}" namespace="{$xh}">
-            <xsl:attribute name="class">loading</xsl:attribute>
+        <xsl:element name="{local-name()}" namespace="{$xh}">            
 			<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
 			<xsl:if test="@src">
 				<xsl:attribute name="data-src">
@@ -1279,6 +1278,7 @@
 				<xsl:attribute name="wbtag">ignore</xsl:attribute>
 				<xsl:copy-of select="@*[name(.)!='src']"/>
 				<xsl:attribute name="rendered">0</xsl:attribute>
+				<xsl:attribute name="class">loading</xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="contains(@data-src, 'http')">
 						<xsl:attribute name="data-src">

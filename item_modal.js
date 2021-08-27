@@ -83,10 +83,8 @@ function updateModal(cranach) {
     $('.slide_button').on('click', function() {
         console.log('SLIDE BUTTON PRESSED');
         let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
-        let slide = $slide.attr('slide');
-        
+        let slide = $slide.attr('slide');        
         let course = $slide.attr('course');
-
         let chapterType = $slide.attr('chapter_type');
         let chapter = $slide.attr('chapter');
 
@@ -119,10 +117,6 @@ function updateModal(cranach) {
         $('#item_modal').find('#modal_keywords').html('<hr><b class="notkw">Keywords:</b>').append($('#slide_keywords').clone(true));
 
         $('#item_modal').find('#item_modal_link').attr('href', url);
-        
-        // $('#item_modal').find('#share_url').val(url);
-        // $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '</a>');
-        // $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + course + ' ' + chapterType + ' ' + chapter + ' Slide ' + slide + '}');
 
     });
 
@@ -135,7 +129,7 @@ function updateModal(cranach) {
         let chapter = $(this).attr('chapter');
         let item = $(this).attr('item') ? $(this).attr('item') : $(this).attr('md5');
         let serial = $(this).attr('serial');
-        let slide = $(this).closest('.slide').attr('slide');
+        let slide = $(this).closest('div.slide').attr('slide');
 
         $('#item_modal').find('#modal_keywords').html('');
         $('#item_modal').modal('toggle');
@@ -191,3 +185,20 @@ function updateModal(cranach) {
         updateModalProofOf(this, cranach);
     });
 }
+
+$(function() {
+    let infoObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type == "attributes") {
+                if (mutation.attributeName == 'data-content-url' || mutation.attributeName == 'data-query') {
+                    baseRenderer.then(cranach => {
+                        updateModal(cranach);
+                    });
+                }
+            }
+        });
+    });
+    infoObserver.observe(document.getElementById('output'), {
+        attributes: true,
+    });
+});

@@ -802,9 +802,10 @@ max-width:600px;
     padding:10px;
 }
 .output img.loading {
-    max-width:10cm;
-    max-height:10cm;
+    width:10cm;
+    height:10cm;
     background:transparent url("icons/Loading_icon.gif") center no-repeat !important;
+    border:0;
 }
 .dual-left{
 display:table-cell;
@@ -1013,7 +1014,8 @@ position:relative;
 }
 #info {
     padding-top:1em;
-    padding-right:1em;
+    padding-bottom:1em;
+    padding-right:1em;    
     height:100%;
     overflow-y:auto;
 }

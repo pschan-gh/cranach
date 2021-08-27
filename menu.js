@@ -1,4 +1,42 @@
+function updateSlideSelector() {
+    if ($("#slide_sel").length == 0) {
+        return 0;
+    }
+    let numOfSlides = 0;
+    try {
+        // numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
+        numOfSlides = $('#output div.slide').length;
+    } catch(error) {
+        return 0;
+    }
+    $("#slide_sel").html('');
+    for (let i = 1; i <= numOfSlides; i++) {
+        let o = new Option(i.toString(), i);
+        $("#slide_sel").append(o);
+    }
+    $('#slide_sel').on('change', function() {
+        console.log('JUMPING TO SLIDE: ' + $(this).val());
+        jumpToSlide($('#output'), $('#s' + $(this).val()));
+    });
+}
+
+
 $(function() {
+    let menuObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type == "attributes") {
+                // if ( mutation.attributeName == 'data-selected-slide' ) {
+                if ( mutation.attributeName == 'data-content-url' ) {
+                    updateSlideSelector();
+                }
+            }
+        });
+    });
+    
+    menuObserver.observe(document.getElementById('output'), {
+        attributes: true,
+    });    
+    
 	// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
 	var menu_timer = null;
 	$('#right_half').first().each(function() {
@@ -80,5 +118,5 @@ $(function() {
     $('#xmlInput').change(function() {
         baseRenderer = openXML(baseRenderer, this);
     });
-        
+    		
 });

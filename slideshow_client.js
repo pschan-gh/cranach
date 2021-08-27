@@ -137,6 +137,10 @@ function renderSlide(slide) {
         imagePostprocess(this);
     });
      
+    baseRenderer.then(cranach => {
+        updateRefs(slide, cranach)
+    });
+     
     // $(slide).find('iframe:not([src])').not(".webwork").each(function() {
     //     $(this).attr('src', $(this).attr('data-src')).show();
     //     let $iframe = $(this);
@@ -152,7 +156,7 @@ function renderSlide(slide) {
             // renderScriptMath(slide);            
             adjustHeight(slide);
         });
-    }    
+    }
 }
 
 function batchRender(slide) {        
@@ -198,7 +202,7 @@ function updateSlideContent(slide) {
 	}
 	$('#uncollapse_button').off();
 	$('#uncollapse_button').click(function() {
-		collapseToggle(slideNum);
+		collapseToggle($(slide).attr('slide'));
 	});
     $(slide).find('.loading_icon').hide();    
 }
@@ -409,12 +413,12 @@ function highlight(item) {
 }
 function imagePostprocess(image) {
     
-    $(image).removeClass('loading');
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
+        $(image).removeClass('loading');        
         if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
-            $(image).css('background', 'none');
-            $(image).show();
+            // $(image).css('background', 'none');
+            // $(image).show();
             console.log($(image).attr('src') + ' OK');
             return 1;
         }
@@ -511,4 +515,114 @@ function isElementInViewport (el) {
         )
 
     );
+}
+
+function updateRefs(slide, cranach) {
+    
+    $(slide).find('a.lcref').each(function() {
+        $(this).attr('lcref', "");
+        
+        let label = $(this).attr('label');
+        let md5 = $(this).attr('md5');
+        let contentDir = cranach.attr['dir'];
+        let rootURL = cranach.attr['rootURL'];
+        
+        
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        let statementType = 'statement';
+        if ($(this).attr('type').match(/proof|solution|answer/i)) {
+            statementType = 'substatement';
+        }
+        if ($(this).attr('type').match(/figure/i)) {
+            statementType = 'figure';
+        }
+        
+        let lcref = '';
+        if ($(this).attr('filename') == 'self') {
+            if (cranach.hasXML) {
+                lcref = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        } else if ($(this).attr('src-filename')) {
+            if ($(this).attr('src-filename').match(/\.xml$/)) {
+                lcref = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            } else {
+                lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
+            }
+        }
+        
+        $(this).attr('lcref', lcref + '&version=' +Math.random());
+        
+    });
+                    
+    $(slide).find('a.href').each(function() {
+                    
+        let label = $(this).attr('label');
+        let serial = $(this).attr('serial');
+        let md5 = $(this).attr('md5');
+        let contentDir = ''
+        
+        let rootURL = cranach.attr['rootURL'];
+        if (cranach.hasXML) {
+            contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
+        } else if (cranach.hasWb) {
+            contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
+        }
+        
+        let href = '';
+        if ($(this).attr('filename') == 'self') {
+            if (cranach.hasXML) {
+                let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
+            } else {
+                let href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
+            }
+        } else {
+            if (cranach.hasXML) {
+                let href = rootURL + "?xml=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            } else {
+                let href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
+            }
+        }
+        
+        $(this).attr('target', '_blank');
+        $(this).attr('href', href);
+        
+    });
+    
+}
+
+function updateSlideClickEvent() {
+    $('.output div.slide').off();
+    $('.output div.slide').click(function() {
+        let slideNum = $(this).attr('slide');
+        let slide = this;
+        $('#output').attr('data-selected-slide', slideNum);        
+        // updateSlideContent(this);
+        // updateSlideInfo(this, cranach);        
+    });
+}
+
+let timer = null;
+function updateScrollEvent() {
+    $('#output').off();
+    
+    // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
+    $('.output:visible').on('scroll', function() {
+        if(timer !== null) {
+            clearTimeout(timer);
+        }
+        timer = window.setTimeout(function() {
+            $('.output:visible .slide.tex2jax_ignore').each(function() {
+                if (isElementInViewport(this)) {
+                    batchRender(this);
+                };
+            });
+        }, 15*100);
+    });
 }

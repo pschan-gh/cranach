@@ -237,7 +237,7 @@ $(function() {
 		$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
 		
 		let $slide = $('.output.present:visible div.slide.active').first();
-		$slide.addClass('selected');
+		$slide.addClass('selected');		
 		let slideNum = parseInt($slide.attr('slide'));
 		
 		$('#output .slide.selected').removeClass('selected');
@@ -270,13 +270,13 @@ $(function() {
 		$('.carousel').carousel('pause');
 		
         $slide.addClass('tex2jax_ignore');
-		updateCarousel(slideNum);
-		updateSlideContent($slide[0]);
-        updateTitle($slide[0]);
-        baseRenderer.then(cranach => {
-			updateSlideInfo($slide[0], cranach);
-			updateModal(cranach);
-		});
+		updateCarousel(slideNum);		
+		$('#output').attr('data-selected-slide', slideNum);
+		// updateSlideContent($slide[0]);
+        // baseRenderer.then(cranach => {
+		// 	updateSlideInfo($slide[0], cranach);
+		// 	updateModal(cranach);
+		// });
 		adjustHeight($slide[0]);
 		updateCanvas($slide[0]);
 		if ($slide.find('a.collapsea[aria-expanded="false"]').length) {

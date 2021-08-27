@@ -79,6 +79,31 @@ function updateEditor(cranach) {
 	});
 }
 
+function scrollToLine(editor, slide) {
+    // let slideLine = Array();
+    lines = editor.getSession().doc.getAllLines();
+    let isComment = false;
+    let slideCount = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].match(/\<\!\-\-/g)) {
+            isComment = true;
+        }
+        if (lines[i].match(/\-\-\>/g)) {
+            isComment = false;
+        }
+
+        if (!isComment) {
+            if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
+                slideCount++;
+            }
+        }
+        if (slideCount == slide) {
+            editor.gotoLine(i + 1);
+            break;
+        }
+    }
+}
+
 $(function() {
     baseRenderer.then(cranach => {        
         $('#save_icon').click(function() {
@@ -89,4 +114,18 @@ $(function() {
             updateEditor(cranach);
         });
     });
+	
+	let observer = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type == "attributes") {
+				if (mutation.attributeName == 'data-selected-slide') {
+					let $slide = $('#output div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
+					scrollToLine(editor, $slide.attr('canon_num'));
+				}
+			}
+		});
+	});
+	observer.observe(document.getElementById('output'), {
+		attributes: true,
+	});
 });

@@ -61,10 +61,7 @@ function generateXML(source) {
 
     var child = root;
 
-    console.log('MAINTOKENSRE: ' + mainTokensRe.source);
-
     child.words = source.match(mainTokensRe);
-    // console.log(child.words.toString());
 
     while (child.words.length) {
         child = child.weave();
@@ -73,8 +70,6 @@ function generateXML(source) {
     child = child.closeTo(/root/i);
 
     console.log('END WEAVER');
-    console.log(child.node);
     var xmlString = new XMLSerializer().serializeToString(child.node);
-    console.log(xmlString);
     return xmlString;
 }

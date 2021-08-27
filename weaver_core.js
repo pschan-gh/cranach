@@ -362,8 +362,6 @@ function Stack(node, doc) {
                 }
             }
         }
-        // console.log(word);
-        // console.log(argument);
         switch(word) {
             case "@course":
             // var re = new RegExp(word + '{(.*?)}');
@@ -659,8 +657,6 @@ function Stack(node, doc) {
             child.node.setAttribute("stepsid", 'steps' + child.stepsID);
             break;
             case "@nstep":
-            console.log('NSTEP: ' + argument);
-            // var insert = '\\class{steps' + child.stepsID + ' steps step' + step + '}';
             var insert = '\\class{steps}{\\cssId{step' + step + '}{' + argument + '}}';
             step++;
             child.node.textContent += insert;

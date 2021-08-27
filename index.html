@@ -53,9 +53,7 @@
     var warnClose = false;
     var baseRenderer = new Cranach(window.location.href).setup();
     </script>
-    <script src="mathjax_setup.js" ></script>    
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>    
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
     
     <style type="text/css">
     .ace_highlight-marker {
@@ -96,7 +94,7 @@
     </div>
     <div id="container" class="pane">
         <div id="left_half" class="left pane overview" mode="overview">
-            <div id="info_half">
+            <div id="info_half" class="info">
                 <div id="info_menu_container">
                     <button class="plain_button icon" id="compose_icon" onclick="$('#compose_button').click();">
                         <i class="material-icons">edit</i>
@@ -147,7 +145,7 @@
                         <div id="info_statements"></div>
                         <br/>
                         <hr>
-                        <div id="slide_info" class=".slide_info" style="display:none">
+                        <div id="slide_info" class="slide_info" style="display:none">
                             <h4 class="current_section"></h4>
                             <h5 class="current_slide"></h5>
                             <br/>
@@ -177,6 +175,7 @@
                     <div class="tab-pane" id="index"></div>
                 </div>
             </div>
+            <script src="info.js"></script>
             <div id="input_container">
                 <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">
                     <div class="navbar-collapse collapse">
@@ -550,6 +549,9 @@
         </div>
     </div>
     <script type="module" src="gittools.js"></script>
+    <script src="mathjax_setup.js" ></script>    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script>
     $(function() {        
         // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes

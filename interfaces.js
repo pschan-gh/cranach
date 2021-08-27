@@ -17,14 +17,12 @@ function collectNewcommands(str) {
     var commandsStr = '';
     var obj = new Object();
     var commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
-    console.log(commands);
     
     if (commands == null || typeof commands == typeof undefined) {
         return '';
     }
     for (var i = 0; i < commands.length; i++) {
         var matches = commands[i].match(/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
-        console.log(matches);
         obj[matches[1]] = matches[2];
     }
     console.log(obj);
@@ -202,12 +200,15 @@ function openWb(filePath) {
 
 
 function openXML(renderer, filePath) {
-    let file    = filePath.files[0];
+    let file = filePath.files[0];
     let filename = '';
+    let dir = '';
+    
     let reader  = new FileReader();
+    
     $('.progress-bar').css('width', '20%').attr('aria-valuenow', '20');
     $('#loading_icon').show();
-    console.log(filePath);
+    
     if (file) {
         // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
         let fullPath = filePath.value;
@@ -217,8 +218,13 @@ function openXML(renderer, filePath) {
             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
                 filename = filename.substring(1);
             }
+            let match;            
+            if (match = fullPath.match(/^(.*?)\/[^\/]+\.(?:wb|xml)/)) {
+                dir = match[1];
+            }
         }
     }
+    
     console.log(filename);
     reader.addEventListener("load", function () {
         $('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
@@ -226,15 +232,15 @@ function openXML(renderer, filePath) {
         baseRenderer = renderer.then(cranach => {
             $('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');            
             cranach.attr['localName'] = filename;
-            cranach.attr['cranachDoc'] = cranachDoc;
+            cranach.attr['dir'] = dir;
+            cranach.attr['cranachDoc'] = cranachDoc;            
             MathJax.startup.document.state(0);
             MathJax.texReset();
             MathJax.typesetClear();
             return cranach.displayCranachDocToHtml();            
         }).then(cranach => {
             postprocess(cranach);            
-            convertCranachDocToWb(cranach.attr['cranachDoc'], editor);
-            
+            convertCranachDocToWb(cranach.attr['cranachDoc'], editor);            
             $('#loading_icon').hide();
             return cranach;
         });
