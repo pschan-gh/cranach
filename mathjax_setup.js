@@ -16,48 +16,39 @@ MathJax = {
 				let filtered = list.filter((node) => container.contains(node.start.node));
 				return filtered;
 			};
-			// MathJax.startup.defaultReady();
-            // MathJax.startup.promise.then(() => {
-            //     MathJax.startup.document.state(0);
-            //     MathJax.texReset();
-            //     return;
-            // }).then(() => {
-            //     return MathJax.tex2chtmlPromise(cranach.macrosString);
-            // }).then(() => {
-            // console.log('MathJax initial typesetting complete');
-            // let cranach is now a promise
-            $('.icon.latex, .icon.xml').hide();
+			$('.icon.latex, .icon.xml').hide();
             baseRenderer.then(cranach => {
                 let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
-                return cranach.render(output)
-                .then(renderer => {
-                    if (renderer.bare) {
-                        return renderer;
-                    }
-                    return renderer.displayIndexDocToHtml(document.getElementById('index'))
-                })
-                .then(renderer => {
-                    // postprocess(renderer);
-                    if ($('.editor.ace_editor').length > 0) {
-                        convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
-                    }
-                    if ($('#item_modal').length > 0) {								
-                        updateModal(renderer);
-                    }
-                    $('#render_sel').prop('disabled', false);
-                    $('#wb_button').prop('disabled', false);
-                    return renderer;
-                }).then(renderer => {
-                    MathJax.startup.defaultReady();
-                    MathJax.startup.promise.then(() => {
-                        MathJax.startup.document.state(0);
-                        MathJax.texReset();
-                        return MathJax.tex2chtmlPromise(renderer.macrosString);
-                    }).then(() => {
-                        postprocess(renderer);
-                    });
-                });
-            });
+                return cranach.render(output);
+			}).then(renderer => {
+				if (renderer.bare) {
+					return renderer;
+				}
+				return renderer.displayIndexDocToHtml(document.getElementById('index'));
+			}).then(renderer => {
+				if (renderer.bare) {
+					return renderer;
+				} else {
+					if ($('.editor.ace_editor').length > 0) {
+						convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+					}
+					if ($('#item_modal').length > 0) {								
+						updateModal(renderer);
+					}
+					$('#render_sel').prop('disabled', false);
+					$('#wb_button').prop('disabled', false);
+					return renderer;
+				}
+			}).then(renderer => {
+				MathJax.startup.defaultReady();
+				MathJax.startup.promise.then(() => {
+					MathJax.startup.document.state(0);
+					MathJax.texReset();
+					return MathJax.tex2chtmlPromise(renderer.macrosString);
+				}).then(() => {
+					postprocess(renderer);
+				});
+			});
 		}
 	},
 	loader: {
