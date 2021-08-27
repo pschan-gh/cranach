@@ -366,7 +366,7 @@ function postprocess(cranach) {
     updateKeywords();
     updateScrollEvent();
     
-    updateTitle($('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0]);    
+    updateTitle( $('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0] );
         
     $(function() {
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {

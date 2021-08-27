@@ -272,9 +272,8 @@ $(function() {
         $slide.addClass('tex2jax_ignore');
 		updateCarousel(slideNum);
 		updateSlideContent($slide[0]);
-        updateTitle($('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0]);
-        updateKeywords();
-		baseRenderer.then(cranach => {
+        updateTitle($slide[0]);
+        baseRenderer.then(cranach => {
 			updateSlideInfo($slide[0], cranach);
 			updateModal(cranach);
 		});
