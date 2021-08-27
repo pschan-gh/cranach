@@ -69,7 +69,7 @@ function showLatex(el) {
         $('#source_text').val('');
         var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
         .replace(/\n(\ )*/g, "\n")
-        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/\&lt;/g, '<').replace(/\&gt;/g, '>')
         .replace(/\<!--.*?--\>/g, '')
         .replace(/&amp;/g, "&")
         .replace(/\\class{.*?}/g, '')
