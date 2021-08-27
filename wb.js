@@ -41,7 +41,7 @@ function convertCranachDocToWb(cranachDoc, editor) {
         // console.log(fragmentStr);
         editor.setValue(fragmentStr
             .replace(/@slide(?:\s|\n)*@((course|lecture|week|chapter|section|subsection|subsubsection|topic){(?:.|\n)*?})/g, "@$1")
-            .replace(/&lt;/g, '<')
+            .replace(/&lt;/g, '< ')
             .replace(/&gt;/g, '>')
             .replace(/&amp;/g, '&')
             .replace(/&apos;/g, "'")

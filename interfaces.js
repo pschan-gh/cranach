@@ -36,7 +36,7 @@ function collectNewcommands(str) {
     return commandsStr;
 }
 
-function showLatex(el) {
+function showLatex(renderer) {
     $('.modal-footer').find('.btn').hide();
     $('.modal-footer').find('.btn.save').show();
     
@@ -44,42 +44,44 @@ function showLatex(el) {
     $('#wb_modal').find('button.save').attr('ext', 'tex');
     $('#wb_modal').find('.modal-title').html('LaTeX');
     
-    var docCranach = el.attr['cranachDoc'];
-    var contentURLDir = el.attr['contentURLDir'];
-    var contentURL = el.attr['contentURL'];
-    
-    $.ajax({
-        url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
-        dataType: 'xml'
-    })
-    .done(function(xsl) {
-        var oParser = new DOMParser();
-        var xml = new XMLSerializer().serializeToString(docCranach);
-        xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
-        xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
-        xml = xml.replace(/#/g, '\#');
-        report(xml);
-        var xmlDOM = oParser.parseFromString(xml, "application/xml");
-        xsltProcessor.importStylesheet(xsl);
-        xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
-        xsltProcessor.setParameter('', 'contenturl', contentURL);
-        fragment = xsltProcessor.transformToFragment(xmlDOM, document);
-        report(fragment);
-        fragmentStr = new XMLSerializer().serializeToString(fragment);
-        $('#source_text').val('');
-        var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
-        .replace(/\n(\ )*/g, "\n")
-        .replace(/\&lt;/g, '<').replace(/\&gt;/g, '>')
-        .replace(/\<!--.*?--\>/g, '')
-        .replace(/&amp;/g, "&")
-        .replace(/\\class{.*?}/g, '')
-        .replace(/\\cssId{.*?}/g, '')
-        .replace(/&ocirc/g, '\\^o');
-        var tmp = el.macrosString + "\n" +  latex;
-        latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
-        // .replace(/\$\n+\$/g, '')
-        .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
-        $('#source_text').val(latex);
+    renderer.then(el => {
+        var docCranach = el.attr['cranachDoc'];
+        var contentURLDir = el.attr['contentURLDir'];
+        var contentURL = el.attr['contentURL'];
+        
+        $.ajax({
+            url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
+            dataType: 'xml'
+        })
+        .done(function(xsl) {
+            var oParser = new DOMParser();
+            var xml = new XMLSerializer().serializeToString(docCranach);
+            xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
+            xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
+            xml = xml.replace(/#/g, '\#');
+            report(xml);
+            var xmlDOM = oParser.parseFromString(xml, "application/xml");
+            xsltProcessor.importStylesheet(xsl);
+            xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
+            xsltProcessor.setParameter('', 'contenturl', contentURL);
+            fragment = xsltProcessor.transformToFragment(xmlDOM, document);
+            report(fragment);
+            fragmentStr = new XMLSerializer().serializeToString(fragment);
+            $('#source_text').val('');
+            var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
+            .replace(/\n(\ )*/g, "\n")
+            .replace(/&lt;/g, '< ').replace(/&gt;/g, '>')
+            .replace(/\<!--.*?--\>/g, '')
+            .replace(/&amp;/g, "&")
+            .replace(/\\class{.*?}/g, '')
+            .replace(/\\cssId{.*?}/g, '')
+            .replace(/&ocirc/g, '\\^o');
+            var tmp = el.macrosString + "\n" +  latex;
+            latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
+            // .replace(/\$\n+\$/g, '')
+            .replace(/section{\s*(.*?)\s*}/g, "section{$1}");
+            $('#source_text').val(latex);
+        });
     });
 }
 
