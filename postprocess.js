@@ -4,6 +4,8 @@ function postprocess(cranach) {
     $('.icon.xml, .icon.latex').show();        
     
     $(function() {        
+        $('#output').attr('data-content-url', cranach.attr['contentURL']);
+        $('#output').attr('data-query', cranach.attr['query']);
         updateSlideClickEvent();        
         updateScrollEvent();
         updateKeywords();
@@ -17,7 +19,7 @@ function postprocess(cranach) {
         $('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
             let text = $(this).text();
             // $(this).attr('text', text.replace(/[^a-z0-9À-ÿ\s\-\']/ig, ''));
-            $(this).attr('text', text.toLowerCase().replace(/[^a-z0-9]/ig, ''));
+            $(this).attr('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
         });
         
         $('.output:visible .slide').each(function() {
@@ -74,8 +76,7 @@ function postprocess(cranach) {
             console.log('PRESENT MODE');
             $('#present_button').click();
         }
-        $('#output').attr('data-content-url', cranach.attr['contentURL']);
-        $('#output').attr('data-query', cranach.attr['query']);
+        
     });
         
 }

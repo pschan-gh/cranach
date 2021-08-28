@@ -15,6 +15,36 @@ body {
     width:100%;
     height:100%;
 }
+
+.ace_highlight-marker {
+    position: absolute; /* without this positions will be wrong */
+    background: #ddf; /* color */
+    z-index: 1000; /* in front of all other markers */
+}
+.ace_slide-marker {
+    position: absolute; /* without this positions will be erong */
+    background: #ffc; /* color */
+    z-index: 1000; /* in front of all other markers */
+}
+#right_half .dropdown-menu > a:hover {
+    background:SteelBlue;
+    color:white !important;
+}
+.navbar-nav li.advanced:hover {
+    position:relative;
+}
+.navbar-nav li.advanced:hover > ul.dropdown-submenu {
+    display: block;
+}
+.dropdown-submenu {
+    position:absolute;
+}
+.dropdown-submenu {
+    top:-500%;
+    left:100%;
+    margin-top:-5px;
+}
+
 mjx-math {
     padding:0.4em 0 !important;
 }
@@ -715,7 +745,7 @@ display: none;
 .present > #menu_container {
     position:fixed;
 }
-#test_button {
+#main_menu_button {
     font-size:1.5em;
 }
 .present .slide_sel {
@@ -786,11 +816,11 @@ font-size:1rem;
     margin: 25mm 25mm 25mm 25mm;
 }
 .image {
-margin:0px auto;
+/* margin:0px auto;
 padding:10px;
 font-size:80%;
 text-align:center;
-max-width:600px;
+max-width:600px; */
 }
 .center {
     padding:1em;
@@ -802,10 +832,10 @@ max-width:600px;
     padding:10px;
 }
 .output img.loading {
-    width:10cm;
-    height:10cm;
-    background:transparent url("icons/Loading_icon.gif") center no-repeat !important;
-    border:0;
+    /* width:10cm;
+    height:10cm; */
+    /* background:transparent url("icons/Loading_icon.gif") center no-repeat !important; */
+    display:none;
 }
 .dual-left{
 display:table-cell;
@@ -894,13 +924,13 @@ z-index:100;
     outline:none !important;
     box-shadow:none !important;
 }
-#test_button, #left_button, #right_button {
+#main_menu_button, #left_button, #right_button {
 line-height:1.5rem;
 background-color:transparent !important;
 color:hsl(211, 0%, 43%, 0.25) !important;
 border:none !important;
 }
-#test_button:hover, #test_button:active, #test_button:focus, #test_button.active, #left_button:hover, #right_button:hover {
+#main_menu_button:hover, #main_menu_button:active, #main_menu_button:focus, #main_menu_button.active, #left_button:hover, #right_button:hover {
 background-color:transparent !important;
 color:SteelBlue !important;
 border:none !important;
@@ -1204,7 +1234,7 @@ and (max-width : 1024px) {
     .overview .slide_number {
 	display:none;
     }
-    #test_button {
+    #main_menu_button {
 	font-size: 1.5em;
     }
     .material-icons {

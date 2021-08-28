@@ -1092,11 +1092,6 @@
 							<xsl:value-of select="@src"/>
 						</xsl:attribute>
 					</xsl:when>
-					<!-- <xsl:otherwise>
-						<xsl:attribute name="data-src">
-							<xsl:value-of select="concat($contentdir, '/', @src)"/>
-						</xsl:attribute>
-					</xsl:otherwise> -->
 				</xsl:choose>
 			</xsl:if>
 			<xsl:attribute name="rendered">0</xsl:attribute>
@@ -1273,7 +1268,14 @@
 			<xsl:attribute name="class">
 				<xsl:text>image</xsl:text>
 			</xsl:attribute>
-			<xsl:copy-of select="@*[name(.)!='src']"/>			
+			<xsl:copy-of select="@*[name(.)!='src']"/>
+			<div class="loading_icon" wbtag="ignore">
+	            <div class="spinner-border text-secondary" style="margin:2em" role="status">
+	                <span class="visually-hidden">Loading...</span>
+	            </div>
+	            <br/>
+	            <div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
+	        </div>
 			<xsl:element name="img">
 				<xsl:attribute name="wbtag">ignore</xsl:attribute>
 				<xsl:copy-of select="@*[name(.)!='src']"/>

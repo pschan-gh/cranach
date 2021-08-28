@@ -210,7 +210,7 @@ function updateSlideContent(slide) {
 function showStep(el) {
     let $parent = $(el).closest('div[wbtag="steps"]');
     let $stepsClass = $parent.find('.steps');
-
+    
     if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
         $parent.attr('stepId', 0);
     }
@@ -221,8 +221,8 @@ function showStep(el) {
         whichStep++;
     }
 
-    if (whichStep >= $stepsClass.length) {
-        $parent.find('button.next').attr('disabled', true);
+    if ($parent.find('#step' + whichStep).length == 0) {
+        $parent.find('button.next').attr('disabled', true).removeClass('btn-outline-info').addClass('btn-outline-secondary');
     }
 
     $parent.find('button.reset').attr('disabled', false);
@@ -236,7 +236,7 @@ function showStep(el) {
 //
 function resetSteps(el) {
     let $parent = $(el).closest('div[wbtag="steps"]');
-    $parent.find('button.next').attr('disabled', false);
+    $parent.find('button.next').attr('disabled', false).addClass('btn-outline-info').removeClass('btn-outline-secondary');
     $parent.find('button.reset').attr('disabled', true);
     $parent.find('.steps').css('visibility', 'hidden');
     $parent.attr('stepId', 0);
@@ -372,9 +372,10 @@ function focusOn($item, text = '') {
     
     $item[0].scrollIntoView();
     if (text != '') {
-        console.log(text.toLowerCase().replace(/[^a-z0-9]/g, ''));
+        let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
+        console.log(sanitizedText);
         // let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-        let $textItem = $item.find('*[text="' + text.toLowerCase().replace(/[^a-z0-9]/g, '') + '"]').addClass('highlighted');
+        let $textItem = $item.find('*[text="' + sanitizedText + '"]').addClass('highlighted');
         if ($textItem.length) {
             $textItem[0].scrollIntoView();
             if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
@@ -420,10 +421,8 @@ function imagePostprocess(image) {
     
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
-        $(image).removeClass('loading');        
+        $(image).closest('.image').find('.loading_icon').hide();
         if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
-            // $(image).css('background', 'none');
-            // $(image).show();
             console.log($(image).attr('src') + ' OK');
             return 1;
         }
@@ -607,9 +606,11 @@ function updateSlideClickEvent() {
     $('.output div.slide').click(function() {
         let slideNum = $(this).attr('slide');
         let slide = this;
-        $('#output').attr('data-selected-slide', slideNum);        
-        // updateSlideContent(this);
-        // updateSlideInfo(this, cranach);        
+        if (slideNum != $('#output').attr('data-selected-slide')) {
+            $('#output').attr('data-selected-slide', slideNum); 
+            // updateSlideContent(this);
+            // updateSlideInfo(this, cranach); 
+        }
     });
 }
 
