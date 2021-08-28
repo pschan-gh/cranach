@@ -254,14 +254,11 @@ $(function() {
 		
 		if ($slides.length > 50) {			
 			let clone = document.getElementById('output').cloneNode(true);
-			// $('#carousel .slide').removeClass('carousel-item');
 			$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
 			if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
 				$('#carousel').prepend($(clone).find('.slide[slide="' + prevNum + '"]').first());
-				// $('#carousel').prepend($('#output .slide[slide="' + prevNum + '"]').first().clone(true));
 			}
 			if ($('#carousel .slide[slide="' + nextNum + '"]').length == 0) {
-				// $('#output .slide[slide="' + nextNum + '"]').first().clone(true).appendTo($('#carousel'));
 				$(clone).find('.slide[slide="' + nextNum + '"]').first().appendTo($('#carousel'));
 			}
 		}
@@ -271,23 +268,12 @@ $(function() {
 		
         $slide.addClass('tex2jax_ignore');
 		updateCarousel(slideNum);		
-		$('#output').attr('data-selected-slide', slideNum);
+		$('#output').attr('data-selected-slide', slideNum);		
 		// updateSlideContent($slide[0]);
         // baseRenderer.then(cranach => {
 		// 	updateSlideInfo($slide[0], cranach);
 		// 	updateModal(cranach);
-		// });
-		adjustHeight($slide[0]);
-		updateCanvas($slide[0]);
-		if ($slide.find('a.collapsea[aria-expanded="false"]').length) {
-			$('#uncollapse_button').text('Uncollapse');
-		} else {
-			$('#uncollapse_button').text('Collapse');
-		}
-		$('#uncollapse_button').off();
-		$('#uncollapse_button').click(function() {
-			collapseToggle(slideNum);
-		});
+		// });		
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');

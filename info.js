@@ -216,7 +216,6 @@ $(function() {
                     // console.log('data-selected-slide mutated');
                     // console.log($('#output').attr('data-selected-slide'));
                     let $slide = $('#output div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
-                    updateSlideContent($slide[0]);
                     updateSlideInfo($slide[0]);               
                 }
                 if (mutation.attributeName == 'data-content-url') {
