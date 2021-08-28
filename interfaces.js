@@ -69,7 +69,7 @@ function showLatex(el) {
         .replace(/\n(\ )*/g, "\n")            
         .replace(/\<!--.*?--\>/g, '')
         .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, '< ').replace(/&gt;/g, '>')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
         .replace(/\\class{.*?}/g, '')
         .replace(/\\cssId{.*?}/g, '')
         .replace(/&ocirc/g, '\\^o');
