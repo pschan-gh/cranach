@@ -522,7 +522,7 @@ function updateSlideClickEvent() {
     $('.output div.slide').click(function() {
         let slideNum = $(this).attr('slide');
         let slide = this;
-        if (slideNum != $('#output').attr('data-selected-slide')) {
+        if (slideNum != $('#output').attr('data-selected-slide') || !$('#output').is("[data-selected-slide]")) {
             $('#output').attr('data-selected-slide', slideNum); 
             // updateSlideContent(this);
             // updateSlideInfo(this, cranach); 
