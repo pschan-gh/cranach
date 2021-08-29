@@ -169,16 +169,6 @@ function updateSlideInfo(slide) {
     updateTitle(slide);
     
     let slideNum = +$(slide).attr('slide');            
-    
-    $('*[text]').removeClass('highlighted');
-    $('button').removeClass('highlighted');
-    $('.item_button').css('background-color', '');    
-
-    $('.separator').css('font-weight', 'normal');
-    $('.separator').find('a').css('color', 'pink');
-
-    $(slide).find('.separator').css('font-weight', 'bold');
-    $(slide).find('.separator').find('a').css('color', 'red');
 
     let course = $(slide).attr('course');
     let chapterType = $(slide).attr('chapter_type');

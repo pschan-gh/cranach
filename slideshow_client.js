@@ -208,6 +208,16 @@ function updateSlideContent(slide, carousel = 'false') {
     
     adjustHeight(slide);
     
+    $('*[text]').removeClass('highlighted');
+    $('button').removeClass('highlighted');
+    $('.item_button').css('background-color', '');    
+
+    $('.separator').css('font-weight', 'normal');
+    $('.separator').find('a').css('color', 'pink');
+
+    $(slide).find('.separator').css('font-weight', 'bold');
+    $(slide).find('.separator').find('a').css('color', 'red');
+    
     if (carousel) {
         updateCanvas(slide);
     }
