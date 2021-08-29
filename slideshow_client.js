@@ -185,7 +185,7 @@ function adjustHeight(slide) {
     }
 }
 
-function updateSlideContent(slide) {
+function updateSlideContent(slide, carousel = 'false') {
     if ( $(slide).hasClass('tex2jax_ignore') ) {
         batchRender(slide);
     }
@@ -207,7 +207,10 @@ function updateSlideContent(slide) {
     $(slide).find('.loading_icon').hide();
     
     adjustHeight(slide);
-    updateCanvas(slide);
+    
+    if (carousel) {
+        updateCanvas(slide);
+    }
 }
 
 function showStep(el) {
@@ -555,7 +558,7 @@ $(function() {
             if (mutation.type == "attributes") {
                 if (mutation.attributeName == 'data-selected-slide') {
                     let $slide = $('.output:visible div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
-                    updateSlideContent($slide[0]);
+                    updateSlideContent($slide[0], $('.carousel-item').length > 0);
                 }
             }
         });
