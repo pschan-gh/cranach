@@ -264,6 +264,7 @@ function collapseToggle(slideNum, forced = '') {
     
     $slides.each(function() {
         let $slide = $(this);
+        renderSlide(this);
         if (forced == '') {
             if ($slide.hasClass('collapsed')) {
                 $slide.removeClass('collapsed');
