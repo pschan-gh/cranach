@@ -1008,7 +1008,9 @@ position:relative;
     display:none;
 }
 .modal input {
-    color:#444 !important;
+    color:#666 !important;
+    border:solid 1px #eee;
+    border-radius:5px;
 }
 #text_modal .modal-dialog {
     max-width:75%;

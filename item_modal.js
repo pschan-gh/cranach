@@ -175,10 +175,14 @@ function updateModal(cranach) {
              title = $(this).attr('item') ? item_type + ' ' + item : item_type;
          }
 
-        $('#item_modal').find('#share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
-        $('#item_modal').find('#share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
-        $('#item_modal').find('.md5').val(md5String);
+        $('#item_modal #share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+        if (argName == 'item') {
+            $('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+        } else {
+            $('#item_modal #share_lcref').val('');
+        }
+        $('#item_modal #share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+        $('#item_modal .md5').val(md5String);
 
         updateModalRefby(md5String, cranach);
         updateModalProofs(md5String, cranach);
@@ -190,7 +194,7 @@ $(function() {
     let infoObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type == "attributes") {
-                if (mutation.attributeName == 'data-content-url' || mutation.attributeName == 'data-query') {
+                if (mutation.attributeName == 'data-content-url' || mutation.attributeName == 'data-query' || mutation.attributeName == 'data-selected-slide') {
                     baseRenderer.then(cranach => {
                         updateModal(cranach);
                     });
