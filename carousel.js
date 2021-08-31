@@ -95,7 +95,7 @@ function showSlide(slide, cranach) {
 	clone.remove();	
 }
 
-function hideDivs() {
+function hideCarousel() {
 	$('#container').removeClass('wide');
 	$('.present')
 		.removeClass('present')
@@ -103,10 +103,11 @@ function hideDivs() {
 		.addClass($('#left_half')
 		.attr('mode')); 
 		
-	if( $('#output').hasClass('annotate') ){ 
-		annotate();
-	} 
-	$('#output').removeClass('carousel-inner');
+	// if( $('#output').hasClass('annotate') ){ 
+	// 	annotate();
+	// } 
+	// $('#output').removeClass('carousel-inner');
+	$('.carousel.slide').removeClass('slide');
 	$('.output div.slide')
 		.removeClass('carousel-item')
 		.removeClass('active')
@@ -267,7 +268,6 @@ $(function() {
 		$('.carousel').carousel('pause');
 		
         $slide.addClass('tex2jax_ignore');
-		updateCarousel(slideNum);		
 		$('#output').attr('data-selected-slide', slideNum);		
 		// updateSlideContent($slide[0]);
         // baseRenderer.then(cranach => {
