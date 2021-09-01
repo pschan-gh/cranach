@@ -148,7 +148,7 @@ function lcref_click_handler($el) {
                     new Cranach(url).setup().then(cranach => {
                         return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($output[0]).render();
                     }).then(cranach => {
-                        renderElement($lcref, cranach);
+                        renderElement($lcref);
                     });
                 });
             } else {
@@ -156,7 +156,7 @@ function lcref_click_handler($el) {
                 new Cranach(url).setup().then(cranach => {
                     return cranach.setBare().xmlDocQueryAndRender($output[0]);
                 }).then(cranach => {
-                    renderElement($lcref, cranach);
+                    renderElement($lcref);
                 });
             }
         };
@@ -190,12 +190,9 @@ function lcref_click_handler($el) {
     }
 } //~~ end click handler for *[lcref] elements
 
-function renderElement($lcref, cranach) {
+function renderElement($lcref) {
     typeset([$lcref[0]]);
     $lcref.find('img').each(function() {
-        if (!$(this).attr('data-src').match(/$http(s)?:\/\//)) {
-            $(this).attr('data-src', cranach.attr['dir'] + '/' + $(this).attr('data-src'));
-        }
         imagePostprocess($(this));
     });
     $lcref.find('iframe:not([src])').each(function() {
