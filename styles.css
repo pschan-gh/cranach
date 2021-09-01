@@ -816,11 +816,10 @@ font-size:1rem;
     margin: 25mm 25mm 25mm 25mm;
 }
 .image {
-margin:0px auto;
-/* padding:10px; */
-/* font-size:80%; */
+margin:1em auto;
+padding:1em;
 text-align:center;
-/* max-width:600px; */
+
 }
 .center {
     padding:1em;
