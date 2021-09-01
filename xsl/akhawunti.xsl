@@ -14,7 +14,7 @@
   <xsl:key name="keyword_branches_slide" match="//idx:branch[@keyword]|//idx:keyword|//lv:keyword" use="concat(@file_md5, '-', @slide, '-', @keyword)"/>
   <xsl:key name="statement_branches" match="//idx:branch[@md5]|//idx:statement[@md5]|//idx:substatement[@md5]|//idx:figure[@md5]|//lv:statement[@md5]|//lv:substatement[@md5]|//lv:figure[@md5]" use="@md5"/>
   
-  <xsl:key name="figure_branches" match="//idx:figure[@item]|//lv:figure[@item]" use="@item"/>
+  <!-- <xsl:key name="figure_branches" match="//idx:figure[@item]|//lv:figure[@item]" use="@item"/> -->
   
   <xsl:key name="ref_branches" match="//idx:refby[@md5]|//idx:ref[@md5]" use="concat(@file_md5, '-', @slide, '-', @md5)"/>
 
@@ -31,8 +31,8 @@
 				  //idx:substatement[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
 				  //lv:statement[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
 				  //lv:substatement[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
-                  //idx:figure[@item and (generate-id() = generate-id(key('figure_branches', @item)[1]))]|
-                  //lv:figure[@item and (generate-id() = generate-id(key('figure_branches', @item)[1]))]"/>
+                  //idx:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
+                  //lv:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]"/>
               <xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref"/>
               <xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label"/>
               <xsl:apply-templates select="//idx:course|//idx:chapter|//idx:section|//idx:subsection|//idx:subsubsection|//lv:course|//lv:chapter|//lv:section|//lv:subsection|//lv:subsubsection"/>
@@ -60,7 +60,7 @@
 	  </entry>
   </xsl:template>
 
-  <xsl:template match="idx:branch[@md5]|idx:statement[@md5]|idx:substatement[@md5]|lv:statement[@md5]|lv:substatement[@md5]">
+  <xsl:template match="idx:branch[@md5]|idx:statement[@md5]|idx:substatement[@md5]|lv:statement[@md5]|lv:substatement[@md5]|idx:figure[@md5]|lv:figure[@md5]">
       <entry>
           <xsl:variable name="md5" select="@md5"/>
           <xsl:attribute name="md5">
@@ -83,7 +83,7 @@
       </entry>
   </xsl:template>
   
-  <xsl:template match="idx:figure[@item]|lv:figure[@item]">
+  <!-- <xsl:template match="idx:figure[@md5]|lv:figure[@md5]">
       <entry>
           <xsl:copy-of select="@*"/>
           <xsl:for-each select="key('figure_branches', @item)">
@@ -94,7 +94,7 @@
               </branch>
           </xsl:for-each>
       </entry>
-  </xsl:template>
+  </xsl:template> -->
 
   <xsl:template match="//idx:course|//idx:chapter|//idx:section|//idx:subsection|//idx:subsubsection">
     <xsl:element name="{local-name()}" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">

@@ -161,6 +161,9 @@ function Stack(node, doc) {
                     var textMD5 = md5(strippedText);
                     // report("STATEMENT STRIPPED TEXT: " + strippedText);
                     this.node.setAttribute('md5', textMD5);
+                } else {
+                    let serialized = xmlSerializer.serializeToString(this.node);
+                    this.node.setAttribute('md5', md5(serialized));
                 }
             }
             this.parent.node.appendChild(this.node);

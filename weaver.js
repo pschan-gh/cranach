@@ -1,3 +1,5 @@
+const xmlSerializer = new XMLSerializer();
+
 function md5(text) {
     return CryptoJS.MD5(text);
 }
