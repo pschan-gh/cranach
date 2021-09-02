@@ -119,6 +119,12 @@ function hideCarousel() {
 	$('.slide.selected')[0].scrollIntoView();
 	$('#carousel div.slide').remove();
 	$('#carousel').hide();
+	
+	$('.separator').css('font-weight', 'normal');
+    $('.separator').find('a').css('color', 'pink');
+
+    $('.slide.selected').find('.separator').css('font-weight', 'bold');
+	$('.slide.selected').find('.separator').find('a').css('color', 'red');
 	// MathJax.startup.document.state(0);
 	// MathJax.texReset();
 	// MathJax.typesetClear();
