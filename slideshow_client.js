@@ -8,7 +8,7 @@ function removeTypeset(el) { // i.e. Show LaTeX source
 
 function renderTexSource(slide) {
     let oldElems = slide.getElementsByClassName("latexSource");
-    
+
     for(let i = oldElems.length - 1; i >= 0; i--) {
         let oldElem = oldElems.item(i);
         let parentElem = oldElem.parentNode;
@@ -18,43 +18,43 @@ function renderTexSource(slide) {
         parentElem.insertBefore(textNode, oldElem);
         parentElem.removeChild(oldElem);
     }
-            
+
     $(slide).find('.latexSource').remove();
 }
 
-function inlineEdit(showSource, editor) {    
+function inlineEdit(showSource, editor) {
     let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
-    
+
     $slide.attr('contentEditable', showSource);
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $slide.find('.paragraphs').css('color', '').css('font-family', '');
-    
+
     if (!showSource) {
-        
+
         MathJax.startup.document.state(0);
         MathJax.texReset();
         // MathJax.typesetClear();
         // renderTexSource($slide[0]);
-        
+
         $('#output div.slide').addClass('tex2jax_ignore');
         if ($('.carousel-item').length > 0) {
-            $('#output').css('display', '');            
+            $('#output').css('display', '');
             $('#output div.slide').css('display', '');
             $('#carousel').css('display', '');
             $('#carousel div.slide.selected').html($slide.html());
             $('#carousel div.slide.selected').addClass('tex2jax_ignore');
-            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {            
+            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {
                 renderSlide(this);
             });
         } else {
             renderSlide($slide[0]);
         }
-            
+
         editor.container.style.pointerEvents="auto";
         editor.container.style.opacity = 1; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", false);
         editor.focus();
-        
+
     } else {
         if ($('.carousel-item').length) {
             $('#output div.slide').hide();
@@ -99,7 +99,7 @@ function showTexFrom(jax) {
 function showJaxSource(outputId) {
 
     let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById(outputId));
-    
+
     showTexFrom(jax);
 
     let clone = document.getElementById(outputId).cloneNode(true);
@@ -132,15 +132,15 @@ function renderSlide(slide) {
 
     $(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
     $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
-    
+
     $(slide).find('img:not([src])').each(function() {
         imagePostprocess(this);
     });
-     
+
     baseRenderer.then(cranach => {
         updateRefs(slide, cranach)
     });
-     
+
     // $(slide).find('iframe:not([src])').not(".webwork").each(function() {
     //     $(this).attr('src', $(this).attr('data-src')).show();
     //     let $iframe = $(this);
@@ -151,15 +151,15 @@ function renderSlide(slide) {
     renderTexSource(slide);
     $(slide).find('.latexSource').remove();
     if ($(slide).hasClass("tex2jax_ignore")) {
-        $(slide).removeClass("tex2jax_ignore");        
+        $(slide).removeClass("tex2jax_ignore");
         typeset([slide]).then(() => {
-            // renderScriptMath(slide);            
+            // renderScriptMath(slide);
             adjustHeight(slide);
         });
     }
 }
 
-function batchRender(slide) {        
+function batchRender(slide) {
     $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
         renderSlide(this);
     });
@@ -175,7 +175,7 @@ function adjustHeight(slide) {
     if (!$output.length) {
         return 0;
     }
-    
+
     $(slide).find('.slide_content').css('padding-bottom', '');
     if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
         $output.css('display', 'block');
@@ -194,7 +194,7 @@ function updateSlideContent(slide, carousel = 'false') {
         $(this).iFrameResize({checkOrigin:false});
         // iFrameResize({ log: true }, slide);
     });
-    
+
     if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
 		$('#uncollapse_button').text('Uncollapse');
 	} else {
@@ -205,19 +205,19 @@ function updateSlideContent(slide, carousel = 'false') {
 		collapseToggle($(slide).attr('slide'));
 	});
     $(slide).find('.loading_icon').hide();
-    
+
     adjustHeight(slide);
-    
+
     $('*[text]').removeClass('highlighted');
     $('button').removeClass('highlighted');
-    $('.item_button').css('background-color', '');    
+    $('.item_button').css('background-color', '');
 
     $('.separator').css('font-weight', 'normal');
     $('.separator').find('a').css('color', 'pink');
 
     $(slide).find('.separator').css('font-weight', 'bold');
     $(slide).find('.separator').find('a').css('color', 'red');
-    
+
     if (carousel) {
         updateCanvas(slide);
     }
@@ -226,12 +226,12 @@ function updateSlideContent(slide, carousel = 'false') {
 function showStep(el) {
     let $parent = $(el).closest('div[wbtag="steps"]');
     let $stepsClass = $parent.find('.steps');
-    
+
     if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
         $parent.attr('stepId', 0);
     }
     let whichStep = $parent.attr('stepId');
-    
+
     if (whichStep < $stepsClass.length) {
         $parent.find('#step' + whichStep).css('visibility', 'visible');
         whichStep++;
@@ -259,9 +259,9 @@ function resetSteps(el) {
 }
 
 function collapseToggle(slideNum, forced = '') {
-    
+
     let $slides = $('.output div.slide[slide="' + slideNum + '"]');
-    
+
     $slides.each(function() {
         let $slide = $(this);
         renderSlide(this);
@@ -278,8 +278,8 @@ function collapseToggle(slideNum, forced = '') {
                 // $slide.find('.collapse').hide();
                 $slide.find('a.collapsea').attr('aria-expanded', 'false');
                 $('#uncollapse_button').text('Uncollapse');
-            } 
-        } else {            
+            }
+        } else {
             $slide.find('.collapse').collapse(forced);
             $slide.find('a.collapsea').attr('aria-expanded', forced == 'show' ? 'true' : 'false');
             $('#uncollapse_button').text(forced == 'show' ? 'Collapse' : 'Uncollapse');
@@ -289,17 +289,17 @@ function collapseToggle(slideNum, forced = '') {
                 $slide.addClass('collapsed');
             }
         }
-    });        
+    });
 }
 
 function focusOn($item, text = '') {
     if ($item.closest('div.slide').length == 0) {
         return 0;
     }
-    let $slide = $item.closest('div.slide').first();    
+    let $slide = $item.closest('div.slide').first();
     let slideNum = $slide.attr('slide');
     renderSlide($slide[0]);
-    
+
     $item[0].scrollIntoView();
     if (text != '') {
         let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
@@ -313,7 +313,7 @@ function focusOn($item, text = '') {
                 $slide.on('shown.bs.collapse', 'div.collapse', function() {
                     $textItem[0].scrollIntoView();
                 });
-            }            
+            }
         }
     } else {
         if ($item.closest('.collapse, .hidden_collapse').length > 0) {
@@ -324,7 +324,7 @@ function focusOn($item, text = '') {
         }
         $item.addClass('highlighted');
     }
-    
+
     if($('#right_half').hasClass('present')) {
         baseRenderer.then(cranach => {
             showSlide($slide[0], cranach);
@@ -348,24 +348,25 @@ function highlight(item) {
 
 }
 function imagePostprocess(image) {
-    
+
     $(image).attr('src', $(image).attr('data-src'));
     $(image).on('load', function() {
         $(image).closest('.image').find('.loading_icon').hide();
+		$(image).removeClass('loading');
         if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
             console.log($(image).attr('src') + ' OK');
             return 1;
         }
 
         let image_width = $(image).closest('.image').css('width');
-        
+
         $(image).closest('.image').css('height', '');
         $(image).closest('.dual-left').css('height', '');
         $(image).closest('.dual-right').css('height', '');
-    
+
         let override = ($(image).closest('.image').css('width') !== null && typeof $(image).closest('.image').css('width') !== 'undefined' && Number.parseInt($(image).closest('.image').css('width').replace(/px$/, '') < 600))
         // let override = false;
-        
+
         if(/svg/.test($(image).attr('src'))) {
             if (($(image).closest('.dual-left').length > 0) || ($(image).closest('.dual-right').length > 0)) {
                 let width = 300;
@@ -387,7 +388,7 @@ function imagePostprocess(image) {
 
             let width = $(image).get(0).naturalWidth;
             let height = $(image).get(0).naturalHeight;
-            
+
             if (width > height) {
                 if (width > 600) {
                     $(image).css('width', '100%');
@@ -452,22 +453,22 @@ function isElementInViewport (el) {
 }
 
 function updateRefs(slide, cranach) {
-    
+
     $(slide).find('a.lcref').each(function() {
         $(this).attr('lcref', "");
-        
+
         let label = $(this).attr('label');
         let md5 = $(this).attr('md5');
         let contentDir = cranach.attr['dir'];
         let rootURL = cranach.attr['rootURL'];
-        
-        
+
+
         if (cranach.hasXML) {
             contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
         } else if (cranach.hasWb) {
             contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
         }
-        
+
         let statementType = 'statement';
         if ($(this).attr('type').match(/proof|solution|answer/i)) {
             statementType = 'substatement';
@@ -475,7 +476,7 @@ function updateRefs(slide, cranach) {
         if ($(this).attr('type').match(/figure/i)) {
             statementType = 'figure';
         }
-        
+
         let lcref = '';
         if ($(this).attr('filename') == 'self') {
             if (cranach.hasXML) {
@@ -490,25 +491,25 @@ function updateRefs(slide, cranach) {
                 lcref = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
             }
         }
-        
+
         $(this).attr('lcref', lcref + '&version=' +Math.random());
-        
+
     });
-                    
+
     $(slide).find('a.href').each(function() {
-                    
+
         let label = $(this).attr('label');
         let serial = $(this).attr('serial');
         let md5 = $(this).attr('md5');
         let contentDir = ''
-        
+
         let rootURL = cranach.attr['rootURL'];
         if (cranach.hasXML) {
             contentDir = cranach.attr['xmlPath'].replace(/[^\/]+\.xml$/, '');
         } else if (cranach.hasWb) {
             contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
         }
-        
+
         let href = '';
         if ($(this).attr('filename') == 'self') {
             if (cranach.hasXML) {
@@ -523,12 +524,12 @@ function updateRefs(slide, cranach) {
                 let href = rootURL + "?wb=" + contentDir + '/' + $(this).attr('src-filename') + '&section=' + serial;
             }
         }
-        
+
         $(this).attr('target', '_blank');
         $(this).attr('href', href);
-        
+
     });
-    
+
 }
 
 function updateSlideClickEvent() {
@@ -537,9 +538,9 @@ function updateSlideClickEvent() {
         let slideNum = $(this).attr('slide');
         let slide = this;
         if (slideNum != $('#output').attr('data-selected-slide') || !$('#output').is("[data-selected-slide]")) {
-            $('#output').attr('data-selected-slide', slideNum); 
+            $('#output').attr('data-selected-slide', slideNum);
             // updateSlideContent(this);
-            // updateSlideInfo(this, cranach); 
+            // updateSlideInfo(this, cranach);
         }
     });
 }
@@ -547,7 +548,7 @@ function updateSlideClickEvent() {
 let timer = null;
 function updateScrollEvent() {
     $('#output').off();
-    
+
     // https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
     $('.output:visible').on('scroll', function() {
         if(timer !== null) {
@@ -563,7 +564,7 @@ function updateScrollEvent() {
     });
 }
 
-$(function() {                       
+$(function() {
     let slideObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type == "attributes") {
