@@ -24,6 +24,7 @@ function renderTexSource(slide) {
 
 function inlineEdit(showSource, editor) {
     let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
+	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
 
     $slide.attr('contentEditable', showSource);
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
@@ -45,6 +46,7 @@ function inlineEdit(showSource, editor) {
             $('#carousel div.slide.selected').addClass('tex2jax_ignore');
             $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {
                 renderSlide(this);
+				$slide.html($(this).html());
             });
         } else {
             renderSlide($slide[0]);
@@ -56,17 +58,24 @@ function inlineEdit(showSource, editor) {
         editor.focus();
 
     } else {
+
         if ($('.carousel-item').length) {
-            $('#output div.slide').hide();
+			$('#output div.slide').hide();
             $('#output div.slide').removeClass('tex2jax_ignore');
-            $('#output').show();
+			// collapseToggle($slide.attr('slide'), 'show');
+			$('#output').show();
             $('#carousel').hide();
-            $slide.show();
+			duplicateCollapse($carouselSlide[0], $slide[0]);
+			$slide.show();
         }
-        $slide.find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
-        $slide.find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
-        removeTypeset($slide[0]);
-        $slide.addClass('edit').removeClass('tex2jax_ignore');
+
+        $slide.each(function() {
+			$(this).find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
+			$(this).find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
+			removeTypeset(this);
+			$(this).addClass('edit').removeClass('tex2jax_ignore');
+		});
+
         editor.container.style.pointerEvents="none";
         editor.container.style.opacity=0.5; // or use svg filter to make it gray
         editor.renderer.setStyle("disabled", true);
