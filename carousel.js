@@ -56,7 +56,7 @@ function showSlide(slide, cranach) {
 	// MathJax.startup.document.state(0);
 	// MathJax.texReset();
 	// MathJax.typesetClear();
-	updateCollapseAttr(clone, 'carousel');
+	// updateCollapseAttr(clone, 'carousel');
 
 	$('#carousel div.slide').remove();
 	if ($slides.length > 50) {
@@ -152,11 +152,15 @@ function duplicateCollapse(carouselSlide, slide) {
 function updateCollapseAttr(element, type = 'carousel') {
 	if (type == 'carousel') {
 		$(element).find('a.collapsea').each(function() {
-			$(this).attr('aria-controls', 'carousel-' + $(this).attr('aria-controls'));
-			$(this).attr('href', '#' + $(this).attr('aria-controls'));
+			if (!$(this).attr('aria-controls').match(/^carousel/)) {
+				$(this).attr('aria-controls', 'carousel-' + $(this).attr('aria-controls'));
+				$(this).attr('href', '#' + $(this).attr('aria-controls'));
+			}
 		});
 		$(element).find('div.collapse').each(function() {
-			$(this).attr('id', 'carousel-' + $(this).attr('id'));
+			if (!$(this).attr('id').match(/^carousel/)) {
+				$(this).attr('id', 'carousel-' + $(this).attr('id'));
+			}
 		});
 	} else {
 		$(element).find('a.collapsea').each(function() {

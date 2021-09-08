@@ -24,7 +24,6 @@ function renderTexSource(slide) {
 
 function inlineEdit(showSource, editor) {
     let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
-	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
 
     $slide.attr('contentEditable', showSource);
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
@@ -58,14 +57,15 @@ function inlineEdit(showSource, editor) {
         editor.focus();
 
     } else {
-
+		// renderSlide($slide[0]);
         if ($('.carousel-item').length) {
+			let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
 			$('#output div.slide').hide();
             $('#output div.slide').removeClass('tex2jax_ignore');
 			// collapseToggle($slide.attr('slide'), 'show');
 			$('#output').show();
             $('#carousel').hide();
-			duplicateCollapse($carouselSlide[0], $slide[0]);
+			// duplicateCollapse($carouselSlide[0], $slide[0]);
 			$slide.show();
         }
 
