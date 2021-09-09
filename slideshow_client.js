@@ -50,7 +50,7 @@ function inlineEdit(enableEdit, editor) {
         // renderTexSource($slide[0]);
         // $('#output div.slide').addClass('tex2jax_ignore');
 
-		$slide.addClass('tex2jax_ignore');
+		// $slide.addClass('tex2jax_ignore');
 
         if ($('.carousel-item').length > 0) {
 			// $('#carousel div.slide.selected').html($slide.html());
@@ -176,11 +176,11 @@ function renderSlide(slide) {
     $(slide).find('.latexSource').remove();
     if ($(slide).hasClass("tex2jax_ignore")) {
         $(slide).removeClass("tex2jax_ignore");
-        typeset([slide]).then(() => {
-            // renderScriptMath(slide);
-            adjustHeight(slide);
-        });
-    }
+	}
+	typeset([slide]).then(() => {
+		// renderScriptMath(slide);
+		adjustHeight(slide);
+	});
 }
 
 function batchRender(slide) {
@@ -210,9 +210,10 @@ function adjustHeight(slide) {
 }
 
 function updateSlideContent(slide, carousel = 'false') {
-    if ( $(slide).hasClass('tex2jax_ignore') ) {
-        batchRender(slide);
-    }
+    // if ( $(slide).hasClass('tex2jax_ignore') ) {
+    //     batchRender(slide);
+    // }
+	batchRender(slide);
     $(slide).find('iframe:not([src])').each(function() {
         $(this).attr('src', $(this).attr('data-src')).show();
         $(this).iFrameResize({checkOrigin:false});
