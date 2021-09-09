@@ -1,9 +1,10 @@
 function removeTypeset(el) { // i.e. Show LaTeX source
 
-        let jax = MathJax.startup.document.getMathItemsWithin($('#output')[0]);
+        // let jax = MathJax.startup.document.getMathItemsWithin($('#output')[0]);
+		let jax = MathJax.startup.document.getMathItemsWithin(el);
         showTexFrom(jax);
-        // MathJax.typesetClear([el]);
-        MathJax.typesetClear();
+        MathJax.typesetClear([el]);
+        // MathJax.typesetClear();
 }
 
 function renderTexSource(slide) {
@@ -22,34 +23,40 @@ function renderTexSource(slide) {
     $(slide).find('.latexSource').remove();
 }
 
-function inlineEdit(showSource, editor) {
-    let $slide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
+function inlineEdit(enableEdit, editor) {
+	let slide;
+    let $outputSlide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
+	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
 
-    $slide.attr('contentEditable', showSource);
+	if ($('.carousel-item').length == 0) {
+		$slide = $outputSlide;
+	} else {
+		$slide = $carouselSlide;
+	}
+
+    $slide.attr('contentEditable', enableEdit);
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $slide.find('.paragraphs').css('color', '').css('font-family', '');
 
-    if (!showSource) {
+    if (!enableEdit) {
+
+		$('#output').css('display', '');
+		$('#output div.slide').css('display', '');
+		$('#carousel').css('display', '');
 
         MathJax.startup.document.state(0);
         MathJax.texReset();
         // MathJax.typesetClear();
         // renderTexSource($slide[0]);
+        // $('#output div.slide').addClass('tex2jax_ignore');
 
-        $('#output div.slide').addClass('tex2jax_ignore');
+		$slide.addClass('tex2jax_ignore');
+
         if ($('.carousel-item').length > 0) {
-            $('#output').css('display', '');
-            $('#output div.slide').css('display', '');
-            $('#carousel').css('display', '');
-            $('#carousel div.slide.selected').html($slide.html());
-            $('#carousel div.slide.selected').addClass('tex2jax_ignore');
-            $('#carousel div.slide[slide="' + $slide.attr('slide') + '"]').first().each(function() {
-                renderSlide(this);
-				$slide.html($(this).html());
-            });
-        } else {
-            renderSlide($slide[0]);
-        }
+			// $('#carousel div.slide.selected').html($slide.html());
+			$outputSlide.html($carouselSlide.html());
+		}
+		renderSlide($slide[0]);
 
         editor.container.style.pointerEvents="auto";
         editor.container.style.opacity = 1; // or use svg filter to make it gray
@@ -58,18 +65,26 @@ function inlineEdit(showSource, editor) {
 
     } else {
 		// renderSlide($slide[0]);
-        if ($('.carousel-item').length) {
-			let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
-			$('#output div.slide').hide();
-            $('#output div.slide').removeClass('tex2jax_ignore');
-			// collapseToggle($slide.attr('slide'), 'show');
-			$('#output').show();
-            $('#carousel').hide();
-			// duplicateCollapse($carouselSlide[0], $slide[0]);
-			$slide.show();
-        }
+        // if ($('.carousel-item').length) {
+		// 	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
+		// 	// $('#output div.slide').hide();
+        //     // $('#output div.slide').removeClass('tex2jax_ignore');
+		// 	// collapseToggle($slide.attr('slide'), 'show');
+		// 	// $('#output').show();
+		// 	// $slide.show();
+        //     $('#carousel').hide();
+		// 	// duplicateCollapse($carouselSlide[0], $slide[0]);
+        // } else {
+		// 	$slide.each(function() {
+		// 		$(this).find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
+		// 		$(this).find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
+		// 		removeTypeset(this);
+		// 		$(this).addClass('edit').removeClass('tex2jax_ignore');
+		// 	});
+		// }
+		console.log($slide);
 
-        $slide.each(function() {
+		$slide.each(function() {
 			$(this).find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
 			$(this).find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
 			removeTypeset(this);

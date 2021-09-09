@@ -52,6 +52,7 @@ function showSlide(slide, cranach) {
 	// let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById('output'));
 	// showTexFrom(jax);
 
+	removeTypeset(document.getElementById('output'));
 	let clone = document.getElementById('output').cloneNode(true);
 	// MathJax.startup.document.state(0);
 	// MathJax.texReset();
@@ -67,7 +68,6 @@ function showSlide(slide, cranach) {
 		$(clone).find('div.slide').appendTo($('#carousel'));
 	}
 
-
 	$('#carousel div.slide')
 	.removeClass('hidden')
 	.addClass('carousel-item')
@@ -77,7 +77,7 @@ function showSlide(slide, cranach) {
 	updateCarousel(slideNum);
 	$slide.addClass('active');
 
-	batchRender($slide[0]);
+	// batchRender($slide[0]);
 
 	$('.slide_number button').text('Slide ' + slideNum);
 	$('.slide_number button').attr('slide', slideNum);
@@ -95,7 +95,7 @@ function showSlide(slide, cranach) {
 		updateModal(renderer);
 	});
 	clone.remove();
-
+	$('#output').attr('data-selected-slide', slideNum);
 }
 
 function hideCarousel() {
@@ -302,7 +302,10 @@ $(function() {
 
 		$('#carousel.present').removeClass('carousel-inner');
 
+
 		if ($slides.length > 50) {
+			removeTypeset(document.getElementById('output'));
+
 			let clone = document.getElementById('output').cloneNode(true);
 			$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
 			if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
@@ -312,11 +315,11 @@ $(function() {
 				$(clone).find('.slide[slide="' + nextNum + '"]').first().appendTo($('#carousel'));
 			}
 		}
-		$('#carousel .slide').removeClass('hidden').addClass('carousel-item');
+		// $('#carousel .slide').removeClass('hidden').addClass('carousel-item');
 
 		$('.carousel').carousel('pause');
 
-        $slide.addClass('tex2jax_ignore');
+        // $slide.addClass('tex2jax_ignore');
 		$('#output').attr('data-selected-slide', slideNum);
 		// updateSlideContent($slide[0]);
         // baseRenderer.then(cranach => {
