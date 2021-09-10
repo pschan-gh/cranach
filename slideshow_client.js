@@ -147,29 +147,19 @@ function renderSlide(slide) {
 }
 
 function batchRender(slide) {
-	$(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
+	// $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
+	// 	renderSlide(this);
+	// });
+	// $(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
+	// 	renderSlide(this);
+	// });
+	$(slide).nextAll('div.slide:lt(1)').each(function() {
 		renderSlide(this);
 	});
-	$(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
+	$(slide).prevAll('div.slide:lt(1)').each(function() {
 		renderSlide(this);
 	});
 	renderSlide(slide);
-}
-
-function adjustHeight(slide) {
-	// let $output = $('.output.present:visible');
-	let $output = $('#carousel');
-	if (!$output.length) {
-		return 0;
-	}
-
-	$(slide).find('.slide_content').css('padding-bottom', '');
-	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
-		$output.css('display', 'block');
-		$(slide).find('.slide_content').css('padding-bottom', '15em');
-	} else {
-		$output.css('display', '');
-	}
 }
 
 function updateSlideContent(slide, carousel = 'false') {
