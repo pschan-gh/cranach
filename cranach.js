@@ -1,5 +1,5 @@
 function nsResolver(prefix) {
-	var ns = {
+	let ns = {
 		'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
 		'idx' : "http://www.math.cuhk.edu.hk/~pschan/elephas_index",
 		'xh' : 'http://www.w3.org/1999/xhtml',
@@ -54,8 +54,8 @@ function Cranach(url) {
 
 	this.loadMacros = function() {
 		return new Promise((resolve, reject) => {
-			var el = this;
-			var ajax = $.ajax({
+			let el = this;
+			let ajax = $.ajax({
 				url:  el.attr['dir'] + '/macros.tex',
 				dataType: "text"
 			})
@@ -75,8 +75,8 @@ function Cranach(url) {
 	}
 
 	this.loadIndex = function() {
-		var el = this;
-		var url = el.attr['dir'] + '/' + el.attr['index'] + '?version='+ Math.random().toString();
+		let el = this;
+		let url = el.attr['dir'] + '/' + el.attr['index'] + '?version='+ Math.random().toString();
 		console.log(url);
 		return new Promise((resolve, reject) => {
 			$.ajax({
@@ -96,7 +96,7 @@ function Cranach(url) {
 
 	this.setup = function(options) {
 		this.output = document.getElementById(this.attr['outputID']);
-		var domparser = new DOMParser();
+		let domparser = new DOMParser();
 
 		if(options) {
 			for (let key in options){
@@ -107,14 +107,14 @@ function Cranach(url) {
 		}
 
 		if (this.params) {
-			var params = this.params;
-			var urlParams = new URLSearchParams(params[1]);
+			let params = this.params;
+			let urlParams = new URLSearchParams(params[1]);
 			report('URLPARAMS: ' + urlParams);
 			if(urlParams.has('wb') || urlParams.has('xml')) {
-				var pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+				let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
 				this.attr['filepath'] = pathname;
-				var match;
-				var dir = '';
+				let match;
+				let dir = '';
 				if (match = pathname.match(/^(.*?)\/[^\/]+\.(?:wb|xml)/)) {
 					dir = match[1];
 				}
@@ -137,7 +137,7 @@ function Cranach(url) {
 
 			if (urlParams.has('query')) {
 				report('HAS QUERY');
-				var query = urlParams.get('query');
+				let query = urlParams.get('query');
 				report('QUERY: ' + query);
 				this.hasQuery = true;
 				this.attr['query'] = query;
@@ -167,18 +167,18 @@ function Cranach(url) {
 			}
 		}
 
-		var el = this;
+		let el = this;
 
 		return this.loadMacros()
 		.then(cranach => cranach.loadIndex())
 		.then(cranach => {
 			if (cranach.attr['indexDoc'] == null) {
-				var docDom = document.implementation.createDocument ('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
-				var preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'index');
+				let docDom = document.implementation.createDocument ('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
+				let preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'index');
 				docDom.appendChild(preindexDom);
 				this.attr['indexDoc'] = docDom;
 			}
-			var el = cranach;
+			let el = cranach;
 			if (el.attr['xmlPath']) {
 				return new Promise((resolve, reject) => {
 					$.ajax({
@@ -245,17 +245,16 @@ function Cranach(url) {
 	/* interact with Browser */
 
 	this.preCranachDocToCranachDoc = function() {
-		var el = this;
-		var xsltProcessor = new XSLTProcessor();
-		var indexDom = this.attr['indexDoc'];
-		var preCranachDoc = this.attr['preCranachDoc'];
+		let el = this;
+		let xsltProcessor = new XSLTProcessor();
+		let indexDom = this.attr['indexDoc'];
+		let preCranachDoc = this.attr['preCranachDoc'];
 
 		if (indexDom.getElementsByTagName('index')[0]) {
-			var index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
+			let index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
 			preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
 		}
 
-		var el = this;
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				url: 'xsl/cranach.xsl',
@@ -268,10 +267,10 @@ function Cranach(url) {
 
 				/* FIREFOX WORK-AROUND */
 				// preCranachStr = new XMLSerializer().serializeToString(preCranachDoc);
-				// var preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
+				// let preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
 				/* END FIREFOX WORK-AROUND */
 
-				var cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
+				let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
 				el.attr['cranachDoc'] = cranachDoc;
 
 				resolve(el);
@@ -287,13 +286,13 @@ function Cranach(url) {
 		});
 	}
 	this.displayCranachDocToHtml = function() {
-		// var cranachDoc = this.attr['cranachDoc'];
+		// let cranachDoc = this.attr['cranachDoc'];
 		report('IN DISPLAYCRANACHDOCTOHTML');
 		// report(cranachDoc);
-		var xsltProcessor = new XSLTProcessor();
-		var xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
-		var el = this;
-		var output = this.output;
+		let xsltProcessor = new XSLTProcessor();
+		let xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
+		let el = this;
+		let output = this.output;
 		// console.log(output);
 		$(output).find('#loading_icon').show();
 		$(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
@@ -311,8 +310,8 @@ function Cranach(url) {
 					xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
 					$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
 					setTimeout(function() {
-						var cranachDoc = el.attr['cranachDoc'];
-						var fragment = xsltProcessor.transformToFragment(cranachDoc, document);
+						let cranachDoc = el.attr['cranachDoc'];
+						let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
 						$(output).html('');
 						$(output).append(fragment);
 						resolve(el);
@@ -326,26 +325,26 @@ function Cranach(url) {
 			this.output = output;
 		}
 
-		var cranachDoc = this.attr['cranachDoc'];
-		var queryString = this.attr['query'];
+		let cranachDoc = this.attr['cranachDoc'];
+		let queryString = this.attr['query'];
 		if (queryString != '') {
 			report('XML DOM');
 			report(cranachDoc);
 			report('END XML DOM');
 
-			var queries = cranachDoc.evaluate(queryString, cranachDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+			let queries = cranachDoc.evaluate(queryString, cranachDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
-			var queryDom = document.implementation.createDocument("", "", null);
-			var bare = queryDom.createElementNS("http://www.math.cuhk.edu.hk/~pschan/cranach", "root");
+			let queryDom = document.implementation.createDocument("", "", null);
+			let bare = queryDom.createElementNS("http://www.math.cuhk.edu.hk/~pschan/cranach", "root");
 			bare.setAttribute('query', 1);
 
-			for ( var i = 0 ; i < queries.snapshotLength; i++ ) {
+			for ( let i = 0 ; i < queries.snapshotLength; i++ ) {
 				bare.appendChild(queries.snapshotItem(i));
 			}
 			queryDom.appendChild(bare);
 
 			$('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
-			var el = this;
+			let el = this;
 
 			this.attr['preCranachDoc'] = queryDom;
 			return this.updateIndex().then(cranach => {
@@ -369,34 +368,34 @@ function Cranach(url) {
 		});
 	}
 	this.updateIndex = function() {
-		var cranachDoc = this.attr['cranachDoc'];
-		var filename = this.attr['localName'];
-		var contents = new XMLSerializer().serializeToString(cranachDoc);
+		let cranachDoc = this.attr['cranachDoc'];
+		let filename = this.attr['localName'];
+		let contents = new XMLSerializer().serializeToString(cranachDoc);
 
-		var docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
+		let docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
 		if (this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index').length) {
 			docDom.appendChild(this.attr['indexDoc'].getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0]);
 		}
-		var preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'preindex');
+		let preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'preindex');
 
-		var xmlDom = cranachDoc;
+		let xmlDom = cranachDoc;
 
-		var fileMD5 = md5(contents);
+		let fileMD5 = md5(contents);
 
-		var query = "//idx:branch[@filename!='" + filename + "']|//idx:ref[(@filename!='" + filename + "') and (@filename!='self')]|//idx:section";
-		var oldBranches = docDom.evaluate(query, docDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+		let query = "//idx:branch[@filename!='" + filename + "']|//idx:ref[(@filename!='" + filename + "') and (@filename!='self')]|//idx:section";
+		let oldBranches = docDom.evaluate(query, docDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
-		for ( var i = 0 ; i < oldBranches.snapshotLength; i++ ) {
+		for ( let i = 0 ; i < oldBranches.snapshotLength; i++ ) {
 			report('ADDING OLD BRANCH: ' + oldBranches.snapshotItem(i).textContent);
 			preindexDom.appendChild(oldBranches.snapshotItem(i));
 		}
 
 
-		var query = "//lv:keyword[@slide!='all']";
-		var newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+		query = "//lv:keyword[@slide!='all']";
+		let newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
 
-		for ( var i = 0 ; i < newBranches.snapshotLength; i++ ) {
+		for ( let i = 0 ; i < newBranches.snapshotLength; i++ ) {
 			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
 			newBranches.snapshotItem(i).setAttribute('filename', filename);
 			newBranches.snapshotItem(i).setAttribute('file_md5', fileMD5);
@@ -407,50 +406,49 @@ function Cranach(url) {
 		}
 
 
-		var query = "//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]";
+		query = "//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]";
+		newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
-		var newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-		for (var i = 0; i < newBranches.snapshotLength; i++) {
+		for (let i = 0; i < newBranches.snapshotLength; i++) {
 			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
-			var newBranch = newBranches.snapshotItem(i).cloneNode(true);
-			var branch = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', newBranch.tagName);
+			let newBranch = newBranches.snapshotItem(i).cloneNode(true);
+			let branch = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', newBranch.tagName);
 
 			if (newBranch.hasAttributes()) {
-				var attrs = newBranch.attributes;
-				for(var j = attrs.length - 1; j >= 0; j--) {
+				let attrs = newBranch.attributes;
+				for(let j = attrs.length - 1; j >= 0; j--) {
 					branch.setAttribute(attrs[j].name, attrs[j].value);
 				}
 			}
 			branch.setAttribute('filename', filename);
 			branch.setAttribute('file_md5', fileMD5);
 
-			var titles = xmlDom.evaluate('./lv:title', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+			let titles = xmlDom.evaluate('./lv:title', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			report('TITLES: ' + titles.snapshotLength);
 			if (titles.snapshotLength > 0) {
-				for (var j = titles.snapshotLength - 1; j >= 0 ; j--) {
-					var clone = titles.snapshotItem(j).cloneNode(true);
+				for (let j = titles.snapshotLength - 1; j >= 0 ; j--) {
+					let clone = titles.snapshotItem(j).cloneNode(true);
 					branch.appendChild(clone);
 				}
 			}
 
-			var labels = xmlDom.evaluate('./lv:label', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-			for (var j = labels.snapshotLength - 1; j >= 0 ; j--) {
-				var clone = labels.snapshotItem(j).cloneNode(true);
+			let labels = xmlDom.evaluate('./lv:label', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+			for (let j = labels.snapshotLength - 1; j >= 0 ; j--) {
+				let clone = labels.snapshotItem(j).cloneNode(true);
 				branch.appendChild(clone);
 			}
 			preindexDom.appendChild(branch);
 		}
 
-		var el = this;
+		let el = this;
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				url: 'xsl/akhawunti.xsl',
 				dataType: "xml"
 			}).done(function(indexXsl) {
-				var xsltProcessor = new XSLTProcessor();
+				let xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(indexXsl);
-				var indexDoc = xsltProcessor.transformToDocument(preindexDom);
+				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
 
 				el.attr['indexDoc'] = indexDoc;
 
@@ -461,16 +459,16 @@ function Cranach(url) {
 	}
 
 	this.displayIndexDocToHtml = function(target) {
-		var contentURLDir = this.attr['rootURL'] + '\/?xml=' + this.attr['dir']
-		var indexDoc = this.attr['indexDoc'];
-		var el = this;
+		let contentURLDir = this.attr['rootURL'] + '\/?xml=' + this.attr['dir']
+		let indexDoc = this.attr['indexDoc'];
+		let el = this;
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				url: 'xsl/index2html.xsl',
 				dataType: "xml"
 			})
 			.done(function(wbxslFile) {
-				var xsltProcessor = new XSLTProcessor();
+				let xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(wbxslFile);
 				xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
 				fragment = xsltProcessor.transformToFragment(indexDoc, document);
@@ -490,8 +488,8 @@ function Cranach(url) {
 			$(this).addClass('tex2jax_ignore');
 		});
 
-		var xmlString = generateXML(wbString);
-		var preCranachDoc = new DOMParser().parseFromString(xmlString, 'text/xml');
+		let xmlString = generateXML(wbString);
+		let preCranachDoc = new DOMParser().parseFromString(xmlString, 'text/xml');
 		this.attr['preCranachDoc'] = preCranachDoc;
 		return this.displayPreCranachDocToHtml();
 	}
@@ -509,8 +507,8 @@ function Cranach(url) {
 	}
 
 	this.openIndex = function(filePath) {
-		var file    = filePath.files[0];
-		var reader  = new FileReader();
+		let file    = filePath.files[0];
+		let reader  = new FileReader();
 		reader.addEventListener("load", function () {
 			report(reader.result);
 			$('#source_text').val(reader.result);
