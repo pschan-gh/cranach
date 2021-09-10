@@ -1,9 +1,9 @@
 function saveText(text, renderer, ext) {
-	var dummyLink = document.createElement('a');
+	let dummyLink = document.createElement('a');
 	uriContent = "data:application/octet-stream," + encodeURIComponent(text);
 	dummyLink.setAttribute('href', uriContent);
 
-	var filename = renderer.attr['localName'];
+	let filename = renderer.attr['localName'];
 	console.log(filename);
 	dummyLink.setAttribute('download', filename.replace(/\.[^\.]+$/, '') + '.' + ext);
 	dummyLink.click();
@@ -14,23 +14,23 @@ function saveWb(editor, renderer) {
 }
 
 function collectNewcommands(str) {
-	var commandsStr = '';
-	var obj = new Object();
-	var commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
+	let commandsStr = '';
+	let obj = new Object();
+	let commands = str.match(/(\\(re)?newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g);
 
 	if (commands == null || typeof commands == typeof undefined) {
 		return '';
 	}
-	for (var i = 0; i < commands.length; i++) {
-		var matches = commands[i].match(/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/);
+	for (let i = 0; i < commands.length; i++) {
+		let matches = commands[i].match(
+			/\\(?:re)?newcommand{(.*?)}((?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/
+		);
 		obj[matches[1]] = matches[2];
 	}
-	console.log(obj);
 
 	for (const property in obj) {
 		commandsStr += '\\newcommand{' + property + '}' + obj[property] + "\n";
 	}
-	console.log(commandsStr);
 	return commandsStr;
 }
 
@@ -38,26 +38,26 @@ function showLatex(el) {
 	$('.modal-footer').find('.btn').hide();
 	$('.modal-footer').find('.btn.save').show();
 
-	var xsltProcessor = new XSLTProcessor();
+	let xsltProcessor = new XSLTProcessor();
 	$('#text_modal button.save').attr('ext', 'tex');
 	$('#text_modal .modal-title').html('LaTeX');
 
-	var docCranach = el.attr['cranachDoc'];
-	var contentURLDir = el.attr['contentURLDir'];
-	var contentURL = el.attr['contentURL'];
+	let docCranach = el.attr['cranachDoc'];
+	let contentURLDir = el.attr['contentURLDir'];
+	let contentURL = el.attr['contentURL'];
 
 	$.ajax({
 		url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
 		dataType: 'xml'
 	})
 	.done(function(xsl) {
-		var oParser = new DOMParser();
-		var xml = new XMLSerializer().serializeToString(docCranach);
+		let oParser = new DOMParser();
+		let xml = new XMLSerializer().serializeToString(docCranach);
 		xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
 		xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
 		xml = xml.replace(/#/g, '\#');
 		report(xml);
-		var xmlDOM = oParser.parseFromString(xml, "application/xml");
+		let xmlDOM = oParser.parseFromString(xml, "application/xml");
 		xsltProcessor.importStylesheet(xsl);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
@@ -65,7 +65,7 @@ function showLatex(el) {
 		report(fragment);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
 		$('#source_text').val('');
-		var latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
+		let latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
 		.replace(/\n(\ )*/g, "\n")
 		.replace(/\<!--.*?--\>/g, '')
 		.replace(/&amp;/g, "&")
@@ -73,8 +73,9 @@ function showLatex(el) {
 		.replace(/\\class{.*?}/g, '')
 		.replace(/\\cssId{.*?}/g, '')
 		.replace(/&ocirc/g, '\\^o');
-		var tmp = el.macrosString + "\n" +  latex;
-		latex = collectNewcommands(tmp) + latex.replace(/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
+		let tmp = el.macrosString + "\n" +  latex;
+		latex = collectNewcommands(tmp) + latex.replace(
+			/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
 		.replace(/section{\s*(.*?)\s*}/g, "section{$1}");
 		$('#source_text').val(latex);
 	});
@@ -136,7 +137,7 @@ function initGhDialog(editor) {
 	$wb_msg.find('code').html(message);
 	message = "Updating .xml";
 	$wb_msg = $('<div><code>' + message + '</code></div>').appendTo( $('#gh_modal .feedback .message') );
-	var baseRenderer = new Cranach(window.location.href).setup({'query':''}).then(cranach => {
+	let baseRenderer = new Cranach(window.location.href).setup({'query':''}).then(cranach => {
 		console.log(cranach);
 		MathJax.typesetClear();
 		return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
@@ -171,8 +172,8 @@ function initGhDialog(editor) {
 
 function openWb(filePath) {
 
-	var file    = filePath.files[0];
-	var reader  = new FileReader();
+	let file    = filePath.files[0];
+	let reader  = new FileReader();
 
 	console.log('READER');
 	console.log(file);
@@ -185,10 +186,10 @@ function openWb(filePath) {
 
 	if (file) {
 		// https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
-		var fullPath = filePath.value;
+		let fullPath = filePath.value;
 		if (fullPath) {
-			var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-			var filename = fullPath.substring(startIndex);
+			let startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+			let filename = fullPath.substring(startIndex);
 			if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
 				filename = filename.substring(1);
 			}

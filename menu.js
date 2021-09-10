@@ -121,7 +121,7 @@ $(function() {
 	});
 
 	// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-	var menu_timer = null;
+	let menu_timer = null;
 	$('#right_half').first().each(function() {
 		$('#right_half').off();
 		$('#right_half').mousemove(function() {

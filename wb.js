@@ -1,5 +1,5 @@
 function commitWb(editor) {
-	var body = showJaxSource('output').getElementsByTagName('body')[0];
+	let body = showJaxSource('output').getElementsByTagName('body')[0];
 
 	$.ajax({url: 'xsl/html2juengere.xsl'}).done(function(xsl) {
 		let xsltProcessor = new XSLTProcessor();
@@ -34,7 +34,7 @@ function convertCranachDocToWb(cranachDoc, editor) {
 		dataType: "xml"
 	})
 	.done(function(xsl) {
-		var xsltProcessor = new XSLTProcessor();
+		let xsltProcessor = new XSLTProcessor();
 		xsltProcessor.importStylesheet(xsl);
 		fragment = xsltProcessor.transformToFragment(cranachDoc, document);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
