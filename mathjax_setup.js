@@ -17,9 +17,9 @@ MathJax = {
 				return filtered;
 			};
 			$('.icon.latex, .icon.xml').hide();
-            baseRenderer.then(cranach => {
-                let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
-                return cranach.render(output);
+			baseRenderer.then(cranach => {
+				let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
+				return cranach.render(output);
 			}).then(renderer => {
 				if (renderer.bare) {
 					return renderer;
@@ -32,7 +32,7 @@ MathJax = {
 					if ($('.editor.ace_editor').length > 0) {
 						convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
 					}
-					if ($('#item_modal').length > 0) {								
+					if ($('#item_modal').length > 0) {
 						updateModal(renderer);
 					}
 					$('#render_sel').prop('disabled', false);

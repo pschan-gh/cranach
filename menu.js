@@ -1,65 +1,64 @@
 function updateSlideSelector() {
-    if ($("#slide_sel").length == 0) {
-        return 0;
-    }
-    let numOfSlides = 0;
-    try {
-        // numOfSlides = cranach.attr['cranachDoc'].getElementsByTagName('slide').length;
-        numOfSlides = $('#output div.slide').length;
-    } catch(error) {
-        return 0;
-    }
-    $("#slide_sel").html('');
-    for (let i = 1; i <= numOfSlides; i++) {
-        let o = new Option(i.toString(), i);
-        $("#slide_sel").append(o);
-    }
-    $('#slide_sel').on('change', function() {
-        console.log('JUMPING TO SLIDE: ' + $(this).val());
-        jumpToSlide($('#output'), $('#s' + $(this).val()));
-    });
+	if ($("#slide_sel").length == 0) {
+		return 0;
+	}
+	let numOfSlides = 0;
+	try {
+		numOfSlides = $('#output div.slide').length;
+	} catch(error) {
+		return 0;
+	}
+	$("#slide_sel").html('');
+	for (let i = 1; i <= numOfSlides; i++) {
+		let o = new Option(i.toString(), i);
+		$("#slide_sel").append(o);
+	}
+	$('#slide_sel').on('change', function() {
+		console.log('JUMPING TO SLIDE: ' + $(this).val());
+		jumpToSlide($('#output'), $('#s' + $(this).val()));
+	});
 }
 
 function hide() {
-    $('#cover_half').show();
-    $('#container').css('height', '50%');
-    $('.slide_button').addClass('hide');
+	$('#cover_half').show();
+	$('#container').css('height', '50%');
+	$('.slide_button').addClass('hide');
 
 }
 
 function unhide() {
-    $('#cover_half').hide();
-    $('#container').css('position', '');
-    $('#container').css('height', '');
-    $('.slide_button').removeClass('hide');
+	$('#cover_half').hide();
+	$('#container').css('position', '');
+	$('#container').css('height', '');
+	$('.slide_button').removeClass('hide');
 
 }
 
 function dim() {
-    if ($('.dim').first().hasClass('dimmed')) {
-        $(' #right_half, #right_half *, .output:visible *').css('background-color', '').css('color', '');
-        $('#right_half').removeClass('dim');
-        $('.dim').first().removeClass('dimmed');
-        $('#right_half').addClass('carousel-dark');
-    } else {
-        $('#right_half, .output:visible').css('background-color', '#222').css('color', '#bbb');
-        $('#right_half').addClass('dim');
-        $('.dim').first().addClass('dimmed');
-        $('#right_half').removeClass('carousel-dark');
-    }
+	if ($('.dim').first().hasClass('dimmed')) {
+		$(' #right_half, #right_half *, .output:visible *').css('background-color', '').css('color', '');
+		$('#right_half').removeClass('dim');
+		$('.dim').first().removeClass('dimmed');
+		$('#right_half').addClass('carousel-dark');
+	} else {
+		$('#right_half, .output:visible').css('background-color', '#222').css('color', '#bbb');
+		$('#right_half').addClass('dim');
+		$('.dim').first().addClass('dimmed');
+		$('#right_half').removeClass('carousel-dark');
+	}
 }
 
 function resizeFont(multiplier) {
-    if (document.getElementsByTagName("html")[0].style.fontSize == "") {
-        document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
-    }
-    document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
+	if (document.getElementsByTagName("html")[0].style.fontSize == "") {
+		document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
+	}
+	document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
 }
 
 // function print(promise) {
-// 
+//
 //     $('html').css('position', 'relative');
-// 
+//
 //     if($('#right_half').hasClass('overview') || $('#right_half').hasClass('compose') || $('#right_half').hasClass('info') ) {
 //         $('#print_content').html('');
 //         $('#print_content').append($('#output').clone());
@@ -78,11 +77,11 @@ function resizeFont(multiplier) {
 //         $('#print_content').find('.title_box').find('h3').css('color', '#888');
 //         $('#print_content').append($('.output:visible div.slide.selected').html());
 //     }
-// 
+//
 //     $('#print').show();
-// 
+//
 //     $('#container').hide();
-// 
+//
 //     $('#print_content').removeClass('text');
 //     $('#print_content').addClass('output_dual');
 //     $('#print_content').find('.slide').css('display', 'block');
@@ -91,10 +90,10 @@ function resizeFont(multiplier) {
 //         imagePostprocess(this);
 //     });
 //     $('#print_content').find('.slide').show();
-// 
+//
 //     $('#print_content').find('.statement').after('<hr/>');
 //     $('#print_content').find('.substatement').after('<hr/>');
-// 
+//
 //     $('#print_content').find('.separator').html(".&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.&nbsp&nbsp&nbsp&nbsp.");
 //     $('#print_content').find('blockquote').each(function() {
 //         $(this).after($(this).html());
@@ -106,21 +105,21 @@ function resizeFont(multiplier) {
 // }
 
 $(function() {
-    let menuObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type == "attributes") {
-                // if ( mutation.attributeName == 'data-selected-slide' ) {
-                if ( mutation.attributeName == 'data-content-url' ) {
-                    updateSlideSelector();
-                }
-            }
-        });
-    });
-    
-    menuObserver.observe(document.getElementById('output'), {
-        attributes: true,
-    });    
-    
+	let menuObserver = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type == "attributes") {
+				// if ( mutation.attributeName == 'data-selected-slide' ) {
+				if ( mutation.attributeName == 'data-content-url' ) {
+					updateSlideSelector();
+				}
+			}
+		});
+	});
+
+	menuObserver.observe(document.getElementById('output'), {
+		attributes: true,
+	});
+
 	// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
 	var menu_timer = null;
 	$('#right_half').first().each(function() {
@@ -135,7 +134,7 @@ $(function() {
 			}, 1000);
 		})
 	});
-	
+
 	$('.present #menu_container').first().each(function() {
 		$(this).find(".navbar-nav, .present .slide_number").not('.hidden').off();
 		$(this).find(".navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
@@ -157,7 +156,7 @@ $(function() {
 			})
 		});
 	});
-	
+
 	$('.controls').off();
 	$('.controls').on('mouseover', function() {
 		$('#right_half').off('mousemove');
@@ -177,7 +176,7 @@ $(function() {
 			}, 1000);
 		})
 	});
-	
+
 	$('input.lecture_mode').change(function() {
 		if (this.checked) {
 			$('[data-lecture-skip="true"]').addClass('lecture_skip');
@@ -185,22 +184,22 @@ $(function() {
 			$('[data-lecture-skip="true"]').removeClass('lecture_skip');
 		}
 	});
-    
-    $('#latex_icon').click(function() {
-        $('#text_modal').modal('toggle');
-        baseRenderer.then(cranach => {
-            showLatex(cranach);
-        });
-    });
-    $('#xml_icon').click(function() {
-        baseRenderer.then(cranach => {
-            $('#text_modal').modal('toggle');
-            showXML(cranach);
-        });
-    });
-    
-    $('#xmlInput').change(function() {
-        baseRenderer = openXML(baseRenderer, this);
-    });
-    		
+
+	$('#latex_icon').click(function() {
+		$('#text_modal').modal('toggle');
+		baseRenderer.then(cranach => {
+			showLatex(cranach);
+		});
+	});
+	$('#xml_icon').click(function() {
+		baseRenderer.then(cranach => {
+			$('#text_modal').modal('toggle');
+			showXML(cranach);
+		});
+	});
+
+	$('#xmlInput').change(function() {
+		baseRenderer = openXML(baseRenderer, this);
+	});
+
 });
