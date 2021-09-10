@@ -1,9 +1,10 @@
 function updateCarousel(slideNum) {
 
-	$('div.tooltip').remove();
+	$('#carousel div.slide')
+	.removeClass('hidden')
+	.addClass('carousel-item');
 
-	let numOfSlides = $('#carousel div.slide').length;
-
+	$('.carousel-indicators div.tooltip').remove();	
 	$(".carousel-indicators").html('');
 
 	let i;
@@ -20,6 +21,7 @@ function updateCarousel(slideNum) {
 	}
 	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 
+	$('#carousel div.slide[slide="' + slideNum + '"]').addClass('active');
 }
 
 function showSlide(slide, cranach) {
@@ -72,13 +74,8 @@ function showSlide(slide, cranach) {
 		$('#output div.slide').clone(true, true).appendTo($('#carousel'));
 	}
 
-	$('#carousel div.slide')
-	.removeClass('hidden')
-	.addClass('carousel-item');
-
-	$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
 	updateCarousel(slideNum);
-	$slide.addClass('active');
+	$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
 
 	$('.slide_number button').text('Slide ' + slideNum);
 	$('.slide_number button').attr('slide', slideNum);

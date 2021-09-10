@@ -38,22 +38,14 @@ function inlineEdit(enableEdit, editor) {
     $slide.find('.slide_content *, .paragraphs').css('border', '').css('padding', '');
     $slide.find('.paragraphs').css('color', '').css('font-family', '');
 
-    if (!enableEdit) {
+	if (!enableEdit) {
+		MathJax.texReset();
 
 		$('#output').css('display', '');
 		$('#output div.slide').css('display', '');
 		$('#carousel').css('display', '');
 
-        MathJax.startup.document.state(0);
-        MathJax.texReset();
-        // MathJax.typesetClear();
-        // renderTexSource($slide[0]);
-        // $('#output div.slide').addClass('tex2jax_ignore');
-
-		// $slide.addClass('tex2jax_ignore');
-
         if ($('.carousel-item').length > 0) {
-			// $('#carousel div.slide.selected').html($slide.html());
 			$outputSlide.html($carouselSlide.html());
 		}
 		renderSlide($slide[0]);
@@ -64,25 +56,6 @@ function inlineEdit(enableEdit, editor) {
         editor.focus();
 
     } else {
-		// renderSlide($slide[0]);
-        // if ($('.carousel-item').length) {
-		// 	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
-		// 	// $('#output div.slide').hide();
-        //     // $('#output div.slide').removeClass('tex2jax_ignore');
-		// 	// collapseToggle($slide.attr('slide'), 'show');
-		// 	// $('#output').show();
-		// 	// $slide.show();
-        //     $('#carousel').hide();
-		// 	// duplicateCollapse($carouselSlide[0], $slide[0]);
-        // } else {
-		// 	$slide.each(function() {
-		// 		$(this).find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
-		// 		$(this).find('.paragraphs').css('color', 'grey').css('font-family', 'monospace');
-		// 		removeTypeset(this);
-		// 		$(this).addClass('edit').removeClass('tex2jax_ignore');
-		// 	});
-		// }
-		console.log($slide);
 
 		$slide.each(function() {
 			$(this).find('.slide_content *:not([wbtag=ignore]):not([wbtag=skip]):not([wbtag=transparent]):not([class=paragraphs])').css('border', '1px solid grey').css('padding', '1px');
