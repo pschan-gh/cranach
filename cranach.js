@@ -26,8 +26,6 @@ function Cranach(url) {
 		'query':'',
 		'outputID': 'output',
 		'localName':'untitled',
-		'editor':null,
-		'editMode':false,
 		/* Initial Presentation */
 		'selectedItem' : null,
 		'selectedSection' : null,
@@ -154,7 +152,7 @@ function Cranach(url) {
 				this.attr['selectedItem'] = urlParams.get('item');
 			}
 			if (urlParams.has('section')) {
-				this.attr['selectedSection']= urlParams.get('section');
+				this.attr['selectedSection'] = urlParams.get('section');
 			}
 			if (urlParams.has('keyword')) {
 				this.attr['selectedKeyword'] = urlParams.get('keyword');
@@ -363,33 +361,31 @@ function Cranach(url) {
 		});
 	}
 	this.updateIndex = function() {
-		let cranachDoc = this.cranachDoc;
+		let xmlDom = cranachDoc;
 		let filename = this.attr['localName'];
-		let contents = new XMLSerializer().serializeToString(cranachDoc);
+
+		let contents = new XMLSerializer().serializeToString(xmlDom);
+		let fileMD5 = md5(contents);
 
 		let docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
+
 		if (this.indexDoc.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index').length) {
 			docDom.appendChild(this.indexDoc.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0]);
 		}
+
 		let preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'preindex');
 
-		let xmlDom = cranachDoc;
+		let query, newBranches;
 
-		let fileMD5 = md5(contents);
-
-		let query = "//idx:branch[@filename!='" + filename + "']|//idx:ref[(@filename!='" + filename + "') and (@filename!='self')]|//idx:section";
+		query = "//idx:branch[@filename!='" + filename + "']|//idx:ref[(@filename!='" + filename + "') and (@filename!='self')]|//idx:section";
 		let oldBranches = docDom.evaluate(query, docDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
 		for ( let i = 0 ; i < oldBranches.snapshotLength; i++ ) {
 			report('ADDING OLD BRANCH: ' + oldBranches.snapshotItem(i).textContent);
 			preindexDom.appendChild(oldBranches.snapshotItem(i));
 		}
 
-
 		query = "//lv:keyword[@slide!='all']";
-		let newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-
+		newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		for ( let i = 0 ; i < newBranches.snapshotLength; i++ ) {
 			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
 			newBranches.snapshotItem(i).setAttribute('filename', filename);
@@ -403,7 +399,6 @@ function Cranach(url) {
 
 		query = "//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]";
 		newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
 		for (let i = 0; i < newBranches.snapshotLength; i++) {
 			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
 			let newBranch = newBranches.snapshotItem(i).cloneNode(true);
@@ -444,9 +439,7 @@ function Cranach(url) {
 				let xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(indexXsl);
 				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
-
 				el.indexDoc = indexDoc;
-
 				resolve(el);
 			});
 		});
