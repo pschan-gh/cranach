@@ -4,6 +4,9 @@ const htmlElements = /pre|table|tbody|thead|th|tr|td|i|em|p|a|b|strong|u|h\d|div
 const htmlRe = new RegExp('\\<(?:' + htmlElements.source + ')(?:\\s+(?:.|\n)*?|)\\/*\\>', 'i');
 const htmlCloseRe = new RegExp('\\<\\/(?:' + htmlElements.source +')(?:\\s+.*?|)\\>', 'i');
 
+const htmlTagRe = new RegExp('\\<(' + htmlElements.source + ')(\\s+(?:.|\n)*|)\\/*\\>', 'i');
+const htmlTagCloseRe = new RegExp('\\<\\/(' + htmlElements.source +')(\\s+.*?|)\\>', 'i');
+
 const nested = /((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)/;
 
 const mainTokensRe = new RegExp('(\\<\\!\\-\\-)|(\\-\\-\\>)|(@@\\w+)|(@(?:[a-zA-Z\*]+)(?:{\\n*' + nested.source + '\\n*})?(?:\\[.*?\\])?)|(' + htmlRe.source + ')|(' + htmlCloseRe.source + ')|((?:\\s|\\n)*((?!\\<\\/*(' + htmlElements.source + ')|@|\\<\\!\\-\\-|\\-\\-\\>).|\\n)+)', 'g');
@@ -60,49 +63,32 @@ let secNums = {
 	'slide': 1
 }
 
-function weaveHtml(node, word) {
-	let child = node;
-	let htmlTagRe = new RegExp('\\<(' + htmlElements.source + ')(\\s+(?:.|\n)*|)\\/*\\>', 'i');
-	let htmlMatches = word.match(htmlTagRe);
+function weaveHtml(child, word, htmlMatches) {
+	report('HTML TAG: ' + htmlMatches[1]);				
+	if (htmlMatches[1].match(/^li$/i)) {
+		child = child.closeTo(/ol|ul/i);
+	}
 
-	if (htmlMatches) {
-		report('HTML TAG: ' + htmlMatches[1]);
-		if (htmlMatches[1].match(/^li$/i)) {
-			child = child.closeTo(/ol|ul/i);
-		}
+	let tag = htmlMatches[1];
+	let domString;
+	let parameters = htmlMatches.length > 2 ? htmlMatches[2] : '';
 
-		let tag = htmlMatches[1];
-		let domString;
-		let parameters = htmlMatches.length > 2 ? htmlMatches[2] : '';
-
-		if (htmlMatches[1].match(/^tr|tbody|thead$/i)) {
-			tag = htmlMatches[1].match(/^(tr|tbody|thead)$/i)[1];
-			domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
-		} else if (htmlMatches[1].match(/^td|th$/i)) {
-			tag = htmlMatches[1].match(/^(td|th)$/i)[1];
-			domString = '<table><tr><' + htmlMatches[1]+ parameters + '></' + tag + '></tr></table>';
-		} else {
-			domString = '<' + xh_prefix + htmlMatches[1]+ parameters + '></' + xh_prefix + htmlMatches[1] + '>';
-		}
-		let htmlDom = new DOMParser().parseFromString(domString, 'text/html');
-		let node = htmlDom.getElementsByTagName(xh_prefix + htmlMatches[1])[0];
-
-		child = child.addNode(node);
-
-		if (word.match(/\/\>$/) || htmlMatches[1].match(/^(img|hr|br)$/i)) {
-			child = child.close();
-		}
+	if (htmlMatches[1].match(/^tr|tbody|thead$/i)) {
+		tag = htmlMatches[1].match(/^(tr|tbody|thead)$/i)[1];
+		domString = '<table><' + htmlMatches[1]+ parameters + '></' + tag + ' ></table>';
+	} else if (htmlMatches[1].match(/^td|th$/i)) {
+		tag = htmlMatches[1].match(/^(td|th)$/i)[1];
+		domString = '<table><tr><' + htmlMatches[1]+ parameters + '></' + tag + '></tr></table>';
 	} else {
-		let htmlTagCloseRe = new RegExp('\\<\\/(' + htmlElements.source +')(\\s+.*?|)\\>', 'i');
+		domString = '<' + xh_prefix + htmlMatches[1]+ parameters + '></' + xh_prefix + htmlMatches[1] + '>';
+	}
+	let htmlDom = new DOMParser().parseFromString(domString, 'text/html');
+	let node = htmlDom.getElementsByTagName(xh_prefix + htmlMatches[1])[0];
 
-		htmlMatches = word.match(htmlTagCloseRe);
+	child = child.addNode(node);
 
-		if(htmlMatches) {
-			let re = new RegExp(xh_prefix + htmlMatches[1], 'i');
-			child = child.closeTo(re);
-			report('TAG CLOSED');
-			child = child.close();
-		}
+	if (word.match(/\/\>$/) || htmlMatches[1].match(/^(img|hr|br)$/i)) {
+		child = child.close();
 	}
 	return child;
 }
@@ -315,7 +301,20 @@ function Stack(node, doc) {
 		}
 
 		// HTML section
-		child = weaveHtml(child, word);
+
+		let htmlMatches = word.match(htmlTagRe);
+		if (htmlMatches) {
+			return weaveHtml(child, word, htmlMatches);
+		} else {
+			htmlMatches = word.match(htmlTagCloseRe);
+			if(htmlMatches) {
+				let re = new RegExp(xh_prefix + htmlMatches[1], 'i');
+				child = child.closeTo(re);
+				report('TAG CLOSED');
+				child = child.close();
+				return child;
+			}
+		}
 		// END HTML section
 
 		let tagname = '';
