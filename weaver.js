@@ -7,8 +7,7 @@ function md5(text) {
 function generateXML(source) {
 	console.log('IN GENERATEXML');
 
-	var wbMD5 = md5(source);
-	console.log(wbMD5);
+	let wbMD5 = md5(source);
 
 	secNums = {
 		'chapter' : 1,
@@ -22,15 +21,14 @@ function generateXML(source) {
 	docNode = document.implementation.createDocument("", "", null);
 
 	// LEGACY COMPATIBILITY
-	var topicTags = source.match(/(@topic{.*?})/g);
+	let topicTags = source.match(/(@topic{.*?})/g);
 
 	if (typeof topicTags != typeof undefined && topicTags != null) {
-		for (var j = 0; j < topicTags.length; j++) {
-			// console.log("TOPIC TAGS: " + topicTags[j]);
-			var topics = topicTags[j].match(/@topic{(.*?)}/)[1].split(/\<br\/*\>/);
-			var topicString = "";
+		for (let j = 0; j < topicTags.length; j++) {
+			let topics = topicTags[j].match(/@topic{(.*?)}/)[1].split(/\<br\/*\>/);
+			let topicString = "";
 			if (topics.length > 1) {
-				for (var i = 0; i < topics.length; i++) {
+				for (let i = 0; i < topics.length; i++) {
 					topicString += "@topic{" + topics[i] + "}\n";
 				}
 				source = source.replace(topicTags[j], topicString);
@@ -55,13 +53,13 @@ function generateXML(source) {
 
 	// END LEGACY COMPATIBILITY
 
-	var doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', 'document', null);
+	let doc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/cranach', 'document', null);
 
-	var root = new Stack(doc.createElementNS('http://www.math.cuhk.edu.hk/~pschan/cranach', 'root'), doc);
+	let root = new Stack(doc.createElementNS('http://www.math.cuhk.edu.hk/~pschan/cranach', 'root'), doc);
 	root.node.setAttribute("xmlns:xh", 'http://www.w3.org/1999/xhtml');
 	root.node.setAttribute("wbmd5", wbMD5);
 
-	var child = root;
+	let child = root;
 
 	child.words = source.match(mainTokensRe);
 
@@ -72,6 +70,5 @@ function generateXML(source) {
 	child = child.closeTo(/root/i);
 
 	console.log('END WEAVER');
-	var xmlString = new XMLSerializer().serializeToString(child.node);
-	return xmlString;
+	return new XMLSerializer().serializeToString(child.node);
 }

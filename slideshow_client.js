@@ -327,7 +327,6 @@ function imagePostprocess(image) {
 		$(image).closest('.image').find('.loading_icon').hide();
 		$(image).removeClass('loading');
 		if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
-			console.log($(image).attr('src') + ' OK');
 			return 1;
 		}
 

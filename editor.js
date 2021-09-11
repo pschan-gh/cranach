@@ -50,7 +50,7 @@ function updateEditor(cranach) {
 		console.log(query);
 		$("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
 		let dir = cranach.attr['dir'];
-		baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']})
+		baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.indexDoc})
 		.then(cranach => {
 			console.log(cranach);
 			MathJax.typesetClear();

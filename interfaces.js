@@ -42,7 +42,7 @@ function showLatex(el) {
 	$('#text_modal button.save').attr('ext', 'tex');
 	$('#text_modal .modal-title').html('LaTeX');
 
-	let docCranach = el.attr['cranachDoc'];
+	let docCranach = el.cranachDoc;
 	let contentURLDir = el.attr['contentURLDir'];
 	let contentURL = el.attr['contentURL'];
 
@@ -91,7 +91,7 @@ function showXML(el) {
 	$('#source_text').val('');
 	$('#text_modal').find('button.save').attr('ext', 'xml');
 	$('#text_modal').find('.modal-title').text('Cranach XML');
-	$('#source_text').val(new XMLSerializer().serializeToString(el.attr['cranachDoc']));
+	$('#source_text').val(new XMLSerializer().serializeToString(el.cranachDoc));
 }
 
 function initGhDialog(editor) {
@@ -143,8 +143,8 @@ function initGhDialog(editor) {
 		return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
 	}).then(cranach => {
 		postprocess(cranach);
-		let cranach_text = new XMLSerializer().serializeToString(cranach.attr['cranachDoc']);
-		let index_text = new XMLSerializer().serializeToString(cranach.attr['indexDoc']);
+		let cranach_text = new XMLSerializer().serializeToString(cranach.cranachDoc);
+		let index_text = new XMLSerializer().serializeToString(cranach.indexDoc);
 		$('#cranach_text').val(cranach_text);
 		$('#index_text').val(index_text);
 		message += "&nbsp; &#x2713;";
@@ -164,8 +164,8 @@ function initGhDialog(editor) {
 //
 //     $('#source_text').val('');
 //     promise.then(el => {
-//         if (el.attr['indexDoc']) {
-//             $('#source_text').val(new XMLSerializer().serializeToString(el.attr['indexDoc']));
+//         if (el.indexDoc) {
+//             $('#source_text').val(new XMLSerializer().serializeToString(el.indexDoc));
 //         }
 //     });
 // }
@@ -233,14 +233,14 @@ function openXML(renderer, filePath) {
 			$('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
 			cranach.attr['localName'] = filename;
 			cranach.attr['dir'] = dir;
-			cranach.attr['cranachDoc'] = cranachDoc;
+			cranach.cranachDoc = cranachDoc;
 			MathJax.startup.document.state(0);
 			MathJax.texReset();
 			MathJax.typesetClear();
 			return cranach.displayCranachDocToHtml();
 		}).then(cranach => {
 			postprocess(cranach);
-			convertCranachDocToWb(cranach.attr['cranachDoc'], editor);
+			convertCranachDocToWb(cranach.cranachDoc, editor);
 			$('#loading_icon').hide();
 			return cranach;
 		});
