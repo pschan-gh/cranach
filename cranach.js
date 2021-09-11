@@ -361,7 +361,7 @@ function Cranach(url) {
 		});
 	}
 	this.updateIndex = function() {
-		let xmlDom = cranachDoc;
+		let xmlDom = this.cranachDoc;
 		let filename = this.attr['localName'];
 
 		let contents = new XMLSerializer().serializeToString(xmlDom);
