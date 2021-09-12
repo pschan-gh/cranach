@@ -412,13 +412,14 @@ function Stack(node, doc) {
 			case '@newcol':
 			case '@collapse':
 			case '@col':
+			let tagname = 'newcol';
 			while (child.node.nodeName.match(/PARAGRAPHS/i)) {
 				child = child.close();
 			}
 			if ((word == '@newcol') || (child.getEnvironment() != 'newcol')) {
-				let tagname = 'newcol';
+				tagname = 'newcol';
 			}  else {
-				let tagname = 'collapse';
+				tagname = 'collapse';
 			}
 			child = child.addChild(tagname);
 			child.node.setAttribute("wbtag", tagname);

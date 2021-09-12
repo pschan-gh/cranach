@@ -1019,7 +1019,7 @@
 	<!-- <xsl:template match="lv:newcol|lv:collapse|*[@wbtag='newcol']|*[@wbtag='collapse']"> -->
 	<xsl:template match="lv:newcol|lv:collapse">
 		<xsl:variable name="col">
-			<xsl:number level="any" count="lv:newcol|lv:collapse"/>
+			<xsl:number level="any" count="lv:newcol|lv:collapse/>
 		</xsl:variable>
 		<xsl:variable name="id">
 			<xsl:value-of select="concat('c', $timestamp, $col)" />
