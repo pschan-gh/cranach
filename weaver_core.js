@@ -412,7 +412,6 @@ function Stack(node, doc) {
 			case '@newcol':
 			case '@collapse':
 			case '@col':
-			let tagname = 'newcol';
 			while (child.node.nodeName.match(/PARAGRAPHS/i)) {
 				child = child.close();
 			}
