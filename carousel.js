@@ -101,6 +101,10 @@ function showSlide(slide, cranach) {
 }
 
 function hideCarousel() {
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	}
+
 	$('#container').removeClass('wide');
 	$('.present')
 	.removeClass('present')
@@ -185,20 +189,26 @@ function updateCollapseAttr(element, type = 'carousel') {
 	}
 }
 
-function annotate() {
+function hideAnnotate() {
+	$('canvas').hide();
+	$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+	$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+	$('.output:visible').removeClass('annotate');
+}
 
-	if ($('.output.present:visible').first().hasClass('annotate')) {
-		$('canvas').hide();
-		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
-		$('.output:visible').removeClass('annotate');
-	} else {
-		$('.output.present:visible').first().addClass('annotate');
-		$('.carousel').attr('data-bs-touch', "false");
-	}
+function showAnnotate() {
+	$('.output.present:visible').first().addClass('annotate');
+	$('.carousel').attr('data-bs-touch', "false");
 	let slide = $('.output.present:visible div.slide.active')[0];
-	updateCanvas(slide);
+}
 
+function annotate() {
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	} else {
+		showAnnotate();
+	}
+	updateCanvas(slide);
 }
 
 function updateCanvas(slide) {
@@ -282,7 +292,7 @@ function clearAllCanvas() {
 		// 			this.cfd.canvas.remove();
 		// 		}
 		// 	}
-		// });		
+		// });
 		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
 		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
 		$('.output:visible').removeClass('annotate');
