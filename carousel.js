@@ -208,7 +208,7 @@ function annotate() {
 	} else {
 		showAnnotate();
 	}
-	updateCanvas(slide);
+	updateCanvas($('.output.present:visible div.slide.active')[0]);
 }
 
 function updateCanvas(slide) {
