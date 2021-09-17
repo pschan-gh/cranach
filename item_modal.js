@@ -31,13 +31,14 @@ function updateModalProofs(md5String, cranach) {
 
 }
 function updateModalProofOf(button, cranach) {
+	let contentURLDir = cranach.attr['contentURLDir'];
 	if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
 		$('.modal_proof_of').hide();
 		return 0;
 	}
 	let rootURL = cranach.attr['rootURL'];
 	// let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
-	let href = rootURL + "?xml=" + $(button).attr('of-src-filename') + "&item=" + $(button).attr('of');
+	let href = contentURLDir + '/' + $(button).attr('of-src-filename') + "&item=" + $(button).attr('of');
 
 	$('.modal_proof_of a').attr('href', href);
 	if ($(button).find('.of-title').length) {
