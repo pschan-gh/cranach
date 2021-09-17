@@ -33,42 +33,38 @@ function ghCommitFiles(octokit, owner, repo, head, branch, fileroot) {
 	$('#gh_modal .feedback .message').append('<div><code>Sending pull request: ' + wbFile + ', ' + xmlFile + ', index.xml.</code></div>');
 
 	octokit.createPullRequest({
-    owner: owner,
-    repo: repo,
-    title: "Update " + fileroot,
-    body: "",
-    base: branch /* optional: defaults to default branch */,
-    head: head,
-    changes: [
-		{
-		  /* optional: if `files` is not passed, an empty commit is created instead */
-		  files:  {
-			  [wbFile] : editor.getValue(),
-			  [xmlFile] : $('#cranach_text').val(),
-			  "index.xml" : $('#index_text').val()
-		  },
-        commit:
-          "Update " + fileroot,
-      },
-    ],
-  })
-  .then((pr) => {
-	  console.log(pr);
-	  $('#gh_modal .feedback .message').append('<div><a target="_blank" href="' + pr.data.html_url + '"> ' + pr.data.html_url +  '</a></div>');
-	  $('#gh_modal .loading').hide();
-  })
-  .catch(err => {
-	  $('#gh_modal .feedback .message').append('<div><code>' +  err + '</code></div>');
-	  $('#gh_modal .loading').hide();
-  });
+		owner: owner,
+		repo: repo,
+		title: "Update " + fileroot,
+		body: "",
+		base: branch /* optional: defaults to default branch */,
+		head: head,
+		changes: [
+			{
+				/* optional: if `files` is not passed, an empty commit is created instead */
+				files:  {
+					[wbFile] : editor.getValue(),
+					[xmlFile] : $('#cranach_text').val(),
+					"index.xml" : $('#index_text').val()
+				},
+				commit:
+				"Update " + fileroot,
+			},
+		],
+	})
+	.then((pr) => {
+		console.log(pr);
+		$('#gh_modal .feedback .message').append('<div><a target="_blank" href="' + pr.data.html_url + '"> ' + pr.data.html_url +  '</a></div>');
+		$('#gh_modal .loading').hide();
+	})
+	.catch(err => {
+		$('#gh_modal .feedback .message').append('<div><code>' +  err + '</code></div>');
+		$('#gh_modal .loading').hide();
+	});
 
 }
 
 function ghCommitFile(octokit, owner, repo, branch, filename, string) {
-	// console.log(repo);
-	// console.log(filename);
-	// console.log(string);
-
 	$('#gh_modal .loading').show();
 
 	octokit.repos.getContent({

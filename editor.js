@@ -1,4 +1,4 @@
-var editor = ace.edit("input");
+let editor = ace.edit("input");
 editor.setTheme("ace/theme/cranach");
 editor.session.setMode("ace/mode/cranach");
 editor.getSession().setUseWrapMode(true);
@@ -12,7 +12,7 @@ editor.commands.addCommand({
 		sender: 'editor|cli'
 	},
 	exec: function(env, args, request) {
-		var dummyLink = document.createElement('a');
+		let dummyLink = document.createElement('a');
 		// uriContent = "data:application/octet-stream," + encodeURIComponent(editor.session.getValue());
 		uriContent = "data:application/octet-stream," + encodeURIComponent(editor.getValue());
 		dummyLink.setAttribute('href', uriContent);
@@ -23,35 +23,35 @@ editor.commands.addCommand({
 });
 
 function updateEditor(cranach) {
-    $('#render_sel').mouseover(function() {
-        if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
-            return;
-        }
+	$('#render_sel').mouseover(function() {
+		if (!editor.getValue().match(/@slide|@sep|course|week|lecture|chapter|section|subsection|subsubsection/g)) {
+			return;
+		}
 		$("#render_sel").html('<option value="Render">Render</option><option value="all">All</option>');
-		var buffer = editor.getValue()
+		let buffer = editor.getValue()
 		.replace(/@sep/g, '@slide')
 		.replace(/\<!--(.|\n)*?--\>/g, '');
 		let numOfSlides = buffer.match(/@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection/g).length;
-		var pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
+		let pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
 		.replace(/@sep/g, '@slide')
 		.replace(/\<!--(.|\n)*?--\>/g, '');
 		let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
-		var o = new Option(currentSlide.toString(), currentSlide);
+		let o = new Option(currentSlide.toString(), currentSlide);
 		$("#render_sel").append(o);
 		$("#render_sel").append('<hr/>');
 		for (let i = numOfSlides; i >= 1; i--) {
-			var o = new Option(i.toString(), i);
+			let o = new Option(i.toString(), i);
 			$("#render_sel").append(o);
 		}
-	});	
+	});
 	$('#render_sel').on('change', function() {
 		let query = $(this).val() == 'all' ? '' : '//lv:slide[@slide=' + $(this).val() + ']';
 		let selectedSlideNum = $('.output:visible div.slide.selected').length > 0 ? $('.output:visible div.slide.selected').attr('slide') : 1;
 		console.log(query);
 		$("#render_sel").html('<option value="">Render</option><option value="all">All</option>');
-        let dir = cranach.attr['dir'];
-        baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.attr['indexDoc']})
-        .then(cranach => {
+		let dir = cranach.attr['dir'];
+		baseRenderer = new Cranach(window.location.href).setup({'dir':dir, 'query':query, 'lectureMode':cranach.attr['lectureMode'], 'selectedSlide':selectedSlideNum, 'indexDoc':cranach.indexDoc})
+		.then(cranach => {
 			console.log(cranach);
 			MathJax.typesetClear();
 			return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
@@ -80,41 +80,41 @@ function updateEditor(cranach) {
 }
 
 function scrollToLine(editor, slide) {
-    // let slideLine = Array();
-    lines = editor.getSession().doc.getAllLines();
-    let isComment = false;
-    let slideCount = 0;
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i].match(/\<\!\-\-/g)) {
-            isComment = true;
-        }
-        if (lines[i].match(/\-\-\>/g)) {
-            isComment = false;
-        }
+	// let slideLine = Array();
+	lines = editor.getSession().doc.getAllLines();
+	let isComment = false;
+	let slideCount = 0;
+	for (let i = 0; i < lines.length; i++) {
+		if (lines[i].match(/\<\!\-\-/g)) {
+			isComment = true;
+		}
+		if (lines[i].match(/\-\-\>/g)) {
+			isComment = false;
+		}
 
-        if (!isComment) {
-            if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
-                slideCount++;
-            }
-        }
-        if (slideCount == slide) {
-            editor.gotoLine(i + 1);
-            break;
-        }
-    }
+		if (!isComment) {
+			if (lines[i].match(/^@(slide|sep|course|chapter|lecture|week|section|subsection|subsubsection)/) && !lines[i].match(/\<\!\-\-.*?\-\-\>/)) {
+				slideCount++;
+			}
+		}
+		if (slideCount == slide) {
+			editor.gotoLine(i + 1);
+			break;
+		}
+	}
 }
 
 $(function() {
-    baseRenderer.then(cranach => {        
-        $('#save_icon').click(function() {
-            saveWb(editor, cranach);
-        });
-        
-        $('.ace_editor').each(function() {
-            updateEditor(cranach);
-        });
-    });
-	
+	baseRenderer.then(cranach => {
+		$('#save_icon').click(function() {
+			saveWb(editor, cranach);
+		});
+
+		$('.ace_editor').each(function() {
+			updateEditor(cranach);
+		});
+	});
+
 	let observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {

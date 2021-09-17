@@ -1,9 +1,10 @@
 function updateCarousel(slideNum) {
 
-	$('div.tooltip').remove();
+	$('#carousel div.slide')
+	.removeClass('hidden')
+	.addClass('carousel-item');
 
-	let numOfSlides = $('#carousel div.slide').length;
-
+	$('.carousel-indicators div.tooltip').remove();
 	$(".carousel-indicators").html('');
 
 	let i;
@@ -20,13 +21,14 @@ function updateCarousel(slideNum) {
 	}
 	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 
+	$('#carousel div.slide[slide="' + slideNum + '"]').addClass('active');
 }
 
 function showSlide(slide, cranach) {
 	$('.pane').removeClass('info')
-		.removeClass('overview')
-		.removeClass('compose')
-		.addClass('present');
+	.removeClass('overview')
+	.removeClass('compose')
+	.addClass('present');
 
 	$('#right_half').addClass('slide').addClass('present');
 
@@ -49,35 +51,31 @@ function showSlide(slide, cranach) {
 	$('#carousel.present').removeClass('carousel-inner');
 	$('#carousel .slide').removeClass('carousel-item');
 
-	// let jax = MathJax.startup.document.getMathItemsWithin(document.getElementById('output'));
-	// showTexFrom(jax);
-
-	let clone = document.getElementById('output').cloneNode(true);
-	// MathJax.startup.document.state(0);
-	// MathJax.texReset();
-	// MathJax.typesetClear();
-	// updateCollapseAttr(clone, 'carousel');
+	// removeTypeset(document.getElementById('output'));
+	// let clone = document.getElementById('output').cloneNode(true);
 
 	$('#carousel div.slide').remove();
 	if ($slides.length > 50) {
-		$(clone).find('.slide[slide="' + slideNum + '"]').first().appendTo($('#carousel'));
-		$('#carousel').prepend($(clone).find('.slide[slide="' + prevNum + '"]').first());
-		$(clone).find('.slide[slide="' + nextNum + '"]').first().appendTo($('#carousel'));
+
+		removeTypeset($('#output').find('div.slide[slide="' + slideNum + '"]').first()[0]);
+		let $cloneCurrent = $('#output').find('div.slide[slide="' + slideNum + '"]').first().clone(true, true);
+		$cloneCurrent.appendTo($('#carousel'));
+
+		removeTypeset($('#output').find('div.slide[slide="' + prevNum + '"]').first()[0]);
+		let $clonePrev = $('#output').find('div.slide[slide="' + prevNum + '"]').first().clone(true, true);
+		$('#carousel').prepend($clonePrev);
+
+		removeTypeset($('#output').find('div.slide[slide="' + nextNum + '"]').first()[0]);
+		let $cloneNext = $('#output').find('div.slide[slide="' + nextNum + '"]').first().clone(true, true);
+		$cloneNext.appendTo($('#carousel'));
+
 	} else {
-		$(clone).find('div.slide').appendTo($('#carousel'));
+		removeTypeset($('#output')[0]);
+		$('#output div.slide').clone(true, true).appendTo($('#carousel'));
 	}
 
-
-	$('#carousel div.slide')
-	.removeClass('hidden')
-	.addClass('carousel-item')
-	.addClass('tex2jax_ignore');
-
-	$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
 	updateCarousel(slideNum);
-	$slide.addClass('active');
-
-	batchRender($slide[0]);
+	$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
 
 	$('.slide_number button').text('Slide ' + slideNum);
 	$('.slide_number button').attr('slide', slideNum);
@@ -94,49 +92,67 @@ function showSlide(slide, cranach) {
 	cranach.then(renderer => {
 		updateModal(renderer);
 	});
-	clone.remove();
 
+	$('#output').attr('data-selected-slide', slideNum);
+	MathJax.startup.document.state(0);
+	MathJax.texReset();
+	MathJax.typesetClear();
+	batchRender($('#carousel div.slide.active').first()[0]);
 }
 
 function hideCarousel() {
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	}
+
 	$('#container').removeClass('wide');
 	$('.present')
-		.removeClass('present')
-		.removeClass('overview')
-		.addClass($('#left_half')
-		.attr('mode'));
+	.removeClass('present')
+	.removeClass('overview')
+	.addClass($('#left_half')
+	.attr('mode'));
 
-	// if( $('#output').hasClass('annotate') ){
-	// 	annotate();
-	// }
-	// $('#output').removeClass('carousel-inner');
 	$('.carousel.slide').removeClass('slide');
+
 	$('.output div.slide')
-		.removeClass('carousel-item')
-		.removeClass('active')
-		.removeClass('hidden')
-		.addClass('tex2jax_ignore');
+	.removeClass('carousel-item')
+	.removeClass('active')
+	.removeClass('hidden')
+	.addClass('tex2jax_ignore');
 	$('.controls').hide();
 	$('#output .slide_content').css('padding-bottom', '');
 	// $('#output').scrollTo($('.slide.selected'));
-
-	$('#carousel .slide.selected a.collapsea').each(function() {
-		$('#output #' + $(this).attr('aria-controls')).collapse($(this).attr('aria-expanded') == 'true' ? 'show' : 'hide');
-	});
 
 	$('.slide.selected')[0].scrollIntoView();
 	$('#carousel div.slide').remove();
 	$('#carousel').hide();
 
 	$('.separator').css('font-weight', 'normal');
-    $('.separator').find('a').css('color', 'pink');
+	$('.separator').find('a').css('color', 'pink');
 
-    $('.slide.selected').find('.separator').css('font-weight', 'bold');
+	$('.slide.selected').find('.separator').css('font-weight', 'bold');
 	$('.slide.selected').find('.separator').find('a').css('color', 'red');
 
-	// MathJax.startup.document.state(0);
-	// MathJax.texReset();
-	// MathJax.typesetClear();
+	MathJax.startup.document.state(0);
+	MathJax.texReset();
+	MathJax.typesetClear();
+
+	batchRender($('#output div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]').first()[0]);
+}
+
+function adjustHeight(slide) {
+	let $output = $('#carousel');
+	if (!$output.length) {
+		return 0;
+	}
+
+	$(slide).find('.slide_content').css('padding-bottom', '');
+	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
+		$output.css('display', 'block');
+		$(slide).find('.slide_content').css('padding-bottom', '15em');
+	} else {
+		$output.css('display', '');
+	}
 }
 
 function duplicateCollapse(carouselSlide, slide) {
@@ -173,111 +189,136 @@ function updateCollapseAttr(element, type = 'carousel') {
 	}
 }
 
+function hideAnnotate() {
+	$('canvas').hide();
+	$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+	$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+	$('.output:visible').removeClass('annotate');
+}
+
+function showAnnotate() {
+	$('.output.present:visible').first().addClass('annotate');
+	$('.carousel').attr('data-bs-touch', "false");
+	let slide = $('.output.present:visible div.slide.active')[0];
+}
+
 function annotate() {
-
-    if ($('.output.present:visible').first().hasClass('annotate')) {
-        $('canvas').hide();
-        $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-        $('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
-        $('.output:visible').removeClass('annotate');
-    } else {
-        $('.output.present:visible').first().addClass('annotate');
-        $('.carousel').attr('data-bs-touch', "false");
-    }
-    let slide = $('.output.present:visible div.slide.active')[0];
-    updateCanvas(slide);
-
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	} else {
+		showAnnotate();
+	}
+	updateCanvas($('.output.present:visible div.slide.active')[0]);
 }
 
 function updateCanvas(slide) {
-    if ($('.output.present:visible').first().hasClass('annotate')) {
-        $('.canvas-controls').show();
-        if (!$(slide).find('canvas').length) {
-            addCanvas(slide);
-        }
-        $(slide.cfd.canvas).show();
-    } else {
-        if ($(slide).find('canvas').length) {
-            $('.canvas-controls').hide();
-            $(slide).find('canvas').hide();
-        }
-        return 1;
-    }
-    $('.canvas-controls').find('*').off();
-    // $('.canvas-controls .annotate').off();
-    $('.canvas-controls .clear').click(function() {
-        $(slide).find('canvas').remove();
-        addCanvas(slide);
-    });
-    // $('.canvas-controls .expand').off();
-    $('.canvas-controls .expand').click(function() {
-        slide.cfd.disableDrawingMode();
-        // https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-        let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-        let img = new Image();
-        img.src = oldCanvas;
-        img.onload = function (){
-            $(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
-            $(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
-            let ctx = slide.cfd.canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            slide.cfd.enableDrawingMode();
-            slide.cfd.setDraw();
-        }
-    });
-    // $('.canvas-controls .disable').off();
-    $('.canvas-controls .disable').click(function() {
-        slide.cfd.disableDrawingMode();
-        $(slide.cfd.canvas).css('z-index', 0);
-        $('.canvas-controls .nav-link').not('.enable').addClass('disabled');
-        $('.canvas-controls .enable').removeClass('disabled');
-        // $('.carousel').attr('data-bs-touch', "true");
-    });
-    // $('.canvas-controls .erase').off();
-    $('.canvas-controls .erase').click(function() {
-        slide.cfd.setErase();
-        $('.canvas-controls .nav-link').removeClass('disabled');
-        $(this).addClass('disabled');
-    });
-    // $('.canvas-controls .enable').off();
-    $('.canvas-controls .enable').click(function() {
-        slide.cfd.enableDrawingMode();
-        $(slide.cfd.canvas).show();
-        $(slide.cfd.canvas).css('z-index', 999);
-        slide.cfd.setDraw();
-        $('.canvas-controls .nav-link').removeClass('disabled');
-        $(this).addClass('disabled');
-    });
-    $('.canvas-controls .undo').click(() => slide.cfd.undo());
-    $('.canvas-controls .redo').click(() => slide.cfd.redo());
-    $('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
-    $('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
-    $('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
-    $('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
-    $('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
+	if ($('.carousel-item').length == 0) {
+		return 0;
+	}
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		$('.canvas-controls').show();
+		if (!$(slide).find('canvas').length) {
+			addCanvas(slide);
+		}
+		$(slide.cfd.canvas).show();
+	} else {
+		if ($(slide).find('canvas').length) {
+			$('.canvas-controls').hide();
+			$(slide).find('canvas').hide();
+		}
+		return 1;
+	}
+	$('.canvas-controls').find('*').off();
+	// $('.canvas-controls .annotate').off();
+	$('.canvas-controls .clear').click(function() {
+		$(slide).find('canvas').remove();
+		addCanvas(slide);
+	});
+	// $('.canvas-controls .expand').off();
+	$('.canvas-controls .expand').click(function() {
+		slide.cfd.disableDrawingMode();
+		// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
+		let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+		let img = new Image();
+		img.src = oldCanvas;
+		img.onload = function (){
+			$(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
+			$(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
+			let ctx = slide.cfd.canvas.getContext('2d');
+			ctx.drawImage(img, 0, 0);
+			slide.cfd.enableDrawingMode();
+			slide.cfd.setDraw();
+		}
+	});
+	// $('.canvas-controls .disable').off();
+	$('.canvas-controls .disable').click(function() {
+		slide.cfd.disableDrawingMode();
+		$(slide.cfd.canvas).css('z-index', 0);
+		$('.canvas-controls .nav-link').not('.enable').addClass('disabled');
+		$('.canvas-controls .enable').removeClass('disabled');
+		// $('.carousel').attr('data-bs-touch', "true");
+	});
+	// $('.canvas-controls .erase').off();
+	$('.canvas-controls .erase').click(function() {
+		slide.cfd.setErase();
+		$('.canvas-controls .nav-link').removeClass('disabled');
+		$(this).addClass('disabled');
+	});
+	// $('.canvas-controls .enable').off();
+	$('.canvas-controls .enable').click(function() {
+		slide.cfd.enableDrawingMode();
+		$(slide.cfd.canvas).show();
+		$(slide.cfd.canvas).css('z-index', 999);
+		slide.cfd.setDraw();
+		$('.canvas-controls .nav-link').removeClass('disabled');
+		$(this).addClass('disabled');
+	});
+	$('.canvas-controls .undo').click(() => slide.cfd.undo());
+	$('.canvas-controls .redo').click(() => slide.cfd.redo());
+	$('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
+	$('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
+	$('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
+	$('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
+	$('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
 
-    $('.canvas-controls .disable').click();
+	$('.canvas-controls .disable').click();
+}
+
+function clearAllCanvas() {
+	if (window.confirm("Are you sure?")) {
+		// $('.carousel-item').each(function() {
+		// 	if ('cfd' in this) {
+		// 		if ('canvas' in this.cfd) {
+		// 			this.cfd.canvas.remove();
+		// 		}
+		// 	}
+		// });
+		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+		$('.output:visible').removeClass('annotate');
+		$('canvas').remove();
+	}
 }
 
 function addCanvas(slide) {
-    if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
-            return 0;
-    }
+	if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
+		return 0;
+	}
 
-    let width = $('.output.present:visible').first()[0].scrollWidth;
-    let height = $('.output.present:visible').first()[0].scrollHeight;
+	let width = $('.output.present:visible').first()[0].scrollWidth;
+	let height = $('.output.present:visible').first()[0].scrollHeight;
 
-    slide.cfd = new CanvasFreeDrawing.default({
-      elementId: slide.id,
-      width: width,
-      height: height,
-      showWarnings: true,
-    });
-    slide.cfd.setLineWidth(2);
-    slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
-    slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
-      slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-    });
+	slide.cfd = new CanvasFreeDrawing.default({
+		elementId: slide.id,
+		width: width,
+		height: height,
+		showWarnings: true,
+	});
+	slide.cfd.setLineWidth(2);
+	slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
+	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
+		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
+	});
 
 }
 
@@ -303,26 +344,27 @@ $(function() {
 		$('#carousel.present').removeClass('carousel-inner');
 
 		if ($slides.length > 50) {
-			let clone = document.getElementById('output').cloneNode(true);
+			// removeTypeset(document.getElementById('output'));
+			// let clone = document.getElementById('output').cloneNode(true);
 			$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
-			if ($('#carousel .slide[slide="' + prevNum + '"]').length == 0) {
-				$('#carousel').prepend($(clone).find('.slide[slide="' + prevNum + '"]').first());
+
+			if ($('#carousel div.slide[slide="' + prevNum + '"]').length == 0) {
+				removeTypeset($('#output').find('div.slide[slide="' + prevNum + '"]').first()[0]);
+				let $clonePrev = $('#output').find('div.slide[slide="' + prevNum + '"]').first().clone(true, true);
+				$('#carousel').prepend($clonePrev);
 			}
-			if ($('#carousel .slide[slide="' + nextNum + '"]').length == 0) {
-				$(clone).find('.slide[slide="' + nextNum + '"]').first().appendTo($('#carousel'));
+			if ($('#carousel div.slide[slide="' + nextNum + '"]').length == 0) {
+				removeTypeset($('#output').find('div.slide[slide="' + nextNum + '"]').first()[0]);
+				let $cloneNext = $('#output').find('div.slide[slide="' + nextNum + '"]').first().clone(true, true);
+				$('#carousel').append($cloneNext);
 			}
+			$('#carousel div.slide').addClass('carousel-item');
 		}
-		$('#carousel .slide').removeClass('hidden').addClass('carousel-item');
 
 		$('.carousel').carousel('pause');
 
-        $slide.addClass('tex2jax_ignore');
 		$('#output').attr('data-selected-slide', slideNum);
-		// updateSlideContent($slide[0]);
-        // baseRenderer.then(cranach => {
-		// 	updateSlideInfo($slide[0], cranach);
-		// 	updateModal(cranach);
-		// });
+
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');
