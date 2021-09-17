@@ -124,9 +124,8 @@ function showJaxSource(outputId) {
 }
 
 function renderSlide(slide) {
-
-	$(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 	$(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+	$(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
 	$(slide).find('img:not([src])').each(function() {
 		imagePostprocess(this);
@@ -327,7 +326,6 @@ function imagePostprocess(image) {
 		$(image).closest('.image').find('.loading_icon').hide();
 		$(image).removeClass('loading');
 		if ($(image).hasClass('exempt') || Math.max($(image).get(0).naturalWidth, $(image).get(0).naturalHeight) < 450) {
-			console.log($(image).attr('src') + ' OK');
 			return 1;
 		}
 

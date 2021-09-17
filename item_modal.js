@@ -1,7 +1,7 @@
 function updateModalProofs(md5String, cranach) {
 	let contentURLDir = cranach.attr['contentURLDir'];
 
-	let indexDoc = cranach.attr['indexDoc'];
+	let indexDoc = cranach.indexDoc;
 	let queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
 	console.log(queryString);
 	let iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
@@ -31,13 +31,14 @@ function updateModalProofs(md5String, cranach) {
 
 }
 function updateModalProofOf(button, cranach) {
+	let contentURLDir = cranach.attr['contentURLDir'];
 	if (typeof $(button).attr('of') == 'undefined' || $(button).attr('of') == null) {
 		$('.modal_proof_of').hide();
 		return 0;
 	}
 	let rootURL = cranach.attr['rootURL'];
 	// let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&query=(//lv:statement[@md5='" + $(button).attr('of') + "'])[1]";
-	let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + "&item=" + $(button).attr('of');
+	let href = contentURLDir + '/' + $(button).attr('of-src-filename') + "&item=" + $(button).attr('of');
 
 	$('.modal_proof_of a').attr('href', href);
 	if ($(button).find('.of-title').length) {
@@ -57,7 +58,7 @@ function updateModalRefby(md5String, cranach) {
 	//     dataType: "xml"
 	// })
 	// .done(function(index) {
-	let index = cranach.attr['indexDoc'];
+	let index = cranach.indexDoc;
 	$.ajax({
 		url: 'xsl/refby2html.xsl'
 	})

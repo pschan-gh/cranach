@@ -7,11 +7,6 @@
     xmlns:m = "http://www.w3.org/1998/Math/MathML"
     >
 
-    <!-- exclude-result-prefixes="lv" -->
-    <!-- xmlns:xh="https://www.w3.org/TR/html51/" -->
-    <!-- xmlns:xh="http://www.w3.org/1999/xhtml" -->
-
-    <!-- <xsl:strip-space elements="lv:newcol"/> -->
     <xsl:preserve-space elements="xh:pre lv:paragraphs"/>
     <xsl:output method="xml" indent="yes"/>
 
@@ -43,7 +38,7 @@
                 <xsl:with-param name="chapter_type" select="$chapter_type"/>
                 <xsl:with-param name="section" select="$section"/>
                 <xsl:with-param name="subsection" select="$subsection"/>
-                <xsl:with-param name="subsubsection" select="$subsubsection"/>                
+                <xsl:with-param name="subsubsection" select="$subsubsection"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
@@ -186,7 +181,7 @@
 
     <xsl:template match="lv:section">
         <xsl:param name="course" select="@course"/>
-        <xsl:param name="chapter" select="@chapter"/>        
+        <xsl:param name="chapter" select="@chapter"/>
         <xsl:param name="chapter_type" select="@chapter_type"/>
         <xsl:param name="old_serial" select="@serial"/>
         <xsl:variable name="section">
@@ -623,19 +618,19 @@
                     <xsl:when test="@of">
                         <xsl:value-of select="'false'"/>
                     </xsl:when>
-                    <xsl:otherwise>                                
+                    <xsl:otherwise>
                         <xsl:value-of select="'true'"/>
                     </xsl:otherwise>
                 </xsl:choose>
-            </xsl:variable>             
+            </xsl:variable>
             <xsl:choose>
                 <xsl:when test="@type='Proof'">
                     <xsl:variable name="of">
                         <xsl:choose>
                             <xsl:when test="@of">
-                                <xsl:value-of select="@of"/>                                
+                                <xsl:value-of select="@of"/>
                             </xsl:when>
-                            <xsl:otherwise>                                
+                            <xsl:otherwise>
                                 <xsl:value-of select="preceding::lv:statement[1]/@md5[last()]"/>
                             </xsl:otherwise>
                         </xsl:choose>
@@ -668,7 +663,7 @@
                             </xsl:attribute>
                             <xsl:variable name="ofmd5">
                                 <xsl:value-of select="$branch/@md5"/>
-                            </xsl:variable>                        
+                            </xsl:variable>
                             <xsl:attribute name="ofmd5">
                                 <xsl:value-of select="$ofmd5"/>
                             </xsl:attribute>
@@ -683,11 +678,11 @@
                                     <xsl:when test="$branch/idx:title">
                                         <xsl:copy-of select="($branch/idx:title/*)|($branch/idx:title/text())"/>
                                     </xsl:when>
-                                    <xsl:otherwise>                                        
+                                    <xsl:otherwise>
                                             <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
-                            </xsl:element>                            
+                            </xsl:element>
                         </xsl:when>
                         <xsl:otherwise>
                         </xsl:otherwise>
@@ -803,7 +798,7 @@
         <xsl:param name="subsubsection" select="@subsubsection"/>
         <xsl:param name="subsubsection_title" select="@subsubsection_title"/>
         <xsl:param name="slide"/>
-        
+
         <xsl:element name="{local-name()}" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="course">
@@ -907,8 +902,8 @@
         <xsl:param name="course"/>
         <xsl:param name="chapter"/>
         <xsl:param name="slide"/>
-        
-        
+
+
         <xsl:element name="ref" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="course">
@@ -996,7 +991,7 @@
         <xsl:value-of select="." disable-output-escaping="no" />
         <!-- <xsl:copy-of select="current()"/> -->
     </xsl:template>
-    
+
     <xsl:template match="comment()">
         <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
             <xsl:comment>

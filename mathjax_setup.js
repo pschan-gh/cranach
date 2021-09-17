@@ -30,7 +30,7 @@ MathJax = {
 					return renderer;
 				} else {
 					if ($('.editor.ace_editor').length > 0) {
-						convertCranachDocToWb(renderer.attr['cranachDoc'], editor);
+						convertCranachDocToWb(renderer.cranachDoc, editor);
 					}
 					if ($('#item_modal').length > 0) {
 						updateModal(renderer);

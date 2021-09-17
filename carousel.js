@@ -101,6 +101,10 @@ function showSlide(slide, cranach) {
 }
 
 function hideCarousel() {
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	}
+
 	$('#container').removeClass('wide');
 	$('.present')
 	.removeClass('present')
@@ -185,23 +189,32 @@ function updateCollapseAttr(element, type = 'carousel') {
 	}
 }
 
-function annotate() {
+function hideAnnotate() {
+	$('canvas').hide();
+	$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+	$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+	$('.output:visible').removeClass('annotate');
+}
 
-	if ($('.output.present:visible').first().hasClass('annotate')) {
-		$('canvas').hide();
-		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
-		$('.output:visible').removeClass('annotate');
-	} else {
-		$('.output.present:visible').first().addClass('annotate');
-		$('.carousel').attr('data-bs-touch', "false");
-	}
+function showAnnotate() {
+	$('.output.present:visible').first().addClass('annotate');
+	$('.carousel').attr('data-bs-touch', "false");
 	let slide = $('.output.present:visible div.slide.active')[0];
-	updateCanvas(slide);
+}
 
+function annotate() {
+	if ($('.output.present:visible').first().hasClass('annotate')) {
+		hideAnnotate();
+	} else {
+		showAnnotate();
+	}
+	updateCanvas($('.output.present:visible div.slide.active')[0]);
 }
 
 function updateCanvas(slide) {
+	if ($('.carousel-item').length == 0) {
+		return 0;
+	}
 	if ($('.output.present:visible').first().hasClass('annotate')) {
 		$('.canvas-controls').show();
 		if (!$(slide).find('canvas').length) {
@@ -269,6 +282,22 @@ function updateCanvas(slide) {
 	$('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
 
 	$('.canvas-controls .disable').click();
+}
+
+function clearAllCanvas() {
+	if (window.confirm("Are you sure?")) {
+		// $('.carousel-item').each(function() {
+		// 	if ('cfd' in this) {
+		// 		if ('canvas' in this.cfd) {
+		// 			this.cfd.canvas.remove();
+		// 		}
+		// 	}
+		// });
+		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+		$('.output:visible').removeClass('annotate');
+		$('canvas').remove();
+	}
 }
 
 function addCanvas(slide) {
