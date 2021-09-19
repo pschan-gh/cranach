@@ -146,7 +146,6 @@ function adjustHeight(slide) {
 		 // || $(slide).closest('.lcref').length > 0
 		return 0;
 	}
-	console.log('adjusting height');
 	$(slide).find('.slide_content').css('padding-bottom', '');
 	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
 		$output.css('display', 'block');
