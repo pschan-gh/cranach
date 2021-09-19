@@ -140,7 +140,7 @@ function renderSlide(slide) {
 	if ($(slide).hasClass("tex2jax_ignore")) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
-	typeset([slide]).then(() => {
+	MathJax.startup.promise = typeset([slide]).then(() => {
 		adjustHeight(slide);
 	});
 }

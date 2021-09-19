@@ -16,6 +16,10 @@ body {
     height:100%;
 }
 
+.paragraphs {
+	white-space:nowrap;
+}
+
 .ace_highlight-marker {
     position: absolute; /* without this positions will be wrong */
     background: #ddf; /* color */
