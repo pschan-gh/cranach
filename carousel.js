@@ -364,7 +364,7 @@ $(function() {
 		$('.carousel').carousel('pause');
 
 		$('#output').attr('data-selected-slide', slideNum);
-		$slide.find('> .slide_content > .slide_content').css('padding-bottom', '15em');
+		$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
 
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
