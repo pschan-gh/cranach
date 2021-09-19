@@ -182,16 +182,6 @@ function updateSlideContent(slide, carousel = 'false') {
 
 	adjustHeight(slide);
 
-	$('*[text]').removeClass('highlighted');
-	$('button').removeClass('highlighted');
-	$('.item_button').css('background-color', '');
-
-	$('.separator').css('font-weight', 'normal');
-	$('.separator').find('a').css('color', 'pink');
-
-	$(slide).find('.separator').css('font-weight', 'bold');
-	$(slide).find('.separator').find('a').css('color', 'red');
-
 	if (carousel) {
 		updateCanvas(slide);
 	}
@@ -506,6 +496,15 @@ function updateSlideClickEvent() {
 	$('.output div.slide').click(function() {
 		let slideNum = $(this).attr('slide');
 		let slide = this;
+		$('*[text]').removeClass('highlighted');
+		$('button').removeClass('highlighted');
+		$('.item_button').css('background-color', '');
+
+		$('.separator').css('font-weight', 'normal');
+		$('.separator').find('a').css('color', 'pink');
+
+		$(slide).find('.separator').css('font-weight', 'bold');
+		$(slide).find('.separator').find('a').css('color', 'red');
 		if (slideNum != $('#output').attr('data-selected-slide') || !$('#output').is("[data-selected-slide]")) {
 			$('#output').attr('data-selected-slide', slideNum);
 		}
