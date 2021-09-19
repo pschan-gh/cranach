@@ -17,7 +17,7 @@ body {
 }
 
 .paragraphs {
-	white-space:nowrap;
+	white-space:normal;
 }
 
 .ace_highlight-marker {
