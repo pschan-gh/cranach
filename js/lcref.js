@@ -191,8 +191,7 @@ function lcref_click_handler($el) {
 } //~~ end click handler for *[lcref] elements
 
 function renderElement($lcref) {
-    typeset([$lcref[0]]);
-    $lcref.find('img').each(function() {
+	$lcref.find('img').each(function() {
         imagePostprocess($(this));
     });
     $lcref.find('iframe:not([src])').each(function() {
@@ -200,6 +199,7 @@ function renderElement($lcref) {
         var $iframe = $(this);
         $(this).iFrameResize({checkOrigin:false});
     });
+    typeset([$lcref[0]]);
 }
 
 /** register a click handler for each element with the lcref attribute
@@ -215,7 +215,7 @@ $(function() {
             $lcref.attr("lcref-uid", lcref_id_counter);
             lcref_id_counter++;
         }
-        lcref_click_handler($lcref, evt);
+		lcref_click_handler($lcref, evt);
     });
     $("a[lcref]").attr("href", "");
 });
