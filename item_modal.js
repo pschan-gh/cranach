@@ -80,7 +80,6 @@ function updateModalRefby(md5String, cranach) {
 function updateModal(cranach) {
 	$('.slide_button').off();
 	$('.slide_button').on('click', function() {
-		console.log('SLIDE BUTTON PRESSED');
 		let $slide = $('div.slide[slide="' + $(this).attr('slide') + '"');
 		let slide = $slide.attr('slide');
 		let course = $slide.attr('course');
@@ -154,54 +153,56 @@ function updateModal(cranach) {
 			url += '&' + argName + '=' + $labels.first().attr('name');
 			if (argName == 'item') {
 				lcref = cranach.attr['contentURL'] + "&query=(//lv:*[./lv:label/@name='" + $labels.first().attr('name') + "'])[1]";
-				}
-			} else {
-				url +=  '&' + argName + '=' + serial;
-				if (argName == 'item') {
-					lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
-					}
-				}
+			}
+			console.log(url);
+			console.log(lcref);
+		} else {
+			url +=  '&' + argName + '=' + serial;
+			if (argName == 'item') {
+				lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
+			}
+		}
+		console.log(url);
+		$('#item_modal').find('#item_modal_link').attr('href', url);
+		$('#item_modal').find('#share_url').val(url);
 
-				$('#item_modal').find('#item_modal_link').attr('href', url);
-				$('#item_modal').find('#share_url').val(url);
+		let title = '';
 
-				let title = '';
-
-				let titles = $(this).find('*[wbtag="title"]');
-				if (titles.length) {
-					title = titles.first().text();
-				} else {
-					title = $(this).attr('item') ? item_type + ' ' + item : item_type;
-				}
-
-				$('#item_modal #share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
-				if (argName == 'item') {
-					$('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
-				} else {
-					$('#item_modal #share_lcref').val('');
-				}
-				$('#item_modal #share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
-				$('#item_modal .md5').val(md5String);
-
-				updateModalRefby(md5String, cranach);
-				updateModalProofs(md5String, cranach);
-				updateModalProofOf(this, cranach);
-			});
+		let titles = $(this).find('*[wbtag="title"]');
+		if (titles.length) {
+			title = titles.first().text();
+		} else {
+			title = $(this).attr('item') ? item_type + ' ' + item : item_type;
 		}
 
-		$(function() {
-			let infoObserver = new MutationObserver(function(mutations) {
-				mutations.forEach(function(mutation) {
-					if (mutation.type == "attributes") {
-						if (mutation.attributeName == 'data-content-url' || mutation.attributeName == 'data-query' || mutation.attributeName == 'data-selected-slide') {
-							baseRenderer.then(cranach => {
-								updateModal(cranach);
-							});
-						}
-					}
-				});
-			});
-			infoObserver.observe(document.getElementById('output'), {
-				attributes: true,
-			});
+		$('#item_modal #share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
+		if (argName == 'item') {
+			$('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+		} else {
+			$('#item_modal #share_lcref').val('');
+		}
+		$('#item_modal #share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+		$('#item_modal .md5').val(md5String);
+
+		updateModalRefby(md5String, cranach);
+		updateModalProofs(md5String, cranach);
+		updateModalProofOf(this, cranach);
+	});
+}
+
+$(function() {
+	let infoObserver = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type == "attributes") {
+				if (mutation.attributeName == 'data-content-url' || mutation.attributeName == 'data-query' || mutation.attributeName == 'data-selected-slide') {
+					baseRenderer.then(cranach => {
+						updateModal(cranach);
+					});
+				}
+			}
 		});
+	});
+	infoObserver.observe(document.getElementById('output'), {
+		attributes: true,
+	});
+});
