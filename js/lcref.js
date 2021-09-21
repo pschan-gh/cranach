@@ -38,23 +38,19 @@ var lcref_focus_stack = [];
 
 function lcref_click_handler($el) {
 	// the lcref attribute holds the id of the lcref
-	var lcref_id = $el.attr("lcref");
+	let lcref_id = $el.attr("lcref");
 	// the uid is necessary if we want to reference the same content several times
-	var uid = $el.attr("lcref-uid");
-	var output_id = '#lcref-output-' + uid;
-	var $output_id = $(output_id);
+	let uid = $el.attr("lcref-uid");
+	let output_id = '#lcref-output-' + uid;
+	let $output = $(output_id);
 	// create the element for the content, insert it after the one where the
 	// lcref element is included (e.g. inside a <h1> tag) (sibling in DOM)
-	var idtag = "id='"+output_id.substring(1) + "'";
-	var kid   = "id='kuid-"+ uid + "'";
-	// if we already have the content, toggle visibility
+	let idtag = "id='"+output_id.substring(1) + "'";
 
-	// Note that for tracking lcrefs, this setup is not optimal
-	// because it applies to open lcrefs and also lcrefs which
-	// were opened and then closed.
-	if ($output_id.length > 0) {
-		thislcrefid = "kuid-"+uid
-		$("#kuid-"+uid).slideToggle("fast");
+	let thislcrefid = 'kuid-' + uid;
+
+	if ($output.length > 0) {
+		$(`#${thislcrefid}`).slideToggle("fast");
 		if($el.attr("replace")) {
 			$($el.attr("replace")).slideToggle("fast");
 		}
@@ -79,8 +75,12 @@ function lcref_click_handler($el) {
 	} else {
 		// where_it_goes is the location the lcref will appear *after*
 		// lcref is the variable that will hold the content of the output lcref
-		var where_it_goes = $el;
-		var lcref = "<div class='lcref-output' "+kid+"><div class='lcref'><div class='lcref-content' " +idtag+ ">loading '"+lcref_id+"'</div><div class='lcref-footer'>"+lcref_id+"</div></div></div>";
+		let where_it_goes = $el;
+		let lcref = `<div class="lcref-output" id="${thislcrefid}">`
+		+ `<div class="lcref">`
+		+ `<div class="lcref-content ${idtag}">loading ${lcref_id}</div>`
+		+ `<div class='lcref-footer'>${lcref_id}</div>`
+		+ `</div></div>`;
 
 		// addafter="#id" means to put the lcref after the element with that id
 		if($el.attr("addafter")) {
@@ -126,8 +126,8 @@ function lcref_click_handler($el) {
 		}
 
 		// "select" where the output is and get a hold of it
-		var $output = $(output_id);
-		var $lcref = $("#kuid-"+uid);
+		// var $output = $(output_id);
+		let $lcref = $($(`#${thislcrefid}`));
 		$output.addClass("loading");
 		$lcref.hide();
 
@@ -181,7 +181,6 @@ function lcref_click_handler($el) {
 			the_replaced_thing.hide("slow");
 		}
 
-		var thislcrefid = 'kuid-'.concat(uid)
 		document.getElementById(thislcrefid).tabIndex=0;
 		document.getElementById(thislcrefid).focus();
 		lcref_focus_stack_uid.push(uid);
