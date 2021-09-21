@@ -40,11 +40,11 @@ function lcref_click_handler($el) {
 	let uid = $el.attr("lcref-uid");
 	let output_id = 'lcref-output-' + uid;
 
-	let thislcrefid = 'kuid-' + uid;
+	let lcrefid = 'kuid-' + uid;
 
 
 	if ($(`#${output_id}`).length > 0) {
-		$(`#${thislcrefid}`).slideToggle("fast");
+		$(`#${lcrefid}`).slideToggle("fast");
 		if($el.attr("replace")) {
 			$($el.attr("replace")).slideToggle("fast");
 		}
@@ -60,7 +60,7 @@ function lcref_click_handler($el) {
 		else {
 			lcref_focus_stack_uid.push(uid);
 			lcref_focus_stack.push($el);
-			document.getElementById(thislcrefid).focus();
+			document.getElementById(lcrefid).focus();
 		}
 
 		$el.toggleClass("active");
@@ -69,8 +69,8 @@ function lcref_click_handler($el) {
 	} else {
 		// where_it_goes is the location the lcref will appear *after*
 		// lcref is the variable that will hold the content of the output lcref
-		let $lcrefContent = $(
-			`<div class="lcref-output" id="${thislcrefid}">`
+		let $lcrefContainer = $(
+			`<div class="lcref-output" id="${lcrefid}">`
 			+ `<div class="lcref">`
 			+ `<div class="lcref-content" id="${output_id}">loading ${lcref}</div>`
 			+ `<div class='lcref-footer'>${lcref}</div>`
@@ -78,9 +78,9 @@ function lcref_click_handler($el) {
 		);
 
 		if ($el.nextAll('.paragraphs').length > 0) {
-			$el.nextAll('.paragraphs').first().after($lcrefContent);
+			$el.nextAll('.paragraphs').first().after($lcrefContainer);
 		} else {
-			$el.after($lcrefContent);
+			$el.after($lcrefContainer);
 		}
 		let $lcrefOutput = $(`#${output_id}`);
 		let url = $el.attr('lcref');
@@ -92,23 +92,23 @@ function lcref_click_handler($el) {
 				new Cranach(url).setup().then(cranach => {
 					return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($lcrefOutput[0]).render();
 				}).then(cranach => {
-					renderElement($lcrefContent);
+					renderElement($lcrefContainer);
 				});
 			});
 		} else {
 			new Cranach(url).setup().then(cranach => {
 				return cranach.setBare().xmlDocQueryAndRender($lcrefOutput[0]);
 			}).then(cranach => {
-				renderElement($lcrefContent);
+				renderElement($lcrefContainer);
 			});
 		}
 		// $el.addClass("active");
-		$lcrefContent.slideDown("slow", function() {
+		$lcrefContainer.slideDown("slow", function() {
 			adjustHeight();
 		});
 
-		document.getElementById(thislcrefid).tabIndex = 0;
-		document.getElementById(thislcrefid).focus();
+		document.getElementById(lcrefid).tabIndex = 0;
+		document.getElementById(lcrefid).focus();
 		lcref_focus_stack_uid.push(uid);
 		lcref_focus_stack.push($el);
 		$("a[lcref]").attr("href", "");
@@ -116,16 +116,16 @@ function lcref_click_handler($el) {
 	}
 } //~~ end click handler for *[lcref] elements
 
-function renderElement($lcrefContent) {
-	$lcrefContent.find('img').each(function() {
+function renderElement($lcrefContainer) {
+	$lcrefContainer.find('img').each(function() {
 		imagePostprocess($(this));
 	});
-	$lcrefContent.find('iframe:not([src])').each(function() {
+	$lcrefContainer.find('iframe:not([src])').each(function() {
 		$(this).attr('src', $(this).attr('data-src')).show();
 		var $iframe = $(this);
 		$(this).iFrameResize({checkOrigin:false});
 	});
-	typeset([$lcrefContent[0]]);
+	typeset([$lcrefContainer[0]]);
 }
 
 
