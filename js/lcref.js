@@ -1,5 +1,8 @@
 /*
 * lcref - Feature Demo for lcrefs
+*
+* Based primarily on the work on Knowl by:
+*
 * Copyright (C) 2011  Harald Schilly
 *
 * This program is free software: you can redistribute it and/or modify
@@ -14,13 +17,6 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
-
-/*  8/14/14  Modified by David Farmer to allow lcref content to be
-*  taken from the element with a given id.
-*
-* The syntax is <a lcref="" class="id-ref" refid="proofSS">Proof</a>
 */
 
 /* javascript code for the lcref features
@@ -34,9 +30,7 @@ var lcref_focus_stack_uid = [];
 var lcref_focus_stack = [];
 
 function lcref_click_handler($el) {
-	// the lcref attribute holds the id of the lcref
 	let lcref = $el.attr("lcref");
-	// the uid is necessary if we want to reference the same content several times
 	let uid = $el.attr("lcref-uid");
 	let output_id = 'lcref-output-' + uid;
 
@@ -63,12 +57,7 @@ function lcref_click_handler($el) {
 			document.getElementById(lcrefid).focus();
 		}
 
-		$el.toggleClass("active");
-
-		// otherwise download it or get it from the cache
 	} else {
-		// where_it_goes is the location the lcref will appear *after*
-		// lcref is the variable that will hold the content of the output lcref
 		let $lcrefContainer = $(
 			`<div class="lcref-output" id="${lcrefid}">`
 			+ `<div class="lcref">`
@@ -78,7 +67,7 @@ function lcref_click_handler($el) {
 		);
 
 		if ($el.nextAll('.paragraphs').length > 0) {
-			$el.nextAll('.paragraphs').first().after($lcrefContainer);
+			$el.nextAll('.paragraphs').last().after($lcrefContainer);
 		} else {
 			$el.after($lcrefContainer);
 		}
@@ -102,7 +91,6 @@ function lcref_click_handler($el) {
 				renderElement($lcrefContainer);
 			});
 		}
-		// $el.addClass("active");
 		$lcrefContainer.slideDown("slow", function() {
 			adjustHeight();
 		});
@@ -112,7 +100,6 @@ function lcref_click_handler($el) {
 		lcref_focus_stack_uid.push(uid);
 		lcref_focus_stack.push($el);
 		$("a[lcref]").attr("href", "");
-		// }
 	}
 } //~~ end click handler for *[lcref] elements
 
