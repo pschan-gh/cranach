@@ -141,7 +141,9 @@ function renderSlide(slide) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
 	MathJax.startup.promise = typeset([slide]).then(() => {
-		adjustHeight(slide);
+		if ($('#carousel').length > 0) {
+			adjustHeight();
+		}
 	});
 }
 
@@ -180,7 +182,7 @@ function updateSlideContent(slide, carousel = 'false') {
 	});
 	$(slide).find('.loading_icon').hide();
 
-	adjustHeight(slide);
+	adjustHeight();
 
 	if (carousel) {
 		updateCanvas(slide);

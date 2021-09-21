@@ -140,16 +140,14 @@ function hideCarousel() {
 	batchRender($('#output div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]').first()[0]);
 }
 
-function adjustHeight(slide) {
+function adjustHeight() {
 	let $output = $('#carousel');
 	if (!$output.length) {
-		 // || $(slide).closest('.lcref').length > 0
-		return 0;
+		 return 0;
 	}
-	$(slide).find('.slide_content').css('padding-bottom', '');
+	$(`#carousel div.slide[slide="${$('#output').attr('data-selected-slide')}"]`).find('.slide_content').css('padding-bottom', '');
 	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
 		$output.css('display', 'block');
-		// $(slide).find('> .slide_content > .slide_content').css('padding-bottom', '15em');
 	} else {
 		$output.css('display', '');
 	}
@@ -369,10 +367,10 @@ $(function() {
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');
-		adjustHeight($slide[0]);
+		adjustHeight();
 	});
 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');
-		adjustHeight($slide[0]);
+		adjustHeight();
 	});
 });

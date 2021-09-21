@@ -168,25 +168,26 @@ function lcref_click_handler($el) {
 
 		$el.addClass("active");
 		// if we are using MathJax, then we reveal the lcref after it has finished rendering the contents
-		if(window.MathJax == undefined) {
-			$lcref.slideDown("slow");
-		} else {
-			$lcref.addClass("processing");
-			$lcref.removeClass("processing");
-			$lcref.slideDown("slow");
+		// if(window.MathJax == undefined) {
+		// 	$lcref.slideDown("slow");
+		// } else {
 
-			if($el.attr("replace")) {
-				var the_replaced_thing = $($el.attr("replace"));
-				the_replaced_thing.hide("slow");
-			}
+		$lcref.slideDown("slow", function() {
+			adjustHeight();
+		});
 
-			var thislcrefid = 'kuid-'.concat(uid)
-			document.getElementById(thislcrefid).tabIndex=0;
-			document.getElementById(thislcrefid).focus();
-			lcref_focus_stack_uid.push(uid);
-			lcref_focus_stack.push($el);
-			$("a[lcref]").attr("href", "");
+		if($el.attr("replace")) {
+			var the_replaced_thing = $($el.attr("replace"));
+			the_replaced_thing.hide("slow");
 		}
+
+		var thislcrefid = 'kuid-'.concat(uid)
+		document.getElementById(thislcrefid).tabIndex=0;
+		document.getElementById(thislcrefid).focus();
+		lcref_focus_stack_uid.push(uid);
+		lcref_focus_stack.push($el);
+		$("a[lcref]").attr("href", "");
+		// }
 	}
 } //~~ end click handler for *[lcref] elements
 
