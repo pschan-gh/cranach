@@ -68,6 +68,8 @@ function lcref_click_handler($el) {
 
 		if ($el.nextAll('.paragraphs').length > 0) {
 			$el.nextAll('.paragraphs').last().after($lcrefContainer);
+		} else if ($el.closest('.paragraphs').length > 0) {
+			$el.closest('.paragraphs').after($lcrefContainer);
 		} else {
 			$el.after($lcrefContainer);
 		}
@@ -117,7 +119,7 @@ function renderElement($lcrefContainer) {
 
 
 $(function() {
-	$("body").on("click", "a[lcref]", function(evt) {
+	$("body").on("click", "*[lcref]", function(evt) {
 		evt.preventDefault();
 		evt.stopPropagation();
 		var $lcref = $(this);
@@ -127,5 +129,5 @@ $(function() {
 		}
 		lcref_click_handler($lcref, evt);
 	});
-	$("a[lcref]").attr("href", "");
+	$("*[lcref]").attr("href", "");
 });
