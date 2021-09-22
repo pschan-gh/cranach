@@ -147,7 +147,8 @@ function updateModal(cranach) {
 		let lcref = '';
 		let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
 
-		let $labels = $(this).closest('div').find('.label');
+		// let $labels = $(this).closest('div').find('.label');
+		let $labels = $(this).find('> .label');
 
 		if ($labels.length) {
 			url += '&' + argName + '=' + $labels.first().attr('name');
