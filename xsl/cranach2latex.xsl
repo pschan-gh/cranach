@@ -217,7 +217,7 @@
 
 <xsl:template match="li|lv:li|xh:li|lv:col_li|lv:item">
 	<xsl:text>&#xa;</xsl:text>
-	<xsl:text>\item</xsl:text>
+	<xsl:text>\item </xsl:text>
 	<!-- <xsl:text>&#xa;</xsl:text> -->
 	<xsl:apply-templates select="text()|*" />
 </xsl:template>
@@ -306,7 +306,7 @@
     <xsl:variable name="url">
         <xsl:choose>
     		<xsl:when test="@data-src">
-                <xsl:value-of select="@data-src"/>			
+                <xsl:value-of select="@data-src"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="@src"/>
@@ -317,7 +317,7 @@
 		<xsl:when test="contains($url, 'http')">
 			<xsl:value-of select="concat('&#xa;\href{', $url, '}{IMAGE}')"/>
 		</xsl:when>
-		<xsl:otherwise>			
+		<xsl:otherwise>
 			<xsl:value-of select="concat('&#xa;\href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IMAGE}')"/>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -327,7 +327,7 @@
     <xsl:variable name="url">
         <xsl:choose>
     		<xsl:when test="@data-src">
-                <xsl:value-of select="@data-src"/>			
+                <xsl:value-of select="@data-src"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="@src"/>
