@@ -308,7 +308,9 @@ function jumpToSlide($output, $slide) {
 
 function highlight(item) {
 	$('.item_button').css('background-color', '');
-	$('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
+	// $('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
+	$('.highlighted').removeClass('highlighted');
+	$('div[item="' + item + '"]').find("button").first().addClass('highlighted');
 
 }
 function imagePostprocess(image) {
