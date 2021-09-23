@@ -29,7 +29,7 @@ function Cranach(url) {
 		/* Initial Presentation */
 		'selectedItem' : null,
 		'selectedSection' : null,
-		'selectedSlide' : 1,
+		'selectedSlide' : null,
 		'selectedKeyword' : null,
 		'present' : false,
 		/* DOM elements */
