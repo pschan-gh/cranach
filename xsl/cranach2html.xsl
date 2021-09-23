@@ -446,7 +446,7 @@
 
 	<xsl:template match="lv:caption">
 		<xsl:param name="serial" select="''"/>
-		<div wbtag="skip">
+		<div class="caption" wbtag="skip">
 			<small class="caption" wbtag="ignore">
 				<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
 			</small>
