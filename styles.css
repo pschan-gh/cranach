@@ -520,7 +520,9 @@ ol > li > ol > li > ol {
     background-color:inherit;
 }
 b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h1.highlighted, button.highlighted{
-    background-color: #ff0;
+    /* background-color: #ff0; */
+	background-color: #fcf5cf;
+	padding: 5px;
 }
 #info_keywords {
     width: 100%;
@@ -823,7 +825,11 @@ font-size:1rem;
 margin:1em auto;
 padding:1em;
 text-align:center;
+}
 
+.image[wbtag="figure"] {
+	border: 1px solid #ddd;
+	border-radius:5px;
 }
 .center {
     padding:1em;

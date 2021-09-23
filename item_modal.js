@@ -147,7 +147,8 @@ function updateModal(cranach) {
 		let lcref = '';
 		let argName = item_type.match(/Course|Chapter|Section/i) ? 'section' : 'item';
 
-		let $labels = $(this).closest('div').find('.label');
+		// let $labels = $(this).closest('div').find('.label');
+		let $labels = $(this).find('> .label');
 
 		if ($labels.length) {
 			url += '&' + argName + '=' + $labels.first().attr('name');
@@ -177,7 +178,8 @@ function updateModal(cranach) {
 
 		$('#item_modal #share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
 		if (argName == 'item') {
-			$('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+			// $('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
+			$('#item_modal #share_lcref').val(`\\href{${lcref}}{\\mathrm{${title.replace(/ /g, '\\;')}}}`);
 		} else {
 			$('#item_modal #share_lcref').val('');
 		}
