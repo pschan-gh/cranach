@@ -24,6 +24,16 @@ function updateCarousel(slideNum) {
 	$('#carousel div.slide[slide="' + slideNum + '"]').addClass('active');
 }
 
+function updateCarouselSlide() {
+	let content = $('#carousel div.slide.active .slide_content').first()[0];
+	let counter = 5;
+	document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
+	while (content.scrollWidth > content.clientWidth && counter > 0) {
+		resizeFont(-0.5);
+		counter--;
+	}
+}
+
 function showSlide(slide, cranach) {
 	$('.pane').removeClass('info')
 	.removeClass('overview')
@@ -98,6 +108,7 @@ function showSlide(slide, cranach) {
 	MathJax.texReset();
 	MathJax.typesetClear();
 	batchRender($('#carousel div.slide.active').first()[0]);
+	updateCarouselSlide();
 }
 
 function hideCarousel() {
@@ -150,40 +161,6 @@ function adjustHeight() {
 		$output.css('display', 'block');
 	} else {
 		$output.css('display', '');
-	}
-}
-
-function duplicateCollapse(carouselSlide, slide) {
-	$(carouselSlide).find('a.collapsea').each(function() {
-		$(slide).find('a.collapsea[aria-controls="' + $(this).attr('aria-controls').replace(/^carousel-/, '') + '"]')
-		.attr('aria-expanded', $(this).attr('aria-expanded'));
-
-		$(slide).find('#' + $(this).attr('aria-controls').replace(/^carousel-/, ''))
-		.collapse($(this).attr('aria-expanded') == 'true' ? 'show' : 'hide');
-	});
-}
-
-function updateCollapseAttr(element, type = 'carousel') {
-	if (type == 'carousel') {
-		$(element).find('a.collapsea').each(function() {
-			if (!$(this).attr('aria-controls').match(/^carousel/)) {
-				$(this).attr('aria-controls', 'carousel-' + $(this).attr('aria-controls'));
-				$(this).attr('href', '#' + $(this).attr('aria-controls'));
-			}
-		});
-		$(element).find('div.collapse').each(function() {
-			if (!$(this).attr('id').match(/^carousel/)) {
-				$(this).attr('id', 'carousel-' + $(this).attr('id'));
-			}
-		});
-	} else {
-		$(element).find('a.collapsea').each(function() {
-			$(this).attr('aria-controls', $(this).attr('aria-controls').replace(/^carousel-/, ''));
-			$(this).attr('href', '#' + $(this).attr('aria-controls'));
-		});
-		$(element).find('div.collapse').each(function() {
-			$(this).attr('id', $(this).attr('id').replace(/^carousel-/, ''));
-		});
 	}
 }
 
@@ -363,7 +340,7 @@ $(function() {
 
 		$('#output').attr('data-selected-slide', slideNum);
 		$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
-
+		updateCarouselSlide();
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');

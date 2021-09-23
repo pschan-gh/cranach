@@ -38,10 +38,9 @@ function lcref_click_handler($el) {
 
 
 	if ($(`#${output_id}`).length > 0) {
-		$(`#${lcrefid}`).slideToggle("fast");
-		if($el.attr("replace")) {
-			$($el.attr("replace")).slideToggle("fast");
-		}
+		$(`#${lcrefid}`).slideToggle("fast", function() {
+			document.getElementById(lcrefid).scrollIntoView();
+		});
 
 		this_lcref_focus_stack_uidindex = lcref_focus_stack_uid.indexOf(uid);
 
@@ -54,7 +53,7 @@ function lcref_click_handler($el) {
 		else {
 			lcref_focus_stack_uid.push(uid);
 			lcref_focus_stack.push($el);
-			document.getElementById(lcrefid).focus();
+			document.getElementById(lcrefid).scrollIntoView();
 		}
 
 	} else {
@@ -96,6 +95,7 @@ function lcref_click_handler($el) {
 		$lcrefContainer.slideDown("slow", function() {
 			if ($('#carousel').length > 0) {
 				adjustHeight();
+				document.getElementById(lcrefid).scrollIntoView();
 			}
 		});
 
