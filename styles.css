@@ -16,6 +16,10 @@ body {
     height:100%;
 }
 
+.paragraphs {
+	white-space:normal;
+}
+
 .ace_highlight-marker {
     position: absolute; /* without this positions will be wrong */
     background: #ddf; /* color */
@@ -516,7 +520,9 @@ ol > li > ol > li > ol {
     background-color:inherit;
 }
 b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h1.highlighted, button.highlighted{
-    background-color: #ff0;
+    /* background-color: #ff0; */
+	background-color: #fcf5cf;
+	padding: 5px;
 }
 #info_keywords {
     width: 100%;
@@ -819,7 +825,11 @@ font-size:1rem;
 margin:1em auto;
 padding:1em;
 text-align:center;
+}
 
+.image[wbtag="figure"] {
+	border: 1px solid #ddd;
+	border-radius:5px;
 }
 .center {
     padding:1em;
@@ -1289,7 +1299,7 @@ and (max-width : 1024px) {
         float:left;
         width:100%;
         height:100%;
-        /* padding:0; */
+        padding-bottom:4em;
         margin-top:0;
         display:block
     }

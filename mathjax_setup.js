@@ -16,6 +16,45 @@ MathJax = {
 				let filtered = list.filter((node) => container.contains(node.start.node));
 				return filtered;
 			};
+
+			const Configuration = MathJax._.input.tex.Configuration.Configuration;
+			const CommandMap = MathJax._.input.tex.SymbolMap.CommandMap;
+			const Label = MathJax._.input.tex.Tags.Label;
+			const BaseMethods = MathJax._.input.tex.base.BaseMethods.default;
+			const NodeUtil = MathJax._.input.tex.NodeUtil.default;
+
+			//
+			//  Create a command map to override \ref and \eqref
+			//
+			new CommandMap('knowl', {
+				href: ['HandleRef', true]
+			}, {
+				HandleRef(parser, name) {
+					const url = parser.GetArgument(name);
+					let arg = parser.ParseArg(name);
+					// if (!NodeUtil.isInferred(arg)) {
+					// 	return arg;
+					// }
+					// let children = NodeUtil.getChildren(arg);
+					// if (children.length === 1) {
+					// 	parser.Push(children[0]);
+					// 	return 1;
+					// }
+					const mrow = parser.create('node', 'mrow');
+					NodeUtil.copyChildren(arg, mrow);
+					NodeUtil.copyAttributes(arg, mrow);
+
+					NodeUtil.setAttribute(mrow, 'lcref', url);
+					parser.Push(mrow);
+				}
+			});
+			//
+      //  Create the package for the overridden macros
+      //
+      Configuration.create('knowl', {
+        handler: {macro: ['knowl']}
+      });
+
 			$('.icon.latex, .icon.xml').hide();
 			baseRenderer.then(cranach => {
 				let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
@@ -60,24 +99,11 @@ MathJax = {
 		processEscapes: true,
 		processRefs: true,
 		tags: "ams",
-		packages: ['base', 'ams', 'newcommand', 'html', 'extpfeil', 'color', 'mathtools']
+		packages: ['base', 'ams', 'newcommand', 'html', 'extpfeil', 'color', 'mathtools', 'knowl']
 	},
 	options: {
 		ignoreHtmlClass: "tex2jax_ignore",
 		skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'annotation', 'annotation-xml'],
-		// renderActions: {
-		// 	findScript: [10, function (doc) {
-		// 		for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
-		// 			const display = !!node.type.match(/; *mode=display/);
-		// 			const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-		// 			const text = document.createTextNode('');
-		// 			node.parentNode.replaceChild(text, node);
-		// 			math.start = {node: text, delim: '', n: 0};
-		// 			math.end = {node: text, delim: '', n: 0};
-		// 			doc.math.push(math);
-		// 		}
-		// 	}, '']
-		// }
 	},
 	svg: {
 		scale: 1,                      // global scaling factor for all expressions

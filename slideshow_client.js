@@ -140,8 +140,10 @@ function renderSlide(slide) {
 	if ($(slide).hasClass("tex2jax_ignore")) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
-	typeset([slide]).then(() => {
-		adjustHeight(slide);
+	MathJax.startup.promise = typeset([slide]).then(() => {
+		if ($('#carousel').length > 0) {
+			adjustHeight();
+		}
 	});
 }
 
@@ -180,17 +182,7 @@ function updateSlideContent(slide, carousel = 'false') {
 	});
 	$(slide).find('.loading_icon').hide();
 
-	adjustHeight(slide);
-
-	$('*[text]').removeClass('highlighted');
-	$('button').removeClass('highlighted');
-	$('.item_button').css('background-color', '');
-
-	$('.separator').css('font-weight', 'normal');
-	$('.separator').find('a').css('color', 'pink');
-
-	$(slide).find('.separator').css('font-weight', 'bold');
-	$(slide).find('.separator').find('a').css('color', 'red');
+	adjustHeight();
 
 	if (carousel) {
 		updateCanvas(slide);
@@ -316,7 +308,9 @@ function jumpToSlide($output, $slide) {
 
 function highlight(item) {
 	$('.item_button').css('background-color', '');
-	$('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
+	// $('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
+	$('.highlighted').removeClass('highlighted');
+	$('div[item="' + item + '"]').find("button").first().addClass('highlighted');
 
 }
 function imagePostprocess(image) {
@@ -506,6 +500,15 @@ function updateSlideClickEvent() {
 	$('.output div.slide').click(function() {
 		let slideNum = $(this).attr('slide');
 		let slide = this;
+		$('*[text]').removeClass('highlighted');
+		$('button').removeClass('highlighted');
+		$('.item_button').css('background-color', '');
+
+		$('.separator').css('font-weight', 'normal');
+		$('.separator').find('a').css('color', 'pink');
+
+		$(slide).find('.separator').css('font-weight', 'bold');
+		$(slide).find('.separator').find('a').css('color', 'red');
 		if (slideNum != $('#output').attr('data-selected-slide') || !$('#output').is("[data-selected-slide]")) {
 			$('#output').attr('data-selected-slide', slideNum);
 		}

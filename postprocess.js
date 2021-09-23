@@ -36,6 +36,9 @@ function postprocess(cranach) {
 			let $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
 			let $selectedSlide = $section.closest('.slide');
 			focusOn($section);
+		} else if (cranach.attr['selectedSlide']) {
+			let $selectedSlide = $(`.output:visible div.slide[slide="${cranach.attr['selectedSlide']}"]`);
+			focusOn($selectedSlide);
 		}
 
 		// else if ($('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').length > 0 ){
