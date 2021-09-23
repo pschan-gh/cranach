@@ -94,7 +94,9 @@ function lcref_click_handler($el) {
 			});
 		}
 		$lcrefContainer.slideDown("slow", function() {
-			adjustHeight();
+			if ($('#carousel').length > 0) {
+				adjustHeight();
+			}
 		});
 
 		document.getElementById(lcrefid).tabIndex = 0;
