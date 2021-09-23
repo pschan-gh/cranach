@@ -182,10 +182,9 @@ function updateSlideContent(slide, carousel = 'false') {
 	});
 	$(slide).find('.loading_icon').hide();
 
-	adjustHeight();
-
 	if (carousel) {
 		updateCanvas(slide);
+		adjustHeight();
 	}
 }
 
