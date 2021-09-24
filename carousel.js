@@ -28,12 +28,13 @@ function updateCarouselSlide() {
 	let content = $('#carousel div.slide.active .slide_content').first()[0];
 	let counter = 5;
 
+	adjustHeight();
 	$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
 
 	while (content.scrollWidth > content.clientWidth && counter > 0) {
 		resizeFont(-0.5, content);
 		counter--;
-	}
+	}	
 }
 
 function showSlide(slide, cranach) {
@@ -345,10 +346,10 @@ $(function() {
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');
-		adjustHeight();
+		updateCarouselSlide();
 	});
 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
 		let $slide = $('.output.present:visible div.slide.active');
-		adjustHeight();
+		updateCarouselSlide();
 	});
 });
