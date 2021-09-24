@@ -48,11 +48,13 @@ function dim() {
 	}
 }
 
-function resizeFont(multiplier) {
-	if (document.getElementsByTagName("html")[0].style.fontSize == "") {
-		document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
+function resizeFont(multiplier, element = $('.output:visible').first()[0]) {
+
+	if (element.style.fontSize == "") {
+		element.style.fontSize = "1.0em";
 	}
-	document.getElementsByTagName("html")[0].style.fontSize = parseFloat(document.getElementsByTagName("html")[0].style.fontSize) + 0.2*(multiplier) + "em";
+	element.style.fontSize = parseFloat(element.style.fontSize) + 0.2*(multiplier) + "em";
+
 }
 
 // function print(promise) {

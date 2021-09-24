@@ -27,9 +27,11 @@ function updateCarousel(slideNum) {
 function updateCarouselSlide() {
 	let content = $('#carousel div.slide.active .slide_content').first()[0];
 	let counter = 5;
-	document.getElementsByTagName("html")[0].style.fontSize = "1.0em";
+
+	$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
+
 	while (content.scrollWidth > content.clientWidth && counter > 0) {
-		resizeFont(-0.5);
+		resizeFont(-0.5, content);
 		counter--;
 	}
 }
@@ -339,7 +341,6 @@ $(function() {
 		$('.carousel').carousel('pause');
 
 		$('#output').attr('data-selected-slide', slideNum);
-		$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
 		updateCarouselSlide();
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
