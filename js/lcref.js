@@ -39,7 +39,11 @@ function lcref_click_handler($el) {
 
 	if ($(`#${output_id}`).length > 0) {
 		$(`#${lcrefid}`).slideToggle("fast", function() {
-			document.getElementById(lcrefid).scrollIntoView();
+			if ($('#' + lcrefid).is(":visible")) {
+				document.getElementById(lcrefid).scrollIntoView();
+			} else {
+				$el[0].scrollIntoView();
+			}
 		});
 
 		this_lcref_focus_stack_uidindex = lcref_focus_stack_uid.indexOf(uid);
