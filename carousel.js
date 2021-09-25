@@ -25,16 +25,19 @@ function updateCarousel(slideNum) {
 }
 
 function updateCarouselSlide() {
-	let content = $('#carousel div.slide.active .slide_content').first()[0];
+
 	let counter = 5;
 
 	adjustHeight();
-	$slide.find('> .slide_container > .slide_content').css('padding-bottom', '15em');
+	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+
+	let content = $('#carousel div.slide.active .slide_content').first()[0];
+	// let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
 
 	while (content.scrollWidth > content.clientWidth && counter > 0) {
 		resizeFont(-0.5, content);
 		counter--;
-	}	
+	}
 }
 
 function showSlide(slide, cranach) {
