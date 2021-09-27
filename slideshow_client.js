@@ -141,8 +141,9 @@ function renderSlide(slide) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
 	MathJax.startup.promise = typeset([slide]).then(() => {
-		if ($('#carousel').length > 0) {
-			adjustHeight();
+		if ($('#carousel').is(":visible").length > 0) {
+			// adjustHeight();
+			updateCarouselSlide();
 		}
 	});
 }

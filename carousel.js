@@ -26,7 +26,7 @@ function updateCarousel(slideNum) {
 
 function updateCarouselSlide() {
 
-	if ($('#carousel').is(":visible") == 0) {
+	if ($('#carousel').is(":visible").length == 0) {
 		return 1;
 	}
 
@@ -47,10 +47,8 @@ function updateCarouselSlide() {
 	while (content.scrollWidth > content.clientWidth && counter > 0 && content.scrollWidth != bufferedWidth) {
 		bufferedWidth = content.scrollWidth;
 		$mathJaxContent.each(function() {
-			if (this.style.fontSize.replace(/em$/, '') != bufferedSize) {
-				this.style.fontSize = parseFloat(this.style.fontSize.replace(/em$/, '')) - 0.2;
-				// resizeFont(-0.5, content);
-			}
+			this.style.fontSize = (parseFloat(this.style.fontSize.replace(/em$/, '')) - 0.1).toString() + 'em';
+			// resizeFont(-0.5, content);
 		});
 		counter--;
 	}
@@ -361,7 +359,7 @@ $(function() {
 		$('.carousel').carousel('pause');
 
 		$('#output').attr('data-selected-slide', slideNum);
-		updateCarouselSlide();
+		// updateCarouselSlide();
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
 		updateCarouselSlide();
