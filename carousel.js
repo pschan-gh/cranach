@@ -30,9 +30,6 @@ function updateCarouselSlide() {
 		return 1;
 	}
 
-	adjustHeight();
-	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-
 	let content = $('#carousel div.slide.active .slide_content').first()[0];
 	let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
 
@@ -52,6 +49,8 @@ function updateCarouselSlide() {
 		});
 		counter--;
 	}
+	adjustHeight();
+	// $('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 }
 
 function showSlide(slide, cranach) {
@@ -177,6 +176,7 @@ function adjustHeight() {
 		 return 0;
 	}
 	$(`#carousel div.slide[slide="${$('#output').attr('data-selected-slide')}"]`).find('.slide_content').css('padding-bottom', '');
+	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
 		$output.css('display', 'block');
 	} else {

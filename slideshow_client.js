@@ -186,7 +186,7 @@ function updateSlideContent(slide, carousel = 'false') {
 	if (carousel) {
 		$(slide).addClass('active');
 		updateCanvas(slide);
-		adjustHeight();
+		updateCarouselSlide();
 	}
 }
 
