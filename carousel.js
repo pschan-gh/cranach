@@ -26,7 +26,7 @@ function updateCarousel(slideNum) {
 
 function updateCarouselSlide() {
 
-	if ($('#carousel').length == 0) {
+	if ($('#carousel').is(":visible") == 0) {
 		return 1;
 	}
 
