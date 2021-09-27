@@ -183,6 +183,7 @@ function updateSlideContent(slide, carousel = 'false') {
 	$(slide).find('.loading_icon').hide();
 
 	if (carousel) {
+		$(slide).addClass('active');
 		updateCanvas(slide);
 		adjustHeight();
 	}
