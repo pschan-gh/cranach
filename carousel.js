@@ -26,6 +26,10 @@ function updateCarousel(slideNum) {
 
 function updateCarouselSlide() {
 
+	if ($('#carousel').length == 0) {
+		return 1;
+	}
+
 	adjustHeight();
 	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 
@@ -360,11 +364,9 @@ $(function() {
 		updateCarouselSlide();
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-		let $slide = $('.output.present:visible div.slide.active');
 		updateCarouselSlide();
 	});
 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-		let $slide = $('.output.present:visible div.slide.active');
 		updateCarouselSlide();
 	});
 });
