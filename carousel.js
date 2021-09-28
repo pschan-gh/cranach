@@ -30,6 +30,7 @@ function updateCarouselSlide() {
 		return 1;
 	}
 
+	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '');
 	let content = $('#carousel div.slide.active .slide_content').first()[0];
 	let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
 
@@ -176,7 +177,7 @@ function adjustHeight() {
 		 return 0;
 	}
 	$(`#carousel div.slide[slide="${$('#output').attr('data-selected-slide')}"]`).find('.slide_content').css('padding-bottom', '');
-	$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+	// $('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 	if ($output[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
 		$output.css('display', 'block');
 	} else {
@@ -366,5 +367,18 @@ $(function() {
 	});
 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
 		updateCarouselSlide();
+	});
+
+	$('#carousel').scroll(function(event) {
+		let element = event.target;
+		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+			$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+		}
+	});
+
+	$('#carousel')[0].addEventListener('wheel', function(event) {
+		if (event.deltaY > 0) {
+			$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+		}
 	});
 });
