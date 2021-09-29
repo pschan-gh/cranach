@@ -377,8 +377,11 @@ $(function() {
 	});
 
 	$('#carousel')[0].addEventListener('wheel', function(event) {
+		let element = $('#carousel')[0];
 		if (event.deltaY > 0) {
-			$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+				$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+			}
 		}
 	});
 });
