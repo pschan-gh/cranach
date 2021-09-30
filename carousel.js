@@ -1,5 +1,7 @@
 function updateCarousel(slideNum) {
 
+	$('.tooltip').remove();
+
 	$('#carousel div.slide')
 	.removeClass('hidden')
 	.addClass('carousel-item');
@@ -26,7 +28,7 @@ function updateCarousel(slideNum) {
 
 function updateCarouselSlide() {
 
-	if ($('#carousel').is(":visible")) {
+	if ($('#carousel:visible').length == 0) {
 		return 1;
 	}
 
@@ -354,12 +356,13 @@ $(function() {
 				let $cloneNext = $('#output').find('div.slide[slide="' + nextNum + '"]').first().clone(true, true);
 				$('#carousel').append($cloneNext);
 			}
-			$('#carousel div.slide').addClass('carousel-item');
+			// $('#carousel div.slide').addClass('carousel-item');
 		}
 
 		$('.carousel').carousel('pause');
 
 		$('#output').attr('data-selected-slide', slideNum);
+		updateCarousel(slideNum);
 		// updateCarouselSlide();
 	});
 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
