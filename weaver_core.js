@@ -295,7 +295,6 @@ function Stack(node, doc) {
 			child.is_comment = false;
 			return child;
 		} else if (child.is_comment) {
-			console.log('COMMENT ' + originalWord);
 			child.node.textContent += originalWord;
 			return child;
 		}
