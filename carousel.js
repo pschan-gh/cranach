@@ -32,7 +32,7 @@ function updateCarouselSlide() {
 		return 1;
 	}
 
-	MathJax.startup.promise.then(() => {
+	// MathJax.startup.promise.then(() => {
 		$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '');
 		let content = $('#carousel div.slide.active .slide_content').first()[0];
 		let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
@@ -55,7 +55,7 @@ function updateCarouselSlide() {
 		}
 		adjustHeight();
 		// $('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-	});
+	// });
 }
 
 function showSlide(slide, cranach) {
