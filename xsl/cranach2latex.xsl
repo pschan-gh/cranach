@@ -257,7 +257,7 @@
 	<xsl:text>}&#xa;</xsl:text>
 </xsl:template>
 <xsl:template match="xh:h5">
-	<!-- <xsl:text>&#xa;</xsl:text> -->
+	<xsl:text>&#xa;&#xa;</xsl:text>
 	<xsl:text>\textbf{</xsl:text>
 	<xsl:apply-templates select="text()|*" />
 	<xsl:text>}&#xa;</xsl:text>
