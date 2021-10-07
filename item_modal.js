@@ -178,11 +178,11 @@ function updateModal(cranach) {
 		$('#item_modal #share_hyperlink').val('<a href="' + url + '" target="_blank" title="Course:' + course + '">' + title + '</a>');
 		if (argName == 'item') {
 			// $('#item_modal #share_lcref').val('<a lcref="' + lcref + '" title="Course:' + course + '">' + title + '</a>');
-			$('#item_modal #share_lcref').val(`\\href{${lcref}}{\\mathrm{${title.replace(/ /g, '\\;')}}}`);
+			$('#item_modal #share_lcref').val(`{\\href{${lcref}}{\\mathrm{${title.replace(/ /g, '\\;')}}}}`);
 		} else {
 			$('#item_modal #share_lcref').val('');
 		}
-		$('#item_modal #share_hyperref').val('\\href{' + url.replace('#', '\\#') + '}{' + title + '}');
+		$('#item_modal #share_hyperref').val('{\\href{' + url.replace('#', '\\#') + '}{' + title + '}}');
 		$('#item_modal .md5').val(md5String);
 
 		updateModalRefby(md5String, cranach);
