@@ -153,17 +153,16 @@ function updateModal(cranach) {
 		if ($labels.length) {
 			url += '&' + argName + '=' + $labels.first().attr('name');
 			if (argName == 'item') {
-				lcref = cranach.attr['contentURL'] + "&query=(//lv:*[./lv:label/@name='" + $labels.first().attr('name') + "'])[1]";
+				lcref = cranach.attr['contentURL'] + '&query='
+				+ `(//lv:*[./lv:label/@name="${$labels.first().attr('name')}"])[1]`;
 			}
-			console.log(url);
-			console.log(lcref);
 		} else {
 			url +=  '&' + argName + '=' + serial;
 			if (argName == 'item') {
-				lcref = cranach.attr['contentURL'] + "&query=(//lv:*[@md5='" + md5String + "'])[1]";
+				lcref = cranach.attr['contentURL'] + '&query='
+				+ `(//lv:*[@md5="${md5String}"])[1]`;
 			}
 		}
-		console.log(url);
 		$('#item_modal').find('#item_modal_link').attr('href', url);
 		$('#item_modal').find('#share_url').val(url);
 
