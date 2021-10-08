@@ -1087,8 +1087,15 @@
         <xsl:value-of select="." disable-output-escaping="yes" />
     </xsl:element>
 </xsl:template>
+
 <xsl:template match="comment()">
     <xsl:copy-of select="current()"/>
     <!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
+</xsl:template>
+<xsl:template match="lv:comment">
+	<xsl:comment>
+		<xsl:copy-of select="current()"/>
+		<!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
+	</xsl:comment>
 </xsl:template>
 </xsl:stylesheet>
