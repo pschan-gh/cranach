@@ -806,8 +806,7 @@ canvas {
 .canvas-controls {
 position:fixed !important;
 top:50px;
-right:75px;
-/* width:100%; */
+right:10px;
 display:none;
 z-index:1500;
 font-size:1rem;
@@ -1333,8 +1332,5 @@ and (max-width : 1024px) {
         width:95vw; */
         overflow-y:auto;
         overflow-x:hidden;
-    }
-    .canvas-controls {
-        right:75px;
     }
 }
