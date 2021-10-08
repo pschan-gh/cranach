@@ -22,7 +22,7 @@ function renderTexSource(slide) {
 }
 
 function inlineEdit(enableEdit, editor) {
-	hideAnnotate();
+	// hideAnnotate();
 	let slide;
 	let $outputSlide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
 	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
@@ -45,7 +45,9 @@ function inlineEdit(enableEdit, editor) {
 		$('#carousel').css('display', '');
 
 		if ($('.carousel-item').length > 0) {
-			$outputSlide.html($carouselSlide.html());
+			let $clone = $carouselSlide.clone();
+			$clone.find('canvas').remove();
+			$outputSlide.html($clone.html());
 		}
 		renderSlide($slide[0]);
 
