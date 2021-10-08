@@ -32,7 +32,7 @@ function updateCarouselSlide() {
 		return 1;
 	}
 
-	// MathJax.startup.promise.then(() => {
+	MathJax.startup.promise.then(() => {
 		$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '');
 		let content = $('#carousel div.slide.active .slide_content').first()[0];
 		let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
@@ -55,7 +55,7 @@ function updateCarouselSlide() {
 		}
 		adjustHeight();
 		// $('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-	// });
+	});
 }
 
 function showSlide(slide, cranach) {
@@ -80,7 +80,8 @@ function showSlide(slide, cranach) {
 
 	let slideNum = parseInt($slide.attr('slide'));
 	let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-	let nextNum = slideNum + 1 % $slides.length;
+	let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
+
 
 	$('#carousel.present').removeClass('carousel-inner');
 	$('#carousel .slide').removeClass('carousel-item');
@@ -192,11 +193,13 @@ function adjustHeight() {
 function hideAnnotate() {
 	$('canvas').hide();
 	$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-	$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
+	$('canvas').closest('div.slide').find('.canvas-controls').hide();
 	$('.output:visible').removeClass('annotate');
+	$('#right_half').removeClass('annotate');
 }
 
 function showAnnotate() {
+	$('#right_half').addClass('annotate');
 	$('.output.present:visible').first().addClass('annotate');
 	$('.carousel').attr('data-bs-touch', "false");
 	let slide = $('.output.present:visible div.slide.active')[0];
@@ -216,14 +219,12 @@ function updateCanvas(slide) {
 		return 0;
 	}
 	if ($('.output.present:visible').first().hasClass('annotate')) {
-		$('.canvas-controls').show();
 		if (!$(slide).find('canvas').length) {
 			addCanvas(slide);
 		}
 		$(slide.cfd.canvas).show();
 	} else {
 		if ($(slide).find('canvas').length) {
-			$('.canvas-controls').hide();
 			$(slide).find('canvas').hide();
 		}
 		return 1;
@@ -286,16 +287,10 @@ function updateCanvas(slide) {
 
 function clearAllCanvas() {
 	if (window.confirm("Are you sure?")) {
-		// $('.carousel-item').each(function() {
-		// 	if ('cfd' in this) {
-		// 		if ('canvas' in this.cfd) {
-		// 			this.cfd.canvas.remove();
-		// 		}
-		// 	}
-		// });
-		$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-		$('canvas').closest('div.slide').find('.canvas-controls').hide();$('.output:visible').removeClass('annotate')
-		$('.output:visible').removeClass('annotate');
+		// $('canvas').closest('div.slide').find('.canvas-controls .disable').click();
+		// $('canvas').closest('div.slide').find('.canvas-controls').hide();
+		// $('.output:visible').removeClass('annotate');
+		hideAnnotate();
 		$('canvas').remove();
 	}
 }
@@ -339,7 +334,7 @@ $(function() {
 		$slides.find('.collapse').removeClass('collapse').addClass('hidden_collapse');
 
 		let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-		let nextNum = slideNum + 1 % $slides.length;
+		let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
 
 		$('#carousel.present').removeClass('carousel-inner');
 

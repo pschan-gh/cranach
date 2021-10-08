@@ -22,6 +22,7 @@ function renderTexSource(slide) {
 }
 
 function inlineEdit(enableEdit, editor) {
+	hideAnnotate();
 	let slide;
 	let $outputSlide = $('#output div.slide.selected').length > 0 ? $('#output div.slide.selected').first() : $('#output div.slide').first();
 	let $carouselSlide = $('#carousel div.slide.active').length > 0 ? $('#carousel div.slide.active').first() : $('#carousel div.slide').first();
@@ -51,7 +52,9 @@ function inlineEdit(enableEdit, editor) {
 		editor.container.style.pointerEvents="auto";
 		editor.container.style.opacity = 1; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", false);
-		editor.focus();
+		// editor.focus();
+
+		adjustHeight();
 
 	} else {
 

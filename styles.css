@@ -802,6 +802,7 @@ canvas {
     z-index:999;
     border: 1px solid #eee;
 }
+
 .canvas-controls {
 position:fixed !important;
 top:50px;
@@ -811,11 +812,17 @@ display:none;
 z-index:1500;
 font-size:1rem;
 }
+
+.annotate .canvas-controls {
+	display:block;
+}
+
 .annotate .slide_container {
     float:left;
     padding-left:2em;
     z-index:750;
 }
+
 @page
 {
     size: auto;   /* auto is the initial value */
