@@ -45,6 +45,7 @@
 \usepackage[capitalise]{cleveref}
 \usepackage{tikz}
 \usepackage{float}
+\usepackage{csquotes}
 <!-- \usepackage{booktabs} -->
 
 \newcounter{statement}
@@ -337,10 +338,10 @@
 	<xsl:text>&#xa;&#xa;</xsl:text>
     <xsl:choose>
         <xsl:when test="contains($url, 'http')">
-            <xsl:value-of select="concat('{\bf \href{', $url, '}{IFRAME}}')"/>
+            <xsl:value-of select="concat('{\bf \href{', $url, '}{Open in browser}}')"/>
 		</xsl:when>
         <xsl:otherwise>
-            <xsl:value-of select="concat('{\bf \href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{IFRAME}}')"/>
+            <xsl:value-of select="concat('{\bf \href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{Open in browser}}')"/>
         </xsl:otherwise>
     </xsl:choose>
     <xsl:text>&#xa;&#xa;</xsl:text>
@@ -478,6 +479,16 @@
 	</xsl:variable>
 	<xsl:text>&#xa;</xsl:text>
 	<xsl:value-of select="concat('\href{', $contenturl, '&amp;slide=', $slide , '}{Interactive Example}')"/>
+</xsl:template>
+
+<xsl:template match="xh:blockquote">
+	<xsl:text>&#xa;</xsl:text>
+	<xsl:text>\begin{displayquote}</xsl:text>
+	<xsl:text>&#xa;</xsl:text>
+	<xsl:apply-templates select="*|text()" />
+	<xsl:text>&#xa;</xsl:text>
+	<xsl:text>\end{displayquote}</xsl:text>
+	<xsl:text>&#xa;</xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>
