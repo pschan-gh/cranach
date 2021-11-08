@@ -91,7 +91,7 @@ MathJax = {
 		}
 	},
 	loader: {
-		load: ['output/svg', '[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil', '[tex]/color', '[tex]/mathtools']
+		load: ['output/svg', '[tex]/ams', '[tex]/newcommand', '[tex]/html', '[tex]/extpfeil', '[tex]/color', '[tex]/mathtools', 'ui/lazy']
 	},
 	tex: {
 		inlineMath: [['$','$'], ['\\(','\\)']],
