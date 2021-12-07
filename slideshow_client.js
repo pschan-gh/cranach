@@ -1,8 +1,10 @@
 function removeTypeset(el) { // i.e. Show LaTeX source
-	let jax = MathJax.startup.document.getMathItemsWithin(el);
-	showTexFrom(jax);
-	MathJax.typesetClear([el]);
-	// MathJax.typesetClear();
+	MathJax.startup.promise = MathJax.startup.promise.then(() => {
+		let jax = MathJax.startup.document.getMathItemsWithin(el);
+		showTexFrom(jax);
+		MathJax.typesetClear([el]);
+		// MathJax.typesetClear();
+	});
 }
 
 function renderTexSource(slide) {

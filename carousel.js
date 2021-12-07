@@ -95,47 +95,49 @@ function showSlide(slide, cranach) {
 	$('#carousel .slide').removeClass('carousel-item');
 
 	$('#carousel div.slide').remove();
-	MathJax.startup.promise.then(() => {
-		if ($slides.length > 50) {
-			removeTypeset($('#output').find('div.slide[slide="' + slideNum + '"]').first()[0]);
-			let $cloneCurrent = $('#output').find('div.slide[slide="' + slideNum + '"]').first().clone(true, true);
-			$cloneCurrent.appendTo($('#carousel'));
+	if ($slides.length > 50) {
+		removeTypeset($('#output').find('div.slide[slide="' + slideNum + '"]').first()[0]);
+		let $cloneCurrent = $('#output').find('div.slide[slide="' + slideNum + '"]').first().clone(true, true);
+		$cloneCurrent.appendTo($('#carousel'));
 
-			removeTypeset($('#output').find('div.slide[slide="' + prevNum + '"]').first()[0]);
-			let $clonePrev = $('#output').find('div.slide[slide="' + prevNum + '"]').first().clone(true, true);
-			$('#carousel').prepend($clonePrev);
+		removeTypeset($('#output').find('div.slide[slide="' + prevNum + '"]').first()[0]);
+		let $clonePrev = $('#output').find('div.slide[slide="' + prevNum + '"]').first().clone(true, true);
+		$('#carousel').prepend($clonePrev);
 
-			removeTypeset($('#output').find('div.slide[slide="' + nextNum + '"]').first()[0]);
-			let $cloneNext = $('#output').find('div.slide[slide="' + nextNum + '"]').first().clone(true, true);
-			$cloneNext.appendTo($('#carousel'));
-		} else {
-			removeTypeset($('#output')[0]);
-			$('#output div.slide').clone(true, true).appendTo($('#carousel'));
-		}
-		updateCarousel(slideNum);
-		$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
+		removeTypeset($('#output').find('div.slide[slide="' + nextNum + '"]').first()[0]);
+		let $cloneNext = $('#output').find('div.slide[slide="' + nextNum + '"]').first().clone(true, true);
+		$cloneNext.appendTo($('#carousel'));
+	} else {
+		removeTypeset($('#output')[0]);
+		$('#output div.slide').clone(true, true).appendTo($('#carousel'));
+	}
+	updateCarousel(slideNum);
+	$slide = $('#carousel div.slide[slide="' + slideNum + '"]');
 
-		$('.slide_number button').text('Slide ' + slideNum);
-		$('.slide_number button').attr('slide', slideNum);
+	$('.slide_number button').text('Slide ' + slideNum);
+	$('.slide_number button').attr('slide', slideNum);
 
-		if ($slide.find('a.collapsea[aria-expanded="false"]').length) {
-			$('#uncollapse_button').text('Uncollapse');
-		} else {
-			$('#uncollapse_button').text('Collapse');
-		}
-		$('#uncollapse_button').off();
-		$('#uncollapse_button').click(function() {
-			collapseToggle(slideNum);
-		});
-		cranach.then(renderer => {
-			updateModal(renderer);
-		});
+	if ($slide.find('a.collapsea[aria-expanded="false"]').length) {
+		$('#uncollapse_button').text('Uncollapse');
+	} else {
+		$('#uncollapse_button').text('Collapse');
+	}
+	$('#uncollapse_button').off();
+	$('#uncollapse_button').click(function() {
+		collapseToggle(slideNum);
+	});
+	cranach.then(renderer => {
+		updateModal(renderer);
+	});
 
-		$('#output').attr('data-selected-slide', slideNum);
+	$('#output').attr('data-selected-slide', slideNum);
+	MathJax.startup.promise = MathJax.startup.promise.then(() => {
 		MathJax.startup.document.state(0);
 		MathJax.texReset();
 		MathJax.typesetClear();
 		batchRender($('#carousel div.slide.active').first()[0]);
+	});
+	MathJax.startup.promise = MathJax.startup.promise.then(() => {
 		updateCarouselSlide();
 	});
 }
