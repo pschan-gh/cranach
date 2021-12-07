@@ -134,7 +134,7 @@ function showSlide(slide, cranach) {
 	MathJax.startup.promise = MathJax.startup.promise.then(() => {
 		MathJax.startup.document.state(0);
 		MathJax.texReset();
-		MathJax.typesetClear();
+		// MathJax.typesetClear();
 		batchRender($('#carousel div.slide.active').first()[0]);
 	});
 	MathJax.startup.promise = MathJax.startup.promise.then(() => {
