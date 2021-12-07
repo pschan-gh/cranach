@@ -40,7 +40,7 @@ function updateCarouselSlide() {
 		return 1;
 	}
 
-	MathJax.startup.promise.then(() => {
+	MathJax.startup.promise = MathJax.startup.promise.then(() => {
 		$('#carousel div.slide.active > .slide_container > .slide_content').css('padding-bottom', '');
 		let content = $('#carousel div.slide.active .slide_content').first()[0];
 		let $mathJaxContent = $('#carousel div.slide.active .slide_content .MathJax');
@@ -342,7 +342,7 @@ $(function() {
 
 		$('#carousel.present').removeClass('carousel-inner');
 
-		MathJax.startup.promise.then(() => {
+		MathJax.startup.promise = MathJax.startup.promise.then(() => {
 
 			if ($slides.length > 50) {
 				$('#carousel .slide').not('.slide[slide="' + slideNum + '"]').remove();
