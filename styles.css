@@ -104,7 +104,7 @@ iframe.webwork {
     border-radius:5px;
 }
 #slide_sel {
-    display:none;
+    /* display:none; */
 }
 #slide_progress td {
     height:7px;
