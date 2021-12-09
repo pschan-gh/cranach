@@ -1,9 +1,8 @@
 function removeTypeset(el) { // i.e. Show LaTeX source
-	MathJax.startup.promise = MathJax.startup.promise.then(() => {
+	MathJax.startup.promise.then(() => {
 		let jax = MathJax.startup.document.getMathItemsWithin(el);
 		showTexFrom(jax);
 		MathJax.typesetClear([el]);
-		// MathJax.typesetClear();
 	});
 }
 
@@ -147,25 +146,25 @@ function renderSlide(slide) {
 	if ($(slide).hasClass("tex2jax_ignore")) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
-	MathJax.startup.promise = typeset([slide]).then(() => {
-		if ($('#carousel').is(":visible").length > 0) {
-			// adjustHeight();
+	typeset([slide]).then(() => {
+        // console.log('rendering ' + slide.getAttribute('slide'));
+        if ($('#carousel').is(":visible").length > 0) {
 			updateCarouselSlide();
 		}
 	});
 }
 
 function batchRender(slide) {
-	// $(slide).nextAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
+	// $(slide).nextAll('div.slide:lt(1)').each(function() {
 	// 	renderSlide(this);
 	// });
-	// $(slide).prevAll('div.slide.tex2jax_ignore:lt(1)').each(function() {
-	// 	renderSlide(this);
-	// });
-	$(slide).nextAll('div.slide:lt(1)').each(function() {
+    $(slide).next().each(function() {
 		renderSlide(this);
 	});
-	$(slide).prevAll('div.slide:lt(1)').each(function() {
+	// $(slide).prevAll('div.slide:lt(1)').each(function() {
+	// 	renderSlide(this);
+	// });
+    $(slide).prev().each(function() {
 		renderSlide(this);
 	});
 	renderSlide(slide);
