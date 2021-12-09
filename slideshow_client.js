@@ -1,3 +1,12 @@
+function splitScreen() {
+	if ($('.carousel-item').length > 0) {
+		hideCarousel();
+	} else {
+		$('#container').removeClass('wide');
+		$('.pane').addClass('info');
+	}
+}
+
 function removeTypeset(el) { // i.e. Show LaTeX source
 	MathJax.startup.promise.then(() => {
 		let jax = MathJax.startup.document.getMathItemsWithin(el);

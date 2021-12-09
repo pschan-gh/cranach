@@ -97,7 +97,7 @@ function lcref_click_handler($el) {
 			});
 		}
 		$lcrefContainer.slideDown("slow", function() {
-			if ($('#carousel').length > 0) {
+			if ($('.carousel-item').length > 0) {
 				adjustHeight();
 				document.getElementById(lcrefid).scrollIntoView();
 			}
