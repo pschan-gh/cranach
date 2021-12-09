@@ -140,6 +140,7 @@ function showJaxSource(outputId) {
 }
 
 function renderSlide(slide) {
+	console.log('renderSlide');
 	$(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 	$(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
@@ -156,15 +157,12 @@ function renderSlide(slide) {
 	if ($(slide).hasClass("tex2jax_ignore")) {
 		$(slide).removeClass("tex2jax_ignore");
 	}
-	typeset([slide]).then(() => {
-        // console.log('rendering ' + slide.getAttribute('slide'));
-        if ($('.carousel-item').length > 0) {
-			updateCarouselSlide();
-		}
-	});
+	MathJax.startup.promise = typeset([slide]);
 }
 
 function batchRender(slide) {
+	console.log('batchRender');
+	console.log(slide.getAttribute('slide'));
 	// $(slide).nextAll('div.slide:lt(1)').each(function() {
 	// 	renderSlide(this);
 	// });
@@ -181,6 +179,7 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = 'false') {
+	console.log('updateSlideContent');
 	batchRender(slide);
 	$(slide).find('iframe:not([src])').each(function() {
 		$(this).attr('src', $(this).attr('data-src')).show();
@@ -199,6 +198,7 @@ function updateSlideContent(slide, carousel = 'false') {
 	});
 	$(slide).find('.loading_icon').hide();
 
+	// $('#output > div.slide').removeClass('active');
 	if (carousel) {
 		$(slide).addClass('active');
 		updateCanvas(slide);
@@ -542,7 +542,7 @@ function updateScrollEvent() {
 			clearTimeout(timer);
 		}
 		timer = window.setTimeout(function() {
-			$('.output:visible .slide.tex2jax_ignore').each(function() {
+			$('div.slide.tex2jax_ignore:visible').each(function() {
 				if (isElementInViewport(this)) {
 					batchRender(this);
 				};
@@ -557,6 +557,7 @@ $(function() {
 			if (mutation.type == "attributes") {
 				if (mutation.attributeName == 'data-selected-slide') {
 					let $slide = $('.output:visible div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
+					console.log('mutation');
 					updateSlideContent($slide[0], $('.carousel-item').length > 0);
 				}
 			}

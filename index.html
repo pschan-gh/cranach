@@ -1,6 +1,6 @@
 <html xml:lang="en" lang="en" xmlns="http:/www.w3.org/1999/xhtml">
 <title>
-    Cranach (Carousel)
+    Cranach (Carousel-Simple)
 </title>
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -187,7 +187,7 @@
                 <script src="wb.js"></script>
             </div>
         </div>
-        <div id="right_half" class='right pane overview carousel carousel-dark' data-bs-interval="false" data-bs-touch="false" data-bs-keyboard="false">
+        <div id="right_half" class='right pane overview carousel-dark slide' data-bs-interval="false" data-bs-touch="false" data-bs-keyboard="false">
             <div id="loading_icon">
                 <div>
                     <h1 style="color:SteelBlue">Loading</h1>
@@ -210,7 +210,7 @@
                             <!-- &#9776; -->
                             <ul class="dropdown-menu" aria-labelledby="main_menu_button">
                                 <li>
-                                    <a id="present_button" class="dropdown-item menu_button present" onclick="showSlide($('#output div.slide.selected')[0] || $('#output div.slide:lt(1)')[0], baseRenderer);$('#carousel').show();">Full Screen</a>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="showSlide($('#output div.slide.selected')[0] || $('#output div.slide:lt(1)')[0], baseRenderer);">Full Screen</a>
                                 </li>
                                 <li>
                                     <a id="presentation_button" class="dropdown-item menu_button fullscreen" onclick="if(document.fullscreenElement){document.exitFullscreen();} else {$('body')[0].requestFullscreen();}">Presentation Mode</a>
@@ -325,8 +325,7 @@
                 </div>
             </nav>
             <script src="menu.js"></script>
-            <div id="output" class="output overview dual pane"></div>
-            <div id="carousel" class="output overview dual pane"></div>
+            <div id="output" class="output overview dual pane" data-selected-slide="1"></div>
             <div class="controls carousel-indicators">
             </div>
             <script src="carousel.js" ></script>
