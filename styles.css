@@ -237,7 +237,7 @@ iframe.webwork {
     height:100%;
     margin: auto;
     background-color: #fff;
-    overflow:auto;
+    overflow:hidden;
     display:block;
 }
 #left_half.compose {
@@ -350,7 +350,7 @@ display:block;
 }
 
 #output.present {
-    display:none;
+    /* display:none; */
 }
 #right_half.present #full_screen_icon {
     display:none;
@@ -404,7 +404,7 @@ display:block;
 .dim .separator .slide_label {
     background-color:#222;
 }
-.present .slide {
+.present > div.slide {
   align-content: center;
   flex-direction: column;
 }
