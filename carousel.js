@@ -1,39 +1,48 @@
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
-	// $('#output').removeClass('carousel-inner');
-	// $('.carousel').off();
-	// $('.carousel').removeClass('carousel');
-	// new bootstrap.Carousel($('#right_half')[0], {
-	// 	dispose : true,
-	// });
+
+	let $slides = $('#output > div.slide');
+
+    if ($slides.length == null || $slides.length == 0) {
+        return 0;
+    }
+
+    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
+    let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
 
 	$('.tooltip').remove();
-
 	$('.carousel-indicators div.tooltip').remove();
 	$(".carousel-indicators").html('');
 
-	let i;
-	let currentIndex = -1;
-	$('#output > div.slide.carousel-item').each(function(index) {
-		i = parseInt($(this).attr('slide'));
-		$(".carousel-indicators").append('<button type="button" data-bs-target="#right_half" data-bs-slide-to="' + index + '" aria-label="Slide ' + i + '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ' + i + '">');
-		if (i == slideNum) {
-			currentIndex = index;
-		}
-	});
-	if (currentIndex != -1) {
-		$('.carousel-indicators button[data-bs-slide-to="' + currentIndex + '"]').addClass('active').attr('aria-current', "true");
-	}
+    if ($slides.length > 50) {
+		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
+		$('#output > div.slide[slide="' + slideNum + '"]').addClass('carousel-item').removeClass('hidden');
+		$('#output > div.slide[slide="' + prevNum + '"]').addClass('carousel-item').removeClass('hidden');
+		$('#output > div.slide[slide="' + nextNum + '"]').addClass('carousel-item').removeClass('hidden');
+
+		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}">`);
+		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}">`);
+		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}">`);
+		$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+    } else {
+		$('#output > div.slide').addClass('carousel-item').removeClass('hidden');
+		let activeIndex = 0;
+		$slides.each(function(index) {
+			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
+			if (this.getAttribute('slide') == slideNum) {
+				activeIndex = index;
+			}
+		});
+		$(`.carousel-indicators button[data-bs-slide-to="${activeIndex}"]`)
+		.addClass('active')
+		.attr('aria-current', "true");
+    }
+
 	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 
 	$('#output > div.slide.carousel-item[slide="' + slideNum + '"]').addClass('active');
 
-	// new bootstrap.Carousel($('#right_half')[0], {
-	// 	keyboard: false,
-	// 	interval: false
-	// });
 	$('#right_half').addClass('carousel').addClass('slide');
-	// $('#output.present').addClass('carousel-inner');
 }
 
 function updateCarouselSlide() {
@@ -79,25 +88,8 @@ function showSlide(slide, cranach) {
 
     let $slide = $(slide);
 	$slide.addClass('selected');
-    let $slides = $('#output > div.slide');
+	let slideNum = parseInt($slide.attr('slide'));
 
-    if ($slides.length == null || $slides.length == 0) {
-        return 0;
-    }
-
-    let slideNum = parseInt($slide.attr('slide'));
-    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-    let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-
-
-    if ($slides.length > 50) {
-		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
-		$('#output > div.slide[slide="' + slideNum + '"]').addClass('carousel-item').removeClass('hidden');
-		$('#output > div.slide[slide="' + prevNum + '"]').addClass('carousel-item').removeClass('hidden');
-		$('#output > div.slide[slide="' + nextNum + '"]').addClass('carousel-item').removeClass('hidden');
-    } else {
-		$('#output > div.slide').addClass('carousel-item').removeClass('hidden');
-    }
 	updateCarousel(slideNum);
 	updateCarouselEvent();
 
@@ -112,8 +104,6 @@ function hideCarousel() {
     if ($('.output.present:visible').first().hasClass('annotate')) {
         hideAnnotate();
     }
-
-	// $('#output').removeClass('carousel-inner');
 
     $('#container').removeClass('wide');
     $('.present')
@@ -139,12 +129,6 @@ function hideCarousel() {
     $('.slide.selected').find('.separator').css('font-weight', 'bold');
     $('.slide.selected').find('.separator').find('a').css('color', 'red');
 
-	// $('.carousel').off();
-	// $('#right_half').removeClass('carousel');
-	// new bootstrap.Carousel($('#right_half')[0], {
-	// 	dispose : true,
-	// });
-	// $('#right_half').removeClass('carousel');
 }
 
 function adjustHeight() {
@@ -283,55 +267,6 @@ function addCanvas(slide) {
 
 }
 
-// $(function() {
-// 	$('.carousel').on('slid.bs.carousel', function () {
-// 		$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-// 		$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-//
-// 		let $slide = $('#output > div.carousel-item.active').first();
-// 		let slideNum = parseInt($slide.attr('slide'));
-// 		$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
-//
-// 		let $slides = $('#output > div.slide');
-// 		let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-// 		let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-//
-// 		if ($slides.length > 50) {
-// 			$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item');
-//
-// 			$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item');
-// 			$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item');
-// 			updateCarousel(slideNum);
-// 		}
-// 		batchRender($slide[0]);
-// 		updateSlideContent($slide[0], true);
-// 		// $('#output').attr('data-selected-slide', slideNum);
-// 	});
-//
-// 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-// 		updateCarouselSlide();
-// 	});
-// 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-// 		updateCarouselSlide();
-// 	});
-//
-// 	$('#output.present').scroll(function(event) {
-// 		let element = event.target;
-// 		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-// 			$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-// 		}
-// 	});
-//
-// 	$('#output')[0].addEventListener('wheel', function(event) {
-// 		let element = $('#output')[0];
-// 		if (event.deltaY > 0) {
-// 			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-// 				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-// 			}
-// 		}
-// 	});
-// });
-
 function updateCarouselEvent() {
 	$(function() {
 		$('.carousel').on('slid.bs.carousel', function () {
@@ -347,15 +282,20 @@ function updateCarouselEvent() {
 			let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
 
 			if ($slides.length > 50) {
+				$('.tooltip').remove();
+				$('.carousel-indicators div.tooltip').remove();
+				$(".carousel-indicators").html('');
 				$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
 				$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
 				$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
-				// $('.carousel').off();
-				// updateCarousel(slideNum);
-				// updateCarouselEvent();
-				$('.carousel-indicators button[data-bs-slide-to="0"]').removeClass('active').attr('aria-current', "false");
+				// $('.carousel-indicators button[data-bs-slide-to="0"]').removeClass('active').attr('aria-current', "false");
+				// $('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+				// $('.carousel-indicators button[data-bs-slide-to="2"]').removeClass('active').attr('aria-current', "false");$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
+				$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
+				$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
+				$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
 				$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
-				$('.carousel-indicators button[data-bs-slide-to="2"]').removeClass('active').attr('aria-current', "false");
+				$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 			}
 			$('#output').attr('data-selected-slide', slideNum);
 		});
