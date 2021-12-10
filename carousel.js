@@ -1,10 +1,12 @@
 function updateCarousel(slideNum) {
-	console.log('updateCarousel');
-	$('#output').removeClass('carousel-inner');
-	$('#right_half').removeClass('carousel');
-	new bootstrap.Carousel($('#right_half')[0], {
-		dispose : true,
-	});
+	// console.log('updateCarousel');
+	// $('#output').removeClass('carousel-inner');
+	// $('.carousel').off();
+	// $('.carousel').removeClass('carousel');
+	// new bootstrap.Carousel($('#right_half')[0], {
+	// 	dispose : true,
+	// });
+
 	$('.tooltip').remove();
 
 	$('.carousel-indicators div.tooltip').remove();
@@ -26,16 +28,16 @@ function updateCarousel(slideNum) {
 
 	$('#output > div.slide.carousel-item[slide="' + slideNum + '"]').addClass('active');
 
+	// new bootstrap.Carousel($('#right_half')[0], {
+	// 	keyboard: false,
+	// 	interval: false
+	// });
 	$('#right_half').addClass('carousel').addClass('slide');
-	new bootstrap.Carousel($('#right_half')[0], {
-		keyboard: false,
-		interval: false
-	});
 	// $('#output.present').addClass('carousel-inner');
 }
 
 function updateCarouselSlide() {
-	console.log('updateCarouselSlide');
+	// console.log('updateCarouselSlide');
 	if ($('.carousel-item').length == 0) {
 		return 1;
 	}
@@ -75,59 +77,35 @@ function showSlide(slide, cranach) {
 
     $('#output').addClass('present');
 
-    // $('.lcref-output').remove();
-
     let $slide = $(slide);
-
+	$slide.addClass('selected');
     let $slides = $('#output > div.slide');
 
     if ($slides.length == null || $slides.length == 0) {
         return 0;
     }
 
-    // $('#output a.collapsea').removeAttr('data-bs-toggle');
-
     let slideNum = parseInt($slide.attr('slide'));
     let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
     let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
 
-	$('#output > div.slide').removeClass('carousel-item');
 
     if ($slides.length > 50) {
-		$('#output > div.slide').addClass('hidden');
-        $('#output > div.slide[slide="' + slideNum + '"]').removeClass('hidden').addClass('carousel-item');
-		$('#output > div.slide[slide="' + prevNum + '"]').removeClass('hidden').addClass('carousel-item');
-		$('#output > div.slide[slide="' + nextNum + '"]').removeClass('hidden').addClass('carousel-item');
+		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
+		$('#output > div.slide[slide="' + slideNum + '"]').addClass('carousel-item').removeClass('hidden');
+		$('#output > div.slide[slide="' + prevNum + '"]').addClass('carousel-item').removeClass('hidden');
+		$('#output > div.slide[slide="' + nextNum + '"]').addClass('carousel-item').removeClass('hidden');
     } else {
-		// $('#output > div.slide').addClass('hidden');
-        $('#output > div.slide').addClass('carousel-item');
+		$('#output > div.slide').addClass('carousel-item').removeClass('hidden');
     }
 	updateCarousel(slideNum);
+	updateCarouselEvent();
 
-    $slide = $('#output > div.slide[slide="' + slideNum + '"]');
-
-    $('.slide_number button').text('Slide ' + slideNum);
-    $('.slide_number button').attr('slide', slideNum);
-
-    if ($slide.find('a.collapsea[aria-expanded="false"]').length) {
-        $('#uncollapse_button').text('Uncollapse');
-    } else {
-        $('#uncollapse_button').text('Collapse');
-    }
-    $('#uncollapse_button').off();
-    $('#uncollapse_button').click(function() {
-        collapseToggle(slideNum);
-    });
     cranach.then(renderer => {
         updateModal(renderer);
     });
 
-	$('#output').attr('data-selected-slide', slideNum);
-	// batchRender($('#output > div.slide.active').first()[0]);
-	// $slide.addClass('active');
-	// updateCanvas(slide);
-	// updateCarouselSlide();
-	// updateCarouselEvent();
+	// $('#output').attr('data-selected-slide', slideNum);
 }
 
 function hideCarousel() {
@@ -153,7 +131,7 @@ function hideCarousel() {
     $('.controls').hide();
     $('#output .slide_content').css('padding-bottom', '');
 
-    $('.slide.selected')[0].scrollIntoView();
+    $('#output > div.slide.selected')[0].scrollIntoView();
 
     $('.separator').css('font-weight', 'normal');
     $('.separator').find('a').css('color', 'pink');
@@ -161,9 +139,12 @@ function hideCarousel() {
     $('.slide.selected').find('.separator').css('font-weight', 'bold');
     $('.slide.selected').find('.separator').find('a').css('color', 'red');
 
-	new bootstrap.Carousel($('#right_half')[0], {
-		dispose : true,
-	});
+	// $('.carousel').off();
+	// $('#right_half').removeClass('carousel');
+	// new bootstrap.Carousel($('#right_half')[0], {
+	// 	dispose : true,
+	// });
+	// $('#right_half').removeClass('carousel');
 }
 
 function adjustHeight() {
@@ -302,57 +283,56 @@ function addCanvas(slide) {
 
 }
 
-$(function() {
-	$('.carousel').on('slid.bs.carousel', function () {
-		$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-		$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-
-		let $slide = $('#output > div.carousel-item.active').first();
-		let slideNum = parseInt($slide.attr('slide'));
-		$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
-
-		let $slides = $('#output > div.slide');
-		let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-		let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-
-		if ($slides.length > 50) {
-			$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item');
-
-			$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item');
-			$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item');
-			updateCarousel(slideNum);
-		}
-		batchRender($slide[0]);
-		updateSlideContent($slide[0], true);
-		// $('#output').attr('data-selected-slide', slideNum);
-	});
-
-	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-		updateCarouselSlide();
-	});
-	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-		updateCarouselSlide();
-	});
-
-	$('#output.present').scroll(function(event) {
-		let element = event.target;
-		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-			$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-		}
-	});
-
-	$('#output')[0].addEventListener('wheel', function(event) {
-		let element = $('#output')[0];
-		if (event.deltaY > 0) {
-			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-			}
-		}
-	});
-});
+// $(function() {
+// 	$('.carousel').on('slid.bs.carousel', function () {
+// 		$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
+// 		$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+//
+// 		let $slide = $('#output > div.carousel-item.active').first();
+// 		let slideNum = parseInt($slide.attr('slide'));
+// 		$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
+//
+// 		let $slides = $('#output > div.slide');
+// 		let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
+// 		let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
+//
+// 		if ($slides.length > 50) {
+// 			$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item');
+//
+// 			$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item');
+// 			$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item');
+// 			updateCarousel(slideNum);
+// 		}
+// 		batchRender($slide[0]);
+// 		updateSlideContent($slide[0], true);
+// 		// $('#output').attr('data-selected-slide', slideNum);
+// 	});
+//
+// 	$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
+// 		updateCarouselSlide();
+// 	});
+// 	$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
+// 		updateCarouselSlide();
+// 	});
+//
+// 	$('#output.present').scroll(function(event) {
+// 		let element = event.target;
+// 		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+// 			$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+// 		}
+// 	});
+//
+// 	$('#output')[0].addEventListener('wheel', function(event) {
+// 		let element = $('#output')[0];
+// 		if (event.deltaY > 0) {
+// 			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+// 				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+// 			}
+// 		}
+// 	});
+// });
 
 function updateCarouselEvent() {
-	$('.carousel').off();
 	$(function() {
 		$('.carousel').on('slid.bs.carousel', function () {
 			$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
@@ -367,14 +347,16 @@ function updateCarouselEvent() {
 			let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
 
 			if ($slides.length > 50) {
-				$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item');
-
-				$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item');
-				$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item');
-				updateCarousel(slideNum);
+				$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
+				$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
+				$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
+				// $('.carousel').off();
+				// updateCarousel(slideNum);
+				// updateCarouselEvent();
+				$('.carousel-indicators button[data-bs-slide-to="0"]').removeClass('active').attr('aria-current', "false");
+				$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+				$('.carousel-indicators button[data-bs-slide-to="2"]').removeClass('active').attr('aria-current', "false");
 			}
-			// batchRender($slide[0]);
-			// updateSlideContent($slide[0], true);
 			$('#output').attr('data-selected-slide', slideNum);
 		});
 

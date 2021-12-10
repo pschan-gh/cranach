@@ -140,7 +140,7 @@ function showJaxSource(outputId) {
 }
 
 function renderSlide(slide) {
-	console.log('renderSlide');
+	// console.log('renderSlide');
 	$(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 	$(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
@@ -161,8 +161,8 @@ function renderSlide(slide) {
 }
 
 function batchRender(slide) {
-	console.log('batchRender');
-	console.log(slide.getAttribute('slide'));
+	// console.log('batchRender');
+	// console.log(slide.getAttribute('slide'));
 	// $(slide).nextAll('div.slide:lt(1)').each(function() {
 	// 	renderSlide(this);
 	// });
@@ -179,7 +179,7 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = 'false') {
-	console.log('updateSlideContent');
+	// console.log('updateSlideContent');
 	batchRender(slide);
 	$(slide).find('iframe:not([src])').each(function() {
 		$(this).attr('src', $(this).attr('data-src')).show();
@@ -198,7 +198,6 @@ function updateSlideContent(slide, carousel = 'false') {
 	});
 	$(slide).find('.loading_icon').hide();
 
-	// $('#output > div.slide').removeClass('active');
 	if (carousel) {
 		$(slide).addClass('active');
 		updateCanvas(slide);
@@ -557,7 +556,7 @@ $(function() {
 			if (mutation.type == "attributes") {
 				if (mutation.attributeName == 'data-selected-slide') {
 					let $slide = $('.output:visible div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
-					console.log('mutation');
+					// console.log('mutation');
 					updateSlideContent($slide[0], $('.carousel-item').length > 0);
 				}
 			}
