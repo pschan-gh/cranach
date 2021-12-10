@@ -22,7 +22,7 @@ function postprocess(cranach) {
 			$(this).attr('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
 		});
 
-		$('div.slide:visible').each(function() {
+		$('#output > div.slide:visible').each(function() {
 			if (isElementInViewport(this)) {
 				batchRender(this);
 			}

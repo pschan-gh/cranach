@@ -141,7 +141,8 @@ function showJaxSource(outputId) {
 
 function renderSlide(slide) {
 	// console.log('renderSlide');
-	$(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
+    // console.log(`initiating collapse on ${slide.getAttribute('slide')}.`);
+    $(slide).find('.hidden_collapse').removeClass('hidden_collapse').addClass('collapse');
 	$(slide).find('a.collapsea').attr('data-bs-toggle', 'collapse');
 
 	$(slide).find('img:not([src])').each(function() {
