@@ -45,6 +45,8 @@ function updateCarousel(slideNum) {
 	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 
 	$('#output > div.slide.carousel-item[slide="' + slideNum + '"]').addClass('active');
+    $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
+    $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
 
 	$('#right_half').addClass('carousel').addClass('slide');
 }
@@ -111,7 +113,7 @@ function hideCarousel() {
 
     $('#container').removeClass('wide');
     $('.present')
-	.removeClass('slide')
+	// .removeClass('slide')
     .removeClass('present')
     .removeClass('overview')
     .addClass($('#left_half')
