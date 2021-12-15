@@ -32,10 +32,6 @@ function Cranach(url) {
 		'selectedSlide' : null,
 		'selectedKeyword' : null,
 		'present' : false,
-		/* DOM elements */
-		// 'preCranachDoc': null,
-		// 'cranachDoc': null,
-		// 'indexDoc': null,
 		'lectureMode' : 0
 	};
 
@@ -54,22 +50,23 @@ function Cranach(url) {
 	this.loadMacros = function() {
 		return new Promise((resolve, reject) => {
 			let el = this;
-			let ajax = $.ajax({
-				url:  el.attr['dir'] + '/macros.tex',
-				dataType: "text"
-			})
-			.done(function(macros) {
-				report('MACROS FILE FOUND');
-				el.macrosString = macros;
-				el.macros = new DOMParser().parseFromString('<div>\\(' + macros + '\\)</div>', "text/xml");
-				resolve(el);
-			})
-			.fail(function() {
-				report('NO MACROS FILE PRESENT');
-				el.macrosString = '';
-				el.macros = new DOMParser().parseFromString('<div>\\(\\)</div>', "text/xml");
-				resolve(el);
-			});
+			fetch(el.attr['dir'] + '/macros.tex')
+			    .then(function(response) {
+					if (response.ok) {
+						console.log('MACROS FILE FOUND');
+						return response.text();
+					} else {
+						console.log('NO MACROS FILE PRESENT');
+						el.macrosString = '';
+						el.macros = new DOMParser().parseFromString('<div>\\(\\)</div>', "text/xml");
+						resolve(el);
+					}
+				})
+				.then(macroString => {
+					el.macrosString = macroString;
+					el.macros = new DOMParser().parseFromString('<div>\\(' + el.macrosString + '\\)</div>', "text/xml");
+					resolve(el);
+				});
 		});
 	}
 
@@ -78,18 +75,20 @@ function Cranach(url) {
 		let url = el.attr['dir'] + '/' + el.attr['index'] + '?version='+ Math.random().toString();
 
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: url,
-				dataType: 'xml'
-			})
-			.done(function(indexDoc) {
-				el.indexDoc = indexDoc;
-				resolve(el);
-			})
-			.fail(function() {
-				console.log("INDEX FILE DOESN'T EXIST");
-				resolve(el);
-			})
+			fetch(url)
+			    .then(response => {
+					if (response.ok) {
+						return response.text();
+					} else {
+						console.log("INDEX FILE DOESN'T EXIST");
+						resolve(el);
+					}
+
+				})
+				.then(xmltext => {
+					el.indexDoc = new DOMParser().parseFromString(xmltext, "application/xml");
+					resolve(el);
+				});
 		});
 	}
 
@@ -180,34 +179,37 @@ function Cranach(url) {
 			let el = cranach;
 			if (el.attr['xmlPath']) {
 				return new Promise((resolve, reject) => {
-					$.ajax({
-						url:  el.attr['xmlPath'] + '?version=' + Math.random(),
-						dataType: "xml"
+					fetch(el.attr['xmlPath'] + '?version=' + Math.random())
+					.then(function(response) {
+						if (response.ok) {
+							return response.text();
+						} else {
+							console.log('FILE NOT FOUND');
+							el.cranachDoc = null;
+							resolve(el);
+						}
 					})
-					.done(function(xml) {
+					.then(xmltext => {
 						$('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
-						el.cranachDoc = xml;
-						resolve(el);
-					})
-					.fail(function(xml){
-						el.cranachDoc = null;
+						el.cranachDoc = new DOMParser().parseFromString(xmltext, "application/xml");
 						resolve(el);
 					});
 				});
-			}  else if (el.attr['wbPath']) {
+			} else if (el.attr['wbPath']) {
 				return new Promise((resolve, reject) => {
-					$.ajax({
-						url:  el.attr['wbPath'] + '?version=' + Math.random(),
-						dataType: "text"
+					fetch(el.attr['wbPath'] + '?version=' + Math.random())
+					.then(response => {
+						if (response.ok) {
+							return response.text();
+						} else {
+							el.preCranachDoc = null;
+							resolve(el);
+						}
 					})
-					.done(function(wb) {
+					.then(wb => {
 						el.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
 						resolve(el);
 					})
-					.fail(function(wb){
-						el.preCranachDoc = null;
-						resolve(el);
-					});
 				});
 			} else {
 				return el;
@@ -255,24 +257,15 @@ function Cranach(url) {
 		}
 
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: 'xsl/cranach.xsl',
-				dataType: "xml"
-			})
-			.done(function(xslFile) {
-				report('PRECRANACHTOCRANACH');
-				xsltProcessor.importStylesheet(xslFile);
-
-				/* FIREFOX WORK-AROUND */
-				// preCranachStr = new XMLSerializer().serializeToString(preCranachDoc);
-				// let preCranachDOM = new DOMParser().parseFromString(preCranachStr, 'text/xml');
-				/* END FIREFOX WORK-AROUND */
-
-				let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
-				el.cranachDoc = cranachDoc;
-
-				resolve(el);
-			});
+			fetch('xsl/cranach.xsl')
+				.then(response => response.text())
+				.then(xsltext => {
+					report('PRECRANACHTOCRANACH');
+					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
+					el.cranachDoc = cranachDoc;
+					resolve(el);
+				});
 		});
 	}
 
@@ -291,31 +284,52 @@ function Cranach(url) {
 		// console.log(output);
 		$(output).find('#loading_icon').show();
 		$(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
+		// return new Promise((resolve, reject) => {
+		// 	$.ajax({
+		// 		url: xsl,
+		// 		dataType: "xml"
+		// 	})
+		// 	.done(function(wbxslFile) {
+		// 		$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
+		// 		setTimeout(function() {
+		// 			xsltProcessor.importStylesheet(wbxslFile);
+		// 			xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
+		// 			xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
+		// 			xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
+		// 			$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
+		// 			setTimeout(function() {
+		// 				let cranachDoc = el.cranachDoc;
+		// 				let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
+		// 				$(output).html('');
+		// 				$(output).append(fragment);
+		// 				resolve(el);
+		// 			}, 0);
+		// 		}, 0);
+		// 	});
+		// });
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: xsl,
-				dataType: "xml"
-			})
-			.done(function(wbxslFile) {
-				$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
-				setTimeout(function() {
-					xsltProcessor.importStylesheet(wbxslFile);
-					xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
-					xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
-					xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
-					$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
+			fetch(xsl)
+			    .then(response => response.text())
+				.then(xsltext => {
+					$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
 					setTimeout(function() {
-						let cranachDoc = el.cranachDoc;
-						let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
-						$(output).html('');
-						$(output).append(fragment);
-						resolve(el);
+						xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
+						xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
+						xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
+						$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
+						setTimeout(function() {
+							let cranachDoc = el.cranachDoc;
+							let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
+							$(output).html('');
+							$(output).append(fragment);
+							resolve(el);
+						}, 0);
 					}, 0);
-				}, 0);
+				});
 			});
-		});
-	}
-	this.xmlDocQueryAndRender = function(output) {
+		}
+		this.xmlDocQueryAndRender = function(output) {
 		report('xmlDocQueryAndRender');
 		if (output) {
 			this.output = output;
@@ -432,16 +446,15 @@ function Cranach(url) {
 
 		let el = this;
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: 'xsl/akhawunti.xsl',
-				dataType: "xml"
-			}).done(function(indexXsl) {
-				let xsltProcessor = new XSLTProcessor();
-				xsltProcessor.importStylesheet(indexXsl);
-				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
-				el.indexDoc = indexDoc;
-				resolve(el);
-			});
+			fetch('xsl/akhawunti.xsl')
+			    .then(response => response.text())
+				.then(function(xsltext) {
+					let xsltProcessor = new XSLTProcessor();
+					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					let indexDoc = xsltProcessor.transformToDocument(preindexDom);
+					el.indexDoc = indexDoc;
+					resolve(el);
+				});
 		});
 
 	}
@@ -451,19 +464,17 @@ function Cranach(url) {
 		let indexDoc = this.indexDoc;
 		let el = this;
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: 'xsl/index2html.xsl',
-				dataType: "xml"
-			})
-			.done(function(wbxslFile) {
-				let xsltProcessor = new XSLTProcessor();
-				xsltProcessor.importStylesheet(wbxslFile);
-				xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
-				fragment = xsltProcessor.transformToFragment(indexDoc, document);
-				$(target).html('');
-				$(target).append(fragment);
-				resolve(el);
-			});
+			fetch('xsl/index2html.xsl')
+			    .then(response => response.text())
+				.then(xsltext => {
+					let xsltProcessor = new XSLTProcessor();
+					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
+					fragment = xsltProcessor.transformToFragment(indexDoc, document);
+					$(target).html('');
+					$(target).append(fragment);
+					resolve(el);
+			    });
 		});
 	}
 
