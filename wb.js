@@ -1,23 +1,19 @@
 function commitWb(editor) {
 	let body = showJaxSource('output').getElementsByTagName('body')[0];
 
-	$.ajax({url: 'xsl/html2juengere.xsl'}).done(function(xsl) {
-		let xsltProcessor = new XSLTProcessor();
-		xsltProcessor.importStylesheet(xsl);
-		console.log(body);
-		let preCranachDoc = xsltProcessor.transformToDocument(body,document);
-
-		$('#source_text').val('');
-		// // DEBUG
-		// preCranachStr = new XMLSerializer().serializeToString(preCranachDoc);
-		// console.log(preCranachStr);
-		// preCranachDoc = new DOMParser().parseFromString(preCranachStr, 'text/xml');
-		$.ajax({url: 'xsl/cranach.xsl'}).done(function(xsl) {
-			let xsltProcessor2 = new XSLTProcessor();
-			xsltProcessor2.importStylesheet(xsl);
+	fetch('xsl/html2juengere.xsl')
+    .then(response => response.text())
+    .then(xsl => {        
+        xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
+        let preCranachDoc = xsltProcessor.transformToDocument(body,document);
+		fetch('xsl/cranach.xsl')
+        .then(response => response.text())
+        .then(xsl => {            
+            $('#source_text').val('');
+			xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 			console.log('HTML2PRELOVU');
 			console.log(preCranachDoc);
-			let cranachDoc = xsltProcessor2.transformToDocument(preCranachDoc, document);
+			let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc, document);
 			console.log(cranachDoc);
 			convertCranachDocToWb(cranachDoc, editor);
 		});
@@ -27,15 +23,12 @@ function commitWb(editor) {
 
 function convertCranachDocToWb(cranachDoc, editor) {
 	console.log('convertCranachDocToWb');
-
 	// let nested = /((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)/;
-	$.ajax({
-		url: 'xsl/cranach2wb.xsl',
-		dataType: "xml"
-	})
-	.done(function(xsl) {
-		let xsltProcessor = new XSLTProcessor();
-		xsltProcessor.importStylesheet(xsl);
+	fetch('xsl/cranach2wb.xsl')
+    .then(response => response.text())
+    .then(xsl => {
+		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
+        console.log(cranachDoc);
 		fragment = xsltProcessor.transformToFragment(cranachDoc, document);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
 		// console.log(fragmentStr);

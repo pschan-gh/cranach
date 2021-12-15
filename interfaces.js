@@ -38,7 +38,6 @@ function showLatex(el) {
 	$('.modal-footer').find('.btn').hide();
 	$('.modal-footer').find('.btn.save').show();
 
-	let xsltProcessor = new XSLTProcessor();
 	$('#text_modal button.save').attr('ext', 'tex');
 	$('#text_modal .modal-title').html('LaTeX');
 
@@ -46,19 +45,15 @@ function showLatex(el) {
 	let contentURLDir = el.attr['contentURLDir'];
 	let contentURL = el.attr['contentURL'];
 
-	$.ajax({
-		url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
-		dataType: 'xml'
-	})
-	.done(function(xsl) {
-		let oParser = new DOMParser();
-		let xml = new XMLSerializer().serializeToString(docCranach);
+	fetch('xsl/cranach2latex.xsl?' + 'version=' + Math.random())
+    .then(response => response.text())
+    .then(xsl => {
+        let xml = new XMLSerializer().serializeToString(docCranach);
 		xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
 		xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
 		xml = xml.replace(/#/g, '\#');
-		report(xml);
-		let xmlDOM = oParser.parseFromString(xml, "application/xml");
-		xsltProcessor.importStylesheet(xsl);
+		let xmlDOM = domparser.parseFromString(xml, "application/xml");
+		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, "text/xml"));
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
 		fragment = xsltProcessor.transformToFragment(xmlDOM, document);
@@ -154,22 +149,6 @@ function initGhDialog(editor) {
 
 }
 
-// function showIndex(promise) {
-//     $('.modal-footer').find('.btn').hide();
-//     $('.modal-footer').find('.btn.save').show();
-//     $('.modal-footer').find('.btn.update-index').show();
-//     $('.modal-footer').find('.btn.load-index').show();
-//     $('#text_modal').find('button.save').attr('ext', 'xml');
-//     $('#text_modal').find('.modal-title').text('Index XML');
-//
-//     $('#source_text').val('');
-//     promise.then(el => {
-//         if (el.indexDoc) {
-//             $('#source_text').val(new XMLSerializer().serializeToString(el.indexDoc));
-//         }
-//     });
-// }
-
 function openWb(filePath) {
 
 	let file    = filePath.files[0];
@@ -240,6 +219,7 @@ function openXML(renderer, filePath) {
 			return cranach.displayCranachDocToHtml();
 		}).then(cranach => {
 			postprocess(cranach);
+            console.log(cranach.cranachDoc);
 			convertCranachDocToWb(cranach.cranachDoc, editor);
 			$('#loading_icon').hide();
 			return cranach;

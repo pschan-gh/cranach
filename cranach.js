@@ -1,3 +1,6 @@
+const domparser = new DOMParser();
+const xsltProcessor = new XSLTProcessor();
+
 function nsResolver(prefix) {
 	let ns = {
 		'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
@@ -51,22 +54,24 @@ function Cranach(url) {
 		return new Promise((resolve, reject) => {
 			let el = this;
 			fetch(el.attr['dir'] + '/macros.tex')
-			    .then(function(response) {
-					if (response.ok) {
-						console.log('MACROS FILE FOUND');
-						return response.text();
-					} else {
-						console.log('NO MACROS FILE PRESENT');
-						el.macrosString = '';
-						el.macros = new DOMParser().parseFromString('<div>\\(\\)</div>', "text/xml");
-						resolve(el);
-					}
-				})
-				.then(macroString => {
-					el.macrosString = macroString;
-					el.macros = new DOMParser().parseFromString('<div>\\(' + el.macrosString + '\\)</div>', "text/xml");
-					resolve(el);
-				});
+            .then(function(response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);                    
+                }
+                console.log('MACROS FILE FOUND');
+                return response.text();
+            })
+            .then(macroString => {
+                el.macrosString = macroString;
+                el.macros = domparser.parseFromString('<div>\\(' + el.macrosString + '\\)</div>', "text/xml");
+                resolve(el);
+            })
+            .catch(error => {
+                console.log(error);
+                el.macrosString = '';
+                el.macros = domparser.parseFromString('<div>\\(\\)</div>', "text/xml");
+                resolve(el);
+            });
 		});
 	}
 
@@ -77,25 +82,26 @@ function Cranach(url) {
 		return new Promise((resolve, reject) => {
 			fetch(url)
 			    .then(response => {
-					if (response.ok) {
-						return response.text();
-					} else {
-						console.log("INDEX FILE DOESN'T EXIST");
-						resolve(el);
+					if (!response.ok) {
+                        throw Error("INDEX FILE DOESN'T EXIST");            
 					}
-
+                    return response.text();
 				})
 				.then(xmltext => {
-					el.indexDoc = new DOMParser().parseFromString(xmltext, "application/xml");
+					el.indexDoc = domparser.parseFromString(xmltext, "text/xml");
 					resolve(el);
-				});
+				})
+                .catch(error => {
+                    console.log(error);
+                    el.indexDoc = null;
+                    resolve(el);
+                });
 		});
 	}
 
 	this.setup = function(options) {
 		this.output = document.getElementById(this.attr['outputID']);
-		let domparser = new DOMParser();
-
+		
 		if(options) {
 			for (let key in options){
 				if(options.hasOwnProperty(key)){
@@ -181,41 +187,47 @@ function Cranach(url) {
 				return new Promise((resolve, reject) => {
 					fetch(el.attr['xmlPath'] + '?version=' + Math.random())
 					.then(function(response) {
-						if (response.ok) {
-							return response.text();
-						} else {
-							console.log('FILE NOT FOUND');
-							alert('FILE NOT FOUND');
-							el.cranachDoc = null;
-							resolve(el);
-						}
+						if (!response.ok) {
+                            throw Error('FILE NOT FOUND');
+                        } 
+                        return response.text();
 					})
 					.then(xmltext => {
 						$('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
-						el.cranachDoc = new DOMParser().parseFromString(xmltext, "application/xml");
+						el.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
+                        console.log(el.cranachDoc);
 						resolve(el);
-					});
+					})
+                    .catch(error => {
+                        alert(error);                        
+                        console.log(error);
+                        el.cranachDoc = null;
+                        resolve(el);
+                    });
 				});
 			} else if (el.attr['wbPath']) {
 				return new Promise((resolve, reject) => {
 					fetch(el.attr['wbPath'] + '?version=' + Math.random())
 					.then(response => {
-						if (response.ok) {
-							return response.text();
-						} else {
-							el.preCranachDoc = null;
-							resolve(el);
+						if (!response.ok) {
+                            throw Error('FILE NOT FOUND');
 						}
+                        return response.text();
 					})
 					.then(wb => {
 						el.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
 						resolve(el);
 					})
+                    .catch(error => {
+                        alert(error);
+                        console.error(error);
+                        el.preCranachDoc = null;
+                        resolve(el);
+                    });
 				});
 			} else {
 				return el;
 			}
-
 		});
 
 	}
@@ -248,7 +260,6 @@ function Cranach(url) {
 
 	this.preCranachDocToCranachDoc = function() {
 		let el = this;
-		let xsltProcessor = new XSLTProcessor();
 		let indexDom = this.indexDoc;
 		let preCranachDoc = this.preCranachDoc;
 
@@ -262,7 +273,7 @@ function Cranach(url) {
 				.then(response => response.text())
 				.then(xsltext => {
 					report('PRECRANACHTOCRANACH');
-					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
 					el.cranachDoc = cranachDoc;
 					resolve(el);
@@ -278,7 +289,6 @@ function Cranach(url) {
 	}
 	this.displayCranachDocToHtml = function() {
 		report('IN DISPLAYCRANACHDOCTOHTML');
-		let xsltProcessor = new XSLTProcessor();
 		let xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
 		let el = this;
 		let output = this.output;
@@ -314,7 +324,7 @@ function Cranach(url) {
 				.then(xsltext => {
 					$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
 					setTimeout(function() {
-						xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
 						xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
 						xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
@@ -450,8 +460,7 @@ function Cranach(url) {
 			fetch('xsl/akhawunti.xsl')
 			    .then(response => response.text())
 				.then(function(xsltext) {
-					let xsltProcessor = new XSLTProcessor();
-					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					let indexDoc = xsltProcessor.transformToDocument(preindexDom);
 					el.indexDoc = indexDoc;
 					resolve(el);
@@ -468,8 +477,7 @@ function Cranach(url) {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
 				.then(xsltext => {
-					let xsltProcessor = new XSLTProcessor();
-					xsltProcessor.importStylesheet(new DOMParser().parseFromString(xsltext, "application/xml"));
+					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);
 					$(target).html('');
@@ -485,7 +493,7 @@ function Cranach(url) {
 		}
 
 		let xmlString = generateXML(wbString);
-		let preCranachDoc = new DOMParser().parseFromString(xmlString, 'text/xml');
+		let preCranachDoc = domparser.parseFromString(xmlString, 'text/xml');
 		this.preCranachDoc = preCranachDoc;
 		return this.displayPreCranachDocToHtml();
 	}
