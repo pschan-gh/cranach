@@ -16,6 +16,16 @@ body {
     height:100%;
 }
 
+#output > div.slide[contenteditable="true"] .slide_content :not([wbtag="ignore"]):not([wbtag="skip"]):not([wbtag="transparent"]):not(.paragraphs) {
+    border: 1px solid grey;
+    padding: 1px;
+}
+
+#output > div.slide[contenteditable="true"] .paragraphs {
+    color: grey;
+    font-family: monospace;
+}
+
 .paragraphs {
 	white-space:normal;
 }
