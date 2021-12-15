@@ -9,11 +9,6 @@ function postprocess(cranach) {
 		updateSlideClickEvent();
 		updateScrollEvent();
 		updateKeywords();
-		// updateToc(cranach);
-		// updateSlideSelector();
-		// updateRefs(cranach);
-		// updateInfo(cranach);
-		// updateModal(cranach);
 		updateTitle( $('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0] );
 
 		$('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
@@ -81,7 +76,7 @@ function postprocess(cranach) {
 			console.log('PRESENT MODE');
 			$('#present_button').click();
 		}
-
+		
 	});
 
 }

@@ -1075,6 +1075,9 @@ position:relative;
 .steps {
     visibility:hidden;
 }
+.steps.shown {
+    visibility:visible;
+}
 .lcref-content .steps {
     visibility:visible;
 }

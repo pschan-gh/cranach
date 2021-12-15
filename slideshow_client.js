@@ -1,5 +1,5 @@
 function splitScreen() {
-	if (document.querySelector('.carousel-item').length > 0) {
+	if (document.querySelector('.carousel-item') != null) {
 		hideCarousel();
 	} else {
 		document.querySelector('#container').classList.remove('wide');
@@ -42,16 +42,15 @@ function inlineEdit(enableEdit, editor) {
 	if (!enableEdit) {
 		MathJax.texReset();
 
-		$('#output').css('display', '');
-		$('#output div.slide').css('display', '');
+		// $('#output').css('display', '');
+		// $('#output div.slide').css('display', '');
 	
 		renderSlide(slide);
 
 		editor.container.style.pointerEvents="auto";
 		editor.container.style.opacity = 1; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", false);
-		// editor.focus();
-
+		
 		adjustHeight();
 
 	} else {
@@ -157,97 +156,91 @@ function batchRender(slide) {
 	renderSlide(slide);
 }
 
-function updateSlideContent(slide, carousel = 'false') {
+function updateSlideContent(slide, carousel = false) {
 	// console.log('updateSlideContent');
 	batchRender(slide);
-	$(slide).find('iframe:not([src])').each(function() {
-		$(this).attr('src', $(this).attr('data-src')).show();
-		$(this).iFrameResize({checkOrigin:false});
-		// iFrameResize({ log: true }, slide);
+	slide.querySelectorAll('iframe:not([src])').forEach(e => {
+		e.setAttribute('src', e.getAttribute('data-src'));
+		e.classList.remove('hidden');
+		// $(e).iFrameResize({checkOrigin:false});
+		iFrameResize({ log: false }, e);
+
 	});
 
-	if ($(slide).find('a.collapsea[aria-expanded="false"]').length) {
-		$('#uncollapse_button').text('Uncollapse');
-	} else {
-		$('#uncollapse_button').text('Collapse');
-	}
-	$('#uncollapse_button').off();
-	$('#uncollapse_button').click(function() {
-		collapseToggle($(slide).attr('slide'));
-	});
-	$(slide).find('.loading_icon').hide();
+	document.querySelector('#uncollapse_button').textContent = slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse';
+	
+	slide.querySelectorAll('.loading_icon').forEach(e => e.classList.add('hidden'));
 
 	if (carousel) {
-		$(slide).addClass('active');
+		slide.classList.add('active');
 		updateCanvas(slide);
 		updateCarouselSlide();
 	}
 }
 
 function showStep(el) {
-	let $parent = $(el).closest('div[wbtag="steps"]');
-	let $stepsClass = $parent.find('.steps');
+	let parent = el.closest('div[wbtag="steps"]');
+	let stepsClass = parent.querySelectorAll('.steps');
 
-	if (typeof $parent.attr('stepId') == 'undefined' || $parent.attr('stepId') == null) {
-		$parent.attr('stepId', 0);
+	if (stepsClass == null) {
+        return 0;
 	}
-	let whichStep = $parent.attr('stepId');
 
-	if (whichStep < $stepsClass.length) {
-		$parent.find('#step' + whichStep).css('visibility', 'visible');
+	if (!parent.hasAttribute('stepId')) {
+		parent.setAttribute('stepId', 0);
+	}
+	let whichStep = parent.getAttribute('stepId');
+
+	if (whichStep < stepsClass.length) {
+		parent.querySelector('#step' + whichStep).classList.add('shown');
 		whichStep++;
 	}
 
-	if ($parent.find('#step' + whichStep).length == 0) {
-		$parent.find('button.next').attr('disabled', true).removeClass('btn-outline-info').addClass('btn-outline-secondary');
+	if (parent.querySelector('#step' + whichStep) == null) {
+		let button = parent.querySelector('button.next');
+		button.setAttribute('disabled', true);
+		button.classList.remove('btn-outline-info');
+		button.classList.add('btn-outline-secondary');
 	}
 
-	$parent.find('button.reset').attr('disabled', false);
-
-	$parent.attr('stepId', whichStep);
-
+	parent.querySelector('button.reset').removeAttribute('disabled');
+	parent.setAttribute('stepId', whichStep);
 }
 //
 //  Enable the step button and disable the reset button.
 //  Hide the steps.
 //
 function resetSteps(el) {
-	let $parent = $(el).closest('div[wbtag="steps"]');
-	$parent.find('button.next').attr('disabled', false).addClass('btn-outline-info').removeClass('btn-outline-secondary');
-	$parent.find('button.reset').attr('disabled', true);
-	$parent.find('.steps').css('visibility', 'hidden');
-	$parent.attr('stepId', 0);
+	let parent = el.closest('div[wbtag="steps"]');
+	let button = parent.querySelector('button.next');
+	button.removeAttribute('disabled');
+	button.classList.add('btn-outline-info');
+	button.classList.remove('btn-outline-secondary');
+
+	parent.querySelector('button.reset').setAttribute('disabled', "");
+	parent.querySelectorAll('.steps').forEach(e => e.classList.remove('shown'));
+	parent.setAttribute('stepId', 0);
 }
 
 function collapseToggle(slideNum, forced = '') {
 
-	let $slides = $('.output div.slide[slide="' + slideNum + '"]');
-
-	$slides.each(function() {
-		let $slide = $(this);
-		renderSlide(this);
-		if (forced == '') {
-			if ($slide.hasClass('collapsed')) {
-				$slide.removeClass('collapsed');
-				$slide.find('.collapse').collapse('show');
-				$slide.find('a.collapsea').attr('aria-expanded', 'true');
-				$('#uncollapse_button').text('Collapse');
-			} else {
-				$slide.addClass('collapsed');
-				$slide.find('.collapse').collapse('hide');
-				$slide.find('a.collapsea').attr('aria-expanded', 'false');
-				$('#uncollapse_button').text('Uncollapse');
-			}
-		} else {
-			$slide.find('.collapse').collapse(forced);
-			$slide.find('a.collapsea').attr('aria-expanded', forced == 'show' ? 'true' : 'false');
-			$('#uncollapse_button').text(forced == 'show' ? 'Collapse' : 'Uncollapse');
-			if (forced == 'show') {
-				$slide.removeClass('collapsed');
-			} else {
-				$slide.addClass('collapsed');
-			}
-		}
+	let slide = document.querySelector('.output div.slide[slide="' + slideNum + '"]');
+	MathJax.startup.promise.then(() => {
+        if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {			
+            // $slide.find('.collapse').collapse('show');
+            // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: true, hide: false}));
+        
+            slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => e.click());
+            $('#uncollapse_button').text('Collapse');
+            slide.classList.remove('collapsed');
+        } else {            
+            // $slide.find('.collapse').collapse('hide');
+            // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: false, hide: true}));
+            
+            slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => e.click());
+            $('#uncollapse_button').text('Uncollapse');
+            slide.classList.add('collapsed');            
+        }
 	});
 }
 
@@ -399,12 +392,12 @@ function isElementInViewport (el) {
 	return (
 		(
 			rect.top >= 0  &&
-			rect.top <= $(window).height()
+			rect.top <= window.innerHeight
 		)
 		||
 		(
 			rect.bottom >= 0  &&
-			rect.bottom <= $(window).height()
+			rect.bottom <= window.innerHeight
 		)
 
 	);
@@ -529,14 +522,14 @@ function updateScrollEvent() {
 	});
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	let slideObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {
 				if (mutation.attributeName == 'data-selected-slide') {
-					let $slide = $('.output:visible div.slide[slide="' + $('#output').attr('data-selected-slide') + '"]');
+					let slide = document.querySelector(`.output div.slide[slide="${document.querySelector('#output').getAttribute('data-selected-slide')}"]`);
 					// console.log('mutation');
-					updateSlideContent($slide[0], $('.carousel-item').length > 0);
+					updateSlideContent(slide, document.querySelectorAll('.carousel-item') !== null);
 				}
 			}
 		});
@@ -544,4 +537,8 @@ $(function() {
 	slideObserver.observe(document.getElementById('output'), {
 		attributes: true,
 	});
+	
+	document.querySelector('#uncollapse_button').addEventListener('click', () => {
+        collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'));
+    });
 });

@@ -1,5 +1,12 @@
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
+	// $('.carousel').off('slid.bs.carousel', 'shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse');
+	// $('.carousel').removeClass('carousel');
+	// bootstrap.Carousel.getOrCreateInstance(document.querySelector('#output'), {
+	// 	dispose: true
+	// });
+	// new bootstrap.Carousel(document.querySelector('#output'));
+	
 
 	let $slides = $('#output > div.slide');
 
@@ -85,6 +92,7 @@ function updateCarouselSlide() {
 
 function showSlide(slide, cranach) {
 	console.log('showSlide');
+	// document.querySelector('#output').outerHTML = document.querySelector('#output').outerHTML;
     $('.pane').removeClass('info')
     .removeClass('overview')
     .removeClass('compose')
@@ -98,6 +106,7 @@ function showSlide(slide, cranach) {
 
 	updateCarousel(slideNum);
 	updateCarouselEvent();
+	updateCarouselSlide();
 
     cranach.then(renderer => {
         updateModal(renderer);
@@ -309,16 +318,13 @@ function updateCarouselEvent() {
 			$('#output').attr('data-selected-slide', slideNum);
 		});
 
-		$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-			updateCarouselSlide();
-		});
-		$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
+		$('.carousel').on('shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse',function() {
 			updateCarouselSlide();
 		});
 
 	});
 }
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	$('#output.present').scroll(function(event) {
 		let element = event.target;
 		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
@@ -334,4 +340,43 @@ $(function() {
 			}
 		}
 	});
+
+	// $('.carousel').on('slid.bs.carousel', function () {
+	// 	$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
+	// 	$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+
+	// 	let $slide = $('#output > div.carousel-item.active').first();
+	// 	let slideNum = parseInt($slide.attr('slide'));
+	// 	$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
+
+	// 	let $slides = $('#output > div.slide');
+	// 	let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
+	// 	let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
+
+	// 	if ($slides.length > 50) {
+	// 		$('.tooltip').remove();
+	// 		$('.carousel-indicators div.tooltip').remove();
+	// 		$(".carousel-indicators").html('');
+
+	// 		$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
+	// 		$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
+	// 		$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
+
+	// 		if (prevNum < slideNum) {
+	// 			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
+	// 		}
+	// 		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
+	// 		if (nextNum > slideNum) {
+	// 			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
+	// 		}
+	// 		$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+	// 		$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+	// 	}
+	// 	$('#output').attr('data-selected-slide', slideNum);
+	// 	updateCarouselSlide();
+	// });
+
+	// $('.carousel').on('shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse',function() {
+	// 	updateCarouselSlide();
+	// });
 });

@@ -1031,9 +1031,8 @@
 		<br/>
 		<div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
 	</div>
-	<xsl:element name="{local-name()}" namespace="{$xh}">
+	<xsl:element name="{local-name()}" namespace="{$xh}" class="hidden">
 		<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
-		<xsl:attribute name="style">display:none</xsl:attribute>
 		<xsl:if test="@src">
 			<xsl:choose>
 				<xsl:when test="contains(@src, 'http')">
@@ -1192,7 +1191,7 @@
 				<br/>
 				<div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
 			</div>
-			<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
+			<iframe style="overflow-x:auto;overflow-y:hidden;" class="webwork hidden">
 				<xsl:attribute name="rendered">0</xsl:attribute>
 				<xsl:attribute name="data-src">
 					<!-- <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/> -->
