@@ -185,6 +185,7 @@ function Cranach(url) {
 							return response.text();
 						} else {
 							console.log('FILE NOT FOUND');
+							alert('FILE NOT FOUND');
 							el.cranachDoc = null;
 							resolve(el);
 						}
