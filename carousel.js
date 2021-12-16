@@ -123,19 +123,17 @@ function updateCarouselSlide(slide, content = null) {
 
 	outerContent.style['padding-bottom'] = '';
 
-	let mathJaxContentList = content == null ? outerContent.querySelectorAll('.MathJax') : content.querySelectorAll('.MathJax');
-
-	if (mathJaxContentList != null) {
-		mathJaxContentList.forEach(e => {
-			if (!e.style.fontSize.match(/em$/)) {
-				e.style.fontSize = "1.2em";
-			}
-		});
-	}
 
 	let bufferedWidth = 0;
 	MathJax.startup.promise.then(() => {
+		let mathJaxContentList = content == null ? outerContent.querySelectorAll('.MathJax') : content.querySelectorAll('.MathJax');
+
 		if (mathJaxContentList != null) {
+			mathJaxContentList.forEach(e => {
+				if (!e.style.fontSize.match(/em$/)) {
+					e.style.fontSize = "1.2em";
+				}
+			});
 			while (outerContent.scrollWidth > outerContent.clientWidth
 				&& outerContent.scrollWidth != bufferedWidth
 				&& parseFloat(mathJaxContentList[0].style.fontSize.replace(/em$/, '')) > 0.8) {
