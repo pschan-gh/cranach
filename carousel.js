@@ -60,36 +60,41 @@ function updateCarousel(slideNum) {
 
 }
 
-function updateCarouselSlide() {
+function updateCarouselSlide(slide, content = null) {
 	// console.log('updateCarouselSlide');
-	if ($('.carousel-item').length == 0) {
+	if (!document.querySelector('#output').classList.contains('present')) {
 		return 1;
 	}
 
-	$('#output > div.slide.active .slide_container > .slide_content').css('padding-bottom', '');
-	let content = $('#output > div.slide.active .slide_content').first()[0];
-	let $mathJaxContent = $('#output > div.slide.active .slide_content .MathJax');
+	let outerContent = slide.querySelector(':scope > .slide_container > .slide_content');
 
-	$mathJaxContent.each(function() {
-		if (!this.style.fontSize.match(/em$/)) {
-			this.style.fontSize = "1.2em";
-		}
-	});
+	outerContent.style['padding-bottom'] = '';
+
+	let mathJaxContentList = content == null ? outerContent.querySelectorAll('.MathJax') : content.querySelectorAll('.MathJax');
+
+	if (mathJaxContentList != null) {
+		mathJaxContentList.forEach(e => {
+			if (!e.style.fontSize.match(/em$/)) {
+				e.style.fontSize = "1.2em";
+			}
+		});
+	}
 
 	let bufferedWidth = 0;
 	MathJax.startup.promise.then(() => {
-		while (content.scrollWidth > content.clientWidth
-			&& content.scrollWidth != bufferedWidth
-			&& parseFloat($mathJaxContent.first()[0].style.fontSize.replace(/em$/, '')) > 0.8) {
-				console.log('adjusting width');
-				bufferedWidth = content.scrollWidth;
-				$mathJaxContent.each(function() {
-					this.style.fontSize = (parseFloat(this.style.fontSize.replace(/em$/, '')) - 0.1).toString() + 'em';
-					// resizeFont(-0.5, content);
-				});
+		if (mathJaxContentList != null) {
+			while (outerContent.scrollWidth > outerContent.clientWidth
+				&& outerContent.scrollWidth != bufferedWidth
+				&& parseFloat(mathJaxContentList[0].style.fontSize.replace(/em$/, '')) > 0.8) {
+					console.log('adjusting width');
+					bufferedWidth = outerContent.scrollWidth;
+					mathJaxContentList.forEach(e => {
+						e.style.fontSize = (parseFloat(e.style.fontSize.replace(/em$/, '')) - 0.1).toString() + 'em';
+					});
+			}
 		}
 		adjustHeight();
-	});	
+	});
 }
 
 function showSlide(slide, cranach) {
@@ -104,11 +109,12 @@ function showSlide(slide, cranach) {
 
     let $slide = $(slide);
 	$slide.addClass('selected');
+	$slide.addClass('active');
 	let slideNum = parseInt($slide.attr('slide'));
 
 	updateCarousel(slideNum);
 	updateCarouselEvent();
-	updateCarouselSlide();
+	updateCarouselSlide(slide);
 
     cranach.then(renderer => {
         updateModal(renderer);
@@ -320,19 +326,7 @@ function updateCarouselEvent() {
 				$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 			}
 			$('#output').attr('data-selected-slide', slideNum);
-			// updateCarouselSlide();
 		});
-
-		// $('div.collapse').off('shown.bs.collapse');
-		// $('div.collapse').off('hidden.bs.collapse');
-		//
-		// $('div.collapse').on('shown.bs.collapse', function() {
-		// 	console.log('shown');
-		// 	updateCarouselSlide();
-		// });
-		// $('div.collapse').on('hidden.bs.collapse', function() {
-		// 	updateCarouselSlide();
-		// });
 
 		// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
 		let menu_timer = null;
@@ -363,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 			}
 		}
-		updateCarouselSlide();
 	});
 
 	// $('.carousel').on('slid.bs.carousel', function () {

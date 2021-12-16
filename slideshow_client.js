@@ -128,8 +128,14 @@ function renderSlide(slide) {
 	// console.log('renderSlide');
     // console.log(`initiating collapse on ${slide.getAttribute('slide')}.`);
     slide.querySelectorAll('.hidden_collapse').forEach(e => {
-		e.classList.remove('hidden_collapse');
 		e.classList.add('collapse');
+		e.classList.remove('hidden_collapse');
+		e.addEventListener('shown.bs.collapse', function() {
+			updateCarouselSlide(slide, e);
+		});
+		e.addEventListener('hidden.bs.collapse', function() {
+			updateCarouselSlide(slide, e);
+		});
 	});
 	slide.querySelectorAll('a.collapsea').forEach(e => {
 		e.setAttribute('data-bs-toggle', 'collapse');
@@ -154,16 +160,6 @@ function batchRender(slide) {
 	renderSlide(slide.nextSibling);
 	renderSlide(slide.previousSibling);
 	renderSlide(slide);
-
-	// $(slide).find('div.collapse').off('shown.bs.collapse');
-	// $(slide).find('div.collapse').off('hidden.bs.collapse');
-	// $(slide).find('div.collapse').on('shown.bs.collapse', function() {
-	// 	console.log('shown');
-	// 	updateCarouselSlide();
-	// });
-	// $(slide).find('div.collapse').on('hidden.bs.collapse', function() {
-	// 	updateCarouselSlide();
-	// });
 }
 
 function updateSlideContent(slide, carousel = false) {
@@ -184,7 +180,7 @@ function updateSlideContent(slide, carousel = false) {
 	if (carousel) {
 		slide.classList.add('active');
 		updateCanvas(slide);
-		updateCarouselSlide();
+		updateCarouselSlide(slide);
 	}
 }
 
