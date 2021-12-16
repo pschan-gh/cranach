@@ -36,7 +36,7 @@ function inlineEdit(enableEdit, editor) {
 	// hideAnnotate();
 	let outputDiv = document.querySelector('#output');
 	let slide = outputDiv.querySelector('div.slide.selected') != null ? outputDiv.querySelectorAll('div.slide.selected')[0] : outputDiv.querySelectorAll('div.slide')[0];
-	
+
 	slide.setAttribute('contentEditable', enableEdit);
 
 	if (!enableEdit) {
@@ -44,13 +44,13 @@ function inlineEdit(enableEdit, editor) {
 
 		// $('#output').css('display', '');
 		// $('#output div.slide').css('display', '');
-	
+
 		renderSlide(slide);
 
 		editor.container.style.pointerEvents="auto";
 		editor.container.style.opacity = 1; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", false);
-		
+
 		adjustHeight();
 
 	} else {
@@ -58,7 +58,7 @@ function inlineEdit(enableEdit, editor) {
 		removeTypeset(slide);
 		slide.classList.add('edit');
 		slide.classList.remove('tex2jax_ignore');
-		
+
 		editor.container.style.pointerEvents="none";
 		editor.container.style.opacity=0.5; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", true);
@@ -154,6 +154,16 @@ function batchRender(slide) {
 	renderSlide(slide.nextSibling);
 	renderSlide(slide.previousSibling);
 	renderSlide(slide);
+
+	// $(slide).find('div.collapse').off('shown.bs.collapse');
+	// $(slide).find('div.collapse').off('hidden.bs.collapse');
+	// $(slide).find('div.collapse').on('shown.bs.collapse', function() {
+	// 	console.log('shown');
+	// 	updateCarouselSlide();
+	// });
+	// $(slide).find('div.collapse').on('hidden.bs.collapse', function() {
+	// 	updateCarouselSlide();
+	// });
 }
 
 function updateSlideContent(slide, carousel = false) {
@@ -168,7 +178,7 @@ function updateSlideContent(slide, carousel = false) {
 	});
 
 	document.querySelector('#uncollapse_button').textContent = slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse';
-	
+
 	slide.querySelectorAll('.loading_icon').forEach(e => e.classList.add('hidden'));
 
 	if (carousel) {
@@ -226,20 +236,20 @@ function collapseToggle(slideNum, forced = '') {
 
 	let slide = document.querySelector('.output div.slide[slide="' + slideNum + '"]');
 	MathJax.startup.promise.then(() => {
-        if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {			
+        if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {
             // $slide.find('.collapse').collapse('show');
             // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: true, hide: false}));
-        
+
             slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => e.click());
             $('#uncollapse_button').text('Collapse');
             slide.classList.remove('collapsed');
-        } else {            
+        } else {
             // $slide.find('.collapse').collapse('hide');
             // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: false, hide: true}));
-            
+
             slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => e.click());
             $('#uncollapse_button').text('Uncollapse');
-            slide.classList.add('collapsed');            
+            slide.classList.add('collapsed');
         }
 	});
 }
@@ -537,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	slideObserver.observe(document.getElementById('output'), {
 		attributes: true,
 	});
-	
+
 	document.querySelector('#uncollapse_button').addEventListener('click', () => {
         collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'));
     });

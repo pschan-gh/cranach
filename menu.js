@@ -110,7 +110,6 @@ $(function() {
 	let menuObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {
-				// if ( mutation.attributeName == 'data-selected-slide' ) {
 				if ( mutation.attributeName == 'data-content-url' ) {
 					updateSlideSelector();
 				}
@@ -123,19 +122,19 @@ $(function() {
 	});
 
 	// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-	let menu_timer = null;
-	$('#right_half').first().each(function() {
-		$('#right_half').off();
-		$('#right_half').mousemove(function() {
-			clearTimeout(menu_timer);
-			$(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-			$('.present .controls.carousel-indicators').css('display', 'flex');
-			menu_timer = setTimeout(function () {
-				$(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
-				$(".controls, .present .active .slide_number").not('.hidden').fadeOut();
-			}, 1000);
-		})
-	});
+	// let menu_timer = null;
+	// $('#right_half').first().each(function() {
+	// 	$('#right_half').off();
+	// 	$('#right_half').mousemove(function() {
+	// 		clearTimeout(menu_timer);
+	// 		$(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+	// 		$('.present .controls.carousel-indicators').css('display', 'flex');
+	// 		menu_timer = setTimeout(function () {
+	// 			$(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+	// 			$(".controls, .present .active .slide_number").not('.hidden').fadeOut();
+	// 		}, 1000);
+	// 	})
+	// });
 
 	$('.present #menu_container').first().each(function() {
 		$(this).find(".navbar-nav, .present .slide_number").not('.hidden').off();

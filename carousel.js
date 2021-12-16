@@ -1,12 +1,9 @@
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
-	// $('.carousel').off('slid.bs.carousel', 'shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse');
-	// $('.carousel').removeClass('carousel');
-	// bootstrap.Carousel.getOrCreateInstance(document.querySelector('#output'), {
-	// 	dispose: true
-	// });
-	// new bootstrap.Carousel(document.querySelector('#output'));
-	
+
+	bootstrap.Carousel.getOrCreateInstance(document.querySelector('#right_half'), {
+		dispose: true
+	});
 
 	let $slides = $('#output > div.slide');
 
@@ -20,6 +17,8 @@ function updateCarousel(slideNum) {
 	$('.tooltip').remove();
 	$('.carousel-indicators div.tooltip').remove();
 	$(".carousel-indicators").html('');
+	document.querySelector('.carousel-indicators').outerHTML = document.querySelector('.carousel-indicators').outerHTML;
+	document.querySelector('.controls_container').outerHTML = document.querySelector('.controls_container').outerHTML;
 
     if ($slides.length > 50) {
 		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
@@ -55,7 +54,10 @@ function updateCarousel(slideNum) {
     $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
     $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
 
+	$('.carousel').off();
+	new bootstrap.Carousel(document.querySelector('#right_half'));
 	$('#right_half').addClass('carousel').addClass('slide');
+
 }
 
 function updateCarouselSlide() {
@@ -87,7 +89,7 @@ function updateCarouselSlide() {
 				});
 		}
 		adjustHeight();
-	});
+	});	
 }
 
 function showSlide(slide, cranach) {
@@ -283,7 +285,9 @@ function addCanvas(slide) {
 }
 
 function updateCarouselEvent() {
-	$(function() {
+
+	// $('.carousel').off('shown.bs.collapse', 'hidden.bs.collapse', 'slid.bs.carousel');
+	// document.addEventListener('DOMContentLoaded', () => {
 		$('.carousel').on('slid.bs.carousel', function () {
 			$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
 			$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
@@ -316,13 +320,33 @@ function updateCarouselEvent() {
 				$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
 			}
 			$('#output').attr('data-selected-slide', slideNum);
+			// updateCarouselSlide();
 		});
 
-		$('.carousel').on('shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse',function() {
-			updateCarouselSlide();
-		});
+		// $('div.collapse').off('shown.bs.collapse');
+		// $('div.collapse').off('hidden.bs.collapse');
+		//
+		// $('div.collapse').on('shown.bs.collapse', function() {
+		// 	console.log('shown');
+		// 	updateCarouselSlide();
+		// });
+		// $('div.collapse').on('hidden.bs.collapse', function() {
+		// 	updateCarouselSlide();
+		// });
 
-	});
+		// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
+		let menu_timer = null;
+		$('#right_half').off('mousemove');
+		$('#right_half').mousemove(function() {
+			clearTimeout(menu_timer);
+			$(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+			$('.present .controls.carousel-indicators').css('display', 'flex');
+			menu_timer = setTimeout(function () {
+				$(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+				$(".controls").hide();
+			}, 1000);
+		})
+	// });
 }
 document.addEventListener('DOMContentLoaded', () => {
 	$('#output.present').scroll(function(event) {
@@ -339,29 +363,30 @@ document.addEventListener('DOMContentLoaded', () => {
 				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
 			}
 		}
+		updateCarouselSlide();
 	});
 
 	// $('.carousel').on('slid.bs.carousel', function () {
 	// 	$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
 	// 	$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-
+	//
 	// 	let $slide = $('#output > div.carousel-item.active').first();
 	// 	let slideNum = parseInt($slide.attr('slide'));
 	// 	$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
-
+	//
 	// 	let $slides = $('#output > div.slide');
 	// 	let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
 	// 	let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-
+	//
 	// 	if ($slides.length > 50) {
 	// 		$('.tooltip').remove();
 	// 		$('.carousel-indicators div.tooltip').remove();
 	// 		$(".carousel-indicators").html('');
-
+	//
 	// 		$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
 	// 		$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
 	// 		$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
-
+	//
 	// 		if (prevNum < slideNum) {
 	// 			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
 	// 		}
@@ -375,8 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 	$('#output').attr('data-selected-slide', slideNum);
 	// 	updateCarouselSlide();
 	// });
+	//
 
-	// $('.carousel').on('shown.bs.collapse', 'hidden.bs.collapse', 'div.collapse',function() {
-	// 	updateCarouselSlide();
-	// });
 });
