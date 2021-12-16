@@ -121,6 +121,9 @@ function renderElement($lcrefContainer) {
 		$(this).iFrameResize({checkOrigin:false});
 	});
 	typeset([$lcrefContainer[0]]);
+	if (document.querySelector('#output').classList.contains('present')) {
+		updateCarouselSlide(document.querySelector('#output > div.slide.active'));
+	}
 }
 
 

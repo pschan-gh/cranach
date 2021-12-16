@@ -342,21 +342,22 @@ function addCanvas(slide) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	$('#output.present').scroll(function(event) {
-		let element = event.target;
-		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-			$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-		}
-	});
+	// $('#output.present').scroll(function(event) {
+	// 	let element = event.target;
+	// 	if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+	// 		$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+	// 	}
+	// });
 
-	$('#output')[0].addEventListener('wheel', function(event) {
-		let element = $('#output')[0];
-		if (event.deltaY > 0) {
-			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-			}
-		}
-	});
+	// document.querySelector('#output.present').addEventListener('wheel', function(event) {
+	// 	let element = document.querySelector('#output');
+	// 	if (event.deltaY > 0) {
+	// 		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+	// 			element.querySelector('div.slide.active > .slide_container > .slide_content').style['padding-bottom'] = '15em';
+	// 			adjustHeight();
+	// 		}
+	// 	}
+	// });
 
 	// $('.carousel').on('slid.bs.carousel', function () {
 	// 	$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
