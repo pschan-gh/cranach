@@ -132,6 +132,7 @@ function renderSlide(slide) {
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
+			expandCanvas(slide, 0.9);
 		});
 		e.addEventListener('hidden.bs.collapse', function() {
 			updateCarouselSlide(slide, e);

@@ -241,6 +241,25 @@ function annotate() {
 	updateCanvas($('.output.present:visible div.slide.active')[0]);
 }
 
+function expandCanvas(slide, scale = 1) {
+	if (!document.querySelector('#output').classList.contains('annotate')) {
+		return 0;
+	}
+	slide.cfd.disableDrawingMode();
+	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
+	let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+	let img = new Image();
+	img.src = oldCanvas;
+	img.onload = function (){
+		$(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
+		$(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight*scale;
+		let ctx = slide.cfd.canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0);
+		slide.cfd.enableDrawingMode();
+		slide.cfd.setDraw();
+	}
+}
+
 function updateCanvas(slide) {
 	if ($('.carousel-item').length == 0) {
 		return 0;
@@ -263,21 +282,7 @@ function updateCanvas(slide) {
 		addCanvas(slide);
 	});
 	// $('.canvas-controls .expand').off();
-	$('.canvas-controls .expand').click(function() {
-		slide.cfd.disableDrawingMode();
-		// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-		let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-		let img = new Image();
-		img.src = oldCanvas;
-		img.onload = function (){
-			$(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
-			$(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
-			let ctx = slide.cfd.canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0);
-			slide.cfd.enableDrawingMode();
-			slide.cfd.setDraw();
-		}
-	});
+	$('.canvas-controls .expand').click(function() {expandCanvas(slide);});
 	// $('.canvas-controls .disable').off();
 	$('.canvas-controls .disable').click(function() {
 		slide.cfd.disableDrawingMode();
