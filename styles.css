@@ -808,9 +808,12 @@ padding:0;
 .present .menu_button.canvas {
     display:block;
 }
+
 canvas {
     z-index:999;
     border: 1px solid #eee;
+	position: absolute;
+	left: 0;
 }
 
 .canvas-controls {

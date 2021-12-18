@@ -132,10 +132,10 @@ function renderSlide(slide) {
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
-			expandCanvas(slide, 0.9);
+			expandCanvas(slide);
 		});
 		e.addEventListener('hidden.bs.collapse', function() {
-			updateCarouselSlide(slide, e);
+			updateCarouselSlide(slide);
 		});
 	});
 	slide.querySelectorAll('a.collapsea').forEach(e => {

@@ -251,8 +251,10 @@ function expandCanvas(slide, scale = 1) {
 	let img = new Image();
 	img.src = oldCanvas;
 	img.onload = function (){
-		$(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
-		$(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight*scale;
+		let output = document.getElementById('output');
+		// slide.cfd.canvas.style.top = -parseInt(slide.cfd.canvas.closest('.slide.carousel-item').getBoundingClientRect().top);
+		slide.cfd.canvas.width = output.scrollWidth;
+		slide.cfd.canvas.height = output.scrollHeight*scale;
 		let ctx = slide.cfd.canvas.getContext('2d');
 		ctx.drawImage(img, 0, 0);
 		slide.cfd.enableDrawingMode();
@@ -282,7 +284,7 @@ function updateCanvas(slide) {
 		addCanvas(slide);
 	});
 	// $('.canvas-controls .expand').off();
-	$('.canvas-controls .expand').click(function() {expandCanvas(slide);});
+	$('.canvas-controls .expand').click(function() {expandCanvas(slide, 1.1);});
 	// $('.canvas-controls .disable').off();
 	$('.canvas-controls .disable').click(function() {
 		slide.cfd.disableDrawingMode();

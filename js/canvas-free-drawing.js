@@ -42,8 +42,7 @@
 	        this.requiredParam(params, 'width');
 	        this.requiredParam(params, 'height');
 	        this.elementId = elementId;
-	        // this.canvasNode = document.getElementById(this.elementId);
-			this.canvasNode = $('.output.present:visible').first().find('#' + this.elementId)[0];
+	        this.canvasNode = document.getElementById(this.elementId);
 	        if (this.canvasNode instanceof HTMLCanvasElement) {
 	            this.canvas = this.canvasNode;
 	        }
@@ -51,9 +50,7 @@
 	            var newCanvas = document.createElement('canvas');
 	            this.canvasNode.appendChild(newCanvas);
 	            this.canvas = newCanvas;
-				$(this.canvas).css('position', 'absolute');
-				$(this.canvas).css('top', '-5em');
-				$(this.canvas).css('left', 0);
+				this.canvas.style.top = -(this.canvas.closest('.slide.carousel-item').getBoundingClientRect().top);
 	        }
 	        else {
 	            throw new Error("No element found with following id: " + this.elementId);
@@ -177,10 +174,9 @@
 	    CanvasFreeDrawing.prototype.touchStart = function (event) {
 	        if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
 				event.preventDefault();
-				console.log($('.output.present:visible').first()[0].scrollTop);
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + $('.output.present:visible').first()[0].scrollTop;
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
 	            this.touchIdentifier = identifier;
 	            this.drawPoint(x, y);
 
@@ -191,7 +187,7 @@
 				event.preventDefault();
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + $('.output.present:visible').first()[0].scrollTop;
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
 	            // check if is multi touch, if it is do nothing
 	            if (identifier != this.touchIdentifier)
 	                return;
