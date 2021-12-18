@@ -245,20 +245,23 @@ function expandCanvas(slide, scale = 1) {
 	if (!document.querySelector('#output').classList.contains('annotate')) {
 		return 0;
 	}
+
 	slide.cfd.disableDrawingMode();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
 	let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
 	let img = new Image();
 	img.src = oldCanvas;
 	img.onload = function (){
-		let output = document.getElementById('output');
-		// slide.cfd.canvas.style.top = -parseInt(slide.cfd.canvas.closest('.slide.carousel-item').getBoundingClientRect().top);
-		slide.cfd.canvas.width = output.scrollWidth;
-		slide.cfd.canvas.height = output.scrollHeight*scale;
-		let ctx = slide.cfd.canvas.getContext('2d');
-		ctx.drawImage(img, 0, 0);
-		slide.cfd.enableDrawingMode();
-		slide.cfd.setDraw();
+		MathJax.startup.promise.then(() => {
+			let output = document.getElementById('output');
+			// slide.cfd.canvas.style.top = -parseInt(slide.cfd.canvas.closest('.slide.carousel-item').getBoundingClientRect().top);
+			slide.cfd.canvas.width = output.scrollWidth;
+			slide.cfd.canvas.height = output.scrollHeight*scale;
+			let ctx = slide.cfd.canvas.getContext('2d');
+			ctx.drawImage(img, 0, 0);
+			slide.cfd.enableDrawingMode();
+			slide.cfd.setDraw();
+		});
 	}
 }
 
@@ -330,9 +333,9 @@ function addCanvas(slide) {
 	if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
 		return 0;
 	}
-
-	let width = $('.output.present:visible').first()[0].scrollWidth;
-	let height = $('.output.present:visible').first()[0].scrollHeight;
+	let output = document.getElementById('output');
+	let width = output.scrollWidth;
+	let height = output.scrollHeight - 5;
 
 	slide.cfd = new CanvasFreeDrawing.default({
 		elementId: slide.id,
