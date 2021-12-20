@@ -52,27 +52,25 @@ function updateModalProofOf(button, cranach) {
 function updateModalRefby(md5String, cranach) {
 	let contentURLDir = cranach.attr['contentURLDir'];
 	let contentURL = cranach.attr['contentURL'];
-	console.log('CONTENTURL ' + contentURL);
-	// $.ajax({
-	//     url:  cranach.attr['dir'] + '/' + cranach.attr['index'],
-	//     dataType: "xml"
-	// })
-	// .done(function(index) {
 	let index = cranach.indexDoc;
-	$.ajax({
-		url: 'xsl/refby2html.xsl'
+	fetch('xsl/refby2html.xsl')
+	.then(function(response) {
+		if (!response.ok) {
+			throw Error(response.statusText);
+		}
+		console.log('MACROS FILE FOUND');
+		return response.text();
 	})
-	.done(function(xsl) {
-		let xsltProcessor = new XSLTProcessor();
-		xsltProcessor.importStylesheet(xsl);
+	.then(function(xsltext) {
+		xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 		xsltProcessor.setParameter('', 'md5', md5String);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
-		console.log('REFBY2HTML PRETRANSFORM');
+		// console.log('REFBY2HTML PRETRANSFORM');
 		fragment = xsltProcessor.transformToFragment(index,document);
-		console.log('REFBY2HTML');
+		// console.log('REFBY2HTML');
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
-		console.log(fragmentStr);
+		// console.log(fragmentStr);
 		$('.modal_refby').html(fragmentStr).show();
 	});
 }
