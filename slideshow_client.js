@@ -268,32 +268,32 @@ function focusOn(item, text = '') {
 	renderSlide(slide);
 
 	MathJax.startup.promise.then(() => {
-		item.scrollIntoView();
 		if (text != '') {
 			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
 			console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
 			let textItem = item.querySelector(`*[text="${sanitizedText}"]`);
+			// textItem.scrollIntoView();
 			if (textItem !== null) {
 				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
 				}
-				textItem.scrollIntoView();
 				textItem.classList.add('highlighted');
 			}
 		} else {
 			if (item.closest('.collapse, .hidden_collapse') !== null) {
 				collapseToggle(slideNum, 'show');
 			}
-			item.scrollIntoView();
 			item.classList.add('highlighted');
 		}
+		item.scrollIntoView();
+		
 
-		if(document.getElementById('right_half').classList.contains('present')) {
-			baseRenderer.then(cranach => {
-				showSlide(slide, cranach);
-			});
-		}
+		// if(document.getElementById('right_half').classList.contains('present')) {
+		// 	baseRenderer.then(cranach => {
+		// 		showSlide(slide, cranach);
+		// 	});
+		// }
 	});
 }
 
