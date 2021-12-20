@@ -1023,7 +1023,7 @@
 	</xsl:element>
 </xsl:template>
 
-<xsl:template match="xh:iframe">
+<xsl:template match="xh:iframe|iframe">
 	<div class="loading_icon" wbtag="ignore">
 		<div class="spinner-border text-secondary" style="margin:2em" role="status">
 			<span class="visually-hidden">Loading...</span>
@@ -1248,8 +1248,10 @@
 
 <xsl:template match="lv:comment">
 	<div class="comment">
-		<xsl:value-of select="text()" disable-output-escaping="yes"/>
-	</div>
+		<xsl:comment>
+			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+		</xsl:comment>
+	</div>	
 </xsl:template>
 
 <xsl:template match="lv:enumerate">

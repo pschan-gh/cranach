@@ -167,6 +167,9 @@ function updateSlideContent(slide, carousel = false) {
 	console.log('updateSlideContent');
 	batchRender(slide);
 	slide.querySelectorAll('iframe.hidden').forEach(e => {
+		if (e.closest('div.comment') !== null) {
+			return 0;
+		}
 		e.src = e.getAttribute('data-src');
 		e.classList.remove('hidden');
 		e.style.display = '';

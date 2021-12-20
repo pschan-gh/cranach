@@ -283,7 +283,7 @@
 
 <xsl:template match="lv:comment">
 	<xsl:text>&#xa;&lt;!--</xsl:text>
-	<xsl:apply-templates select="*|text()" />
+	<xsl:apply-templates select="*|text()|comment()" />
 	<xsl:text>--&gt;&#xa;</xsl:text>
 </xsl:template>
 
@@ -333,9 +333,9 @@
 </xsl:template>
 
 <xsl:template match="comment()" >
-	<xsl:comment>
+	<!-- <xsl:comment> -->
 		<xsl:value-of select="." />
-	</xsl:comment>
+	<!-- </xsl:comment> -->
 </xsl:template>
 
 </xsl:stylesheet>
