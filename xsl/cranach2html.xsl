@@ -1031,8 +1031,9 @@
 		<br/>
 		<div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
 	</div>
-	<xsl:element name="{local-name()}" namespace="{$xh}" class="hidden">
+	<xsl:element name="{local-name()}" namespace="{$xh}">
 		<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
+		<xsl:attribute name="class"><xsl:text>hidden</xsl:text></xsl:attribute>
 		<xsl:if test="@src">
 			<xsl:choose>
 				<xsl:when test="contains(@src, 'http')">

@@ -164,13 +164,13 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = false) {
-	// console.log('updateSlideContent');
+	console.log('updateSlideContent');
 	batchRender(slide);
-	slide.querySelectorAll('iframe:not([src])').forEach(e => {
-		e.setAttribute('src', e.getAttribute('data-src'));
+	slide.querySelectorAll('iframe.hidden').forEach(e => {
+		e.src = e.getAttribute('data-src');
 		e.classList.remove('hidden');
-		// $(e).iFrameResize({checkOrigin:false});
-		iFrameResize({ log: false }, e);
+		e.style.display = '';
+		iFrameResize({ log: false, checkOrigin:false }, e);
 
 	});
 
