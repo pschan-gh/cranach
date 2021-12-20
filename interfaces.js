@@ -34,7 +34,7 @@ function collectNewcommands(str) {
 	return commandsStr;
 }
 
-function showLatex(el) {
+function showLatex(el, mode = 'report') {
 	$('.modal-footer').find('.btn').hide();
 	$('.modal-footer').find('.btn.save').show();
 
@@ -45,7 +45,9 @@ function showLatex(el) {
 	let contentURLDir = el.attr['contentURLDir'];
 	let contentURL = el.attr['contentURL'];
 
-	fetch('xsl/cranach2latex.xsl?' + 'version=' + Math.random())
+	let xslFile = mode == 'report' ?  'xsl/cranach2latex.xsl' : 'xsl/cranach2beamer.xsl';
+
+	fetch(xslFile + '?version=' + Math.random())
     .then(response => response.text())
     .then(xsl => {
         let xml = new XMLSerializer().serializeToString(docCranach);

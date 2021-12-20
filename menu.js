@@ -192,6 +192,12 @@ $(function() {
 			showLatex(cranach);
 		});
 	});
+	$('#beamer_icon').click(function() {
+		$('#text_modal').modal('toggle');
+		baseRenderer.then(cranach => {
+			showLatex(cranach, 'beamer');
+		});
+	});
 	$('#xml_icon').click(function() {
 		baseRenderer.then(cranach => {
 			$('#text_modal').modal('toggle');

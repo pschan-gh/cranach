@@ -18,6 +18,19 @@
 
 	<xsl:template match="lv:document">
 		<xsl:text>\documentclass{beamer}</xsl:text>
+		<!-- https://tex.stackexchange.com/questions/178800/creating-sections-each-with-title-pages-in-beamers-slides -->
+		<xsl:text>
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+		</xsl:text>
 		<xsl:call-template name="latex-preamble" />
 		<xsl:text>\begin{document}&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:course|lv:week|lv:lecture|lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare" />
@@ -48,8 +61,9 @@
 \usepackage{csquotes}
 <!-- \usepackage{booktabs} -->
 
+\setbeamertemplate{theorems}[numbered]
 \newcounter{statement}
-<!-- \numberwithin{statement}{chapter} -->
+\numberwithin{statement}{lecture}
 
 \newtheorem{thm}[statement]{Theorem}
 \newtheorem{prop}[statement]{Proposition}
@@ -58,8 +72,8 @@
 \newtheorem{cor}[statement]{Corollary}
 <!-- \newtheorem{fact}[statement]{Fact} -->
 
-<!-- \numberwithin{equation}{chapter} -->
-<!-- \numberwithin{section}{chapter} -->
+\numberwithin{equation}{lecture}
+\numberwithin{section}{lecture}
 \numberwithin{subsection}{section}
 
 \theoremstyle{definition}
@@ -71,8 +85,9 @@
 \newtheorem*{sol}{\bf Solution}
 \newtheorem*{remark}{\bf Remark}
 
-<!-- \renewcommand{\thesection}{\thechapter.\arabic{section}}
-\renewcommand{\thesubsection}{\thesection.\arabic{subsection}} -->
+\renewcommand{\thesection}{\thelecture.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand\thetheorem{\arabic{lecture}.\arabic{theorem}}
 
 <!-- \renewcommand{\thesection}{} -->
 </xsl:template>
@@ -83,24 +98,29 @@
 
 	<xsl:template match="lv:course">
 		<xsl:text>&#xa;</xsl:text>
-		<xsl:value-of select="concat('\title{', ./lv:title/text() , '}')"/>
+		<xsl:text>\begin{frame}</xsl:text>
+		<xsl:value-of select="concat('{\Large ', ./lv:title/text() , '}')"/>
+		<xsl:text>\end{frame}</xsl:text>
+		<xsl:text>&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:week|lv:lecture|lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
 	<xsl:template match="lv:week|lv:lecture|lv:chapter">
 		<xsl:text>&#xa;</xsl:text>
-		<!-- <xsl:value-of select="concat('\setcounter{chapter}{', ./@num, '}')"/> -->
+		<xsl:text>\begin{frame}</xsl:text>
+		<xsl:value-of select="concat('\setcounter{lecture}{', ./@num, '}')"/>
 		<xsl:text>\setcounter{section}{0}&#xa;\setcounter{subsection}{0}&#xa;\setcounter{statement}{0}&#xa;</xsl:text>
-		<!-- <xsl:text>\chapter*{</xsl:text>
-		<xsl:value-of select="concat(ancestor::lv:course/@title, ' ', @chapter_type, ' ', @num)"/>
+		<!-- <xsl:text>\lecture*{</xsl:text> -->
+		<xsl:value-of select="concat('{\large ', ancestor::lv:course/@title, ' ', @chapter_type, ' ', @num)"/>
 		<xsl:apply-templates select="lv:title"/>
-		<xsl:text>}</xsl:text> -->
-		<!-- <xsl:text>{\bf Topics: }</xsl:text> -->
+		<xsl:text>}&#xa;</xsl:text>
 		<xsl:if test="lv:topic">
 			<xsl:text>&#xa;</xsl:text>
 			<xsl:apply-templates select="lv:topic" />
 			<xsl:text>\quad\newline\hrule\quad\newline</xsl:text>
 		</xsl:if>
+		<xsl:text>\end{frame}</xsl:text>
+		<xsl:text>&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
@@ -114,11 +134,12 @@
 	</xsl:template>
 
 	<xsl:template match="lv:section|lv:subsection|lv:subsubsection">
-		<xsl:text>&#xa;\begin{frame}</xsl:text>
-		<!-- <xsl:value-of select="concat('\', local-name(), '{', @serial)"/> -->
-		<xsl:value-of select="concat('\', local-name(), '{')"/>
+		<!-- <xsl:text>&#xa;\begin{frame}</xsl:text> -->
+		<xsl:value-of select="concat('\', local-name(), '{', @serial, ' ')"/>
+		<!-- <xsl:value-of select="concat('\', local-name(), '{')"/> -->
 		<xsl:apply-templates select="lv:title"/>
-		<xsl:text>}&#xa;\end{frame}</xsl:text>
+		<xsl:text>}</xsl:text>
+		<!-- &#xa;\end{frame} -->
 		<xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
