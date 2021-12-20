@@ -121,21 +121,21 @@ function updateToc(cranach) {
 		$(this).off();
 		$(this).click(function() {
 			console.log($slide);
-			jumpToSlide($(`.output:visible`).first(), $slide);
+			jumpToSlide($(`.output:visible`).first()[0], $slide[0]);
 		});
 	});
 
 	$(`.toc`).find(`a.section`).each(function() {
 		let $slide = $(`.slide[section="${$(this).attr('section')}"][chapter="${$(this).attr('chapter')}"]`).first();
 		$(this).click(function() {
-			jumpToSlide($(`#output`), $slide);
+			jumpToSlide($(`#output`)[0], $slide[0]);
 			$slide.click();
 		});
 	});
 	$(`.toc a.subsection`).each(function() {
 		let $slide = $(`.slide[subsection="${$(this).attr('subsection')}"][section="${$(this).attr('section')}"][chapter="${$(this).attr('chapter')}"]`).first();
 		$(this).click(function() {
-			jumpToSlide($(`#output`), $slide);
+			jumpToSlide($(`#output`)[0], $slide[0]);
 			$slide.click();
 		});
 	});
@@ -207,7 +207,7 @@ function updateSlideInfo(slide) {
 	$(slide).addClass(`selected`);
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', function () {
 	let infoObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {

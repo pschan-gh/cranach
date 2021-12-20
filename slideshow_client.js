@@ -237,17 +237,20 @@ function collapseToggle(slideNum, forced = '') {
 	let slide = document.querySelector('.output div.slide[slide="' + slideNum + '"]');
 	MathJax.startup.promise.then(() => {
         if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {
-            // $slide.find('.collapse').collapse('show');
-            // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: true, hide: false}));
-
-            slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => e.click());
+            slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => {
+				bootstrap.Collapse
+				.getOrCreateInstance(
+					document.querySelector(e.getAttribute('href'))
+				).toggle();
+			});
             document.getElementById('uncollapse_button').textContent = 'Collapse';
             slide.classList.remove('collapsed');
         } else {
-            // $slide.find('.collapse').collapse('hide');
-            // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: false, hide: true}));
-
-            slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => e.click());
+            slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => {
+				bootstrap.Collapse.getOrCreateInstance(
+					document.querySelector(e.getAttribute('href'))
+				).toggle();
+			});
             document.getElementById('uncollapse_button').textContent = 'Uncollapse';
             slide.classList.add('collapsed');
         }
@@ -270,51 +273,42 @@ function focusOn(item, text = '') {
 			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
 			console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-			let textItem = item.querySelector(`*[text="${sanitizedText}"]`).classList.add('highlighted');
+			let textItem = item.querySelector(`*[text="${sanitizedText}"]`);
 			if (textItem !== null) {
 				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
-					// $slide.on('shown.bs.collapse', 'div.collapse', function() {
-					// 	$textItem[0].scrollIntoView();
-					// });
 				}
 				textItem.scrollIntoView();
+				textItem.classList.add('highlighted');
 			}
 		} else {
 			if (item.closest('.collapse, .hidden_collapse') !== null) {
 				collapseToggle(slideNum, 'show');
-				// $item[0].scrollIntoView();
-				// $slide.on('shown.bs.collapse', 'div.collapse', function() {
-				// 	$item[0].scrollIntoView();
-				// });
 			}
 			item.scrollIntoView();
 			item.classList.add('highlighted');
 		}
 
-		if($('#right_half').hasClass('present')) {
+		if(document.getElementById('right_half').classList.contains('present')) {
 			baseRenderer.then(cranach => {
-				showSlide($slide[0], cranach);
+				showSlide(slide, cranach);
 			});
 		}
 	});
 }
 
-function jumpToSlide($output, $slide) {
-	// $output.scrollTo($slide);
-	$slide[0].scrollIntoView();
-	if($('#right_half').hasClass('present')) {
+function jumpToSlide(output, slide) {
+	slide.scrollIntoView();
+	if(document.getElementById('right_half').classList.contains('present')) {
 		baseRenderer.then(cranach => {
-			showSlide($slide[0], cranach);
+			showSlide(slide, cranach);
 		});
 	}
 }
 
 function highlight(item) {
-	$('.item_button').css('background-color', '');
-	// $('div[item="' + item + '"]').find("button").first().css('background-color', '#ff0');
-	$('.highlighted').removeClass('highlighted');
-	$('div[item="' + item + '"]').find("button").first().addClass('highlighted');
+	document.querySelectorAll('.highlighted').forEach(e => e.classList.remove('highlighted'));
+	document.querySelector(`div[item="${item}"] button`).classList.add('highlighted');
 
 }
 function imagePostprocess(image) {
