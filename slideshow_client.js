@@ -259,36 +259,38 @@ function focusOn($item, text = '') {
 	let slideNum = $slide.attr('slide');
 	renderSlide($slide[0]);
 
-	$item[0].scrollIntoView();
-	if (text != '') {
-		let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
-		console.log(sanitizedText);
-		// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-		let $textItem = $item.find('*[text="' + sanitizedText + '"]').addClass('highlighted');
-		if ($textItem.length) {
-			$textItem[0].scrollIntoView();
-			if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
+	MathJax.startup.promise.then(() => {
+		$item[0].scrollIntoView();
+		if (text != '') {
+			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
+			console.log(sanitizedText);
+			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
+			let $textItem = $item.find('*[text="' + sanitizedText + '"]').addClass('highlighted');
+			if ($textItem.length) {
+				$textItem[0].scrollIntoView();
+				if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
+					collapseToggle(slideNum, 'show');
+					$slide.on('shown.bs.collapse', 'div.collapse', function() {
+						$textItem[0].scrollIntoView();
+					});
+				}
+			}
+		} else {
+			if ($item.closest('.collapse, .hidden_collapse').length > 0) {
 				collapseToggle(slideNum, 'show');
 				$slide.on('shown.bs.collapse', 'div.collapse', function() {
-					$textItem[0].scrollIntoView();
+					$item[0].scrollIntoView();
 				});
 			}
+			$item.addClass('highlighted');
 		}
-	} else {
-		if ($item.closest('.collapse, .hidden_collapse').length > 0) {
-			collapseToggle(slideNum, 'show');
-			$slide.on('shown.bs.collapse', 'div.collapse', function() {
-				$item[0].scrollIntoView();
+
+		if($('#right_half').hasClass('present')) {
+			baseRenderer.then(cranach => {
+				showSlide($slide[0], cranach);
 			});
 		}
-		$item.addClass('highlighted');
-	}
-
-	if($('#right_half').hasClass('present')) {
-		baseRenderer.then(cranach => {
-			showSlide($slide[0], cranach);
-		});
-	}
+	});
 }
 
 function jumpToSlide($output, $slide) {
