@@ -113,7 +113,7 @@ function updateToc(cranach) {
 		let $item;
 		$(`#info_statements`).find(`.info_statements_num`).click(function() {
 			$item = $(`.item_title[serial="${$(this).attr('serial')}"]`).first();
-			focusOn($item, ``);
+			focusOn($item[0], ``);
 			highlight($(this).attr(`serial`));
 		});
 

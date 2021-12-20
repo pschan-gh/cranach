@@ -238,51 +238,55 @@ function collapseToggle(slideNum, forced = '') {
             // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: true, hide: false}));
 
             slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => e.click());
-            $('#uncollapse_button').text('Collapse');
+            document.getElementById('uncollapse_button').textContent = 'Collapse';
             slide.classList.remove('collapsed');
         } else {
             // $slide.find('.collapse').collapse('hide');
             // slide.querySelectorAll('.collapse').forEach(e => new bootstrap.Collapse(e , {show: false, hide: true}));
 
             slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => e.click());
-            $('#uncollapse_button').text('Uncollapse');
+            document.getElementById('uncollapse_button').textContent = 'Uncollapse';
             slide.classList.add('collapsed');
         }
 	});
 }
 
-function focusOn($item, text = '') {
-	if ($item.closest('div.slide').length == 0) {
+function focusOn(item, text = '') {
+
+	let slide = item.closest('div.slide');
+	if (slide === null) {
 		return 0;
 	}
-	let $slide = $item.closest('div.slide').first();
-	let slideNum = $slide.attr('slide');
-	renderSlide($slide[0]);
+
+	let slideNum = slide.getAttribute('slide');
+	renderSlide(slide);
 
 	MathJax.startup.promise.then(() => {
-		$item[0].scrollIntoView();
+		item.scrollIntoView();
 		if (text != '') {
 			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
 			console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-			let $textItem = $item.find('*[text="' + sanitizedText + '"]').addClass('highlighted');
-			if ($textItem.length) {
-				$textItem[0].scrollIntoView();
-				if ($textItem.first().closest('.collapse, .hidden_collapse').length > 0) {
+			let textItem = item.querySelector(`*[text="${sanitizedText}"]`).classList.add('highlighted');
+			if (textItem !== null) {
+				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
-					$slide.on('shown.bs.collapse', 'div.collapse', function() {
-						$textItem[0].scrollIntoView();
-					});
+					// $slide.on('shown.bs.collapse', 'div.collapse', function() {
+					// 	$textItem[0].scrollIntoView();
+					// });
 				}
+				textItem.scrollIntoView();
 			}
 		} else {
-			if ($item.closest('.collapse, .hidden_collapse').length > 0) {
+			if (item.closest('.collapse, .hidden_collapse') !== null) {
 				collapseToggle(slideNum, 'show');
-				$slide.on('shown.bs.collapse', 'div.collapse', function() {
-					$item[0].scrollIntoView();
-				});
+				// $item[0].scrollIntoView();
+				// $slide.on('shown.bs.collapse', 'div.collapse', function() {
+				// 	$item[0].scrollIntoView();
+				// });
 			}
-			$item.addClass('highlighted');
+			item.scrollIntoView();
+			item.classList.add('highlighted');
 		}
 
 		if($('#right_half').hasClass('present')) {

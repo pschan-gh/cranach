@@ -26,14 +26,14 @@ function postprocess(cranach) {
 			console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
 			$item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
-			focusOn($item);
+			focusOn($item[0]);
 		} else if (cranach.attr['selectedSection']) {
 			let $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
 			let $selectedSlide = $section.closest('.slide');
-			focusOn($section);
+			focusOn($section[0]);
 		} else if (cranach.attr['selectedSlide']) {
 			let $selectedSlide = $(`.output:visible div.slide[slide="${cranach.attr['selectedSlide']}"]`);
-			focusOn($selectedSlide);
+			focusOn($selectedSlide[0]);
 		}
 
 		// else if ($('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').length > 0 ){
@@ -43,7 +43,7 @@ function postprocess(cranach) {
 
 		if (cranach.attr['selectedKeyword']) {
 			let $selectedSlide = $('.output:visible div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
-			focusOn($selectedSlide, cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
+			focusOn($selectedSlide[0], cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
 		}
 
 		// https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
@@ -76,7 +76,7 @@ function postprocess(cranach) {
 			console.log('PRESENT MODE');
 			$('#present_button').click();
 		}
-		
+
 	});
 
 }
