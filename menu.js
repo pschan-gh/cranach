@@ -15,7 +15,7 @@ function updateSlideSelector() {
 	}
 	$('#slide_sel').on('change', function() {
 		console.log('JUMPING TO SLIDE: ' + $(this).val());
-		jumpToSlide($('#output'), $('#s' + $(this).val()));
+		jumpToSlide($('#output'), document.getElementById(`s${$(this).val()}`));
 	});
 }
 
