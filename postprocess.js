@@ -1,39 +1,38 @@
 function postprocess(cranach) {
-	console.log('POSTPROCESS CALLED');
+	console.log('POSTPROCESS');
 
-	$('.icon.xml, .icon.latex').show();
-
-	$(function() {
-		$('#output').attr('data-content-url', cranach.attr['contentURL']);
-		$('#output').attr('data-query', cranach.attr['query']);
+	document.addEventListener('DOMContentLoaded', () => {
+		let output = document.getElementById('output');
+		output.dataset.contentUrl = cranach.attr['contentURL'];
+		output.dataset.query = cranach.attr['query'];
 		updateSlideClickEvent();
 		updateScrollEvent();
 		updateKeywords();
-		updateTitle( $('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0] );
+		updateTitle( document.querySelector('.output div.slide.selected') || document.querySelector('.output div.slide:first-child') );
 
-		$('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
-			let text = $(this).text();
+		output.querySelectorAll('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').forEach(e => {
+			let text = e.textContent;
 			// $(this).attr('text', text.replace(/[^a-z0-9À-ÿ\s\-\']/ig, ''));
-			$(this).attr('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
+			e.setAttribute('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
 		});
 
-		$('#output > div.slide:visible').each(function() {
-			if (isElementInViewport(this)) {
-				batchRender(this);
+		output.querySelectorAll(':scope > div.slide').forEach(e => {
+			if (isElementInViewport(e)) {
+				batchRender(e);
 			}
 		});
 		if (cranach.attr['selectedItem']) {
 			console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
 
-			$item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
-			focusOn($item[0]);
+			let item = document.querySelector('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').closest('.item_title');
+			focusOn(item);
 		} else if (cranach.attr['selectedSection']) {
-			let $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
-			let $selectedSlide = $section.closest('.slide');
-			focusOn($section[0]);
+			let section = document.querySelector('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').closest('.section_title');
+			// let selectedSlide = section.closest('.slide');
+			focusOn(section);
 		} else if (cranach.attr['selectedSlide']) {
-			let $selectedSlide = $(`.output:visible div.slide[slide="${cranach.attr['selectedSlide']}"]`);
-			focusOn($selectedSlide[0]);
+			let selectedSlide = document.querySelector(`.output div.slide[slide="${cranach.attr['selectedSlide']}"]`);
+			focusOn(selectedSlide);
 		}
 
 		// else if ($('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').length > 0 ){
@@ -42,39 +41,42 @@ function postprocess(cranach) {
 		// }
 
 		if (cranach.attr['selectedKeyword']) {
-			let $selectedSlide = $('.output:visible div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
-			focusOn($selectedSlide[0], cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
+			let selectedSlide = document.querySelector('.output div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
+			focusOn(selectedSlide, cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
 		}
 
-		// https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
-		$("[data-bs-toggle=popover]").popover({
-			html : true,
-			content: function() {
-				html = 'Loading...';
-				return html;
-			}
-		});
-		$('[data-bs-toggle="popover"]').on('shown.bs.popover', function() {
-			$('.popover-body').each(function() {
-				let id = $(this).closest('.popover').attr('id');
-				let popoverBody = this;
-				$(popoverBody).html('');
-				$('[aria-describedby="' + id + '"]').find('a.dropdown-item').each(function() {
-					$(popoverBody).append($(this).clone().removeClass('hidden'));
+		document.querySelectorAll("[data-bs-toggle=popover]").forEach(e => {
+			let html = 'loading...';
+			let popover = new bootstrap.Popover(e, {
+				html : true,
+				content: function() {
+					return html;
+				}
+			});
+			e.addEventListener('shown.bs.popover', function() {
+				let popoverBody =  document.getElementById(this.getAttribute('aria-describedby'))
+				.querySelector('.popover-body');
+				popoverBody.innerHTML = '';
+				this.querySelectorAll('a.dropdown-item').forEach(item => {
+					item.classList.remove('hidden');
+					popoverBody.append(item);
 				});
 			});
 		});
 
 		if (cranach.attr['lectureMode']) {
 			console.log('LECTURE MODE');
-			$('[data-lecture-skip="true"]').addClass('lecture_skip');
+			document.querySelectorAll('[data-lecture-skip="true"]').forEach(e => {
+				e.classList.add('lecture_skip');
+			});
 		}
 
-		$('#loading_icon').hide();
-		$('#right_half .navbar').show();
+		document.getElementById('loading_icon').style.display = 'none';
+		document.querySelector('#right_half .navbar').classList.remove('hidden');
+		document.querySelector('#right_half .navbar').style.display = 'block';
 		if (cranach.attr['present']) {
 			console.log('PRESENT MODE');
-			$('#present_button').click();
+			showSlide(null, cranach);
 		}
 
 	});

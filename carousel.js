@@ -148,28 +148,35 @@ function updateCarouselSlide(slide, content = null) {
 	});
 }
 
-function showSlide(slide, cranach) {
-	console.log('showSlide');
-	// document.querySelector('#output').outerHTML = document.querySelector('#output').outerHTML;
-    $('.pane').removeClass('info')
-    .removeClass('overview')
-    .removeClass('compose')
-    .addClass('present');
+function showSlide(slide = null, cranach) {
+	if (slide === null) {
+		slide = document.querySelector('#output > div.slide.selected')
+		|| document.querySelector('#output > div.slide');
+	}
+	MathJax.startup.promise.then(() => {
+		console.log('showSlide');
+		// document.querySelector('#output').outerHTML = document.querySelector('#output').outerHTML;
+		document.querySelectorAll('.pane').forEach(e => {
+			e.classList.remove('info')
+			e.classList.remove('overview')
+			e.classList.remove('compose')
+			e.classList.add('present');
+		});
 
-    $('#output').addClass('present');
+		document.getElementById('output').classList.add('present');
 
-    let $slide = $(slide);
-	$slide.addClass('selected');
-	$slide.addClass('active');
-	let slideNum = parseInt($slide.attr('slide'));
+		slide.classList.add('selected');
+		slide.classList.add('active');
+		let slideNum = parseInt(slide.getAttribute('slide'));
 
-	updateCarousel(slideNum);
-	updateCarouselEvent();
-	updateCarouselSlide(slide);
+		updateCarousel(slideNum);
+		updateCarouselEvent();
+		updateCarouselSlide(slide);
 
-    cranach.then(renderer => {
-        updateModal(renderer);
-    });
+		cranach.then(renderer => {
+			updateModal(renderer);
+		});
+	});
 
 	// $('#output').attr('data-selected-slide', slideNum);
 }
