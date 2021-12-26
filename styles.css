@@ -26,6 +26,13 @@ body {
     font-family: monospace;
 }
 
+/* #right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output :not(h1, h2, h3, h4, h5, strong, b, .title, .material-icons-outlined, .material-icons, a, button, [wbtag="ignore"]) */
+
+#right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output > .paragraphs, #right_half.dimmed #output :not(.title) > .paragraphs {
+	background-color: #222;
+	color: #bbb;
+}
+
 .paragraphs {
 	white-space:normal;
 }
@@ -456,6 +463,7 @@ display:block;
     color:SteelBlue;
     opacity:0.25;
     z-index:500;
+	display:block;
 }
 .present .carousel-indicators {
     top: 0 !important;
@@ -562,7 +570,7 @@ b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h
     background-color:#ff0;
 }
 .hidden, .comment, .hidden_collapse {
-display:none;
+display:none !important;
 }
 #info_statements {
     overflow-wrap: break-word;

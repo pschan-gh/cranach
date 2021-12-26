@@ -46,7 +46,7 @@ function postprocess(cranach) {
 		}
 
 		document.querySelectorAll("[data-bs-toggle=popover]").forEach(e => {
-			let html = 'loading...';
+			let html = '<div class="loading">loading...</div>';
 			let popover = new bootstrap.Popover(e, {
 				html : true,
 				content: function() {
@@ -56,7 +56,9 @@ function postprocess(cranach) {
 			e.addEventListener('shown.bs.popover', function() {
 				let popoverBody =  document.getElementById(this.getAttribute('aria-describedby'))
 				.querySelector('.popover-body');
-				popoverBody.innerHTML = '';
+				if (popoverBody.querySelector('.loading') !== null) {
+					popoverBody.querySelector('.loading').remove();
+				}
 				this.querySelectorAll('a.dropdown-item').forEach(item => {
 					item.classList.remove('hidden');
 					popoverBody.append(item);

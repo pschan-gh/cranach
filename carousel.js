@@ -99,17 +99,18 @@ function updateCarouselEvent() {
 		});
 
 		// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-		let menu_timer = null;
-		$('#right_half').off('mousemove');
-		$('#right_half').mousemove(function() {
-			clearTimeout(menu_timer);
-			$(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-			$('.present .controls.carousel-indicators').css('display', 'flex');
-			menu_timer = setTimeout(function () {
-				$(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
-				$(".controls").hide();
-			}, 1000);
-		})
+		// let menu_timer = null;
+		// $('#right_half').off('mousemove');
+		// $('#right_half').mousemove(function() {
+		// 	clearTimeout(menu_timer);
+		// 	document.querySelector(".present .menu_container .navbar-nav, .present .controls, .present .slide_number.hidden").classList.remove('hidden');
+		// 	$('.present .controls.carousel-indicators').css('display', 'flex');
+		// 	menu_timer = setTimeout(function () {
+		// 		// $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+		// 		document.querySelector(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").classList.add('hidden');
+		// 		$(".controls").hide();
+		// 	}, 1000);
+		// })
 	// });
 }
 
@@ -355,61 +356,4 @@ function addCanvas(slide) {
 	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
 		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
 	});
-
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-	// $('#output.present').scroll(function(event) {
-	// 	let element = event.target;
-	// 	if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-	// 		$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-	// 	}
-	// });
-
-	// document.querySelector('#output.present').addEventListener('wheel', function(event) {
-	// 	let element = document.querySelector('#output');
-	// 	if (event.deltaY > 0) {
-	// 		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-	// 			element.querySelector('div.slide.active > .slide_container > .slide_content').style['padding-bottom'] = '15em';
-	// 			adjustHeight();
-	// 		}
-	// 	}
-	// });
-
-	// $('.carousel').on('slid.bs.carousel', function () {
-	// 	$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-	// 	$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-	//
-	// 	let $slide = $('#output > div.carousel-item.active').first();
-	// 	let slideNum = parseInt($slide.attr('slide'));
-	// 	$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
-	//
-	// 	let $slides = $('#output > div.slide');
-	// 	let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-	// 	let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-	//
-	// 	if ($slides.length > 50) {
-	// 		$('.tooltip').remove();
-	// 		$('.carousel-indicators div.tooltip').remove();
-	// 		$(".carousel-indicators").html('');
-	//
-	// 		$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
-	// 		$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
-	// 		$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
-	//
-	// 		if (prevNum < slideNum) {
-	// 			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
-	// 		}
-	// 		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
-	// 		if (nextNum > slideNum) {
-	// 			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
-	// 		}
-	// 		$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
-	// 		$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
-	// 	}
-	// 	$('#output').attr('data-selected-slide', slideNum);
-	// 	updateCarouselSlide();
-	// });
-	//
-
-});
