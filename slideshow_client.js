@@ -33,28 +33,21 @@ function renderTexSource(slide) {
 }
 
 function inlineEdit(enableEdit, editor) {
-	// hideAnnotate();
-	let outputDiv = document.querySelector('#output');
-	let slide = outputDiv.querySelector('div.slide.selected') != null ? outputDiv.querySelectorAll('div.slide.selected')[0] : outputDiv.querySelectorAll('div.slide')[0];
+	let outputDiv = document.getElementById('output');
+	let slide = outputDiv.querySelector('div.slide.selected') !== null ? outputDiv.querySelector('div.slide.selected') : outputDiv.querySelector('#output > div.slide');
 
 	slide.setAttribute('contentEditable', enableEdit);
 
 	if (!enableEdit) {
 		MathJax.texReset();
-
-		// $('#output').css('display', '');
-		// $('#output div.slide').css('display', '');
-
+		
 		renderSlide(slide);
 
 		editor.container.style.pointerEvents="auto";
 		editor.container.style.opacity = 1; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", false);
-
 		adjustHeight();
-
 	} else {
-
 		removeTypeset(slide);
 		slide.classList.add('edit');
 		slide.classList.remove('tex2jax_ignore');
@@ -326,11 +319,11 @@ function imagePostprocess(image) {
 		if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
 			return 1;
 		}
-        
-        let override = false;        
+
+        let override = false;
         if (image.closest('.image') !== null) {
             let image_width = image.closest('.image').style.width;
-            
+
             if (image.closest('.image') !== null) {
                 image.closest('.image').style.height = '';
             }
@@ -340,7 +333,7 @@ function imagePostprocess(image) {
             if (image.closest('.dual-right') !== null) {
                 image.closest('.dual-right').style.height = '';
             }
-            
+
             override = (image.closest('.image').style.width !== null && typeof image.closest('.image').style.width !== 'undefined' && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600))
         }
 

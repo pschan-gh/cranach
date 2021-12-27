@@ -221,9 +221,9 @@ function openXML(renderer, filePath) {
 			return cranach.displayCranachDocToHtml();
 		}).then(cranach => {
 			postprocess(cranach);
-            console.log(cranach.cranachDoc);
-			convertCranachDocToWb(cranach.cranachDoc, editor);
-			$('#loading_icon').hide();
+            // console.log(cranach.cranachDoc);
+			// convertCranachDocToWb(cranach.cranachDoc, editor);
+			document.getElementById('loading_icon').classList.add('hidden');
 			return cranach;
 		});
 	}, false);

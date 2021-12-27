@@ -3,12 +3,12 @@ function commitWb(editor) {
 
 	fetch('xsl/html2juengere.xsl')
     .then(response => response.text())
-    .then(xsl => {        
+    .then(xsl => {
         xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
         let preCranachDoc = xsltProcessor.transformToDocument(body,document);
 		fetch('xsl/cranach.xsl')
         .then(response => response.text())
-        .then(xsl => {            
+        .then(xsl => {
             $('#source_text').val('');
 			xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 			console.log('HTML2PRELOVU');
@@ -46,7 +46,7 @@ function convertCranachDocToWb(cranachDoc, editor) {
 			.replace(/^\n/, '')
 			.replace(/ *\n/g, "\n")
 			, 1);
-			$('#output div.slide').addClass('tex2jax_ignore');
-			inlineEdit(false, editor);
+		document.querySelectorAll('#output > div.slide').forEach(e => e.classList.add('tex2jax_ignore'));
+		inlineEdit(false, editor);
 		});
 	}
