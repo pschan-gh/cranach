@@ -1,26 +1,25 @@
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
 
+    let slides = document.querySelectorAll('#output > div.slide');
+
+    if (slides === null) {
+        return 0;
+    }
 	bootstrap.Carousel.getOrCreateInstance(document.querySelector('#right_half'), {
 		dispose: true
 	});
 
-	let $slides = $('#output > div.slide');
+    let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
+    let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
 
-    if ($slides.length == null || $slides.length == 0) {
-        return 0;
-    }
-
-    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-    let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-
-	$('.tooltip').remove();
-	$('.carousel-indicators div.tooltip').remove();
-	$(".carousel-indicators").html('');
+	// $('.tooltip').remove();
+	// $('.carousel-indicators div.tooltip').remove();
+	document.querySelector(".carousel-indicators").innerHTML = '';
 	document.querySelector('.carousel-indicators').outerHTML = document.querySelector('.carousel-indicators').outerHTML;
 	document.querySelector('.controls_container').outerHTML = document.querySelector('.controls_container').outerHTML;
 
-    if ($slides.length > 50) {
+    if (slides.length > 50) {
 		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
 		$('#output > div.slide[slide="' + slideNum + '"]').addClass('carousel-item').removeClass('hidden');
 		$('#output > div.slide[slide="' + prevNum + '"]').addClass('carousel-item').removeClass('hidden');
@@ -35,28 +34,46 @@ function updateCarousel(slideNum) {
 		}
 		$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
     } else {
-		$('#output > div.slide').addClass('carousel-item').removeClass('hidden');
+		document.querySelectorAll('#output > div.slide').forEach(e => {
+            e.classList.add('carousel-item');
+            e.classList.remove('hidden');
+        });
 		let activeIndex = 0;
-		$slides.each(function(index) {
-			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
-			if (this.getAttribute('slide') == slideNum) {
+        console.log(slideNum);
+		slides.forEach((e, index) => {
+            let button = document.createElement('button');
+            button.setAttribute('type', 'button');
+            button.setAttribute('aria-label', `Slide ${e.getAttribute('slide')}`);
+            button.setAttribute('title', `Slide ${e.getAttribute('slide')}`);
+            button.dataset['bsTarget'] = "#right_half";
+            button.dataset['bsSlideTo'] = `${index}`;
+            button.dataset['bsToggle'] = "tooltip";
+            button.dataset['bsPlacement'] = "bottom";
+                        
+			// $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
+			if (e.getAttribute('slide') == slideNum) {
 				activeIndex = index;
-			}
+                button.classList.add('active');
+                button.setAttribute('aria-current', 'true');
+			}            
+            document.querySelector(".carousel-indicators").appendChild(button);
 		});
-		$(`.carousel-indicators button[data-bs-slide-to="${activeIndex}"]`)
-		.addClass('active')
-		.attr('aria-current', "true");
     }
 
-	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+	document.querySelectorAll(".carousel-indicators button").forEach(e => {
+        bootstrap.Tooltip.getOrCreateInstance(e, {
+            delay: { "show": 0, "hide": 0 }
+        });
+    });
+    // tooltip({'delay': { show: 0, hide: 0 }});
+    
+	document.querySelector('#output > div.slide.carousel-item[slide="' + slideNum + '"]').classList.add('active');
+    document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + slideNum;
+    document.querySelector('#right_half .slide_number button').setAttribute('slide', slideNum);
 
-	$('#output > div.slide.carousel-item[slide="' + slideNum + '"]').addClass('active');
-    $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-    $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-
-	$('.carousel').off();
+	// $('.carousel').off();
 	new bootstrap.Carousel(document.querySelector('#right_half'));
-	$('#right_half').addClass('carousel').addClass('slide');
+	document.getElementById('right_half').classList.add('carousel', 'slide');
 
 }
 
@@ -64,54 +81,57 @@ function updateCarouselEvent() {
 
 	// $('.carousel').off('shown.bs.collapse', 'hidden.bs.collapse', 'slid.bs.carousel');
 	// document.addEventListener('DOMContentLoaded', () => {
-		$('.carousel').on('slid.bs.carousel', function () {
-			$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-			$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+    document.querySelector('.carousel').addEventListener('slid.bs.carousel', function () {
+        document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + document.querySelector('.carousel-item.active').getAttribute('slide');
+        document.querySelector('#right_half .slide_number button').setAttribute('slide', document.querySelector('.carousel-item.active').getAttribute('slide'));
 
-			let $slide = $('#output > div.carousel-item.active').first();
-			let slideNum = parseInt($slide.attr('slide'));
-			$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
+        let slide = document.querySelector('#output > div.carousel-item.active');
+        let slideNum = parseInt(slide.getAttribute('slide'));
+        document.querySelector('#output > div.slide[slide="' + slideNum + '"]').classList.add('selected');
 
-			let $slides = $('#output > div.slide');
-			let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-			let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
+        let slides = document.querySelectorAll('#output > div.slide');
+        let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
+        let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
+        
+        if (slides.length > 50) {
+            // $('.tooltip').remove();
+            // $('.carousel-indicators div.tooltip').remove();
+            document.querySelector(".carousel-indicators").innerHTML = '';
+            
+            document.querySelector('#output > div.slide:not([slide="' + slideNum + '"]').forEach(e => {
+                e.classList.remove('carousel-item');
+                e.classList.add('hidden');
+            });
+            document.querySelector(`#output > div.slide[slide="${prevNum}"], #output > div.slide[slide="${nextNum}"]`).forEach(e => {
+                e.classList.add('carousel-item');
+                e.classList.remove('hidden');
+            });
+            
+            if (prevNum < slideNum) {
+                $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
+            }
+            $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
+            if (nextNum > slideNum) {
+                $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
+            }
+            $('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+            $(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+        }
+        document.getElementById('output').dataset.selectedSlide = slideNum;
+    });
 
-			if ($slides.length > 50) {
-				$('.tooltip').remove();
-				$('.carousel-indicators div.tooltip').remove();
-				$(".carousel-indicators").html('');
-
-				$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
-				$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
-				$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
-
-				if (prevNum < slideNum) {
-					$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
-				}
-				$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
-				if (nextNum > slideNum) {
-					$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
-				}
-				$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
-				$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
-			}
-			$('#output').attr('data-selected-slide', slideNum);
-		});
-
-		// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-		// let menu_timer = null;
-		// $('#right_half').off('mousemove');
-		// $('#right_half').mousemove(function() {
-		// 	clearTimeout(menu_timer);
-		// 	document.querySelector(".present .menu_container .navbar-nav, .present .controls, .present .slide_number.hidden").classList.remove('hidden');
-		// 	$('.present .controls.carousel-indicators').css('display', 'flex');
-		// 	menu_timer = setTimeout(function () {
-		// 		// $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
-		// 		document.querySelector(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").classList.add('hidden');
-		// 		$(".controls").hide();
-		// 	}, 1000);
-		// })
-	// });
+    // https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
+    // let menu_timer = null;
+    // $('#right_half').off('mousemove');
+    // $('#right_half').mousemove(function() {
+    //     clearTimeout(menu_timer);
+    //     $(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+    //     $('.present .controls.carousel-indicators').css('display', 'flex');
+    //     menu_timer = setTimeout(function () {
+    //         $(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+    //         $(".controls").hide();
+    //     }, 1000);
+    // })
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -149,35 +169,35 @@ function updateCarouselSlide(slide, content = null) {
 	});
 }
 
-function showSlide(slide = null, cranach) {
-	if (slide === null) {
-		slide = document.querySelector('#output > div.slide.selected')
-		|| document.querySelector('#output > div.slide');
-	}
-	MathJax.startup.promise.then(() => {
-		console.log('showSlide');
-		// document.querySelector('#output').outerHTML = document.querySelector('#output').outerHTML;
-		document.querySelectorAll('.pane').forEach(e => {
-			e.classList.remove('info')
-			e.classList.remove('overview')
-			e.classList.remove('compose')
-			e.classList.add('present');
-		});
+function showSlide(slide, cranach) {
+	console.log('showSlide');
+	// document.querySelector('#output').outerHTML = document.querySelector('#output').outerHTML;
+    if (slide == null) {
+        if (document.querySelector('div.slide.selected') !== null) {
+            slide = document.querySelector('div.slide.selected');
+        } else {
+            slide = document.querySelector('#output > div.slide');
+        }
+    }
+    $('.pane').removeClass('info')
+    .removeClass('overview')
+    .removeClass('compose')
+    .addClass('present');
 
-		document.getElementById('output').classList.add('present');
+    $('#output').addClass('present');
 
-		slide.classList.add('selected');
-		slide.classList.add('active');
-		let slideNum = parseInt(slide.getAttribute('slide'));
+    let $slide = $(slide);
+	// $slide.addClass('selected');
+	// $slide.addClass('active');
+	let slideNum = parseInt($slide.attr('slide'));
 
-		updateCarousel(slideNum);
-		updateCarouselEvent();
-		updateCarouselSlide(slide);
+	updateCarousel(slideNum);
+	updateCarouselEvent();
+	updateCarouselSlide(slide);
 
-		cranach.then(renderer => {
-			updateModal(renderer);
-		});
-	});
+    cranach.then(renderer => {
+        updateModal(renderer);
+    });
 
 	// $('#output').attr('data-selected-slide', slideNum);
 }
@@ -200,7 +220,7 @@ function hideCarousel() {
     .removeClass('active')
     .removeClass('hidden')
     .addClass('tex2jax_ignore');
-    $('.controls').hide();
+    $('.controls').addClass('hidden');
     $('#output .slide_content').css('padding-bottom', '');
 
     $('#output > div.slide.selected')[0].scrollIntoView();

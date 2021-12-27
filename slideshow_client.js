@@ -165,6 +165,8 @@ function batchRender(slide) {
 
 function updateSlideContent(slide, carousel = false) {
 	console.log('updateSlideContent');
+    document.querySelectorAll('#output > div.slide').forEach(e => e.classList.remove('selected', 'active'));
+    slide.classList.add('selected', 'active');
 	batchRender(slide);
 	slide.querySelectorAll('iframe.hidden').forEach(e => {
 		if (e.closest('div.comment') !== null) {
@@ -317,25 +319,30 @@ function imagePostprocess(image) {
 	image.src = image.dataset.src;
 	image.onload = function() {
 		// $(image).closest('.image').find('.loading_icon').hide();
-		image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
+        if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
+            image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
+        }
 		image.classList.remove('loading');
 		if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
 			return 1;
 		}
-
-		let image_width = image.closest('.image').style.width;
-
-		if (image.closest('.image') !== null) {
-			image.closest('.image').style.height = '';
-		}
-		if (image.closest('.dual-left') !== null) {
-			image.closest('.dual-left').style.height = '';
-		}
-		if (image.closest('.dual-right') !== null) {
-			image.closest('.dual-right').style.height = '';
-		}
-
-		let override = (image.closest('.image').style.width !== null && typeof image.closest('.image').style.width !== 'undefined' && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600))
+        
+        let override = false;        
+        if (image.closest('.image') !== null) {
+            let image_width = image.closest('.image').style.width;
+            
+            if (image.closest('.image') !== null) {
+                image.closest('.image').style.height = '';
+            }
+            if (image.closest('.dual-left') !== null) {
+                image.closest('.dual-left').style.height = '';
+            }
+            if (image.closest('.dual-right') !== null) {
+                image.closest('.dual-right').style.height = '';
+            }
+            
+            override = (image.closest('.image').style.width !== null && typeof image.closest('.image').style.width !== 'undefined' && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600))
+        }
 
 		let width;
 		let height;
@@ -347,7 +354,9 @@ function imagePostprocess(image) {
 			} else if (!override) {
 				width = 450;
 				height = 450;
-				image.closest('.image').style.width = 450;
+                if (image.closest('.image') !== null) {
+                    image.closest('.image').style.width = 450;
+                }
 				image.setAttribute('width', width);
 			} else {
 				image.style.width = '100%';
