@@ -186,7 +186,7 @@ function showSlide(slide, cranach) {
 }
 
 function hideCarousel() {
-    if (document.getElementById('output').classList.contains('annotate')) {
+    if (document.getElementById('right_half').classList.contains('annotate')) {
         hideAnnotate();
     }
 
@@ -215,7 +215,7 @@ function adjustHeight() {
 	}
 	let selectedSlideNum = output.dataset.selectedSlide;
 	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
-	if (slide.scrollHeight >  output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
+	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
 		output.classList.add('long');
 	} else {
 		output.classList.remove('long');

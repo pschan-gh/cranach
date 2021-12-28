@@ -100,6 +100,7 @@ function lcref_click_handler($el) {
 			if ($('.carousel-item').length > 0) {
 				adjustHeight();
 				document.getElementById(lcrefid).scrollIntoView();
+				expandCanvas(document.querySelector(`#${output_id}`).closest('div.slide'));
 			}
 		});
 

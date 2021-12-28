@@ -77,7 +77,6 @@ function updateToc(cranach) {
 	if ($(`.toc`).length == 0) {
 		return 0;
 	}
-
 	$(`.toc`).each(function() {
 		$(`#toc`).html(``).append($(`#output`).find(`.toc_src`).first());
 	});
@@ -214,11 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
 				if (mutation.attributeName == `data-selected-slide`) {
 					let $slide = $(`#output div.slide[slide="${$('#output').attr('data-selected-slide')}"]`);
 					updateSlideInfo($slide[0]);
-				}
-				if (mutation.attributeName == `data-content-url`) {
-					baseRenderer.then(cranach => {
-						updateToc(cranach);
-					});
 				}
 			}
 		});
