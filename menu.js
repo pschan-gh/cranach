@@ -27,10 +27,10 @@ function hide() {
 }
 
 function unhide() {
-	document.querySelectorAll('#cover_half').style.display = 'none';
-	document.querySelectorAll('#container').style['position'] =  '';
-	document.querySelectorAll('#container').style['height'] =  '';
-	document.querySelectorAll('.slide_button').classList.remove('hide');
+	document.querySelector('#cover_half').style.display = 'none';
+	document.querySelector('#container').style['position'] =  '';
+	document.querySelector('#container').style['height'] =  '';
+	document.querySelector('.slide_button').classList.remove('hide');
 
 }
 

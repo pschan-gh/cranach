@@ -322,7 +322,10 @@ function addCanvas(slide) {
 	});
 	slide.cfd.setLineWidth(2);
 	slide.redrawCount = slide.querySelector('.annotate.redraw-count');
-	slide.cfd.canvas.style.top = -(slide.getBoundingClientRect().top);
+	let bodyRect = document.body.getBoundingClientRect();
+	let slideRect = slide.getBoundingClientRect()
+	let voffset   = slideRect.top - bodyRect.top;
+	slide.cfd.canvas.style.top = -(voffset.top);
 	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
 		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
 	});
