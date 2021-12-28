@@ -105,7 +105,7 @@ mjx-math {
     border-bottom:none;
     border-color:#ccc !important;
 }
-#right_half .navbar {
+#right_half > .navbar {
     /* position:absolute !important; */
     top:0;
     left:0;
@@ -113,6 +113,7 @@ mjx-math {
     padding-right:5px;
     display:none;
 }
+
 .light {
     color:#888;
 }
@@ -832,8 +833,8 @@ display:none;
 z-index:1500;
 font-size:1rem;
 }
-
-.annotate .canvas-controls {
+ 
+.annotate .canvas-controls, .annotate .canvas-controls .navbar {
 	display:block;
 }
 
