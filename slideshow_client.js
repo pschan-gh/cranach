@@ -40,7 +40,7 @@ function inlineEdit(enableEdit, editor) {
 
 	if (!enableEdit) {
 		MathJax.texReset();
-		
+
 		renderSlide(slide);
 
 		editor.container.style.pointerEvents="auto";
@@ -157,7 +157,7 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = false) {
-	console.log('updateSlideContent');
+	// console.log('updateSlideContent');
     document.querySelectorAll('#output > div.slide').forEach(e => e.classList.remove('selected', 'active'));
     slide.classList.add('selected', 'active');
 	batchRender(slide);

@@ -89,7 +89,7 @@ function carouselThreeSlides(slideNum, slides) {
 	let button = indicatorButton.cloneNode(true);
 	button.setAttribute('aria-label', `Slide ${slideNum}`);
 	button.setAttribute('title', `Slide ${slideNum}`);
-	button.dataset['bsSlideTo'] = `1`;
+	button.dataset['bsSlideTo'] = prevNum < slideNum ? `1` : `0`;
 	button.classList.add('active');
 	button.setAttribute('aria-current', "true");
 	document.querySelector(".carousel-indicators").appendChild(button);
@@ -97,7 +97,7 @@ function carouselThreeSlides(slideNum, slides) {
 		let button = indicatorButton.cloneNode(true);
 		button.setAttribute('aria-label', `Slide ${nextNum}`);
 		button.setAttribute('title', `Slide ${nextNum}`);
-		button.dataset['bsSlideTo'] = `2`;
+		button.dataset['bsSlideTo'] = prevNum < slideNum ? `2` : `1`;
 		document.querySelector(".carousel-indicators").appendChild(button);
 	}
 	document.querySelectorAll(".carousel-indicators button").forEach(e => {
@@ -108,7 +108,10 @@ function carouselThreeSlides(slideNum, slides) {
 }
 
 function carouselSlideHandler() {
-	console.log('carousel slide event');
+	// console.log('carousel slide event');
+
+	document.querySelectorAll('.tooltip').forEach(e => e.remove());
+
 	document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + document.querySelector('.carousel-item.active').getAttribute('slide');
 	document.querySelector('#right_half .slide_number button').setAttribute('slide', document.querySelector('.carousel-item.active').getAttribute('slide'));
 
