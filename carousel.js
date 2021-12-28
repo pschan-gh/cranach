@@ -217,6 +217,7 @@ function adjustHeight() {
 	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
 	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
 		output.classList.add('long');
+		expandCanvas(slide);
 	} else {
 		output.classList.remove('long');
 	}
@@ -247,6 +248,7 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 	if (!document.querySelector('#right_half').classList.contains('annotate')) {
 		return 0;
 	}
+	let output = document.getElementById('output');
 
 	slide.cfd.disableDrawingMode();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
@@ -257,12 +259,12 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 		MathJax.startup.promise.then(() => {
 			// https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
 			let bodyRect = document.body.getBoundingClientRect();
-			let slideRect = slide.getBoundingClientRect()
-			let voffset   = slideRect.top - bodyRect.top;
-			let output = document.getElementById('output');
+			let slideRect = slide.getBoundingClientRect();
 			slide.cfd.canvas.width = output.scrollWidth;
 			slide.cfd.canvas.height = output.scrollHeight*scale + padding;
-			slide.cfd.canvas.style.top = -(voffset.top);
+			let voffset = slideRect.top + document.getElementById('output').scrollTop;
+			slide.querySelector('canvas').style.top = -voffset;
+			// slide.cfd.canvas.top = -(voffset);
 			let ctx = slide.cfd.canvas.getContext('2d');
 			ctx.drawImage(img, 0, 0);
 			slide.cfd.enableDrawingMode();
@@ -324,8 +326,9 @@ function addCanvas(slide) {
 	slide.redrawCount = slide.querySelector('.annotate.redraw-count');
 	let bodyRect = document.body.getBoundingClientRect();
 	let slideRect = slide.getBoundingClientRect()
-	let voffset   = slideRect.top - bodyRect.top;
-	slide.cfd.canvas.style.top = -(voffset.top);
+	let voffset = slideRect.top + document.getElementById('output').scrollTop;
+	// slide.cfd.canvas.top = (voffset);
+	slide.querySelector('canvas').style.top = -voffset;
 	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
 		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
 	});
