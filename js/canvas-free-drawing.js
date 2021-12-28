@@ -49,8 +49,7 @@
 	        else if (this.canvasNode instanceof HTMLElement) {
 	            var newCanvas = document.createElement('canvas');
 	            this.canvasNode.appendChild(newCanvas);
-	            this.canvas = newCanvas;
-				this.canvas.style.top = -(this.canvas.closest('.slide.carousel-item').getBoundingClientRect().top);
+	            this.canvas = newCanvas;				
 	        }
 	        else {
 	            throw new Error("No element found with following id: " + this.elementId);

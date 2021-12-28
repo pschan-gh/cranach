@@ -178,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		clearTimeout(menu_timer);
 		// document.querySelectorAll(".present .menu_container .navbar-nav, .present .controls, .present .slide_number:not(.hidden)").fadeIn();
 		document.querySelectorAll(".present .menu_container .navbar-nav, .controls, .present .slide_number").forEach(e => e.classList.remove('hidden'));
-		document.querySelectorAll('.present .controls.carousel-indicators').forEach(e => {e.style['display'] = 'flex';});
 		menu_timer = setTimeout(function () {
 			// document.querySelectorAll(".present .menu_container.fadeout .navbar-nav, .present .slide_number").fadeOut();
 			document.querySelectorAll(".present .menu_container .navbar-nav, .present .slide_number").forEach(e => {
