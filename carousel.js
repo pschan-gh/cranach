@@ -66,7 +66,9 @@ function updateCarousel(slideNum) {
 function carouselThreeSlides(slideNum, slides) {
 
 	let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
+	// let prevNum = slideNum - 1;
     let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
+	// let nextNum = slideNum + 1;
 
 	document.querySelector(".carousel-indicators").innerHTML = '';
 
@@ -80,24 +82,28 @@ function carouselThreeSlides(slideNum, slides) {
 	});
 
 	if (prevNum < slideNum) {
+	// if (prevNum > 0) {
 		let button = indicatorButton.cloneNode(true);
 		button.setAttribute('aria-label', `Slide ${prevNum}`);
 		button.setAttribute('title', `Slide ${prevNum}`);
 		button.dataset['bsSlideTo'] = `0`;
+		button.dataset['bsSlideTo'] = nextNum > slideNum ? `0` : `1`;
 		document.querySelector(".carousel-indicators").appendChild(button);
 	}
 	let button = indicatorButton.cloneNode(true);
 	button.setAttribute('aria-label', `Slide ${slideNum}`);
 	button.setAttribute('title', `Slide ${slideNum}`);
-	button.dataset['bsSlideTo'] = prevNum < slideNum ? `1` : `0`;
+	// button.dataset['bsSlideTo'] = prevNum < slideNum ? `1` : `0`;
 	button.classList.add('active');
 	button.setAttribute('aria-current', "true");
 	document.querySelector(".carousel-indicators").appendChild(button);
 	if (nextNum > slideNum) {
+	// if (nextNum <= slides.length) {
 		let button = indicatorButton.cloneNode(true);
 		button.setAttribute('aria-label', `Slide ${nextNum}`);
 		button.setAttribute('title', `Slide ${nextNum}`);
 		button.dataset['bsSlideTo'] = prevNum < slideNum ? `2` : `1`;
+		// button.dataset['bsSlideTo'] = prevNum > 0 ? `2` : `1`;
 		document.querySelector(".carousel-indicators").appendChild(button);
 	}
 	document.querySelectorAll(".carousel-indicators button").forEach(e => {
