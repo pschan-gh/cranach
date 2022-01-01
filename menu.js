@@ -109,6 +109,8 @@ function resizeFont(multiplier, element = document.querySelectorAll('.output:vis
 // }
 
 document.addEventListener('DOMContentLoaded', () => {
+	updateSlideSelector();
+	
 	let menuObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {

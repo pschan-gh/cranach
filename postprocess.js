@@ -1,14 +1,16 @@
 function postprocess(cranach) {
 	console.log('POSTPROCESS');
+	document.getElementById('loading_icon').classList.add('hidden');
 
-	document.addEventListener('DOMContentLoaded', () => {
+	// document.addEventListener('DOMContentLoaded', () => {
+
 		let output = document.getElementById('output');
 		output.dataset.contentUrl = cranach.attr['contentURL'];
 		output.dataset.query = cranach.attr['query'];
 		updateSlideClickEvent();
 		updateScrollEvent();
 		updateKeywords();
-		updateTitle( document.querySelector('.output div.slide.selected') || document.querySelector('.output div.slide:first-child') );
+		updateTitle( document.querySelector('.output div.slide.selected') || document.querySelector('.output div.slide') );
 
 		output.querySelectorAll('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').forEach(e => {
 			let text = e.textContent;
@@ -31,7 +33,7 @@ function postprocess(cranach) {
 			// let selectedSlide = section.closest('.slide');
 			focusOn(section);
 		} else if (cranach.attr['selectedSlide']) {
-			let selectedSlide = document.querySelector(`.output div.slide[slide="${cranach.attr['selectedSlide']}"]`);
+			let selectedSlide = document.querySelector(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"], .output > div.slide`);
 			focusOn(selectedSlide);
 		}
 
@@ -73,7 +75,7 @@ function postprocess(cranach) {
 			});
 		}
 
-		document.getElementById('loading_icon').style.display = 'none';
+		document.getElementById('loading_icon').classList.add('hidden');
 		document.querySelector('#right_half .navbar').classList.remove('hidden');
 		document.querySelector('#right_half .navbar').style.display = 'block';
 		if (cranach.attr['present']) {
@@ -98,6 +100,6 @@ function postprocess(cranach) {
 		contentUrlObserver.observe(document.getElementById(`output`), {
 			attributes: true,
 		});
-	});
+	// });
 
 }

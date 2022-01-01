@@ -1,6 +1,7 @@
 const domparser = new DOMParser();
 const xsltProcessor = new XSLTProcessor();
 
+
 function nsResolver(prefix) {
 	let ns = {
 		'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
@@ -52,56 +53,56 @@ function Cranach(url) {
 
 	this.loadMacros = function() {
 		return new Promise((resolve, reject) => {
-			let el = this;
-			fetch(el.attr['dir'] + '/macros.tex')
+			// let el = this;
+			fetch(this.attr['dir'] + '/macros.tex')
             .then(function(response) {
                 if (!response.ok) {
-                    throw Error(response.statusText);                    
+                    throw Error(response.statusText);
                 }
                 console.log('MACROS FILE FOUND');
                 return response.text();
             })
             .then(macroString => {
-                el.macrosString = macroString;
-                el.macros = domparser.parseFromString('<div>\\(' + el.macrosString + '\\)</div>', "text/xml");
-                resolve(el);
+                this.macrosString = macroString;
+                this.macros = domparser.parseFromString('<div>\\(' + this.macrosString + '\\)</div>', "text/xml");
+                resolve(this);
             })
             .catch(error => {
                 console.log(error);
-                el.macrosString = '';
-                el.macros = domparser.parseFromString('<div>\\(\\)</div>', "text/xml");
-                resolve(el);
+                this.macrosString = '';
+                this.macros = domparser.parseFromString('<div>\\(\\)</div>', "text/xml");
+                resolve(this);
             });
 		});
 	}
 
 	this.loadIndex = function() {
-		let el = this;
-		let url = el.attr['dir'] + '/' + el.attr['index'] + '?version='+ Math.random().toString();
+		// let el = this;
+		let url = this.attr['dir'] + '/' + this.attr['index'] + '?version='+ Math.random().toString();
 
 		return new Promise((resolve, reject) => {
 			fetch(url)
 			    .then(response => {
 					if (!response.ok) {
-                        throw Error("INDEX FILE DOESN'T EXIST");            
+                        throw Error("INDEX FILE DOESN'T EXIST");
 					}
                     return response.text();
 				})
 				.then(xmltext => {
-					el.indexDoc = domparser.parseFromString(xmltext, "text/xml");
-					resolve(el);
+					this.indexDoc = domparser.parseFromString(xmltext, "text/xml");
+					resolve(this);
 				})
                 .catch(error => {
                     console.log(error);
-                    el.indexDoc = null;
-                    resolve(el);
+                    this.indexDoc = null;
+                    resolve(this);
                 });
 		});
 	}
 
 	this.setup = function(options) {
 		this.output = document.getElementById(this.attr['outputID']);
-		
+
 		if(options) {
 			for (let key in options){
 				if(options.hasOwnProperty(key)){
@@ -171,7 +172,7 @@ function Cranach(url) {
 			}
 		}
 
-		let el = this;
+		// let el = this;
 
 		return this.loadMacros()
 		.then(cranach => cranach.loadIndex())
@@ -183,31 +184,33 @@ function Cranach(url) {
 				this.indexDoc = docDom;
 			}
 			let el = cranach;
-			if (el.attr['xmlPath']) {
+			if (this.attr['xmlPath']) {
 				return new Promise((resolve, reject) => {
-					fetch(el.attr['xmlPath'] + '?version=' + Math.random())
+					fetch(this.attr['xmlPath'] + '?version=' + Math.random())
 					.then(function(response) {
 						if (!response.ok) {
                             throw Error('FILE NOT FOUND');
-                        } 
+                        }
                         return response.text();
 					})
 					.then(xmltext => {
-						$('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
-						el.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
-                        console.log(el.cranachDoc);
-						resolve(el);
+						const progressBar = document.querySelector('.progress-bar');
+						progressBar.style.width = '50%';
+						progressBar.setAttribute('aria-valuenow', '50');
+						this.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
+                        console.log(this.cranachDoc);
+						resolve(this);
 					})
                     .catch(error => {
-                        alert(error);                        
+                        alert(error);
                         console.log(error);
-                        el.cranachDoc = null;
-                        resolve(el);
+                        this.cranachDoc = null;
+                        resolve(this);
                     });
 				});
-			} else if (el.attr['wbPath']) {
+			} else if (this.attr['wbPath']) {
 				return new Promise((resolve, reject) => {
-					fetch(el.attr['wbPath'] + '?version=' + Math.random())
+					fetch(this.attr['wbPath'] + '?version=' + Math.random())
 					.then(response => {
 						if (!response.ok) {
                             throw Error('FILE NOT FOUND');
@@ -215,14 +218,14 @@ function Cranach(url) {
                         return response.text();
 					})
 					.then(wb => {
-						el.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
-						resolve(el);
+						this.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
+						resolve(this);
 					})
                     .catch(error => {
                         alert(error);
                         console.error(error);
-                        el.preCranachDoc = null;
-                        resolve(el);
+                        this.preCranachDoc = null;
+                        resolve(this);
                     });
 				});
 			} else {
@@ -259,7 +262,7 @@ function Cranach(url) {
 	/* interact with Browser */
 
 	this.preCranachDocToCranachDoc = function() {
-		let el = this;
+		// let el = this;
 		let indexDom = this.indexDoc;
 		let preCranachDoc = this.preCranachDoc;
 
@@ -275,14 +278,13 @@ function Cranach(url) {
 					report('PRECRANACHTOCRANACH');
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
-					el.cranachDoc = cranachDoc;
-					resolve(el);
+					this.cranachDoc = cranachDoc;
+					resolve(this);
 				});
 		});
 	}
 
 	this.displayPreCranachDocToHtml = function() {
-		$(output).find('#loading_icon').show();
 		return this.preCranachDocToCranachDoc().then(renderer => {
 			return renderer.updateIndexAndRender();
 		});
@@ -290,51 +292,30 @@ function Cranach(url) {
 	this.displayCranachDocToHtml = function() {
 		report('IN DISPLAYCRANACHDOCTOHTML');
 		let xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
-		let el = this;
 		let output = this.output;
-		// console.log(output);
-		$(output).find('#loading_icon').show();
-		$(output).find('.progress-bar').first().css('width', '50%').attr('aria-valuenow', '50');
-		// return new Promise((resolve, reject) => {
-		// 	$.ajax({
-		// 		url: xsl,
-		// 		dataType: "xml"
-		// 	})
-		// 	.done(function(wbxslFile) {
-		// 		$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
-		// 		setTimeout(function() {
-		// 			xsltProcessor.importStylesheet(wbxslFile);
-		// 			xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
-		// 			xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
-		// 			xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
-		// 			$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
-		// 			setTimeout(function() {
-		// 				let cranachDoc = el.cranachDoc;
-		// 				let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
-		// 				$(output).html('');
-		// 				$(output).append(fragment);
-		// 				resolve(el);
-		// 			}, 0);
-		// 		}, 0);
-		// 	});
-		// });
+		const progressBar = document.querySelector('.progress-bar');
+		progressBar.style.width = '50%';
+		progressBar.setAttribute('aria-valuenow', '50');
+
 		return new Promise((resolve, reject) => {
 			fetch(xsl)
 			    .then(response => response.text())
 				.then(xsltext => {
-					$(output).find('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
-					setTimeout(function() {
+					progressBar.style.width = '75%';
+					progressBar.setAttribute('aria-valuenow', '75');
+					setTimeout(() => {
 						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
-						xsltProcessor.setParameter('', 'contenturl', el.attr['contentURL']);
-						xsltProcessor.setParameter('', 'contentdir', el.attr['dir']);
-						$(output).find('.progress-bar').css('width', '80%').attr('aria-valuenow', '80');
-						setTimeout(function() {
-							let cranachDoc = el.cranachDoc;
+						xsltProcessor.setParameter('', 'contenturl', this.attr['contentURL']);
+						xsltProcessor.setParameter('', 'contentdir', this.attr['dir']);
+						progressBar.style.width = '80%';
+						progressBar.setAttribute('aria-valuenow', '80');
+						setTimeout(() => {
+							let cranachDoc = this.cranachDoc;
 							let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
-							$(output).html('');
-							$(output).append(fragment);
-							resolve(el);
+							output.innerHTML = '';
+							output.appendChild(fragment);
+							resolve(this);
 						}, 0);
 					}, 0);
 				});
@@ -348,6 +329,7 @@ function Cranach(url) {
 
 		let cranachDoc = this.cranachDoc;
 		let queryString = this.attr['query'];
+		const progressBar = document.querySelector('.progress-bar');
 		if (queryString != '') {
 
 			let queries = cranachDoc.evaluate(queryString, cranachDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -361,8 +343,9 @@ function Cranach(url) {
 			}
 			queryDom.appendChild(bare);
 
-			$('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
-			let el = this;
+			progressBar.style.width = '75%';
+			progressBar.setAttribute('aria-valuenow', '75');
+			// let el = this;
 
 			this.preCranachDoc = queryDom;
 			return this.updateIndex().then(cranach => {
@@ -373,7 +356,8 @@ function Cranach(url) {
 
 		} else {
 			this.cranachDoc = cranachDoc;
-			$('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
+			progressBar.style.width = '75%';
+			progressBar.setAttribute('aria-valuenow', '75');
 
 			return this.displayCranachDocToHtml();
 		}
@@ -455,16 +439,16 @@ function Cranach(url) {
 			preindexDom.appendChild(branch);
 		}
 
-		let el = this;
+		// let el = this;
 		return new Promise((resolve, reject) => {
 			fetch('xsl/akhawunti.xsl')
-			    .then(response => response.text())
-				.then(function(xsltext) {
-					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
-					let indexDoc = xsltProcessor.transformToDocument(preindexDom);
-					el.indexDoc = indexDoc;
-					resolve(el);
-				});
+			.then(response => response.text())
+			.then(xsltext => {
+				xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
+				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
+				this.indexDoc = indexDoc;
+				resolve(this);
+			});
 		});
 
 	}
@@ -472,7 +456,7 @@ function Cranach(url) {
 	this.displayIndexDocToHtml = function(target) {
 		let contentURLDir = this.attr['rootURL'] + '\/?xml=' + this.attr['dir']
 		let indexDoc = this.indexDoc;
-		let el = this;
+		// let el = this;
 		return new Promise((resolve, reject) => {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
@@ -480,9 +464,9 @@ function Cranach(url) {
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);
-					$(target).html('');
-					$(target).append(fragment);
-					resolve(el);
+					target.innerHTML = ''
+					target.appendChild(fragment);
+					resolve(this);
 			    });
 		});
 	}
@@ -515,7 +499,7 @@ function Cranach(url) {
 		let reader  = new FileReader();
 		reader.addEventListener("load", function () {
 			report(reader.result);
-			$('#source_text').val(reader.result);
+			document.getElementById('source_text').value = reader.result;
 		}, false);
 		reader.readAsText(file);
 	}

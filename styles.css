@@ -1023,9 +1023,11 @@ border:none !important;
 #main_edit_menu {
 background-color: hsla(0, 0%, 50%, 1);
 }
-.keywords, .keyword {
+
+/* .keywords, .keyword {
     display:none;
-}
+} */
+
 .dropdown-menu.keywords, .popover {
 min-width:5em !important;
 box-shadow: 5px 5px 2px hsla(0,0%,0%,0.5);

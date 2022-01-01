@@ -35,7 +35,7 @@ function updateEditor(cranach) {
 		let pastBuffer = editor.getValue().substring(0, editor.session.doc.positionToIndex(editor.selection.getCursor()))
 		.replace(/@sep/g, '@slide')
 		.replace(/\<!--(.|\n)*?--\>/g, '');
-		let currentSlide = pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
+		let currentSlide = pastBuffer === null ? 1 : pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
 		let o = new Option(currentSlide.toString(), currentSlide);
 		$("#render_sel").append(o);
 		$("#render_sel").append('<hr/>');
