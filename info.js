@@ -218,7 +218,6 @@ function updateSlideInfo(slide) {
 			chapter.classList.remove('hidden');
 		});
 	}
-	document.querySelectorAll(`#output div.slide`).forEach(el => el.classList.remove(`selected`));
 }
 
 document.addEventListener('DOMContentLoaded', function () {

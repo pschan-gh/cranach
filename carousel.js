@@ -172,8 +172,8 @@ function updateCarouselSlide(slide, content = null) {
 function showSlide(slide, cranach) {
 	console.log('showSlide');
 	if (slide == null) {
-        if (document.querySelector('div.slide.selected') !== null) {
-            slide = document.querySelector('div.slide.selected');
+        if (document.querySelector('div.slide.selected, div.slide.active') !== null) {
+            slide = document.querySelector('div.slide.selected, div.slide.active');
         } else {
             slide = document.querySelector('#output > div.slide');
         }

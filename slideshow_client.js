@@ -156,8 +156,9 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = false) {
-	// console.log('updateSlideContent');
-    document.querySelectorAll('#output > div.slide').forEach(e => e.classList.remove('selected', 'active'));
+	console.log('updateSlideContent');
+	console.log(slide);
+    document.querySelectorAll(`#output > div.slide`).forEach(e => e.classList.remove('selected', 'active'));
     slide.classList.add('selected', 'active');
 	batchRender(slide);
 	slide.querySelectorAll('iframe.hidden').forEach(e => {
@@ -506,10 +507,12 @@ function updateRefs(slide, cranach) {
 }
 
 function updateSlideClickEvent() {
-	$('.output div.slide').off();
-	$('.output div.slide').click(function() {
+	$('.output > div.slide').off();
+	$('.output > div.slide').click(function() {
 		let slideNum = $(this).attr('slide');
 		let slide = this;
+		// $('div.slide').removeClass('selected');
+		// $(this).addClass('selected');
 		$('*[text]').removeClass('highlighted');
 		$('button').removeClass('highlighted');
 		$('.item_button').css('background-color', '');
