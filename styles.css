@@ -736,6 +736,12 @@ display: none;
     color:#888;
     border:none;
 }
+
+#edit_button.editing {
+background-color: red;
+color: white;
+}
+
 #edit_icon {
     width:auto;
     /* max-height:1.5rem; */
