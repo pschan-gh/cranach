@@ -116,15 +116,17 @@ function updateToc(cranach) {
 		document.querySelector(`#info_statements`).appendChild(div);
 
 
-		el.addEventListener('click', event => {
-			let slide = document.querySelector(`.output:visible .slide[chapter="${$(this).getAttribute('chapter')}"]`);
-			jumpToSlide($(`.output:visible`).first()[0], $slide[0]);
+		el.addEventListener('click', () => {
+			jumpToSlide(
+				document.querySelector(`.output`),
+				document.querySelector(`.output .slide[chapter="${el.getAttribute('chapter')}"]`)
+			);
 		});
 	});
 
 	document.querySelectorAll(`.toc a.section`).forEach(a => {
 		let slide = document.querySelector(`.slide[section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
-		a.addEventListener('click', event => {
+		a.addEventListener('click', () => {
 			jumpToSlide(document.getElementById(`output`), slide);
 			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
@@ -141,6 +143,7 @@ function updateToc(cranach) {
 		el.addEventListener('click', event => {
 			const serial = event.target.getAttribute('serial');
 			const item = document.querySelector(`.item_title[serial="${serial}"]`);
+			console.log(`jumping to ${serial}`);
 			focusOn(item, ``);
 			highlight(el.getAttribute(`serial`));
 		});

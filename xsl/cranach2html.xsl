@@ -337,13 +337,13 @@
 				<xsl:value-of select="@wbtag"/>
 			</xsl:attribute>
 			<div class="slide_container" wbtag="ignore">
-				<div class="separator" style="position:relative; width:100%; height:1.5em; text-align:center;" wbtag="ignore">
+				<div class="separator" wbtag="ignore">
 					<xsl:attribute name="slide">
 						<xsl:value-of select="$slide"/>
 					</xsl:attribute>
 					<hr style="border-top:2px dotted pink" />
 					<div style="position:absolute;top:-0.75em;left:0;width:100%;text-align:center">
-						<a href="javascript:void(0)" style="font-size:1em;color:pink" class="slide_label">
+						<span class="slide_label">
 							<xsl:choose>
 								<xsl:when test="@canon_num">
 									<xsl:value-of select="concat(' slide ', @canon_num, ' ')"/>
@@ -352,7 +352,7 @@
 									<xsl:value-of select="concat(' slide ', $slide, ' ')"/>
 								</xsl:otherwise>
 							</xsl:choose>
-						</a>
+						</span>
 					</div>
 					<div style="margin-top:-0.75em">
 						<button href="#" class="plain_button collapse_icon" style="float:right" wbtag="ignore">

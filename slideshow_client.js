@@ -156,9 +156,8 @@ function batchRender(slide) {
 }
 
 function updateSlideContent(slide, carousel = false) {
-	console.log('updateSlideContent');
-	console.log(slide);
-    document.querySelectorAll(`#output > div.slide`).forEach(e => e.classList.remove('selected', 'active'));
+	// console.log('updateSlideContent');
+	document.querySelectorAll(`#output > div.slide`).forEach(e => e.classList.remove('selected', 'active'));
     slide.classList.add('selected', 'active');
 	batchRender(slide);
 	slide.querySelectorAll('iframe.hidden').forEach(e => {
@@ -308,11 +307,9 @@ function highlight(item) {
 }
 function imagePostprocess(image) {
 
-	// $(image).attr('src', $(image).attr('data-src'));
 	image.src = image.dataset.src;
 	image.onload = function() {
-		// $(image).closest('.image').find('.loading_icon').hide();
-        if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
+		if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
             image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
         }
 		image.classList.remove('loading');
@@ -387,13 +384,6 @@ function imagePostprocess(image) {
 				} else {
 					image.style['max-width'] = '100%';
 					image.style['height'] = 'auto';
-					// if ((typeof image.closest('.image').style.width === 'undefined')|| (image.closest('.image').style.width === false) || (image.closest('.image').style.width === '0px')) {
-					// 	$(image).css('max-width', '100%');
-					// 	$(image).css('height', 'auto');
-					// } else {
-					// 	$(image).css('max-width', '100%');
-					// 	$(image).css('height', 'auto');
-					// }
 				}
 			}
 		} else {
@@ -470,11 +460,13 @@ function updateRefs(slide, cranach) {
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
 	});
 
-	slide.querySelectorAll('a.href').forEach(e => function() {
+	slide.querySelectorAll('a.href').forEach(a => {
 
-		let label = e.getAttribute('label');
-		let serial = e.getAttribute('serial');
-		let md5 = e.getAttribute('md5');
+		const label = a.getAttribute('label');
+		const serial = a.getAttribute('serial');
+		const filename = a.getAttribute('filename');
+		const srcFilename = a.getAttribute('src-filename');
+		const md5 = a.getAttribute('md5');
 		let contentDir = ''
 
 		let rootURL = cranach.attr['rootURL'];
@@ -484,63 +476,48 @@ function updateRefs(slide, cranach) {
 			contentDir = cranach.attr['wbPath'].replace(/[^\/]+\.wb$/, '');
 		}
 
-		let href = '';
-		if ($(this).attr('filename') == 'self') {
-			if (cranach.hasXML) {
-				let href = rootURL + "?xml=" + cranach.attr['xmlPath'] + '&section=' + serial;
-			} else {
-				let href = rootURL + "?wb=" + cranach.attr['wbPath'] + '&section=' + serial;
-			}
+		let href = rootURL;
+		if (filename == 'self') {
+			href += cranach.hasXML ? `?xml=${cranach.attr['xmlPath']}` :  `?wb=${cranach.attr['wbPath']}`;
+			href += `&section=${serial}`;
 		} else {
-			if (cranach.hasXML) {
-				let href = rootURL + "?xml=" + contentDir + '/' + e.getAttribute('src-filename') + '&section=' + serial;
-			} else {
-				let href = rootURL + "?wb=" + contentDir + '/' + e.getAttribute('src-filename') + '&section=' + serial;
-			}
+			href += cranach.hasXML ? `?xml=` : `?wb=`;
+			href += `${contentDir}/${srcFilename}&section=${serial}`;
 		}
 
-		e.setAttribute('target', '_blank');
-		e.setAttribute('href', href);
+		a.setAttribute('target', '_blank');
+		a.setAttribute('href', href);
 
 	});
 
 }
 
 function updateSlideClickEvent() {
-	$('.output > div.slide').off();
-	$('.output > div.slide').click(function() {
-		let slideNum = $(this).attr('slide');
-		let slide = this;
-		// $('div.slide').removeClass('selected');
-		// $(this).addClass('selected');
-		$('*[text]').removeClass('highlighted');
-		$('button').removeClass('highlighted');
-		$('.item_button').css('background-color', '');
+	const output = document.getElementById('output');
+	document.querySelectorAll('.output > div.slide').forEach(div => {
+		div.addEventListener('click', () => {
+			let slideNum = div.getAttribute('slide');
 
-		$('.separator').css('font-weight', 'normal');
-		$('.separator').find('a').css('color', 'pink');
+			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
 
-		$(slide).find('.separator').css('font-weight', 'bold');
-		$(slide).find('.separator').find('a').css('color', 'red');
-		if (slideNum != $('#output').attr('data-selected-slide') || !$('#output').is("[data-selected-slide]")) {
-			$('#output').attr('data-selected-slide', slideNum);
-		}
+			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset)) {
+				output.dataset.selectedSlide = slideNum;
+			}
+		});
 	});
 }
 
 let timer = null;
 function updateScrollEvent() {
-	$('#output').off();
-
-	// https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
-	$('.output:visible').on('scroll', function() {
+		// https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling
+	document.querySelector('.output').addEventListener('scroll', () => {
 		if(timer !== null) {
 			clearTimeout(timer);
 		}
 		timer = window.setTimeout(function() {
-			$('div.slide.tex2jax_ignore:visible').each(function() {
-				if (isElementInViewport(this)) {
-					batchRender(this);
+			document.querySelectorAll('#output > div.slide.tex2jax_ignore').forEach( div => {
+				if (isElementInViewport(div)) {
+					batchRender(div);
 				};
 			});
 		}, 15*100);

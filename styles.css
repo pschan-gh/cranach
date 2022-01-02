@@ -414,15 +414,20 @@ display:block;
 }
 
 .separator {
+	position:relative;
+	width:100%;
+	height:1.5em;
+	text-align:center;
 	font-weight: normal;
-	color: pink;
+	font-size: 1em;
 	display:block;
 }
 
-.slide.selected .separator {
-	font-weight: bold;
+.separator .slide_label {
+	color: pink;
 }
-.slide.selected .separator  a{
+.slide.selected .separator .slide_label {
+	font-weight: bold;
 	color:red;
 }
 
