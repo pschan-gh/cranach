@@ -16,8 +16,8 @@ function updateModalProofs(md5String, cranach) {
 				html += ', ';
 			}
 			html += `<a`
-			+ `target="_blank"`
-			+ `href="${contentURLDir}/${thisNode.getAttribute('filename')}&item=${thisNode.getAttribute('md5')}">`
+			+ ` target="_blank" `
+			+ ` href="${contentURLDir}/${thisNode.getAttribute('filename')}&item=${thisNode.getAttribute('md5')}">`
 			+ index
 			+ `</a>`;
 			index++;
