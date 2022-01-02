@@ -28,11 +28,6 @@ body {
 
 /* #right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output :not(h1, h2, h3, h4, h5, strong, b, .title, .material-icons-outlined, .material-icons, a, button, [wbtag="ignore"]) */
 
-#right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output > .paragraphs, #right_half.dimmed #output :not(.title) > .paragraphs {
-	background-color: #222;
-	color: #bbb;
-}
-
 .paragraphs {
 	white-space:normal;
 }
@@ -1253,6 +1248,16 @@ font-weight:bolder;
 .lecture_skip * {
     color:#ccc !important;
 }
+
+#right_half.dimmed, #right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output > .paragraphs, #right_half.dimmed #output :not(.title) > .paragraphs {
+	background-color: #222;
+	color: #bbb;
+}
+
+#right_half.dimmed .separator .slide_label {
+	background-color: #222;
+}
+
 @media print {
     html {
         height: 100%;
