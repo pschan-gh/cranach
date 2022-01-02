@@ -442,7 +442,7 @@
                     <div style="float:left">
                     </div>
                     <div style="float:right">
-                        <input class="btn btn-outline-info load-index" style="display:none" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                        <input class="btn btn-outline-info load-index" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
                         <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
                         <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString($('#source_text').val(), 'application/xml');el.updateIndexAndRender();})">Update</button>
                         <button class="btn btn-outline-info btn-sm save" ext="" >Save</button>
@@ -515,7 +515,7 @@
                             <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
                         </div>
                         <div style="float:right">
-                            <button style="float:right;display:none" class="btn btn-outline-info btn-sm commit">Commit</button>
+                            <button style="float:right" class="btn btn-outline-info btn-sm commit hidden">Commit</button>
                         </div>
                     </div>
                 </div>

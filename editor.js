@@ -1,4 +1,4 @@
-let editor = ace.edit("input");
+const editor = ace.edit("input");
 editor.setTheme("ace/theme/cranach");
 editor.session.setMode("ace/mode/cranach");
 editor.getSession().setUseWrapMode(true);

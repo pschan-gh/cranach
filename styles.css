@@ -1091,8 +1091,21 @@ position:relative;
 .modal-title {
     color:#fff;
 }
+
+.modal-footer.latex .render,
+.modal-footer.latex .load-index,
+.modal-footer.latex .update-index {
+	display: none;
+}
+
+.modal-footer.xml .load-index,
+.modal-footer.xml .update-index {
+	display: none;
+}
+
+
 .modal-footer .github {
-    display:none;
+    display:inline-block;
 }
 .modal input {
     color:#666 !important;
