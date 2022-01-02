@@ -22,7 +22,7 @@ function postprocess(cranach) {
 			e.setAttribute('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
 		});
 
-		output.querySelectorAll(':scope > div.slide').forEach(e => {
+		document.querySelectorAll('#right_half:not(.carousel) > .output > div.slide').forEach(e => {
 			if (isElementInViewport(e)) {
 				batchRender(e);
 			}

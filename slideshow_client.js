@@ -515,7 +515,7 @@ function updateScrollEvent() {
 			clearTimeout(timer);
 		}
 		timer = window.setTimeout(function() {
-			document.querySelectorAll('#output > div.slide.tex2jax_ignore').forEach( div => {
+			document.querySelectorAll('#right_half:not(.carousel) .output > div.slide.tex2jax_ignore').forEach( div => {
 				if (isElementInViewport(div)) {
 					batchRender(div);
 				};
