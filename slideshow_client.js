@@ -373,7 +373,7 @@ function imagePostprocess(image) {
 						image.style.width = '100%';
 						image.style['max-height'] = '100%';
 					} else {
-						if ((typeof image.closest('.image').style.width === 'undefined')|| (image.closest('.image').style.width === false) || (image.closest('.image').style.width === '0px') || (image_width == '600px')){
+						if ((typeof image.closest('.image').style.width === 'undefined')|| (image.closest('.image').style.width === false) || (image.closest('.image').style.width === '0px') || (image.width == '600px')){
 							image.style['height'] = '560px';
 							image.style['width'] = 'auto';
 						} else {
