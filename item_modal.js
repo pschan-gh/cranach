@@ -1,31 +1,37 @@
 function updateModalProofs(md5String, cranach) {
-	let contentURLDir = cranach.attr['contentURLDir'];
+	const contentURLDir = cranach.attr['contentURLDir'];
 
-	let indexDoc = cranach.indexDoc;
-	let queryString = '//idx:branch[@type="Proof" and @ofmd5="' + md5String + '"]|//lv:branch[@type="Proof" and @ofmd5="' + md5String + '"]';
-	console.log(queryString);
-	let iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
-	console.log(iterator);
+	const indexDoc = cranach.indexDoc;
+	const queryString = `//idx:branch[@type="Proof" and @ofmd5="${md5String}"]|`
+	+ `//lv:branch[@type="Proof" and @ofmd5="${md5String}"]`;
+
+	const iterator = indexDoc.evaluate(queryString, indexDoc, nsResolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null );
+
 	try {
 		let thisNode = iterator.iterateNext();
-
 		let html = '';
 		let index = 1;
 		while (thisNode) {
 			if (html != '') {
 				html += ', ';
 			}
-			html += '<a target="_blank" href="' + contentURLDir + '/' + thisNode.getAttribute('filename') + '&item=' + thisNode.getAttribute('md5') + '">' + index + '</a>';
+			html += `<a`
+			+ `target="_blank"`
+			+ `href="${contentURLDir}/${thisNode.getAttribute('filename')}&item=${thisNode.getAttribute('md5')}">`
+			+ index
+			+ `</a>`;
 			index++;
 			thisNode = iterator.iterateNext();
 		}
-		if (html != '') {
-			$('.modal_proofs').html('<br/><strong>Proofs</strong>: ' + html).show();
-		} else {
-			$('.modal_proofs').html(html).hide();
-		}
-	}
-	catch (e) {
+		document.querySelectorAll('.modal_proofs').forEach(el => {
+			if (html != '') {
+				el.innerHTML = `<br/><strong>Proofs</strong>: ${html}`);
+				el.classList.remove('hidden');
+			} else {
+				el.classList.add('hidden');
+			}
+		});
+	} catch (e) {
 		alert( 'Error: Document tree modified during iteration ' + e );
 	}
 
