@@ -11,6 +11,10 @@ function postprocess(cranach) {
 		updateScrollEvent();
 		updateKeywords();
 		updateTitle( document.querySelector('.output div.slide.selected') || document.querySelector('.output div.slide') );
+        if (document.getElementById('item_modal') !== null) {
+            updateModal(cranach);
+        }
+        updateSlideInfo(document.querySelector('#output > div.slide'));
 
 		output.querySelectorAll('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').forEach(e => {
 			let text = e.textContent;

@@ -186,9 +186,9 @@ function showSlide(slide, cranach) {
 	updateCarousel(slideNum);
 	updateCarouselSlide(slide);
 
-    cranach.then(renderer => {
-        updateModal(renderer);
-    });
+    // cranach.then(renderer => {
+    //     updateModal(renderer);
+    // });
 }
 
 function hideCarousel() {

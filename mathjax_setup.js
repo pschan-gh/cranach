@@ -49,11 +49,11 @@ MathJax = {
 				}
 			});
 			//
-      //  Create the package for the overridden macros
-      //
-      Configuration.create('knowl', {
-        handler: {macro: ['knowl']}
-      });
+            //  Create the package for the overridden macros
+            //
+            Configuration.create('knowl', {
+                handler: {macro: ['knowl']}
+            });
 
 			$('.icon.latex, .icon.xml').hide();
 			baseRenderer.then(cranach => {
@@ -71,9 +71,9 @@ MathJax = {
 					if ($('.editor.ace_editor').length > 0) {
 						convertCranachDocToWb(renderer.cranachDoc, editor);
 					}
-					if ($('#item_modal').length > 0) {
-						updateModal(renderer);
-					}
+					// if ($('#item_modal').length > 0) {
+					// 	updateModal(renderer);
+					// }
 					$('#render_sel').prop('disabled', false);
 					$('#wb_button').prop('disabled', false);
 					return renderer;
