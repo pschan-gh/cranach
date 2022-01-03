@@ -138,14 +138,15 @@ function renderSlide(slide) {
 		imagePostprocess(e);
 	});
 
-	baseRenderer.then(cranach => {
-		updateRefs(slide, cranach)
-	});
-
 	renderTexSource(slide);
 	slide.querySelectorAll('.latexSource').forEach(e => e.remove());
 	slide.classList.remove("tex2jax_ignore");
 	MathJax.startup.promise = typeset([slide]);
+	MathJax.startup.promise.then(() => {
+		baseRenderer.then(cranach => {
+			updateRefs(slide, cranach);
+		});
+	});
 }
 
 function batchRender(slide) {
@@ -420,7 +421,7 @@ function isElementInViewport (el) {
 
 function updateRefs(slide, cranach) {
 
-	slide.querySelectorAll('a.lcref').forEach(e => {
+	slide.querySelectorAll('.lcref:not(.updated)').forEach(e => {
 		e.setAttribute('lcref', "");
 
 		let label = e.getAttribute('label');
@@ -459,6 +460,19 @@ function updateRefs(slide, cranach) {
 		}
 
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
+
+		e.addEventListener('click', function(evt) {
+			evt.preventDefault();
+			evt.stopPropagation();
+			const lcref = evt.target;
+			if(!lcref.hasAttribute("lcref-uid")) {
+				lcref.setAttribute("lcref-uid", lcref_id_counter);
+				lcref_id_counter++;
+			}
+			lcref_click_handler(lcref);
+		});
+		e.setAttribute("href", "");
+		e.classList.add('updated');
 	});
 
 	slide.querySelectorAll('a.href').forEach(a => {

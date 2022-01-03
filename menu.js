@@ -30,7 +30,7 @@ function unhide() {
 	document.querySelector('#cover_half').style.display = 'none';
 	document.querySelector('#container').style['position'] =  '';
 	document.querySelector('#container').style['height'] =  '';
-	document.querySelector('.slide_button').classList.remove('hide');
+	document.querySelector('.slide_button').classList.remove('hidden');
 
 }
 

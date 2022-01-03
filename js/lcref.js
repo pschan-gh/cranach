@@ -24,31 +24,43 @@
 * that's necessary because the same lcref could be referenced several times
 * on the same page */
 
-var lcref_id_counter = 0;
+let lcref_id_counter = 0;
 
-var lcref_focus_stack_uid = [];
-var lcref_focus_stack = [];
+const lcref_focus_stack_uid = [];
+const lcref_focus_stack = [];
 
-function lcref_click_handler($el) {
-	let lcref = $el.attr("lcref");
-	let uid = $el.attr("lcref-uid");
+function lcref_click_handler(el) {
+	let lcref = el.getAttribute("lcref");
+	let uid = el.getAttribute("lcref-uid");
 	let output_id = 'lcref-output-' + uid;
 
+
 	let lcrefid = 'kuid-' + uid;
-
-
-	if ($(`#${output_id}`).length > 0) {
-		$(`#${lcrefid}`).slideToggle("fast", function() {
-			if ($('#' + lcrefid).is(":visible")) {
-				document.getElementById(lcrefid).scrollIntoView();
-			} else {
-				$el[0].scrollIntoView();
-			}
-		});
+	const lcrefContainer = document.querySelector(`#${lcrefid}`);
+	if (lcrefContainer !== null) {
+		if (lcrefContainer.classList.contains('hidden')) {
+			expandLcref(lcrefContainer);
+		} else {
+			lcrefContainer.style.height = '0px';
+			lcrefContainer.classList.add('hidden');
+		}
+		// lcrefContainer.style.height = '0px';
+		// document.querySelector(`#${lcrefid}`).slideToggle("fast", function() {
+		// 	if ($('#' + lcrefid).is(":visible")) {
+		// 		document.getElementById(lcrefid).scrollIntoView();
+		// 	} else {
+		// 		el.scrollIntoView();
+		// 	}
+		// });
+		if (document.getElementById(lcrefid).offsetParent !== null) {
+			document.getElementById(lcrefid).scrollIntoView();
+		} else {
+			el.scrollIntoView();
+		}
 
 		this_lcref_focus_stack_uidindex = lcref_focus_stack_uid.indexOf(uid);
 
-		if($el.hasClass("active")) {
+		if(el.classList.contains("active")) {
 			if(this_lcref_focus_stack_uidindex != -1) {
 				lcref_focus_stack_uid.splice(this_lcref_focus_stack_uidindex, 1);
 				lcref_focus_stack.splice(this_lcref_focus_stack_uidindex, 1);
@@ -56,87 +68,106 @@ function lcref_click_handler($el) {
 		}
 		else {
 			lcref_focus_stack_uid.push(uid);
-			lcref_focus_stack.push($el);
+			lcref_focus_stack.push(el);
 			document.getElementById(lcrefid).scrollIntoView();
 		}
 
 	} else {
-		let $lcrefContainer = $(
-			`<div class="lcref-output" id="${lcrefid}">`
-			+ `<div class="lcref">`
-			+ `<div class="lcref-content" id="${output_id}">loading ${lcref}</div>`
-			+ `<div class='lcref-footer'>${lcref}</div>`
-			+ `</div></div>`
-		);
+		const lcrefContainer = document.createElement('div');
+		lcrefContainer.id = lcrefid;
+		lcrefContainer.classList.add('lcref-output', 'hidden');
+		lcrefContainer.innerHTML = `<div class="lcref">`
+		+ `<div class="lcref-content" id="${output_id}">loading ${lcref}</div>`
+		+ `<div class='lcref-footer'>${lcref}</div>`
+		+ `</div></div>`;
+		lcrefContainer.style.transition = 'height 0.35s ease-in-out';
 
-		if ($el.nextAll('.paragraphs').length > 0) {
-			$el.nextAll('.paragraphs').last().after($lcrefContainer);
-		} else if ($el.closest('.paragraphs').length > 0) {
-			$el.closest('.paragraphs').after($lcrefContainer);
+		if (el.closest('.paragraphs') !== null) {
+			el.closest('.paragraphs').after(lcrefContainer);
 		} else {
-			$el.after($lcrefContainer);
+			el.after(lcrefContainer);
 		}
-		let $lcrefOutput = $(`#${output_id}`);
-		let url = $el.attr('lcref');
-		let params = url.match(/\?(.*?)(#|$)/);
-		let urlParams = new URLSearchParams(params[1]);
-		let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+		const lcrefOutput = lcrefContainer.querySelector('.lcref-content');
+		const url = el.getAttribute('lcref');
+		const params = url.match(/\?(.*?)(#|$)/);
+		const urlParams = new URLSearchParams(params[1]);
+		const pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+
 		if (pathname.match(/\/local$/)) {
 			baseRenderer.then(baseDoc => {
 				new Cranach(url).setup().then(cranach => {
-					return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput($lcrefOutput[0]).render();
+					return cranach.setCranachDoc(baseDoc.attr['cranachDoc']).setIndexDoc(baseDoc.attr['indexDoc']).setBare().setOutput(lcrefOutput).render();
 				}).then(cranach => {
-					renderElement($lcrefContainer);
+					renderElement(lcrefContainer);
 				});
 			});
 		} else {
 			new Cranach(url).setup().then(cranach => {
-				return cranach.setBare().xmlDocQueryAndRender($lcrefOutput[0]);
+				return cranach.setBare().xmlDocQueryAndRender(lcrefOutput);
 			}).then(cranach => {
-				renderElement($lcrefContainer);
+				renderElement(lcrefContainer);
 			});
 		}
-		$lcrefContainer.slideDown("slow", function() {
-			if ($('.carousel-item').length > 0) {
-				adjustHeight();
-				document.getElementById(lcrefid).scrollIntoView();
-			}
-		});
+
+		// $lcrefContainer.slideDown("slow", function() {
+		// 	if ($('.carousel-item').length > 0) {
+		// 		adjustHeight();
+		// 		document.getElementById(lcrefid).scrollIntoView();
+		// 	}
+		// });
+		if (document.querySelector('.carousel-item') !== null) {
+			adjustHeight();
+			document.getElementById(lcrefid).scrollIntoView();
+		}
 
 		document.getElementById(lcrefid).tabIndex = 0;
 		document.getElementById(lcrefid).focus();
 		lcref_focus_stack_uid.push(uid);
-		lcref_focus_stack.push($el);
-		$("a[lcref]").attr("href", "");
+		lcref_focus_stack.push(el);
+		document.querySelectorAll("a[lcref]").forEach(a => a.setAttribute("href", ""));
 	}
 } //~~ end click handler for *[lcref] elements
 
-function renderElement($lcrefContainer) {
-	$lcrefContainer.find('img').each(function() {
-		imagePostprocess($(this));
+function renderElement(lcrefContainer) {
+	lcrefContainer.querySelectorAll('img').forEach(el => imagePostprocess(el));
+	lcrefContainer.querySelectorAll('iframe:not([src])').forEach(el => {
+		el.src = el.dataset.src;
+		el.style.display = 'block';
+		el.classList.remove('hidden');
+		iFrameResize({ checkOrigin:false}, el)
 	});
-	$lcrefContainer.find('iframe:not([src])').each(function() {
-		$(this).attr('src', $(this).attr('data-src')).show();
-		var $iframe = $(this);
-		$(this).iFrameResize({checkOrigin:false});
-	});
-	typeset([$lcrefContainer[0]]);
+	typeset([lcrefContainer]);
 	if (document.querySelector('#output').classList.contains('present')) {
 		updateCarouselSlide(document.querySelector('#output > div.slide.active'));
 	}
+	expandLcref(lcrefContainer);
 }
 
+function expandLcref(lcrefContainer) {
+	MathJax.startup.promise.then(() => {
+		lcrefContainer.style.height = 'auto';
+		lcrefContainer.classList.remove('hidden');
+		const clientHeight = lcrefContainer.clientHeight;
+		lcrefContainer.style.height = '0px';
 
-$(function() {
-	$("body").on("click", "*[lcref]", function(evt) {
-		evt.preventDefault();
-		evt.stopPropagation();
-		var $lcref = $(this);
-		if(!$lcref.attr("lcref-uid")) {
-			$lcref.attr("lcref-uid", lcref_id_counter);
-			lcref_id_counter++;
-		}
-		lcref_click_handler($lcref, evt);
+		setTimeout(function () {
+			lcrefContainer.style.height = clientHeight + 'px';
+		}, 0);
 	});
-	$("*[lcref]").attr("href", "");
-});
+}
+
+// document.addEventListener('DOMContentLoaded', () => {
+// 	document.querySelectorAll("body [lcref]").forEach(el => {
+// 		el.addEventListener('click', function(evt) {
+// 			evt.preventDefault();
+// 			evt.stopPropagation();
+// 			const lcref = evt.target;
+// 			if(!lcref.hasAttribute("lcref-uid")) {
+// 				lcref.setAttribute("lcref-uid", lcref_id_counter);
+// 				lcref_id_counter++;
+// 			}
+// 			lcref_click_handler(lcref, evt);
+// 		});
+// 		el.setAttribute("href", "");
+// 	});
+// });
