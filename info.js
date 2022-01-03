@@ -1,7 +1,8 @@
 const dataKeys = ['course', 'chapter_type', 'chapter', 'section', 'subsection', 'subsubsection'];
 
 function updateTitle(slide) {
-	const slideNum = slide.getAttribute(`slide`);
+	// console.log(slide);
+	const slideNum = slide.hasAttribute(`slide`) ? slide.getAttribute(`slide`) : 1;
 	const metadata = {};
 
 	dataKeys.forEach(key => {

@@ -10,7 +10,7 @@ function postprocess(cranach) {
 		updateSlideClickEvent();
 		updateScrollEvent();
 		updateKeywords();
-		updateTitle( document.querySelector('.output div.slide.selected') || document.querySelector('.output div.slide') );
+		updateTitle( document.querySelector('.output > div.slide.selected, .output > div.slide') );
         if (document.getElementById('item_modal') !== null) {
             updateModal(cranach);
         }

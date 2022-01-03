@@ -291,8 +291,8 @@ function Cranach(url) {
 	}
 	this.displayCranachDocToHtml = function() {
 		report('IN DISPLAYCRANACHDOCTOHTML');
-		let xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
-		let output = this.output;
+		const xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
+		const output = this.output;
 		const progressBar = document.querySelector('.progress-bar');
 		progressBar.style.width = '50%';
 		progressBar.setAttribute('aria-valuenow', '50');
@@ -313,6 +313,7 @@ function Cranach(url) {
 						setTimeout(() => {
 							let cranachDoc = this.cranachDoc;
 							let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
+							console.log(fragment);
 							output.innerHTML = '';
 							output.appendChild(fragment);
 							resolve(this);
@@ -475,10 +476,13 @@ function Cranach(url) {
 		if (output) {
 			this.output = output;
 		}
+		this.bare = false;
+		this.attr['query'] = '';
 
 		let xmlString = generateXML(wbString);
 		let preCranachDoc = domparser.parseFromString(xmlString, 'text/xml');
 		this.preCranachDoc = preCranachDoc;
+		console.log(preCranachDoc);
 		return this.displayPreCranachDocToHtml();
 	}
 

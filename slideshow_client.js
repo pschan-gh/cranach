@@ -513,13 +513,13 @@ function updateRefs(slide, cranach) {
 
 function updateSlideClickEvent() {
 	const output = document.getElementById('output');
-	document.querySelectorAll('.output > div.slide').forEach(div => {
+	document.querySelectorAll('.output > div.slide').forEach( ( div, index ) => {
 		div.addEventListener('click', () => {
 			let slideNum = div.getAttribute('slide');
 
 			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
 
-			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset)) {
+			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset) || index == 0) {
 				output.dataset.selectedSlide = slideNum;
 			}
 		});
