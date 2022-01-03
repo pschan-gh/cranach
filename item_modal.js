@@ -53,7 +53,7 @@ function updateModalProofOf(button, cranach) {
 
         modal.querySelector('a').innerHTML = button.querySelector('.of-title') !== null ?
         button.querySelector('.of-title').innerHTML :
-        `button.querySelector.getAttribute('of-type') ${button.getAttribute('of-item')}`;
+        `${button.getAttribute('of-type')} ${button.getAttribute('of-item')}`;
 
         modal.classList.remove('hidden');
 	});
@@ -92,14 +92,13 @@ function slideButtonClickHandler(cranach) {
     const itemModal = document.getElementById('item_modal');
     const modalKeywords = itemModal.querySelector('#modal_keywords');
 
-    const slide = document.querySelector('#output > div.slide.selected');
+    const slide = document.querySelector('#output > div.slide.selected, #output > div.slide');
     const slideNum = slide.getAttribute('slide');
     const course = slide.getAttribute('course');
     const chapterType = slide.getAttribute('chapter_type');
     const chapter = slide.getAttribute('chapter');
 
-    itemModal.querySelector('.modal-title > span, .modal_refby, .modal_proofs, .modal_proof_of')
-	.classList.add('hidden');
+    itemModal.querySelectorAll('.modal-title > span, .modal_refby, .modal_proofs, .modal_proof_of').forEach(el => el.classList.add('hidden'));
 
 	itemModal.querySelector('.md5.share_text').textContent = '';
 

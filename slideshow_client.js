@@ -265,7 +265,7 @@ function focusOn(item, text = '') {
 	MathJax.startup.promise.then(() => {
 		if (text != '') {
 			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
-			console.log(sanitizedText);
+			// console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
 			let textItem = item.querySelector(`*[text="${sanitizedText}"]`);
 			// textItem.scrollIntoView();
@@ -421,7 +421,7 @@ function isElementInViewport (el) {
 
 function updateRefs(slide, cranach) {
 
-	slide.querySelectorAll('.lcref:not(.updated)').forEach(e => {
+	slide.querySelectorAll('.lcref').forEach(e => {
 		e.setAttribute('lcref', "");
 
 		let label = e.getAttribute('label');
@@ -437,11 +437,14 @@ function updateRefs(slide, cranach) {
 		}
 
 		let statementType = 'statement';
-		if (e.getAttribute('type').match(/proof|solution|answer/i)) {
-			statementType = 'substatement';
-		}
-		if (e.getAttribute('type').match(/figure/i)) {
-			statementType = 'figure';
+
+		if (e.hasAttribute('type')) {
+			if (e.getAttribute('type').match(/proof|solution|answer/i)) {
+				statementType = 'substatement';
+			}
+			if (e.getAttribute('type').match(/figure/i)) {
+				statementType = 'figure';
+			}
 		}
 
 		let lcref = '';
@@ -451,7 +454,7 @@ function updateRefs(slide, cranach) {
 			} else {
 				lcref = rootURL + "?wb=" + cranach.attr['wbPath'] + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
 			}
-		} else if (e.getAttribute('src-filename')) {
+		} else if (e.hasAttribute('src-filename')) {
 			if (e.getAttribute('src-filename').match(/\.xml$/)) {
 				lcref = rootURL + "?xml=" + contentDir + '/' + e.getAttribute('src-filename') + "&query=(//lv:" + statementType + "[@md5='" + md5 + "'])[1]";
 			} else {
@@ -460,19 +463,20 @@ function updateRefs(slide, cranach) {
 		}
 
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
+	});
 
-		e.addEventListener('click', function(evt) {
+	slide.querySelectorAll('[lcref]:not(.updated)').forEach(el => {
+		el.addEventListener('click', function(evt) {
 			evt.preventDefault();
 			evt.stopPropagation();
-			const lcref = evt.target;
-			if(!lcref.hasAttribute("lcref-uid")) {
-				lcref.setAttribute("lcref-uid", lcref_id_counter);
+			if(!el.hasAttribute("lcref-uid")) {
+				el.setAttribute("lcref-uid", lcref_id_counter);
 				lcref_id_counter++;
 			}
-			lcref_click_handler(lcref);
+			lcref_click_handler(el);
 		});
-		e.setAttribute("href", "");
-		e.classList.add('updated');
+		el.removeAttribute("href");
+		el.classList.add('updated');
 	});
 
 	slide.querySelectorAll('a.href').forEach(a => {
