@@ -125,43 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		attributes: true,
 	});
 
-	// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
-	// let menu_timer = null;
-	// document.querySelectorAll('#right_half')[0].each(function() {
-	// 	document.querySelectorAll('#right_half').off();
-	// 	document.querySelectorAll('#right_half').mousemove(function() {
-	// 		clearTimeout(menu_timer);
-	// 		document.querySelectorAll(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-	// 		document.querySelectorAll('.present .controls.carousel-indicators').style['display'] =  'flex';
-	// 		menu_timer = setTimeout(function () {
-	// 			document.querySelectorAll(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
-	// 			document.querySelectorAll(".controls, .present .active .slide_number").not('.hidden').fadeOut();
-	// 		}, 1000);
-	// 	})
-	// });
-
-	// document.querySelectorAll('.present #menu_container')[0].each(function() {
-	// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').off();
-	// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
-	// 		document.querySelectorAll('#right_half').off('mousemove');
-	// 		clearTimeout(menu_timer);
-	// 		document.querySelectorAll(this).show();
-	// 	});
-	// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
-	// 		clearTimeout(menu_timer);
-	// 		document.querySelectorAll('#right_half').off('mousemove');
-	// 		document.querySelectorAll('#right_half').mousemove(function() {
-	// 			clearTimeout(menu_timer);
-	// 			document.querySelectorAll(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
-	// 			document.querySelectorAll('.present .controls.carousel-indicators').style['display'] =  'flex';
-	// 			menu_timer = setTimeout(function () {
-	// 				document.querySelectorAll(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
-	// 				document.querySelectorAll(".controls").style.display = 'none';
-	// 			}, 1000);
-	// 		})
-	// 	});
-	// });
-
 	let menu_timer = null;
 	// document.querySelectorAll('.controls').off();
 	document.querySelectorAll('.controls').forEach(e => {
@@ -220,4 +183,48 @@ document.addEventListener('DOMContentLoaded', () => {
 		baseRenderer = openXML(baseRenderer, this);
 	});
 
+	document.querySelectorAll('.dropdown-item.persist').forEach(item => {
+		item.addEventListener('click', function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+		});
+	});
+
 });
+
+// https://stackoverflow.com/questions/4305726/hide-div-element-with-jquery-when-mouse-isnt-moving-for-a-period-of-time
+// let menu_timer = null;
+// document.querySelectorAll('#right_half')[0].each(function() {
+// 	document.querySelectorAll('#right_half').off();
+// 	document.querySelectorAll('#right_half').mousemove(function() {
+// 		clearTimeout(menu_timer);
+// 		document.querySelectorAll(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+// 		document.querySelectorAll('.present .controls.carousel-indicators').style['display'] =  'flex';
+// 		menu_timer = setTimeout(function () {
+// 			document.querySelectorAll(".present .menu_container.fadeout .navbar-nav, .controls, .present .active .slide_number").not('.hidden').fadeOut();
+// 			document.querySelectorAll(".controls, .present .active .slide_number").not('.hidden').fadeOut();
+// 		}, 1000);
+// 	})
+// });
+
+// document.querySelectorAll('.present #menu_container')[0].each(function() {
+// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').off();
+// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').mouseover(function() {
+// 		document.querySelectorAll('#right_half').off('mousemove');
+// 		clearTimeout(menu_timer);
+// 		document.querySelectorAll(this).show();
+// 	});
+// 	document.querySelectorAll(this).find(".navbar-nav, .present .slide_number").not('.hidden').mouseout(function() {
+// 		clearTimeout(menu_timer);
+// 		document.querySelectorAll('#right_half').off('mousemove');
+// 		document.querySelectorAll('#right_half').mousemove(function() {
+// 			clearTimeout(menu_timer);
+// 			document.querySelectorAll(".present .menu_container .navbar-nav, .present .controls, .present .slide_number").not('.hidden').fadeIn();
+// 			document.querySelectorAll('.present .controls.carousel-indicators').style['display'] =  'flex';
+// 			menu_timer = setTimeout(function () {
+// 				document.querySelectorAll(".present .menu_container.fadeout .navbar-nav, .present .slide_number").not('.hidden').fadeOut();
+// 				document.querySelectorAll(".controls").style.display = 'none';
+// 			}, 1000);
+// 		})
+// 	});
+// });
