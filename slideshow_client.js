@@ -169,11 +169,11 @@ function updateSlideContent(slide, carousel = false) {
 		if (e.closest('div.comment') !== null) {
 			return 0;
 		}
+		e.onload = adjustHeight;
 		e.src = e.getAttribute('data-src');
 		e.classList.remove('hidden');
 		e.style.display = '';
 		iFrameResize({ log: false, checkOrigin:false }, e);
-
 	});
 
 	document.querySelector('#uncollapse_button').textContent = slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse';
