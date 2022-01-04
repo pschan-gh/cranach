@@ -125,6 +125,10 @@ function renderSlide(slide) {
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
+			if (focusOnItem !== null) {
+				focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
+				focusOnItem = null;
+			}
 		});
 		e.addEventListener('hidden.bs.collapse', function() {
 			updateCarouselSlide(slide);
@@ -262,6 +266,7 @@ function focusOn(item, text = '') {
 	let slideNum = slide.getAttribute('slide');
 	renderSlide(slide);
 
+	focusOnItem = item;
 	MathJax.startup.promise.then(() => {
 		if (text != '') {
 			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
@@ -280,9 +285,9 @@ function focusOn(item, text = '') {
 			}
 			item.classList.add('highlighted');
 		}
+
 		item.scrollIntoView( {block: "center", behavior: "smooth"} );
-
-
+		
 		// if(document.getElementById('right_half').classList.contains('present')) {
 		// 	baseRenderer.then(cranach => {
 		// 		showSlide(slide, cranach);
