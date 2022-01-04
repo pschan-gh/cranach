@@ -26,8 +26,6 @@ body {
     font-family: monospace;
 }
 
-/* #right_half.dimmed #menu_container, #right_half.dimmed #output, #right_half.dimmed #output :not(h1, h2, h3, h4, h5, strong, b, .title, .material-icons-outlined, .material-icons, a, button, [wbtag="ignore"]) */
-
 .paragraphs {
 	white-space:normal;
 }
@@ -198,6 +196,7 @@ iframe.webwork {
     top:0;
 	width:70%;
     left:30%;
+    height:100%
 }
 
 /* .info #left_half, .overview #left_half  {
