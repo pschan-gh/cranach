@@ -3,6 +3,7 @@ function commitWb(editor) {
 	fetch('xsl/html2juengere.xsl')
 	.then(response => response.text())
 	.then(xsl => {
+        let xsltProcessor = new XSLTProcessor();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 		let preCranachDoc = xsltProcessor.transformToDocument(body,document);
 		fetch('xsl/cranach.xsl')
@@ -25,6 +26,7 @@ function convertCranachDocToWb(cranachDoc, editor) {
 	fetch('xsl/cranach2wb.xsl')
 	.then(response => response.text())
 	.then(xsl => {
+        let xsltProcessor = new XSLTProcessor();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 		console.log(cranachDoc);
 		fragment = xsltProcessor.transformToFragment(cranachDoc, document);

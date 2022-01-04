@@ -72,6 +72,7 @@ function updateModalRefby(md5String, cranach) {
 		return response.text();
 	})
 	.then(function(xsltext) {
+        let xsltProcessor = new XSLTProcessor();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 		xsltProcessor.setParameter('', 'md5', md5String);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);

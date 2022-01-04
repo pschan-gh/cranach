@@ -1,5 +1,5 @@
 const domparser = new DOMParser();
-const xsltProcessor = new XSLTProcessor();
+// const xsltProcessor = new XSLTProcessor();
 
 
 function nsResolver(prefix) {
@@ -276,6 +276,7 @@ function Cranach(url) {
 				.then(response => response.text())
 				.then(xsltext => {
 					report('PRECRANACHTOCRANACH');
+                    let xsltProcessor = new XSLTProcessor();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
 					this.cranachDoc = cranachDoc;
@@ -304,6 +305,7 @@ function Cranach(url) {
 					progressBar.style.width = '75%';
 					progressBar.setAttribute('aria-valuenow', '75');
 					setTimeout(() => {
+                        let xsltProcessor = new XSLTProcessor();
 						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
 						xsltProcessor.setParameter('', 'contenturl', this.attr['contentURL']);
@@ -445,6 +447,7 @@ function Cranach(url) {
 			fetch('xsl/akhawunti.xsl')
 			.then(response => response.text())
 			.then(xsltext => {
+                let xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
 				this.indexDoc = indexDoc;
@@ -462,6 +465,7 @@ function Cranach(url) {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
 				.then(xsltext => {
+                    let xsltProcessor = new XSLTProcessor();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);

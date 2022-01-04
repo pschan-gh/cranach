@@ -57,6 +57,7 @@ function showLatex(el, mode = 'report') {
 		xml = xml.replace(/#/g, '\#');
 
 		let xmlDOM = domparser.parseFromString(xml, "application/xml");
+        let xsltProcessor = new XSLTProcessor();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, "text/xml"));
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
