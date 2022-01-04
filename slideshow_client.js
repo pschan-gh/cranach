@@ -518,7 +518,8 @@ function updateSlideClickEvent() {
 
 			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
 
-			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset) || index == 0) {
+			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset) ||
+			(output.querySelector(':scope > div.slide.selected') === null && index == 0)) {
 				output.dataset.selectedSlide = slideNum;
 			}
 		});

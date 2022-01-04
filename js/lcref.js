@@ -29,17 +29,17 @@ function lcref_click_handler(el) {
 	let lcref = el.getAttribute("lcref");
 	let uid = el.getAttribute("lcref-uid");
 	let output_id = 'lcref-output-' + uid;
-    
+
 
 	let lcrefid = 'kuid-' + uid;
-    
+
     el.dataset.bsToggle = 'collapse';
     el.setAttribute('href', `#${lcrefid}`);
-    
+
 	const lcrefContainer = document.querySelector(`#${lcrefid}`);
 	if (lcrefContainer !== null) {
         // lcrefContainer.querySelector('.icon.loading').classList.add('hidden');
-        bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();		
+        bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();
 	} else {
 		const lcrefContainer = document.createElement('div');
 		lcrefContainer.id = lcrefid;
@@ -61,9 +61,9 @@ function lcref_click_handler(el) {
         lcrefContainer.addEventListener('shown.bs.collapse', function () {
             lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
         });
-        
+
         bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();
-        
+
 		const lcrefOutput = lcrefContainer.querySelector('.lcref-content');
 		const url = el.getAttribute('lcref');
 		const params = url.match(/\?(.*?)(#|$)/);
@@ -121,18 +121,17 @@ function renderElement(lcrefContainer) {
 function findNeighbor(el) {
     let sibling = el;
     let paragraph = null;
-    
+
     let counter = 0;
-    
+
     while (sibling.nextElementSibling !== null && counter++ < 10) {
-        console.log(sibling.nextElementSibling);
+        sibling = sibling.nextElementSibling;
         if (sibling.classList.contains('paragraphs')) {
             paragraph = sibling;
         }
-        sibling = sibling.nextElementSibling;        
     }
-    
-    if (paragraph === null) {
+
+    if (paragraph == null) {
         if (el.closest('.paragraphs') !== null) {
             return el.closest('.paragraphs');
         } else {

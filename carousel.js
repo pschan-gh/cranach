@@ -176,6 +176,7 @@ function showSlide(slide, cranach) {
             slide = document.querySelector('div.slide.selected, div.slide.active');
         } else {
             slide = document.querySelector('#output > div.slide');
+			slide.classList.add('selected');
         }
     }
     document.querySelector('#container').classList.remove('info', 'overview', 'compose');

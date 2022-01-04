@@ -89,11 +89,11 @@ function updateModalRefby(md5String, cranach) {
 	});
 }
 
-function slideButtonClickHandler(cranach) {
+function slideButtonClickHandler(button, cranach) {
     const itemModal = document.getElementById('item_modal');
     const modalKeywords = itemModal.querySelector('#modal_keywords');
 
-    const slide = document.querySelector('#output > div.slide.selected, #output > div.slide');
+    const slide = document.querySelector('#output > div.slide.selected');
     const slideNum = slide.getAttribute('slide');
     const course = slide.getAttribute('course');
     const chapterType = slide.getAttribute('chapter_type');
@@ -202,14 +202,13 @@ function itemSectionButtonClickHandler(el, cranach) {
 }
 
 function updateModal(cranach) {
-
 	document.querySelectorAll('.slide_button').forEach(button => {
-        button.addEventListener('click', () => slideButtonClickHandler(cranach));
-    });
+		button.addEventListener('click', evt => slideButtonClickHandler(button, cranach));
+	});
 
 	document.querySelectorAll('.item_button, .section_button').forEach(el => {
-        el.addEventListener('click', () => itemSectionButtonClickHandler(el, cranach));
-    });
+		el.addEventListener('click', evt => itemSectionButtonClickHandler(el, cranach));
+	});
 }
 
 // document.addEventListener('DOMContentLoaded', () => {
