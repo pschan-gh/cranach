@@ -268,7 +268,6 @@ function focusOn(item, text = '') {
 			// console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
 			let textItem = item.querySelector(`*[text="${sanitizedText}"]`);
-			// textItem.scrollIntoView();
 			if (textItem !== null) {
 				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
@@ -281,7 +280,7 @@ function focusOn(item, text = '') {
 			}
 			item.classList.add('highlighted');
 		}
-		item.scrollIntoView();
+		item.scrollIntoView( {block: "center", behavior: "smooth"} );
 
 
 		// if(document.getElementById('right_half').classList.contains('present')) {
@@ -293,7 +292,7 @@ function focusOn(item, text = '') {
 }
 
 function jumpToSlide(output, slide) {
-	slide.scrollIntoView();
+	slide.scrollIntoView( {block: "center", behavior: "smooth"} );
 	if(document.getElementById('right_half').classList.contains('present')) {
 		baseRenderer.then(cranach => {
 			showSlide(slide, cranach);

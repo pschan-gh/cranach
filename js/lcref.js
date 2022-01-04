@@ -39,12 +39,7 @@ function lcref_click_handler(el) {
 	const lcrefContainer = document.querySelector(`#${lcrefid}`);
 	if (lcrefContainer !== null) {
         // lcrefContainer.querySelector('.icon.loading').classList.add('hidden');
-        bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();
-		if (document.getElementById(lcrefid).offsetParent !== null) {
-			document.getElementById(lcrefid).scrollIntoView();
-		} else {
-			el.scrollIntoView();
-		}
+        bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();		
 	} else {
 		const lcrefContainer = document.createElement('div');
 		lcrefContainer.id = lcrefid;
@@ -59,11 +54,14 @@ function lcref_click_handler(el) {
 		+ `</div></div>`;
         lcrefContainer.style.transition = 'height 0.5s ease-in-out';
 
-		if (el.closest('.paragraphs') !== null) {
-			el.closest('.paragraphs').after(lcrefContainer);
-		} else {
-			el.after(lcrefContainer);
-		}
+        findNeighbor(el).after(lcrefContainer);
+        lcrefContainer.addEventListener('hidden.bs.collapse', function () {
+            el.scrollIntoView( {block: "center", behavior: "smooth"} );
+        });
+        lcrefContainer.addEventListener('shown.bs.collapse', function () {
+            lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
+        });
+        
         bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();
         
 		const lcrefOutput = lcrefContainer.querySelector('.lcref-content');
@@ -118,5 +116,28 @@ function renderElement(lcrefContainer) {
         lcrefContainer.querySelector('.icon.loading').classList.add('hidden');
         lcrefContainer.querySelector('.lcref-content').classList.remove('hidden');
     });
+}
+
+function findNeighbor(el) {
+    let sibling = el;
+    let paragraph = null;
     
+    let counter = 0;
+    
+    while (sibling.nextSibling != null && counter++ < 10) {
+        sibling = sibling.nextElementSibling;
+        if (sibling.classList.contains('paragraphs')) {
+            paragraph = sibling;
+        }
+    }
+    
+    if (paragraph === null) {
+        if (el.closest('.paragraphs') !== null) {
+            return el.closest('.paragraphs');
+        } else {
+            return el;
+        }
+    } else {
+        return paragraph;
+    }
 }

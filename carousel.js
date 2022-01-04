@@ -208,7 +208,7 @@ function hideCarousel() {
     // document.querySelectorAll$('#output .slide_content').forEach(e => e.classList.remove('padded'));
 	// css('padding-bottom', '');
 	if (document.querySelector('#output > div.slide.selected') !== null) {
-		document.querySelector('#output > div.slide.selected').scrollIntoView();
+		document.querySelector('#output > div.slide.selected').scrollIntoView( {block: "center", behavior: "smooth"} );
 	}
 
 }
