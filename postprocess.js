@@ -37,8 +37,9 @@ function postprocess(cranach) {
 			// let selectedSlide = section.closest('.slide');
 			focusOn(section);
 		} else if (cranach.attr['selectedSlide']) {
-			let selectedSlide = document.querySelector(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"], .output > div.slide`);
-			focusOn(selectedSlide);
+			let selectedSlide = document.querySelector(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"]`);
+			selectSlide(selectedSlide);
+			focusOn(selectedSlide);			
 		}
 
 		// else if ($('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').length > 0 ){

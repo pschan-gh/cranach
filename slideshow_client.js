@@ -258,41 +258,38 @@ function collapseToggle(slideNum, forced = '') {
 
 function focusOn(item, text = '') {
 
-	let slide = item.closest('div.slide');
+	const slide = item.closest('div.slide');
 	if (slide === null) {
 		return 0;
 	}
 
-	let slideNum = slide.getAttribute('slide');
-	renderSlide(slide);
+	const slideNum = slide.getAttribute('slide');
 
 	focusOnItem = item;
+
+	renderSlide(slide);
 	MathJax.startup.promise.then(() => {
 		if (text != '') {
-			let sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
+			const sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
 			// console.log(sanitizedText);
 			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-			let textItem = item.querySelector(`*[text="${sanitizedText}"]`);
+			const textItem = item.querySelector(`*[text="${sanitizedText}"]`);
 			if (textItem !== null) {
+				textItem.classList.add('highlighted');
 				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
+				} else {
+					item.scrollIntoView( {block: "center", behavior: "smooth"} );
 				}
-				textItem.classList.add('highlighted');
 			}
 		} else {
+			item.classList.add('highlighted');
 			if (item.closest('.collapse, .hidden_collapse') !== null) {
 				collapseToggle(slideNum, 'show');
+			} else {
+				item.scrollIntoView( {block: "center", behavior: "smooth"} );
 			}
-			item.classList.add('highlighted');
 		}
-
-		item.scrollIntoView( {block: "center", behavior: "smooth"} );
-		
-		// if(document.getElementById('right_half').classList.contains('present')) {
-		// 	baseRenderer.then(cranach => {
-		// 		showSlide(slide, cranach);
-		// 	});
-		// }
 	});
 }
 
@@ -546,6 +543,10 @@ function updateScrollEvent() {
 			});
 		}, 15*100);
 	});
+}
+
+function selectSlide(slide) {
+	document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

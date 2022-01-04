@@ -49,7 +49,7 @@ function updateTitle(slide) {
 	document.querySelectorAll(`.current_topics`).forEach(el => el.innerHTML = topics);
 
 	if (metadata.section != ``) {
-		document.querySelectorAll(`.current_section`).forEach(el => el.innerHTML = `Section ${metadata.section}<br/>${sectionTitle}`);
+		document.querySelectorAll(`.current_section`).forEach(el => el.innerHTML = `Section ${metadata.chapter}.${metadata.section}<br/>${sectionTitle}`);
 	} else {
 		document.querySelectorAll(`.current_section`).forEach(el => el.innerHTML = ``);
 	}

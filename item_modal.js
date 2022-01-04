@@ -77,13 +77,8 @@ function updateModalRefby(md5String, cranach) {
 		xsltProcessor.setParameter('', 'md5', md5String);
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
-		// console.log('REFBY2HTML PRETRANSFORM');
 		fragment = xsltProcessor.transformToFragment(index,document);
-		// console.log('REFBY2HTML');
-		// fragmentStr = new XMLSerializer().serializeToString(fragment);
-		// console.log(fragmentStr);
-		// $('.modal_refby').html(fragmentStr).show();
-        document.querySelectorAll('.modal_refby').forEach(modal => {
+		document.querySelectorAll('.modal_refby').forEach(modal => {
             modal.innerHTML = new XMLSerializer().serializeToString(fragment);
         });
 	});
@@ -160,7 +155,9 @@ function itemSectionButtonClickHandler(el, cranach) {
         document.querySelector(`.current_${key}`).textContent = metadata[key];
     });
     document.querySelector(`.current_item_type`).textContent = metadata.type;
-    document.querySelector(`.current_item`).textContent = metadata['type'].match(/Course|Chapter|Section/i) ? metadata.serial : metadata.item;
+
+	const urlItem =  metadata['type'].match(/Course|Chapter|Section/i) ? metadata.serial : metadata.item;
+    document.querySelector(`.current_item`).textContent = urlItem;
 
     document.querySelectorAll('#share_item span.current_course, #share_item span.current_chapter, #share_item span.current_item_type, #share_item span.current_item').forEach(el => el.classList.remove('hidden'));
 
@@ -171,11 +168,13 @@ function itemSectionButtonClickHandler(el, cranach) {
     let label = el.querySelector(':scope > .label');
     if (label !== null) {
         url +=  `&${argName}=${label.getAttribute('name')}`;
-        if (argName == 'item') {
+
+		if (argName == 'item') {
             lcref = `${url}&query=(//lv:*[./lv:label@name="${label.getAttribute('name')}"])[1]`;
         }
     } else {
-        url += `&${argName}=${metadata.serial}`;
+        url += `&${argName}=${urlItem}`;
+
         if (argName == 'item') {
             lcref = `${url}&query=(//lv:*[@md5="${metadata.md5}"])[1]`;
         }
