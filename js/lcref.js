@@ -93,11 +93,11 @@ function lcref_click_handler(el) {
 			document.getElementById(lcrefid).scrollIntoView();
 		}
 
-		document.getElementById(lcrefid).tabIndex = 0;
-		document.getElementById(lcrefid).focus();
-		lcref_focus_stack_uid.push(uid);
-		lcref_focus_stack.push(el);
-		document.querySelectorAll("a[lcref]").forEach(a => a.setAttribute("href", ""));
+		// document.getElementById(lcrefid).tabIndex = 0;
+		// document.getElementById(lcrefid).focus();
+		// lcref_focus_stack_uid.push(uid);
+		// lcref_focus_stack.push(el);
+		// document.querySelectorAll("a[lcref]").forEach(a => a.setAttribute("href", ""));
 	}
 }
 

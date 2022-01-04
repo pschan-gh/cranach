@@ -421,7 +421,7 @@ function isElementInViewport (el) {
 
 function updateRefs(slide, cranach) {
 
-	slide.querySelectorAll('.lcref').forEach(e => {
+	slide.querySelectorAll('a.lcref').forEach(e => {
 		e.setAttribute('lcref', "");
 
 		let label = e.getAttribute('label');
@@ -465,7 +465,7 @@ function updateRefs(slide, cranach) {
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
 	});
 
-	slide.querySelectorAll('[lcref]:not(.updated)').forEach(el => {
+	slide.querySelectorAll('a.lcref:not(.updated)').forEach(el => {
 		el.addEventListener('click', function(evt) {
 			evt.preventDefault();
 			evt.stopPropagation();
