@@ -56,10 +56,12 @@ function lcref_click_handler(el) {
 
         findNeighbor(el).after(lcrefContainer);
         lcrefContainer.addEventListener('hidden.bs.collapse', function () {
+			adjustHeight();
             el.scrollIntoView( {block: "center", behavior: "smooth"} );
         });
         lcrefContainer.addEventListener('shown.bs.collapse', function () {
-            lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
+			adjustHeight();
+			lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
         });
 
         bootstrap.Collapse.getOrCreateInstance(lcrefContainer).toggle();
@@ -86,11 +88,6 @@ function lcref_click_handler(el) {
 			});
 		}
 
-		if (document.querySelector('.carousel-item') !== null) {
-			adjustHeight();
-			document.getElementById(lcrefid).scrollIntoView();
-		}
-
 		// document.getElementById(lcrefid).tabIndex = 0;
 		// document.getElementById(lcrefid).focus();
 		// lcref_focus_stack_uid.push(uid);
@@ -115,6 +112,8 @@ function renderElement(lcrefContainer) {
     MathJax.startup.promise.then(() => {
         lcrefContainer.querySelector('.icon.loading').classList.add('hidden');
         lcrefContainer.querySelector('.lcref-content').classList.remove('hidden');
+		adjustHeight();
+		lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
     });
 }
 

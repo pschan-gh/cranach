@@ -308,8 +308,8 @@ function Cranach(url) {
                         let xsltProcessor = new XSLTProcessor();
 						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
-						xsltProcessor.setParameter('', 'contenturl', this.attr['contentURL']);
-						xsltProcessor.setParameter('', 'contentdir', this.attr['dir']);
+						xsltProcessor.setParameter(null, 'contenturl', this.attr['contentURL']);
+						xsltProcessor.setParameter(null, 'contentdir', this.attr['dir']);
 						progressBar.style.width = '80%';
 						progressBar.setAttribute('aria-valuenow', '80');
 						setTimeout(() => {
@@ -458,16 +458,17 @@ function Cranach(url) {
 	}
 
 	this.displayIndexDocToHtml = function(target) {
-		let contentURLDir = this.attr['rootURL'] + '\/?xml=' + this.attr['dir']
-		let indexDoc = this.indexDoc;
+		const contentURLDir = this.attr['rootURL'] + '\/?xml=' + this.attr['dir']
+		const indexDoc = this.indexDoc;
 		// let el = this;
+		console.log(contentURLDir);
 		return new Promise((resolve, reject) => {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
 				.then(xsltext => {
                     let xsltProcessor = new XSLTProcessor();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
-					xsltProcessor.setParameter('cranach_index', 'contenturldir', contentURLDir);
+					xsltProcessor.setParameter(null, 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);
 					target.innerHTML = ''
 					target.appendChild(fragment);

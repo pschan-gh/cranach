@@ -546,6 +546,7 @@ function updateScrollEvent() {
 }
 
 function selectSlide(slide) {
+	slide.classList.add('selected');
 	document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
 }
 
