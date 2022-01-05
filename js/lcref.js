@@ -125,6 +125,9 @@ function findNeighbor(el) {
 
     while (sibling.nextElementSibling !== null && counter++ < 10) {
         sibling = sibling.nextElementSibling;
+		if (sibling.nodeName == 'BR') {
+			return sibling;
+		}
         if (sibling.classList.contains('paragraphs')) {
             paragraph = sibling;
         }
