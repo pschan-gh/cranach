@@ -124,10 +124,10 @@ function findNeighbor(el) {
     let counter = 0;
 
     while (sibling.nextElementSibling !== null && counter++ < 10) {
-        sibling = sibling.nextElementSibling;
-		if (sibling.nodeName == 'BR') {
+		if (sibling.nextElementSibling.nodeName == 'BR' || sibling.nextElementSibling.classList.contains('statement') || sibling.nextElementSibling.classList.contains('substatement')) {
 			return sibling;
 		}
+        sibling = sibling.nextElementSibling;
         if (sibling.classList.contains('paragraphs')) {
             paragraph = sibling;
         }
