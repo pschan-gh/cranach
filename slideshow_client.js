@@ -311,31 +311,36 @@ function highlight(item) {
 }
 function imagePostprocess(image) {
 
+	image.classList.add('hidden');
 	image.src = image.dataset.src;
 	image.onload = function() {
 		if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
             image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
         }
 		image.classList.remove('loading');
-		if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
+		// if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
+		if (image.classList.contains('exempt')) {
+			image.classList.remove('hidden');
 			return 1;
 		}
 
         let override = false;
         if (image.closest('.image') !== null) {
-            let image_width = image.closest('.image').style.width;
 
-            if (image.closest('.image') !== null) {
-                image.closest('.image').style.height = '';
-            }
-            if (image.closest('.dual-left') !== null) {
-                image.closest('.dual-left').style.height = '';
-            }
-            if (image.closest('.dual-right') !== null) {
-                image.closest('.dual-right').style.height = '';
-            }
+            // if (image.closest('.image') !== null) {
+            //     image.closest('.image').style.height = '';
+            // }
+            // if (image.closest('.dual-left') !== null) {
+            //     image.closest('.dual-left').style.height = '';
+            // }
+            // if (image.closest('.dual-right') !== null) {
+            //     image.closest('.dual-right').style.height = '';
+            // }
 
-            override = (image.closest('.image').style.width !== null && typeof image.closest('.image').style.width !== 'undefined' && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600))
+            override =
+			image.closest('.image').style.width !== null &&
+			typeof image.closest('.image').style.width !== 'undefined';
+			// && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600)
         }
 
 		let width;
@@ -356,7 +361,7 @@ function imagePostprocess(image) {
 				image.style.width = '100%';
 			}
 		} else if (!override) {
-			image.removeAttribute('style');
+			// image.removeAttribute('style');
 			image.removeAttribute('width');
 			image.removeAttribute('height');
 
@@ -392,6 +397,9 @@ function imagePostprocess(image) {
 				}
 			}
 		} else {
+			image.removeAttribute('width');
+			image.removeAttribute('height');
+
 			if (image.style['width'] == '' || typeof image.style['width'] === 'undefined' || image.style['width'] === false) {
 				image.style['width'] = '100%';
 			}

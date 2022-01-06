@@ -149,10 +149,12 @@ function updateCarouselSlide(slide, content = null) {
 	MathJax.startup.promise.then(() => {
 		let mathJaxContentList = content == null ? outerContent.querySelectorAll('.MathJax') : content.querySelectorAll('.MathJax');
 
-		if (mathJaxContentList != null) {
+		if (mathJaxContentList.length > 0) {
 			mathJaxContentList.forEach(e => {
-				if (!e.style.fontSize.match(/em$/)) {
-					e.style.fontSize = "1.2em";
+				if (e.hasAttribute('style')) {
+					if (!e.style.fontSize.match(/em$/)) {
+						e.style.fontSize = "1.2em";
+					}
 				}
 			});
 			while (outerContent.scrollWidth > outerContent.clientWidth
