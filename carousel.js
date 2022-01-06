@@ -155,6 +155,8 @@ function updateCarouselSlide(slide, content = null) {
 					if (!e.style.fontSize.match(/em$/)) {
 						e.style.fontSize = "1.2em";
 					}
+				} else {
+					e.style.fontSize = "1.2em";
 				}
 			});
 			while (outerContent.scrollWidth > outerContent.clientWidth
