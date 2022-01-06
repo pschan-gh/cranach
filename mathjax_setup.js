@@ -63,7 +63,6 @@ MathJax = {
 				} else {
 					const editorElement = document.querySelector('.editor.ace_editor');
 					if (editorElement !== null) {
-						console.log(editor);
 						convertCranachDocToWb(renderer.cranachDoc, editor);
 					}
 					// if ($('#item_modal').length > 0) {

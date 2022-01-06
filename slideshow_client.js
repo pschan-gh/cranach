@@ -294,12 +294,14 @@ function focusOn(item, text = '') {
 }
 
 function jumpToSlide(output, slide) {
-	slide.scrollIntoView( {block: "center", behavior: "smooth"} );
-	if(document.getElementById('right_half').classList.contains('present')) {
-		baseRenderer.then(cranach => {
+	console.log(slide)
+	baseRenderer.then(cranach => {
+		// slide.scrollIntoView( {block: "center"} );
+		slide.scrollIntoView();
+		if ( document.getElementById('right_half').classList.contains('present') ) {
 			showSlide(slide, cranach);
-		});
-	}
+		}
+	});
 }
 
 function highlight(item) {

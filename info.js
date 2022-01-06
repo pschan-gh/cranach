@@ -81,7 +81,6 @@ function updateToc(cranach) {
 			el.appendChild(document.querySelector(`#output .toc_src`));
 		}
 	});
-	// document.querySelector(`#output .toc_src`).classList.add('hidden');
 
 	document.querySelectorAll(`.toc a span.serial`).forEach(el => {
 		const string = el.textContent;
@@ -89,21 +88,20 @@ function updateToc(cranach) {
 	});
 
 	document.querySelectorAll(`#info_statements`).forEach(el => el.innerHTML = ``);
+
 	document.querySelectorAll(`.toc a.chapter`).forEach(el => {
-		let chapter = el.getAttribute(`chapter`);
-		let statements = new Array();
+		const chapter = el.getAttribute(`chapter`);
+		const statements = new Array();
+		let serial, html = '';
+
 		document.querySelectorAll(`#output div[wbname="statement"][chapter="${chapter}"]`).forEach( div => {
 			if (!(div.getAttribute(`type`) in statements)) {
 				statements[div.getAttribute(`type`)] = ``;
 			}
-
-			let serial = div.getAttribute(`item`);
-			let item = document.querySelector(`div[serial="${serial}"]`).closest(`div.statement`);
-			// let slide = item.closest(`.slide`).getAttribute(`slide`);
-
+			serial = div.getAttribute(`item`);
 			statements[div.getAttribute(`type`)] += `<a style="margin:1px 10px 1px 10px;" class="info_statements_num" serial="${serial}" href="javascript:void(0)">${serial}</a>`;
 		});
-		let html = ``;
+		html = '';
 		for (let key in statements) {
 			html += `<br/><a class="info_statements" target="_blank" href="${url}&query=//lv:statement[@chapter=${chapter} and @type=%27${key}%27]">${key}</a><em>${statements[key]}</em>`;
 		}
@@ -113,29 +111,29 @@ function updateToc(cranach) {
 		div.setAttribute('chapter', chapter);
 		div.innerHTML = html;
 
-		// document.querySelector(`#info_statements`).append(`<div class="statements chapter" chapter="${chapter}" style="display:none">${html}</div>`);
 		document.querySelector(`#info_statements`).appendChild(div);
-
 
 		el.addEventListener('click', () => {
 			jumpToSlide(
-				document.querySelector(`.output`),
-				document.querySelector(`.output .slide[chapter="${el.getAttribute('chapter')}"]`)
+				output,
+				output.querySelector(`:scope > div.slide[chapter="${el.getAttribute('chapter')}"]`)
 			);
+			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
 
 	document.querySelectorAll(`.toc a.section`).forEach(a => {
-		let slide = document.querySelector(`.slide[section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
+		let slide = output.querySelector(`:scope > div.slide[section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
 		a.addEventListener('click', () => {
-			jumpToSlide(document.getElementById(`output`), slide);
+			console.log(slide);
+			jumpToSlide(output, slide);
 			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
 	document.querySelectorAll(`.toc a.subsection`).forEach(a => {
-		let slide = document.querySelector(`.slide[subsection="${a.getAttribute('subsection')}"][section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
+		let slide = output.querySelector(`:scope > div.slide[subsection="${a.getAttribute('subsection')}"][section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
 		a.addEventListener('click', event => {
-			jumpToSlide(document.getElementById(`output`), slide);
+			jumpToSlide(output, slide);
 			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
