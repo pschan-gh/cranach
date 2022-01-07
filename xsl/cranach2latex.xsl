@@ -141,12 +141,12 @@
 
 	<xsl:template match="xh:a[@href]">
 		<xsl:value-of select="concat('\href{',  @href, '}{')"/>
-		<xsl:apply-templates select="*|text()|comment()" />
+		<xsl:apply-templates select="*|text()" />
 		<xsl:text>}</xsl:text>
 	</xsl:template>
     <xsl:template match="xh:a[@lcref]">
 		<xsl:value-of select="concat('\href{',  @lcref, '}{')"/>
-		<xsl:apply-templates select="*|text()|comment()" />
+		<xsl:apply-templates select="*|text()" />
 		<xsl:text>}</xsl:text>
 	</xsl:template>
 
@@ -154,7 +154,7 @@
 	<xsl:if test="not(preceding-sibling::lv:inline_keyword or preceding-sibling::lv:ref or parent::lv:title) and preceding-sibling::lv:*[@wbtag!='']">
 		<xsl:text>&#xa;</xsl:text>
 	</xsl:if>
-	<xsl:apply-templates select="text()|comment()" />
+	<xsl:apply-templates select="text()" />
 </xsl:template>
 
 <xsl:template match="lv:newcol|lv:collapse">
@@ -189,14 +189,14 @@
 			<xsl:text>}</xsl:text>
 		</xsl:when>
 	</xsl:choose>
-	<xsl:apply-templates select="*[not(self::lv:of-title)]|comment()" />
+	<xsl:apply-templates select="*[not(self::lv:of-title)]" />
 	<xsl:text>&#xa;\end{</xsl:text>
 	<xsl:value-of select="@wbtag"/>
 	<xsl:text>}</xsl:text>
 </xsl:template>
 
 <xsl:template match="lv:section/lv:title|lv:subsection/lv:title|lv:subsubsection/lv:title">
-	<xsl:apply-templates select="*|comment()">
+	<xsl:apply-templates select="*">
 	</xsl:apply-templates>
 </xsl:template>
 
@@ -377,14 +377,24 @@
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
+						<xsl:when test="lv:title/@custom = 'true'">
+							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, ' (', lv:title/text(), ')}')"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, '}')"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+				<!-- <xsl:otherwise>
+					<xsl:choose>
 						<xsl:when test="not(@name)">
-							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', lv:title/text(), '}')"/>
+						<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, ' (', lv:title/text(), ')}')"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @name, '}')"/>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:otherwise>
+				</xsl:otherwise> -->
 			</xsl:choose>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -412,12 +422,11 @@
 	<xsl:value-of select="@argument"/>
 </xsl:template>
 
+<xsl:template match="lv:comment" />
+
 <xsl:template match="text()" >
 	<!-- <xsl:value-of select="normalize-space(.)" /> -->
 	<xsl:value-of select="." />
-</xsl:template>
-
-<xsl:template match="lv:comment" >
 </xsl:template>
 
 <xsl:template match="comment()" >

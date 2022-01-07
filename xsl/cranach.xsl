@@ -902,8 +902,6 @@
         <xsl:param name="course"/>
         <xsl:param name="chapter"/>
         <xsl:param name="slide"/>
-
-
         <xsl:element name="ref" namespace="{$lv}">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="course">
@@ -925,7 +923,13 @@
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="./lv:title">
-                    <xsl:copy-of select="./lv:title"/>
+                    <!-- <xsl:copy-of select="./lv:title"/> -->
+					<xsl:element name="title" namespace="{$lv}">
+						<xsl:attribute name="custom">
+			                <xsl:value-of select="'true'"/>
+			            </xsl:attribute>
+						<xsl:copy-of select="./lv:title/*"/>
+					</xsl:element>
                 </xsl:when>
                 <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
                     <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
@@ -961,8 +965,11 @@
                     <xsl:element name="title" namespace="{$lv}">
                         <xsl:choose>
                             <xsl:when test="$branch/idx:title">
+								<xsl:attribute name="custom">
+					                <xsl:value-of select="'true'"/>
+					            </xsl:attribute>
                                 <xsl:copy-of select="($branch/idx:title/*)|($branch/idx:title/text())"/>
-                            </xsl:when>
+							</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>
                             </xsl:otherwise>
@@ -994,7 +1001,7 @@
 
     <xsl:template match="comment()">
         <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
-            <xsl:comment>
+            <xsl:comment namespace="{$lv}">
                 <xsl:value-of select="." disable-output-escaping="no" />
             </xsl:comment>
         <!-- </xsl:element> -->
