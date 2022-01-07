@@ -37,7 +37,8 @@ function updateEditor(cranach) {
 		.replace(/@sep/g, '@slide')
 		.replace(/\<!--(.|\n)*?--\>/g, '');
 
-		const currentSlide = pastBuffer === null ? 1 : pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
+		const currentSlide = pastBuffer === null || typeof pastBuffer === 'undefined' || pastBuffer === '' ?
+		1 :	pastBuffer.match(/(?:^|\n)\s*(?:@slide|@course|@chapter|@week|@lecture|@section|@subsection|@subsubsection)/g).length;
 
 		let o = new Option(currentSlide.toString(), currentSlide);
 		renderSel.appendChild(o);

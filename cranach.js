@@ -94,7 +94,8 @@ function Cranach(url) {
 				})
                 .catch(error => {
                     console.log(error);
-                    this.indexDoc = null;
+                    // this.indexDoc = document.implementation.createDocument ('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'idx', null);
+					this.indexDoc = null;
                     resolve(this);
                 });
 		});
@@ -102,14 +103,6 @@ function Cranach(url) {
 
 	this.setup = function(options) {
 		this.output = document.getElementById(this.attr['outputID']);
-
-		if(options) {
-			for (let key in options){
-				if(options.hasOwnProperty(key)){
-					this.attr[key] = options[key];
-				}
-			}
-		}
 
 		if (this.params) {
 			let params = this.params;
@@ -172,7 +165,13 @@ function Cranach(url) {
 			}
 		}
 
-		// let el = this;
+		if(options) {
+			for (let key in options){
+				if(options.hasOwnProperty(key)){
+					this.attr[key] = options[key];
+				}
+			}
+		}
 
 		return this.loadMacros()
 		.then(cranach => cranach.loadIndex())
@@ -262,24 +261,22 @@ function Cranach(url) {
 	/* interact with Browser */
 
 	this.preCranachDocToCranachDoc = function() {
-		// let el = this;
-		let indexDom = this.indexDoc;
-		let preCranachDoc = this.preCranachDoc;
+		const indexDom = this.indexDoc;
+		const preCranachDoc = this.preCranachDoc;
 
-		if (indexDom.getElementsByTagName('index')[0]) {
-			let index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
-			preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
-		}
-
+		// if (indexDom.getElementsByTagName('index')[0]) {
+		// 	let index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
+		// 	preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
+		// }
 		return new Promise((resolve, reject) => {
 			fetch('xsl/cranach.xsl')
 				.then(response => response.text())
 				.then(xsltext => {
 					report('PRECRANACHTOCRANACH');
                     let xsltProcessor = new XSLTProcessor();
+					xsltProcessor.setParameter('', 'indexdoc', indexDom);
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
-					let cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
-					this.cranachDoc = cranachDoc;
+					this.cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
 					resolve(this);
 				});
 		});
@@ -482,7 +479,6 @@ function Cranach(url) {
 			this.output = output;
 		}
 		this.bare = false;
-		this.attr['query'] = '';
 
 		let xmlString = generateXML(wbString);
 		let preCranachDoc = domparser.parseFromString(xmlString, 'text/xml');

@@ -13,8 +13,12 @@
     <xsl:variable name="lv" select="'http://www.math.cuhk.edu.hk/~pschan/cranach'"/>
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
+	<xsl:param name="indexxml" select="''" />
+	<xsl:param name="indexdoc" select="document($indexxml)"/>
+	<!-- <xsl:param name="indexdoc" /> -->
+
     <xsl:template match="/">
-        <xsl:element name="document" namespace="{$lv}">
+		<xsl:element name="document" namespace="{$lv}">
             <xsl:apply-templates select="lv:root|lv:bare" />
         </xsl:element>
     </xsl:template>
