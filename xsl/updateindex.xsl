@@ -17,16 +17,19 @@
 	<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
 	<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
-	<xsl:param name="cranachfilename" />
+	<xsl:param name="cranachfilename" select="''"/>
 	<xsl:param name="cranachfp" select="''" />
 	<xsl:param name="cranachmd5" select="''"/>
-	<!-- <xsl:param name="cranachdoc" select="document($cranachfp)"/> -->
-	<xsl:param name="cranachdoc" />
+
+	<xsl:variable name="cranachdoc" select="document($cranachfp)"/>
 
 	<xsl:template match="/">
 		<document>
 			<index>
 				<xsl:copy-of select="//idx:branch[@filename != $cranachfilename]|//idx:ref[(@filename != $cranachfilename) and (@filename!='self')]|//idx:section" />
+				<xsl:apply-templates select="//lv:keyword[@slide!='all']" />
+				<xsl:apply-templates select="//lv:statement|//lv:substatement|//lv:figure|//lv:ref|$cranachdoc//lv:*[(lv:label) and (@type='Section')]" />
+				<!-- <xsl:copy-of select="//idx:branch|//idx:ref|//idx:section" /> -->
 				<xsl:apply-templates select="$cranachdoc//lv:keyword[@slide!='all']" />
 				<xsl:apply-templates select="$cranachdoc//lv:statement|$cranachdoc//lv:substatement|$cranachdoc//lv:figure|$cranachdoc//lv:ref|$cranachdoc//lv:*[(lv:label) and (@type='Section')]" />
 			</index>
@@ -57,7 +60,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]">
+	<xsl:template match="lv:statement|lv:substatement|lv:figure|lv:ref|lv:*[(lv:label) and (@type='Section')]">
 		<xsl:element name="{local-name()}" namespace="{$idx}">
 			<xsl:copy-of select="@*"/>
 			<xsl:attribute name="filename">
