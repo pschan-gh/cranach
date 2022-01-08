@@ -345,8 +345,8 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="//idx:index">
-    </xsl:template>
+    <!-- <xsl:template match="lv:root/idx:index">
+    </xsl:template> -->
 
     <xsl:template match="lv:slides">
         <xsl:param name="course" select="@course"/>

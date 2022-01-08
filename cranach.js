@@ -268,25 +268,25 @@ function Cranach(url) {
 	/* interact with Browser */
 
 	this.preCranachDocToCranachDoc = function() {
-		const indexDom = this.indexDoc;
-		const preCranachDoc = this.preCranachDoc;
 
 		// if (indexDom.getElementsByTagName('index')[0]) {
 		// 	let index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
 		// 	preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
 		// }
-		console.log(preCranachDoc);
+		// console.log(preCranachDoc);
 		return new Promise((resolve, reject) => {
 			fetch('xsl/cranach.xsl')
 				.then(response => response.text())
 				.then(xsltext => {
 					report('PRECRANACHTOCRANACH');
                     let xsltProcessor = new XSLTProcessor();
-					// console.log(indexDom);
-					xsltProcessor.setParameter('', 'indexdoc', indexDom);
 					let domparser = new DOMParser();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
-					this.cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
+					console.log(this.indexDoc.cloneNode(true));
+					xsltProcessor.setParameter('', 'indexdoc', this.indexDoc.cloneNode(true));
+					console.log(xsltProcessor.getParameter('', 'indexdoc'));
+					console.log(this.preCranachDoc);
+					this.cranachDoc = xsltProcessor.transformToDocument(this.preCranachDoc);
 					console.log(this.cranachDoc);
 					resolve(this);
 				});
@@ -450,7 +450,6 @@ function Cranach(url) {
 		// 	}
 		// 	preindexDom.appendChild(branch);
 		// }
-		console.log(this.cranachDoc);
 		return new Promise((resolve, reject) => {
 			fetch('xsl/updateindex.xsl')
 			.then(response => response.text())
@@ -462,6 +461,7 @@ function Cranach(url) {
 				xsltProcessor.setParameter('', 'cranachfilename', filename);
 				console.log(this.cranachDoc);
 				xsltProcessor.setParameter('', 'cranachdoc', this.cranachDoc);
+				console.log(xsltProcessor.getParameter('', 'cranachdoc'));
 				console.log(this.indexDoc);
 				let preIndexDoc = xsltProcessor.transformToDocument(this.indexDoc);
 				console.log(preIndexDoc);

@@ -4,12 +4,14 @@ function commitWb(editor) {
 	.then(response => response.text())
 	.then(xsl => {
         let xsltProcessor = new XSLTProcessor();
+		let domparser = new DOMParser();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 		let preCranachDoc = xsltProcessor.transformToDocument(body,document);
 		fetch('xsl/cranach.xsl')
 		.then(response => response.text())
 		.then(xsl => {
 			document.getElementById('source_text').value = '';
+			let domparser = new DOMParser();
 			xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 			console.log('HTML2PRELOVU');
 			// console.log(preCranachDoc);
@@ -27,6 +29,7 @@ function convertCranachDocToWb(cranachDoc, editor) {
 	.then(response => response.text())
 	.then(xsl => {
         let xsltProcessor = new XSLTProcessor();
+		let domparser = new DOMParser();
 		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 		console.log(cranachDoc);
 		fragment = xsltProcessor.transformToFragment(cranachDoc, document);
