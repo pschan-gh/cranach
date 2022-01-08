@@ -53,7 +53,8 @@
 					), $uppercase, $lowercase)
 				" />
 			</xsl:attribute>
-			<xsl:copy-of select="./*" />
+			<xsl:copy-of select="@*" />
+			<xsl:copy-of select="./*|text()" />
 		</xsl:element>
 	</xsl:template>
 
@@ -66,7 +67,8 @@
 			<xsl:attribute name="file_md5">
 				<xsl:value-of select="$cranachmd5"/>
 			</xsl:attribute>
-			<xsl:copy-of select="./lv:title|./lv:label"/>
+			<xsl:copy-of select="./lv:title"/>
+			<xsl:copy-of select="./lv:label"/>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>
