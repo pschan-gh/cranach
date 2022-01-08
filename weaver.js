@@ -70,5 +70,6 @@ function generateXML(source) {
 	child = child.closeTo(/root/i);
 
 	console.log('END WEAVER');
+	console.log(child.node);
 	return new XMLSerializer().serializeToString(child.node);
 }

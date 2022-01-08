@@ -15,7 +15,6 @@
 
 	<xsl:param name="indexxml" select="''" />
 	<xsl:param name="indexdoc" select="document($indexxml)"/>
-	<!-- <xsl:param name="indexdoc" /> -->
 
     <xsl:template match="/">
 		<xsl:element name="document" namespace="{$lv}">
@@ -643,8 +642,8 @@
                         <xsl:value-of select="$of"/>
                     </xsl:attribute>
                     <xsl:choose>
-                        <xsl:when test="(//idx:label[@name=$of]) or (//idx:branch[@md5=$of])">
-                            <xsl:variable name="branch" select="(//idx:label[@name=$of]/parent::node()|//idx:branch[@md5=$of])[1]"/>
+                        <xsl:when test="($indexdoc//idx:label[@name=$of]) or ($indexdoc//idx:branch[@md5=$of])">
+                            <xsl:variable name="branch" select="($indexdoc//idx:label[@name=$of]/parent::node()|$indexdoc//idx:branch[@md5=$of])[1]"/>
                             <xsl:attribute name="of-src-course">
                                 <xsl:value-of select="$branch/@course"/>
                             </xsl:attribute>
@@ -935,8 +934,8 @@
 						<xsl:copy-of select="./lv:title/*"/>
 					</xsl:element>
                 </xsl:when>
-                <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
-                    <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
+                <xsl:when test="($indexdoc//idx:label[@name=current()/@label]) or ($indexdoc//idx:branch[@md5=current()/@label])">
+                    <xsl:variable name="branch" select="($indexdoc//idx:label[@name=current()/@label]/parent::node()|$indexdoc//idx:branch[@md5=current()/@label])[1]"/>
                     <xsl:attribute name="src-course">
                         <xsl:value-of select="$branch/@course"/>
                     </xsl:attribute>
