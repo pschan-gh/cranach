@@ -135,7 +135,7 @@ function itemSectionButtonClickHandler(el, cranach) {
     const modalKeywords = itemModal.querySelector('#modal_keywords');
     const metadata = {};
 
-    ['course', 'md5', 'type', 'chapter_type', 'chapter', 'item_type', 'item', 'serial', 'slide']
+    ['course', 'md5', 'type', 'chapter_type', 'chapter', 'item', 'serial', 'slide'] //, 'item_type'
     .forEach(key => {
         if (key == 'item') {
             metadata[key] =
@@ -183,12 +183,18 @@ function itemSectionButtonClickHandler(el, cranach) {
     itemModal.querySelector('#share_url').value = url;
 
     const titleElement = el.querySelector('*[wbtag="title"]');
-    let title = titleElement !== null ?
-    titleElement.innerHTML :
-    metadata.item ? `${metadata['item_type']} ${metadata.item}` : metadata['item_type'];
+
+	// let title = titleElement !== null ?
+    // titleElement.innerHTML :
+    // metadata.item ? `${metadata['item_type']} ${metadata.item}` : metadata['item_type'];
+
+	const typeSerial = metadata.item ? `${metadata['type']} ${metadata.item}` : `${metadata['type']} ${metadata.serial}`;
+	const title = titleElement !== null ?
+    `${typeSerial} ${titleElement.textContent}` : typeSerial;
 
     document.querySelector('#item_modal #share_hyperlink').value =
     `<a href="${url}" target="_blank" title="Course:${course}">${title}</a>`;
+	
     document.querySelector('#item_modal #share_lcref').value = argName == 'item' ?  `{\\href{${lcref}}{\\mathrm{${title.replace(/ /g, '\\;')}}}}` : '';
 
     document.querySelector('#item_modal #share_hyperref').value = `{\\href{${url.replace('#', '\\#')}}{${title}}}`;
