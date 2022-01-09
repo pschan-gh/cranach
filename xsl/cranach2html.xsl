@@ -1248,9 +1248,9 @@
 
 <xsl:template match="lv:comment">
 	<div class="comment">
-		<!-- <xsl:comment> -->
+		<xsl:comment>
 			<xsl:value-of select="text()" disable-output-escaping="yes"/>
-		<!-- </xsl:comment> -->
+		</xsl:comment>
 	</div>
 </xsl:template>
 
