@@ -937,7 +937,9 @@
 					</xsl:element>
                 </xsl:when>
                 <xsl:when test="($indexdoc//idx:label[@name=current()/@label]) or ($indexdoc//idx:branch[@md5=current()/@label]) or (//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
-                    <xsl:variable name="branch" select="($indexdoc//idx:label[@name=current()/@label]/parent::node()|$indexdoc//idx:branch[@md5=current()/@label]|//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
+				<!-- <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])"> -->
+					<xsl:variable name="branch" select="($indexdoc//idx:label[@name=current()/@label]/parent::node()|$indexdoc//idx:branch[@md5=current()/@label]|//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
+					<!-- <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/> -->
                     <xsl:attribute name="src-course">
                         <xsl:value-of select="$branch/@course"/>
                     </xsl:attribute>
@@ -1006,10 +1008,9 @@
 
     <xsl:template match="comment()">
         <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
-            <xsl:comment namespace="{$lv}">
-                <xsl:value-of select="." disable-output-escaping="no" />
-            </xsl:comment>
-        <!-- </xsl:element> -->
+		<xsl:element name="comment" namespace="{$lv}">
+			<xsl:value-of select="." disable-output-escaping="no" />
+		</xsl:element>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -11,6 +11,7 @@ function commitWb(editor) {
 		.then(response => response.text())
 		.then(xsl => {
 			document.getElementById('source_text').value = '';
+			let xsltProcessor = new XSLTProcessor();
 			let domparser = new DOMParser();
 			xsltProcessor.importStylesheet(domparser.parseFromString(xsl, 'text/xml'));
 			console.log('HTML2PRELOVU');

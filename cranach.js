@@ -1,4 +1,4 @@
-// let domparser = new DOMParser();
+const domparser = new DOMParser();
 // const xsltProcessor = new XSLTProcessor();
 
 function nsResolver(prefix) {
@@ -62,14 +62,14 @@ function Cranach(url) {
             })
             .then(macroString => {
                 this.macrosString = macroString;
-				let domparser = new DOMParser();
+				// let domparser = new DOMParser();
                 this.macros = domparser.parseFromString('<div>\\(' + this.macrosString + '\\)</div>', "text/xml");
                 resolve(this);
             })
             .catch(error => {
                 console.log(error);
                 this.macrosString = '';
-				let domparser = new DOMParser();
+				// let domparser = new DOMParser();
                 this.macros = domparser.parseFromString('<div>\\(\\)</div>', "text/xml");
                 resolve(this);
             });
@@ -89,7 +89,7 @@ function Cranach(url) {
                     return response.text();
 				})
 				.then(xmltext => {
-					let domparser = new DOMParser();
+					// let domparser = new DOMParser();
 					this.indexDoc = domparser.parseFromString(xmltext, "text/xml");
 					resolve(this);
 				})
@@ -192,7 +192,7 @@ function Cranach(url) {
 						const progressBar = document.querySelector('.progress-bar');
 						progressBar.style.width = '50%';
 						progressBar.setAttribute('aria-valuenow', '50');
-						let domparser = new DOMParser();
+						// let domparser = new DOMParser();
 						this.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
                         // console.log(this.cranachDoc);
 						resolve(this);
@@ -214,7 +214,7 @@ function Cranach(url) {
                         return response.text();
 					})
 					.then(wb => {
-						let domparser = new DOMParser();
+						// let domparser = new DOMParser();
 						this.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
 						// console.log(this.preCranachDoc);
 						resolve(this);
@@ -273,10 +273,11 @@ function Cranach(url) {
 			fetch('xsl/cranach.xsl')
 				.then(response => response.text())
 				.then(xsltext => {
-					report('PRECRANACHTOCRANACH');
-                    let xsltProcessor = new XSLTProcessor();
-					let domparser = new DOMParser();
-					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
+					console.log('PRECRANACHTOCRANACH');
+					let xsltProcessor = new XSLTProcessor();
+					let xsltdoc = domparser.parseFromString(xsltext, "text/xml");
+					// console.log(xsltdoc);
+					xsltProcessor.importStylesheet(xsltdoc);
 					// xsltProcessor.setParameter('', 'indexxml', 'data:text/xml,' + new XMLSerializer().serializeToString(this.indexDoc));
 					this.cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
 					console.log(this.cranachDoc);
@@ -306,7 +307,7 @@ function Cranach(url) {
 					progressBar.setAttribute('aria-valuenow', '75');
 					setTimeout(() => {
                         let xsltProcessor = new XSLTProcessor();
-						let domparser = new DOMParser();
+						// let domparser = new DOMParser();
 						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
 						xsltProcessor.setParameter(null, 'contenturl', this.attr['contentURL']);
@@ -391,7 +392,7 @@ function Cranach(url) {
 			.then(response => response.text())
 			.then(xsltext => {
 				let xsltProcessor = new XSLTProcessor();
-				let domparser = new DOMParser();
+				// let domparser = new DOMParser();
 				// console.log(this.indexDoc);
 				xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 				xsltProcessor.setParameter('', 'cranachmd5', fileMD5);
@@ -402,7 +403,7 @@ function Cranach(url) {
 				.then(response => response.text())
 				.then(xsltext => {
 	                let xsltProcessor = new XSLTProcessor();
-					let domparser = new DOMParser();
+					// let domparser = new DOMParser();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					let indexDoc = xsltProcessor.transformToDocument(preIndexDoc);
 					this.indexDoc = indexDoc;
@@ -424,7 +425,7 @@ function Cranach(url) {
 			    .then(response => response.text())
 				.then(xsltext => {
                     let xsltProcessor = new XSLTProcessor();
-					let domparser = new DOMParser();
+					// let domparser = new DOMParser();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					xsltProcessor.setParameter(null, 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);
@@ -442,7 +443,7 @@ function Cranach(url) {
 		this.bare = false;
 
 		let xmlString = generateXML(wbString);
-		let domparser = new DOMParser();
+		// let domparser = new DOMParser();
 		let preCranachDoc = domparser.parseFromString(xmlString, 'text/xml');
 		this.preCranachDoc = preCranachDoc;
 		// console.log(preCranachDoc);
