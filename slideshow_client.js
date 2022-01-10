@@ -476,7 +476,7 @@ function updateRefs(slide, cranach) {
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
 	});
 
-	slide.querySelectorAll('a.lcref:not(.updated)').forEach(el => {
+	slide.querySelectorAll('[lcref]:not(.updated)').forEach(el => {
 		el.addEventListener('click', function(evt) {
 			evt.preventDefault();
 			evt.stopPropagation();
