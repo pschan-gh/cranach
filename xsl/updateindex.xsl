@@ -38,6 +38,7 @@
 
 	<xsl:template match="lv:keyword[@slide!='all']">
 		<xsl:element name="keyword" namespace="{$lv}">
+			<xsl:copy-of select="@*" />
 			<xsl:attribute name="filename">
 				<xsl:value-of select="$cranachfilename"/>
 			</xsl:attribute>
@@ -56,7 +57,7 @@
 					), $uppercase, $lowercase)
 				" />
 			</xsl:attribute>
-			<xsl:copy-of select="./*" />
+			<xsl:copy-of select="./*|text()" />
 		</xsl:element>
 	</xsl:template>
 
