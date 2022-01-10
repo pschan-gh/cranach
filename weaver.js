@@ -44,12 +44,14 @@ function generateXML(source) {
 	.replace(/@proposition/g, '@prop')
 	.replace(/@corollary/g, '@cor')
 	.replace(/@solution/g, '@sol')
-	.replace(/#(nstep|ref|label)/g, '@$1')
+	.replace(/#(nstep|ref|label)/g, "@$1")
 	.replace(/\<p\s*\>/g, '<p/>')
 	.replace(/\<\/p\>/g, '')
 	.replace(/%\n/g, '')
 	.replace(/@slide\s*@(course|week|lecture|chapter|section|subsection|subsubsection)/g, "@$1")
-	.replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle");
+	.replace(/@(section|subsection|subsubsection){((?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+)}/g, "@$1\n@title\n$2\n@endtitle")
+	.replace(/__(.*?)__/g, "@keyword{$1}")
+	.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
 	// END LEGACY COMPATIBILITY
 

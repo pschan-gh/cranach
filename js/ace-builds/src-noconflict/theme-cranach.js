@@ -55,7 +55,7 @@ color: #BFBFBF\
 background-color: rgba(2, 95, 73, 0.97);\
 border-color: rgba(15, 0, 9, 1.0)\
 }\
-.ace-cranach .ace_wbtag {\
+.ace-cranach .ace_wbtag, .ace_wbkeyword {\
 color: #bfb;\
 \/*background-color: #ddd;*\/\
 \/*font-family: \"Helvetica Neue\", helvetica, arial, sans-serif;*\/\
