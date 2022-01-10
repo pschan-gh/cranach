@@ -154,9 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	document.querySelector('input.lecture_mode').addEventListener('change', function() {
 		if (this.checked) {
-			document.querySelectorAll('[data-lecture-skip="true"]').classList.add('lecture_skip');
+			document.querySelectorAll('[data-lecture-skip="true"]').forEach(el => el.classList.add('lecture_skip'));
 		} else {
-			document.querySelectorAll('[data-lecture-skip="true"]').classList.remove('lecture_skip');
+			document.querySelectorAll('[data-lecture-skip="true"]').forEach(el => el.classList.remove('lecture_skip'));
 		}
 	});
 
