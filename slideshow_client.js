@@ -176,7 +176,8 @@ function updateSlideContent(slide, carousel = false) {
 		iFrameResize({ log: false, checkOrigin:false }, e);
 	});
 
-	document.querySelector('#uncollapse_button').textContent = slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse';
+	document.querySelectorAll('#uncollapse_button').forEach(el => el. textContent =
+		slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse');
 
 	slide.querySelectorAll('.loading_icon').forEach(e => e.classList.add('hidden'));
 
