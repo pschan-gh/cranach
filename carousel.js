@@ -346,31 +346,31 @@ function addCanvas(slide) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.querySelector('.canvas-controls .clear').addEventListener('click', function() {
+	document.querySelectorAll('.canvas-controls .clear').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.querySelector('canvas').remove();
 		addCanvas(slide);
-	});
-	document.querySelector('.canvas-controls .expand').addEventListener('click', function() {
+	}));
+	document.querySelectorAll('.canvas-controls .expand').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		expandCanvas(slide, 1, 300);
-	});
-	document.querySelector('.canvas-controls .disable').addEventListener('click', function() {
+	}));
+	document.querySelectorAll('.canvas-controls .disable').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		canvasControlsDisableEvent(slide);
-	});
-	document.querySelector('.canvas-controls .erase').addEventListener('click', function(evt) {
+	}));
+	document.querySelectorAll('.canvas-controls .erase').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setErase();
 		document.querySelector('.canvas-controls .nav-link').classList.remove('disabled');
 		evt.currentTarget.classList.add('disabled');
-	});
+	}));
 	// $('.canvas-controls .enable').off();
-	document.querySelector('.canvas-controls .enable').addEventListener('click', function(evt) {
+	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.enableDrawingMode();
@@ -380,40 +380,40 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
 		evt.currentTarget.classList.add('disabled');
 		slide.cfd.canvas.classList.remove('disabled');
-	});
-	document.querySelector('.canvas-controls .undo').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.undo()
-	});
-	document.querySelector('.canvas-controls .redo').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .redo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.redo()
-	});
-	document.querySelector('.canvas-controls .red').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setDrawingColor([255, 0, 0])
-	});
-	document.querySelector('.canvas-controls .green').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setDrawingColor([0, 180, 0])
-	});
-	document.querySelector('.canvas-controls .blue').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setDrawingColor([0, 0, 255])
-	});
-	document.querySelector('.canvas-controls .orange').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setDrawingColor([255, 128, 0])
-	});
-	document.querySelector('.canvas-controls .black').addEventListener('click', () => {
+	}));
+	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setDrawingColor([0, 0, 0])
-	});
+	}));
 });
