@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 		slide.cfd.setErase();
-		document.querySelector('.canvas-controls .nav-link').classList.remove('disabled');
+		document.querySelectorAll('.canvas-controls .nav-link').forEach(el => el.classList.remove('disabled'));
 		evt.currentTarget.classList.add('disabled');
 	}));
 	// $('.canvas-controls .enable').off();
