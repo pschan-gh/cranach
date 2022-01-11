@@ -327,17 +327,7 @@ function imagePostprocess(image) {
         let override = false;
         if (image.closest('.image') !== null) {
 
-            // if (image.closest('.image') !== null) {
-            //     image.closest('.image').style.height = '';
-            // }
-            // if (image.closest('.dual-left') !== null) {
-            //     image.closest('.dual-left').style.height = '';
-            // }
-            // if (image.closest('.dual-right') !== null) {
-            //     image.closest('.dual-right').style.height = '';
-            // }
-
-            override =
+			override =
 			image.closest('.image').style.width !== null &&
 			typeof image.closest('.image').style.width !== 'undefined';
 			// && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600)
@@ -576,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		attributes: true,
 	});
 
-	document.querySelector('#uncollapse_button').addEventListener('click', () => {
-        collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'));
-    });
+	document.querySelectorAll('#uncollapse_button').forEach(el => el.addEventListener('click', () =>
+        collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'))
+    ));
 });

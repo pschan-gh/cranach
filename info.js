@@ -188,6 +188,10 @@ function updateKeywords() {
 
 function updateSlideInfo(slide) {
 
+	if ( document.getElementById('slide_info') === null ) {
+		return 0;
+	}
+
 	updateTitle(slide);
 
 	let slideNum = +(slide.getAttribute(`slide`));

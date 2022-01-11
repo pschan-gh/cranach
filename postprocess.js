@@ -1,6 +1,6 @@
 function postprocess(cranach) {
 	console.log('POSTPROCESS');
-	document.getElementById('loading_icon').classList.add('hidden');
+	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 
 	// document.addEventListener('DOMContentLoaded', () => {
 
@@ -14,6 +14,7 @@ function postprocess(cranach) {
 	if (document.getElementById('item_modal') !== null) {
 		updateModal(cranach);
 	}
+
 	updateSlideInfo(document.querySelector('#output > div.slide'));
 
 	output.querySelectorAll('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').forEach(e => {
@@ -56,9 +57,9 @@ function postprocess(cranach) {
 		});
 	}
 
-	document.getElementById('loading_icon').classList.add('hidden');
-	document.querySelector('#right_half .navbar').classList.remove('hidden');
-	document.querySelector('#right_half .navbar').style.display = 'block';
+	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
+	document.querySelectorAll('#right_half .navbar').forEach(el => el.classList.remove('hidden'));
+	document.querySelectorAll('#right_half .navbar').forEach(el => el.style.display = 'block');
 	if (cranach.attr['present']) {
 		console.log('PRESENT MODE');
 		showSlide(null, cranach);

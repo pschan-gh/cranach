@@ -190,8 +190,10 @@ function Cranach(url) {
 					})
 					.then(xmltext => {
 						const progressBar = document.querySelector('.progress-bar');
-						progressBar.style.width = '50%';
-						progressBar.setAttribute('aria-valuenow', '50');
+						if (progressBar !== null) {
+							progressBar.style.width = '50%';
+							progressBar.setAttribute('aria-valuenow', '50');
+						}
 						// let domparser = new DOMParser();
 						this.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
                         // console.log(this.cranachDoc);
@@ -296,15 +298,19 @@ function Cranach(url) {
 		const xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
 		const output = this.output;
 		const progressBar = document.querySelector('.progress-bar');
-		progressBar.style.width = '50%';
-		progressBar.setAttribute('aria-valuenow', '50');
+		if (progressBar !== null) {
+			progressBar.style.width = '50%';
+			progressBar.setAttribute('aria-valuenow', '50');
+		}
 
 		return new Promise((resolve, reject) => {
 			fetch(xsl)
 			    .then(response => response.text())
 				.then(xsltext => {
-					progressBar.style.width = '75%';
-					progressBar.setAttribute('aria-valuenow', '75');
+					if (progressBar !== null) {
+						progressBar.style.width = '75%';
+						progressBar.setAttribute('aria-valuenow', '75');
+					}
 					setTimeout(() => {
                         let xsltProcessor = new XSLTProcessor();
 						// let domparser = new DOMParser();
@@ -312,8 +318,10 @@ function Cranach(url) {
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
 						xsltProcessor.setParameter(null, 'contenturl', this.attr['contentURL']);
 						xsltProcessor.setParameter(null, 'contentdir', this.attr['dir']);
-						progressBar.style.width = '80%';
-						progressBar.setAttribute('aria-valuenow', '80');
+						if (progressBar !== null) {
+							progressBar.style.width = '80%';
+							progressBar.setAttribute('aria-valuenow', '80');
+						}
 						setTimeout(() => {
 							let cranachDoc = this.cranachDoc;
 							let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
@@ -347,9 +355,10 @@ function Cranach(url) {
 			}
 			queryDom.appendChild(bare);
 
-			progressBar.style.width = '75%';
-			progressBar.setAttribute('aria-valuenow', '75');
-			// let el = this;
+			if (progressBar !== null) {
+				progressBar.style.width = '75%';
+				progressBar.setAttribute('aria-valuenow', '75');
+			}
 
 			this.preCranachDoc = queryDom;
 			return this.updateIndex().then(cranach => {
@@ -360,8 +369,10 @@ function Cranach(url) {
 
 		} else {
 			this.cranachDoc = cranachDoc;
-			progressBar.style.width = '75%';
-			progressBar.setAttribute('aria-valuenow', '75');
+			if (progressBar !== null) {
+				progressBar.style.width = '75%';
+				progressBar.setAttribute('aria-valuenow', '75');
+			}
 
 			return this.displayCranachDocToHtml();
 		}
@@ -420,6 +431,9 @@ function Cranach(url) {
 		const indexDoc = this.indexDoc;
 		// let el = this;
 		console.log(contentURLDir);
+		if (target === null) {
+			return this;
+		}		
 		return new Promise((resolve, reject) => {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
