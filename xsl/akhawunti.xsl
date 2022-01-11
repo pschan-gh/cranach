@@ -42,8 +42,10 @@
 					//idx:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
 					//lv:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]
 				"/>
-				<xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref"/>
-				<xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label"/>
+				<!-- <xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref|//idx:ref|//lv:ref"/>
+				<xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label|//idx:label|//lv:label"/> -->
+				<xsl:apply-templates select="//idx:ref|//lv:ref"/>
+				<!-- <xsl:apply-templates select="//idx:label|//lv:label"/> -->
 				<xsl:apply-templates select="
 					//idx:course|
 					//idx:chapter|
@@ -121,15 +123,19 @@
 	<xsl:template match="idx:title|lv:title">
 		<xsl:element name="title" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="*|text()"/>
+			<xsl:apply-templates select="*|text()"/>
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="idx:ref|lv:ref">
 		<xsl:element name="ref" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="*|text()"/>
+			<xsl:apply-templates select="*|text()"/>
 		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="text()">
+        <xsl:value-of select="." disable-output-escaping="no" />
 	</xsl:template>
 
 </xsl:stylesheet>
