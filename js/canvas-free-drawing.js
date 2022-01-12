@@ -1,3 +1,4 @@
+// https://github.com/federico-moretti/canvas-free-drawing
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -49,7 +50,7 @@
 	        else if (this.canvasNode instanceof HTMLElement) {
 	            var newCanvas = document.createElement('canvas');
 	            this.canvasNode.appendChild(newCanvas);
-	            this.canvas = newCanvas;				
+	            this.canvas = newCanvas;
 	        }
 	        else {
 	            throw new Error("No element found with following id: " + this.elementId);
@@ -249,7 +250,6 @@
 	    };
 	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery) {
 	        var _this = this;
-	        this.context.lineJoin = 'round';
 	        var positions = [__spreadArrays(this.positions).pop()];
 	        positions.forEach(function (position) {
 	            if (position && position[0] && position[0].strokeColor) {
@@ -279,11 +279,11 @@
 	            else {
 	                _this.context.moveTo(x - 1, y);
 	            }
-				// _this.context.lineTo(x, y);
-				// _this.context.closePath();
-				// _this.context.stroke();
+
 				if (!_this.isErasing) {
 					_this.context.lineTo(x, y);
+					_this.context.lineJoin = 'round';
+					_this.context.lineCap = 'round';
 					_this.context.closePath();
 					_this.context.stroke();
 				} else {
