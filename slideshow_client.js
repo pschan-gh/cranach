@@ -126,6 +126,8 @@ function renderSlide(slide) {
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
 			if (typeof focusOnItem !== 'undefined' && focusOnItem !== null) {
+				console.log('scrolling to');
+				console.log(focusOnItem);
 				focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
 				focusOnItem = null;
 			}
@@ -291,11 +293,11 @@ function focusOn(item, text = '') {
 				item.scrollIntoView( {block: "center", behavior: "smooth"} );
 			}
 		}
+		focusOnItem = null;
 	});
 }
 
 function jumpToSlide(output, slide) {
-	console.log(slide)
 	baseRenderer.then(cranach => {
 		// slide.scrollIntoView( {block: "center"} );
 		slide.scrollIntoView();
@@ -550,8 +552,9 @@ function updateScrollEvent() {
 }
 
 function selectSlide(slide) {
-	// slide.classList.add('selected');
-	document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
+	if (slide !== null) {
+		document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
+	}
 }
 
 document.addEventListener('DOMContentLoaded', () => {

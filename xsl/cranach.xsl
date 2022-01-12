@@ -933,7 +933,7 @@
 						<xsl:attribute name="custom">
 			                <xsl:value-of select="'true'"/>
 			            </xsl:attribute>
-						<xsl:copy-of select="./lv:title/*"/>
+						<xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
 					</xsl:element>
                 </xsl:when>
                 <xsl:when test="($indexdoc//idx:label[@name=current()/@label]) or ($indexdoc//idx:branch[@md5=current()/@label]) or (//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
@@ -975,7 +975,7 @@
 								<xsl:attribute name="custom">
 					                <xsl:value-of select="'true'"/>
 					            </xsl:attribute>
-                                <xsl:copy-of select="($branch/idx:title/*)|($branch/idx:title/text())"/>
+                                <xsl:apply-templates select="($branch/idx:title/*)|($branch/idx:title/text())"/>
 							</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>

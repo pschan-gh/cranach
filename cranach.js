@@ -270,7 +270,7 @@ function Cranach(url) {
 			const index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
 			preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
 		}
-		// console.log(preCranachDoc);
+		console.log(preCranachDoc);
 		return new Promise((resolve, reject) => {
 			fetch('xsl/cranach.xsl')
 				.then(response => response.text())
@@ -386,7 +386,8 @@ function Cranach(url) {
 	}
 	this.updateIndex = function() {
 		let xmlDom = this.cranachDoc;
-		let filename = this.attr['localName'];
+		let filename = this.attr['query'] == '' ? this.attr['localName'] : 'local';
+		// let filename = 'self';
 
 		let contents = new XMLSerializer().serializeToString(xmlDom);
 		let fileMD5 = md5(contents);
@@ -433,7 +434,7 @@ function Cranach(url) {
 		console.log(contentURLDir);
 		if (target === null) {
 			return this;
-		}		
+		}
 		return new Promise((resolve, reject) => {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())

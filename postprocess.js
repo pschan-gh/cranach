@@ -67,23 +67,19 @@ function postprocess(cranach) {
 
 	baseRenderer.then(cranach => {
 		if (cranach.attr['selectedItem']) {
-			console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
-
-			let item = document.querySelector('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').closest('.item_title');
-			focusOn(item);
+			document.querySelectorAll('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]')
+			.forEach(item => focusOn(item.closest('.item_title')));
 		} else if (cranach.attr['selectedSection']) {
-			let section = document.querySelector('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').closest('.section_title');
-			// let selectedSlide = section.closest('.slide');
-			focusOn(section);
+			document.querySelectorAll('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').forEach(section => focusOn(section.closest('.section_title')));
 		} else if (cranach.attr['selectedSlide']) {
-			let selectedSlide = document.querySelector(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"]`);
-			selectSlide(selectedSlide);
-			focusOn(selectedSlide);
+			document.querySelectorAll(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"]`).forEach(selectedSlide => {
+				selectSlide(selectedSlide);
+				focusOn(selectedSlide);
+			});
 		}
-
 		if (cranach.attr['selectedKeyword']) {
-			let selectedSlide = document.querySelector('.output div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
-			focusOn(selectedSlide, cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
+			document.querySelectorAll('.output div.slide[slide="' + cranach.attr['selectedSlide']  + '"]')
+			.forEach(selectedSlide => focusOn(selectedSlide, cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, '')));
 		}
 		updateToc(cranach);
 	});
