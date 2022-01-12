@@ -23,7 +23,8 @@
 		//lv:figure[@md5]" use="@md5"
 	/>
 
-	<xsl:key name="ref_branches" match="//idx:refby[@md5]|//idx:ref[@md5]" use="concat(@file_md5, '-', @slide, '-', @md5)"/>
+	<!-- <xsl:key name="ref_branches" match="//idx:refby[@md5]|//idx:ref[@md5]" use="concat(@file_md5, '-', @slide, '-', @md5)"/> -->
+	<xsl:key name="ref_branches" match="//idx:ref[@referrer-md5]|//lv:ref[@referrer-md5]" use="@referrer-md5"/>
 
 	<xsl:template match="/">
 		<document>
@@ -44,7 +45,9 @@
 				"/>
 				<!-- <xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref|//idx:ref|//lv:ref"/>
 				<xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label|//idx:label|//lv:label"/> -->
-				<xsl:apply-templates select="//idx:ref|//lv:ref"/>
+				<xsl:apply-templates select="
+					//idx:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]|
+					//lv:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]"/>
 				<!-- <xsl:apply-templates select="//idx:label|//lv:label"/> -->
 				<xsl:apply-templates select="
 					//idx:course|
@@ -130,7 +133,7 @@
 	<xsl:template match="idx:ref|lv:ref">
 		<xsl:element name="ref" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates select="*|text()"/>
+			<xsl:apply-templates select="key('ref_branches', @referrer-md5)[1]/*|key('ref_branches', @referrer-md5)[1]/text()"/>
 		</xsl:element>
 	</xsl:template>
 
