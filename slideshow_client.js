@@ -125,7 +125,7 @@ function renderSlide(slide) {
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
-			if (focusOnItem !== null) {
+			if (typeof focusOnItem !== 'undefined' && focusOnItem !== null) {
 				focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
 				focusOnItem = null;
 			}
