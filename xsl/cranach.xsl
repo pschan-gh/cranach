@@ -984,6 +984,9 @@
                     </xsl:element>
                 </xsl:when>
                 <xsl:otherwise>
+					<xsl:attribute name="undefined">
+	                    <xsl:value-of select="'true'"/>
+	                </xsl:attribute>
                     <xsl:element name="title" namespace="{$lv}">
                         <xsl:text>UNDEFINED</xsl:text>
                     </xsl:element>
