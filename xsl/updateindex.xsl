@@ -26,16 +26,21 @@
 	<xsl:template match="/">
 		<document>
 			<index>
-				<xsl:copy-of select="//idx:branch[@filename != $cranachfilename]|//idx:ref[(@filename != $cranachfilename) and (@filename!='self')]|//idx:section[@filename != $cranachfilename]" />
-				<xsl:apply-templates select="//lv:keyword[@slide!='all']" />
+				<!-- <xsl:copy-of select="//idx:branch[@filename != $cranachfilename]|//idx:ref[(@filename != $cranachfilename) and (@filename!='self')]|//idx:section[@filename != $cranachfilename]" /> -->
+				<xsl:copy-of select="//idx:branch[not(@filename = $cranachfilename)]|//idx:ref[not(@filename = $cranachfilename) and not(@filename ='self')]|//idx:section[not(@filename = $cranachfilename)]" />
+				<xsl:apply-templates select="//lv:keyword[not(@slide = 'all')]" />
 				<xsl:apply-templates select="//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]" />
-				<xsl:apply-templates select="$cranachdoc//lv:keyword[@slide!='all']" />
+				<xsl:apply-templates select="$cranachdoc//lv:keyword[not(@slide ='all')]" />
 				<xsl:apply-templates select="$cranachdoc//lv:statement|$cranachdoc//lv:substatement|$cranachdoc//lv:figure|$cranachdoc//lv:ref|$cranachdoc//lv:*[(lv:label) and (@type='Section')]" />
 			</index>
 		</document>
 	</xsl:template>
 
-	<xsl:template match="lv:keyword[@slide!='all']">
+	<!-- <xsl:template match="//idx:branch[not(@filename = $cranachfilename)]|//idx:ref[not(@filename = $cranachfilename) and not(@filename ='self')]|//idx:section[not(@filename = $cranachfilename)]">
+		<xsl:copy-of select="." />
+	</xsl:template> -->
+
+	<xsl:template match="lv:keyword[not(@slide = 'all')]">
 		<xsl:element name="keyword" namespace="{$lv}">
 			<xsl:copy-of select="@*" />
 			<xsl:attribute name="filename">
@@ -69,8 +74,22 @@
 			<xsl:attribute name="file_md5">
 				<xsl:value-of select="$cranachmd5"/>
 			</xsl:attribute>
-			<xsl:copy-of select="./lv:title"/>
-			<xsl:copy-of select="./lv:label"/>
+			<xsl:apply-templates select="idx:label|lv:label"/>
+			<xsl:apply-templates select="idx:title|lv:title"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="idx:label|lv:label">
+		<xsl:element name="label" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
+			<xsl:copy-of select="../@*"/>
+			<xsl:copy-of select="@*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="idx:title|lv:title">
+		<xsl:element name="title" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="*|text()"/>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>
