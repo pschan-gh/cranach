@@ -26,13 +26,15 @@
 	<xsl:template match="/">
 		<document>
 			<index>
-				<!-- <xsl:copy-of select="//idx:branch[not(@filename = $cranachfilename)]|//idx:ref[not(@filename = $cranachfilename) and not(@filename ='self')]|//idx:section[not(@filename = $cranachfilename)]" /> -->
-				<xsl:copy-of select="//idx:branch[not(@filename = $cranachfilename)]|//idx:ref[not(@newcomer) and not(@undefined)]|//idx:section[not(@newcomer)]" />
+				<xsl:copy-of select="//idx:branch[@filename != $cranachfilename]|//idx:ref[(@filename != $cranachfilename) and (@filename != 'self')]|//idx:section[@filename != $cranachfilename]" />
+				<!-- <xsl:copy-of select="//idx:branch[not(@filename = $cranachfilename)]|//idx:ref[not(@newcomer) and not(@undefined)]|//idx:section[not(@newcomer)]" /> -->
 				<xsl:apply-templates select="//lv:keyword[not(@slide = 'all')]" />
-				<!-- <xsl:apply-templates select="//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]" /> -->
-				<xsl:apply-templates select="//lv:statement[@newcomer]|//lv:substatement[@newcomer]|//lv:figure[@newcomer]|//lv:ref[@newcomer and not(@undefined)]|//lv:*[(lv:label) and (@type='Section') and (@newcomer)]" />
-				<xsl:apply-templates select="$cranachdoc//lv:keyword[not(@slide ='all')]" />
-				<xsl:apply-templates select="$cranachdoc//lv:statement|$cranachdoc//lv:substatement|$cranachdoc//lv:figure|$cranachdoc//lv:ref|$cranachdoc//lv:*[(lv:label) and (@type='Section')]" />
+				<xsl:apply-templates select="//lv:statement|//lv:substatement|//lv:figure|//idx:index/lv:ref|//lv:*[(lv:label) and (@type='Section')]" />
+				<!-- <xsl:apply-templates select="//lv:statement[@newcomer]|//lv:substatement[@newcomer]|//lv:figure[@newcomer]|//lv:ref[@newcomer and not(@undefined)]|//lv:*[(lv:label) and (@type='Section') and (@newcomer)]" /> -->
+                <xsl:if test="not($cranachfp = '')" >
+                    <xsl:apply-templates select="$cranachdoc//lv:keyword[not(@slide ='all')]" />
+                    <xsl:apply-templates select="$cranachdoc//lv:statement|$cranachdoc//lv:substatement|$cranachdoc//lv:figure|$cranachdoc//lv:ref|$cranachdoc//lv:*[(lv:label) and (@type='Section')]" />
+                </xsl:if>
 			</index>
 		</document>
 	</xsl:template>
