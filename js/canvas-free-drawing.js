@@ -1,4 +1,5 @@
 // https://github.com/federico-moretti/canvas-free-drawing
+//
 // The MIT License (MIT)
 //
 // Copyright (c) 2018-present, Federico Moretti
