@@ -1343,7 +1343,11 @@ h5.current_slide {
 	border-radius:5px
 }
 
-.lecture_skip * {
+/* .lecture_skip * {
+	color:#ccc !important;
+} */
+
+.lecture_skip [data-lecture-skip="true"] * {
 	color:#ccc !important;
 }
 
