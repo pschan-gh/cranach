@@ -77,7 +77,7 @@ function showTexFrom(jax) {
 			preview.style.display = 'block';
 		}
 
-		jaxNode.parentNode.insertBefore(preview, jaxNode);
+    jaxNode.parentNode.insertBefore(preview, jaxNode);
 		jaxNode.remove();
 	}
 }

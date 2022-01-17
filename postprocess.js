@@ -1,5 +1,5 @@
 function postprocess(cranach) {
-	console.log('POSTPROCESS');
+  console.log('POSTPROCESS');
 	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 
 	// document.addEventListener('DOMContentLoaded', () => {
