@@ -1,7 +1,6 @@
 const domparser = new DOMParser();
 // const xsltProcessor = new XSLTProcessor();
 
-
 function nsResolver(prefix) {
 	let ns = {
 		'lv' : "http://www.math.cuhk.edu.hk/~pschan/cranach",
@@ -11,7 +10,6 @@ function nsResolver(prefix) {
 	};
 	return ns[prefix] || null;
 }
-
 
 function Cranach(url) {
 
@@ -64,12 +62,14 @@ function Cranach(url) {
             })
             .then(macroString => {
                 this.macrosString = macroString;
+				// let domparser = new DOMParser();
                 this.macros = domparser.parseFromString('<div>\\(' + this.macrosString + '\\)</div>', "text/xml");
                 resolve(this);
             })
             .catch(error => {
                 console.log(error);
                 this.macrosString = '';
+				// let domparser = new DOMParser();
                 this.macros = domparser.parseFromString('<div>\\(\\)</div>', "text/xml");
                 resolve(this);
             });
@@ -89,14 +89,16 @@ function Cranach(url) {
                     return response.text();
 				})
 				.then(xmltext => {
+					// let domparser = new DOMParser();
 					this.indexDoc = domparser.parseFromString(xmltext, "text/xml");
 					resolve(this);
 				})
                 .catch(error => {
                     console.log(error);
-                    // this.indexDoc = document.implementation.createDocument ('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'idx', null);
-					this.indexDoc = null;
-                    resolve(this);
+                    console.log('creating indexdoc');
+					let indexDoc = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'index', null);
+					this.indexDoc = indexDoc;
+					resolve(this);
                 });
 		});
 	}
@@ -176,12 +178,6 @@ function Cranach(url) {
 		return this.loadMacros()
 		.then(cranach => cranach.loadIndex())
 		.then(cranach => {
-			if (cranach.indexDoc == null) {
-				let docDom = document.implementation.createDocument ('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
-				let preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'index');
-				docDom.appendChild(preindexDom);
-				this.indexDoc = docDom;
-			}
 			let el = cranach;
 			if (this.attr['xmlPath']) {
 				return new Promise((resolve, reject) => {
@@ -194,10 +190,13 @@ function Cranach(url) {
 					})
 					.then(xmltext => {
 						const progressBar = document.querySelector('.progress-bar');
-						progressBar.style.width = '50%';
-						progressBar.setAttribute('aria-valuenow', '50');
+						if (progressBar !== null) {
+							progressBar.style.width = '50%';
+							progressBar.setAttribute('aria-valuenow', '50');
+						}
+						// let domparser = new DOMParser();
 						this.cranachDoc = domparser.parseFromString(xmltext, "text/xml");
-                        console.log(this.cranachDoc);
+                        // console.log(this.cranachDoc);
 						resolve(this);
 					})
                     .catch(error => {
@@ -217,7 +216,9 @@ function Cranach(url) {
                         return response.text();
 					})
 					.then(wb => {
+						// let domparser = new DOMParser();
 						this.preCranachDoc = domparser.parseFromString(generateXML(wb), "text/xml");
+						// console.log(this.preCranachDoc);
 						resolve(this);
 					})
                     .catch(error => {
@@ -261,22 +262,27 @@ function Cranach(url) {
 	/* interact with Browser */
 
 	this.preCranachDocToCranachDoc = function() {
+
 		const indexDom = this.indexDoc;
 		const preCranachDoc = this.preCranachDoc;
 
-		// if (indexDom.getElementsByTagName('index')[0]) {
-		// 	let index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
-		// 	preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
-		// }
+		if (indexDom.getElementsByTagName('index')[0]) {
+			const index = indexDom.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0].cloneNode(true);
+			preCranachDoc.getElementsByTagName('root')[0].appendChild(index);
+		}
+		console.log(preCranachDoc);
 		return new Promise((resolve, reject) => {
 			fetch('xsl/cranach.xsl')
 				.then(response => response.text())
 				.then(xsltext => {
-					report('PRECRANACHTOCRANACH');
-                    let xsltProcessor = new XSLTProcessor();
-					xsltProcessor.setParameter('', 'indexdoc', indexDom);
-					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
+					console.log('PRECRANACHTOCRANACH');
+					let xsltProcessor = new XSLTProcessor();
+					let xsltdoc = domparser.parseFromString(xsltext, "text/xml");
+					// console.log(xsltdoc);
+					xsltProcessor.importStylesheet(xsltdoc);
+					// xsltProcessor.setParameter('', 'indexxml', 'data:text/xml,' + new XMLSerializer().serializeToString(this.indexDoc));
 					this.cranachDoc = xsltProcessor.transformToDocument(preCranachDoc);
+					console.log(this.cranachDoc);
 					resolve(this);
 				});
 		});
@@ -292,27 +298,33 @@ function Cranach(url) {
 		const xsl = this.bare ? 'xsl/cranach2html_bare.xsl' : 'xsl/cranach2html.xsl';
 		const output = this.output;
 		const progressBar = document.querySelector('.progress-bar');
-		progressBar.style.width = '50%';
-		progressBar.setAttribute('aria-valuenow', '50');
+		if (progressBar !== null) {
+			progressBar.style.width = '50%';
+			progressBar.setAttribute('aria-valuenow', '50');
+		}
 
 		return new Promise((resolve, reject) => {
 			fetch(xsl)
 			    .then(response => response.text())
 				.then(xsltext => {
-					progressBar.style.width = '75%';
-					progressBar.setAttribute('aria-valuenow', '75');
+					if (progressBar !== null) {
+						progressBar.style.width = '75%';
+						progressBar.setAttribute('aria-valuenow', '75');
+					}
 					setTimeout(() => {
                         let xsltProcessor = new XSLTProcessor();
+						// let domparser = new DOMParser();
 						xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 						xsltProcessor.setParameter(null, "timestamp", new Date().getTime());
 						xsltProcessor.setParameter(null, 'contenturl', this.attr['contentURL']);
 						xsltProcessor.setParameter(null, 'contentdir', this.attr['dir']);
-						progressBar.style.width = '80%';
-						progressBar.setAttribute('aria-valuenow', '80');
+						if (progressBar !== null) {
+							progressBar.style.width = '80%';
+							progressBar.setAttribute('aria-valuenow', '80');
+						}
 						setTimeout(() => {
 							let cranachDoc = this.cranachDoc;
 							let fragment = xsltProcessor.transformToFragment(cranachDoc, document);
-							console.log(fragment);
 							output.innerHTML = '';
 							output.appendChild(fragment);
 							resolve(this);
@@ -343,9 +355,10 @@ function Cranach(url) {
 			}
 			queryDom.appendChild(bare);
 
-			progressBar.style.width = '75%';
-			progressBar.setAttribute('aria-valuenow', '75');
-			// let el = this;
+			if (progressBar !== null) {
+				progressBar.style.width = '75%';
+				progressBar.setAttribute('aria-valuenow', '75');
+			}
 
 			this.preCranachDoc = queryDom;
 			return this.updateIndex().then(cranach => {
@@ -356,8 +369,10 @@ function Cranach(url) {
 
 		} else {
 			this.cranachDoc = cranachDoc;
-			progressBar.style.width = '75%';
-			progressBar.setAttribute('aria-valuenow', '75');
+			if (progressBar !== null) {
+				progressBar.style.width = '75%';
+				progressBar.setAttribute('aria-valuenow', '75');
+			}
 
 			return this.displayCranachDocToHtml();
 		}
@@ -371,84 +386,42 @@ function Cranach(url) {
 	}
 	this.updateIndex = function() {
 		let xmlDom = this.cranachDoc;
-		let filename = this.attr['localName'];
+		let filename = this.attr['query'] == '' ? this.attr['localName'] : 'local';
+		// let filename = 'self';
 
 		let contents = new XMLSerializer().serializeToString(xmlDom);
 		let fileMD5 = md5(contents);
 
-		let docDom = document.implementation.createDocument('http://www.math.cuhk.edu.hk/~pschan/elephas_index', '', null);
+		const query = "//lv:keyword[@slide!='all']|//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]";
 
-		if (this.indexDoc.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index').length) {
-			docDom.appendChild(this.indexDoc.getElementsByTagNameNS("http://www.math.cuhk.edu.hk/~pschan/elephas_index", 'index')[0]);
-		}
-
-		let preindexDom = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', 'preindex');
-
-		let query, newBranches;
-
-		query = "//idx:branch[@filename!='" + filename + "']|//idx:ref[(@filename!='" + filename + "') and (@filename!='self')]|//idx:section";
-		let oldBranches = docDom.evaluate(query, docDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-		for ( let i = 0 ; i < oldBranches.snapshotLength; i++ ) {
-			report('ADDING OLD BRANCH: ' + oldBranches.snapshotItem(i).textContent);
-			preindexDom.appendChild(oldBranches.snapshotItem(i));
-		}
-
-		query = "//lv:keyword[@slide!='all']";
-		newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+		const indexDom = this.indexDoc;
+		const newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		for ( let i = 0 ; i < newBranches.snapshotLength; i++ ) {
-			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
-			newBranches.snapshotItem(i).setAttribute('filename', filename);
-			newBranches.snapshotItem(i).setAttribute('file_md5', fileMD5);
-			newBranches.snapshotItem(i).setAttribute('keyword', newBranches.snapshotItem(i).textContent.toLowerCase());
-			preindexDom.appendChild(newBranches.snapshotItem(i));
-			report('ADDING OLD BRANCH: ' + newBranches.snapshotItem(i).textContent);
-			preindexDom.appendChild(newBranches.snapshotItem(i));
+			indexDom.getElementsByTagName('index')[0].appendChild(newBranches.snapshotItem(i).cloneNode(true));
 		}
-
-
-		query = "//lv:statement|//lv:substatement|//lv:figure|//lv:ref|//lv:*[(lv:label) and (@type='Section')]";
-		newBranches = xmlDom.evaluate(query, xmlDom, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-		for (let i = 0; i < newBranches.snapshotLength; i++) {
-			report('ADDING NEW BRANCH: ' + newBranches.snapshotItem(i).textContent);
-			let newBranch = newBranches.snapshotItem(i).cloneNode(true);
-			let branch = docDom.createElementNS('http://www.math.cuhk.edu.hk/~pschan/elephas_index', newBranch.tagName);
-
-			if (newBranch.hasAttributes()) {
-				let attrs = newBranch.attributes;
-				for(let j = attrs.length - 1; j >= 0; j--) {
-					branch.setAttribute(attrs[j].name, attrs[j].value);
-				}
-			}
-			branch.setAttribute('filename', filename);
-			branch.setAttribute('file_md5', fileMD5);
-
-			let titles = xmlDom.evaluate('./lv:title', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-			report('TITLES: ' + titles.snapshotLength);
-			if (titles.snapshotLength > 0) {
-				for (let j = titles.snapshotLength - 1; j >= 0 ; j--) {
-					let clone = titles.snapshotItem(j).cloneNode(true);
-					branch.appendChild(clone);
-				}
-			}
-
-			let labels = xmlDom.evaluate('./lv:label', newBranch, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-			for (let j = labels.snapshotLength - 1; j >= 0 ; j--) {
-				let clone = labels.snapshotItem(j).cloneNode(true);
-				branch.appendChild(clone);
-			}
-			preindexDom.appendChild(branch);
-		}
-
-		// let el = this;
 		return new Promise((resolve, reject) => {
-			fetch('xsl/akhawunti.xsl')
+			fetch('xsl/updateindex.xsl')
 			.then(response => response.text())
 			.then(xsltext => {
-                let xsltProcessor = new XSLTProcessor();
+				let xsltProcessor = new XSLTProcessor();
+				// let domparser = new DOMParser();
+				// console.log(this.indexDoc);
 				xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
-				let indexDoc = xsltProcessor.transformToDocument(preindexDom);
-				this.indexDoc = indexDoc;
-				resolve(this);
+				xsltProcessor.setParameter('', 'cranachmd5', fileMD5);
+				xsltProcessor.setParameter('', 'cranachfilename', filename);
+				xsltProcessor.setParameter('', 'cranachdoc', xmlDom);
+				let preIndexDoc = xsltProcessor.transformToDocument(this.indexDoc);
+				fetch('xsl/akhawunti.xsl')
+				.then(response => response.text())
+				.then(xsltext => {
+	                let xsltProcessor = new XSLTProcessor();
+					// let domparser = new DOMParser();
+					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
+					let indexDoc = xsltProcessor.transformToDocument(preIndexDoc);
+					this.indexDoc = indexDoc;
+					console.log(this.indexDoc);
+					resolve(this);
+				});
 			});
 		});
 
@@ -459,11 +432,15 @@ function Cranach(url) {
 		const indexDoc = this.indexDoc;
 		// let el = this;
 		console.log(contentURLDir);
+		if (target === null) {
+			return this;
+		}
 		return new Promise((resolve, reject) => {
 			fetch('xsl/index2html.xsl')
 			    .then(response => response.text())
 				.then(xsltext => {
                     let xsltProcessor = new XSLTProcessor();
+					// let domparser = new DOMParser();
 					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 					xsltProcessor.setParameter(null, 'contenturldir', contentURLDir);
 					fragment = xsltProcessor.transformToFragment(indexDoc, document);
@@ -481,9 +458,10 @@ function Cranach(url) {
 		this.bare = false;
 
 		let xmlString = generateXML(wbString);
+		// let domparser = new DOMParser();
 		let preCranachDoc = domparser.parseFromString(xmlString, 'text/xml');
 		this.preCranachDoc = preCranachDoc;
-		console.log(preCranachDoc);
+		// console.log(preCranachDoc);
 		return this.displayPreCranachDocToHtml();
 	}
 

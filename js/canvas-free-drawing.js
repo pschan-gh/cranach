@@ -1,3 +1,27 @@
+// https://github.com/federico-moretti/canvas-free-drawing
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2018-present, Federico Moretti
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -49,7 +73,7 @@
 	        else if (this.canvasNode instanceof HTMLElement) {
 	            var newCanvas = document.createElement('canvas');
 	            this.canvasNode.appendChild(newCanvas);
-	            this.canvas = newCanvas;				
+	            this.canvas = newCanvas;
 	        }
 	        else {
 	            throw new Error("No element found with following id: " + this.elementId);
@@ -249,7 +273,6 @@
 	    };
 	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery) {
 	        var _this = this;
-	        this.context.lineJoin = 'round';
 	        var positions = [__spreadArrays(this.positions).pop()];
 	        positions.forEach(function (position) {
 	            if (position && position[0] && position[0].strokeColor) {
@@ -279,11 +302,11 @@
 	            else {
 	                _this.context.moveTo(x - 1, y);
 	            }
-				// _this.context.lineTo(x, y);
-				// _this.context.closePath();
-				// _this.context.stroke();
+
 				if (!_this.isErasing) {
 					_this.context.lineTo(x, y);
+					_this.context.lineJoin = 'round';
+					_this.context.lineCap = 'round';
 					_this.context.closePath();
 					_this.context.stroke();
 				} else {

@@ -65,11 +65,8 @@ MathJax = {
 					if (editorElement !== null) {
 						convertCranachDocToWb(renderer.cranachDoc, editor);
 					}
-					// if ($('#item_modal').length > 0) {
-					// 	updateModal(renderer);
-					// }
-					document.getElementById('render_sel').disabled = false;
-					document.getElementById('wb_button').disabled = false;
+					document.querySelectorAll('#render_sel').forEach(el => el.disabled = false);
+					document.querySelectorAll('#wb_button').forEach(el => el.disabled = false);
 					return renderer;
 				}
 			}).then(renderer => {

@@ -14,8 +14,7 @@
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
 	<xsl:param name="indexxml" select="''" />
-	<xsl:param name="indexdoc" select="document($indexxml)"/>
-	<!-- <xsl:param name="indexdoc" /> -->
+	<xsl:variable name="indexdoc" select="document($indexxml)" />
 
     <xsl:template match="/">
 		<xsl:element name="document" namespace="{$lv}">
@@ -642,9 +641,11 @@
                     <xsl:attribute name="of">
                         <xsl:value-of select="$of"/>
                     </xsl:attribute>
-                    <xsl:choose>
-                        <xsl:when test="(//idx:label[@name=$of]) or (//idx:branch[@md5=$of])">
-                            <xsl:variable name="branch" select="(//idx:label[@name=$of]/parent::node()|//idx:branch[@md5=$of])[1]"/>
+					<xsl:choose>
+                        <xsl:when test="($indexdoc//idx:label[@name=$of]) or ($indexdoc//idx:branch[@md5=$of]) or (//idx:label[@name=$of]) or (//idx:branch[@md5=$of])">
+						<!-- <xsl:when test="(//idx:label[@name=$of]) or (//idx:branch[@md5=$of])"> -->
+                            <xsl:variable name="branch" select="($indexdoc//idx:label[@name=$of]/parent::node()|$indexdoc//idx:branch[@md5=$of]|//idx:label[@name=$of]/parent::node()|//idx:branch[@md5=$of])[1]"/>
+							<!-- <xsl:variable name="branch" select="(//idx:label[@name=$of]/parent::node()|//idx:branch[@md5=$of])[1]"/> -->
                             <xsl:attribute name="of-src-course">
                                 <xsl:value-of select="$branch/@course"/>
                             </xsl:attribute>
@@ -932,11 +933,13 @@
 						<xsl:attribute name="custom">
 			                <xsl:value-of select="'true'"/>
 			            </xsl:attribute>
-						<xsl:copy-of select="./lv:title/*"/>
+						<xsl:apply-templates select="./lv:title/*|./lv:title/text()"/>
 					</xsl:element>
                 </xsl:when>
-                <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
-                    <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
+                <xsl:when test="($indexdoc//idx:label[@name=current()/@label]) or ($indexdoc//idx:branch[@md5=current()/@label]) or (//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])">
+				<!-- <xsl:when test="(//idx:label[@name=current()/@label]) or (//idx:branch[@md5=current()/@label])"> -->
+					<xsl:variable name="branch" select="($indexdoc//idx:label[@name=current()/@label]/parent::node()|$indexdoc//idx:branch[@md5=current()/@label]|//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/>
+					<!-- <xsl:variable name="branch" select="(//idx:label[@name=current()/@label]/parent::node()|//idx:branch[@md5=current()/@label])[1]"/> -->
                     <xsl:attribute name="src-course">
                         <xsl:value-of select="$branch/@course"/>
                     </xsl:attribute>
@@ -972,7 +975,7 @@
 								<xsl:attribute name="custom">
 					                <xsl:value-of select="'true'"/>
 					            </xsl:attribute>
-                                <xsl:copy-of select="($branch/idx:title/*)|($branch/idx:title/text())"/>
+                                <xsl:apply-templates select="($branch/idx:title/*)|($branch/idx:title/text())"/>
 							</xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="concat($branch/@type, ' ', $branch/@item)"/>
@@ -981,6 +984,9 @@
                     </xsl:element>
                 </xsl:when>
                 <xsl:otherwise>
+					<xsl:attribute name="undefined">
+	                    <xsl:value-of select="'true'"/>
+	                </xsl:attribute>
                     <xsl:element name="title" namespace="{$lv}">
                         <xsl:text>UNDEFINED</xsl:text>
                     </xsl:element>
@@ -1005,10 +1011,9 @@
 
     <xsl:template match="comment()">
         <!-- <xsl:element name="paragraphs" namespace="{$lv}"> -->
-            <xsl:comment namespace="{$lv}">
-                <xsl:value-of select="." disable-output-escaping="no" />
-            </xsl:comment>
-        <!-- </xsl:element> -->
+		<xsl:element name="comment" namespace="{$lv}">
+			<xsl:value-of select="." disable-output-escaping="no" />
+		</xsl:element>
     </xsl:template>
 
 </xsl:stylesheet>

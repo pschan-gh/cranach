@@ -216,6 +216,12 @@
 		<xsl:value-of select="." disable-output-escaping="no"/>
 	</xsl:template>
 
+    <xsl:template match="*[@class='comment']/comment()">
+		<!-- <xsl:comment> -->
+			<xsl:value-of select="." disable-output-escaping="no"/>
+		<!-- </xsl:comment> -->
+	</xsl:template>
+
 	<xsl:template match="comment()">
 		<xsl:comment>
 			<xsl:value-of select="." disable-output-escaping="no"/>

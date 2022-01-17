@@ -125,7 +125,9 @@ function renderSlide(slide) {
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
-			if (focusOnItem !== null) {
+			if (typeof focusOnItem !== 'undefined' && focusOnItem !== null) {
+				console.log('scrolling to');
+				console.log(focusOnItem);
 				focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
 				focusOnItem = null;
 			}
@@ -176,7 +178,8 @@ function updateSlideContent(slide, carousel = false) {
 		iFrameResize({ log: false, checkOrigin:false }, e);
 	});
 
-	document.querySelector('#uncollapse_button').textContent = slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse';
+	document.querySelectorAll('#uncollapse_button').forEach(el => el. textContent =
+		slide.classList.contains('collapsed') ? 'Uncollapse' : 'Collapse');
 
 	slide.querySelectorAll('.loading_icon').forEach(e => e.classList.add('hidden'));
 
@@ -290,11 +293,11 @@ function focusOn(item, text = '') {
 				item.scrollIntoView( {block: "center", behavior: "smooth"} );
 			}
 		}
+		focusOnItem = null;
 	});
 }
 
 function jumpToSlide(output, slide) {
-	console.log(slide)
 	baseRenderer.then(cranach => {
 		// slide.scrollIntoView( {block: "center"} );
 		slide.scrollIntoView();
@@ -327,17 +330,7 @@ function imagePostprocess(image) {
         let override = false;
         if (image.closest('.image') !== null) {
 
-            // if (image.closest('.image') !== null) {
-            //     image.closest('.image').style.height = '';
-            // }
-            // if (image.closest('.dual-left') !== null) {
-            //     image.closest('.dual-left').style.height = '';
-            // }
-            // if (image.closest('.dual-right') !== null) {
-            //     image.closest('.dual-right').style.height = '';
-            // }
-
-            override =
+			override =
 			image.closest('.image').style.width !== null &&
 			typeof image.closest('.image').style.width !== 'undefined';
 			// && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600)
@@ -476,7 +469,7 @@ function updateRefs(slide, cranach) {
 		e.setAttribute('lcref', lcref + '&version=' + Math.random());
 	});
 
-	slide.querySelectorAll('a.lcref:not(.updated)').forEach(el => {
+	slide.querySelectorAll('[lcref]:not(.updated)').forEach(el => {
 		el.addEventListener('click', function(evt) {
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -530,10 +523,13 @@ function updateSlideClickEvent() {
 
 			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
 
-			if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset) ||
-			(output.querySelector(':scope > div.slide.selected') === null && index == 0)) {
+			if (!div.classList.contains('selected')) {
 				output.dataset.selectedSlide = slideNum;
 			}
+			// if (slideNum != output.dataset.selectedSlide || !('selectedSlide' in output.dataset) ||
+			// (output.querySelector(':scope > div.slide.selected') === null && index == 0)) {
+			// 	output.dataset.selectedSlide = slideNum;
+			// }
 		});
 	});
 }
@@ -556,8 +552,9 @@ function updateScrollEvent() {
 }
 
 function selectSlide(slide) {
-	// slide.classList.add('selected');
-	document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
+	if (slide !== null) {
+		document.querySelector('.output').dataset.selectedSlide = slide.getAttribute('slide');
+	}
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -576,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		attributes: true,
 	});
 
-	document.querySelector('#uncollapse_button').addEventListener('click', () => {
-        collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'));
-    });
+	document.querySelectorAll('#uncollapse_button').forEach(el => el.addEventListener('click', () =>
+        collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'))
+    ));
 });

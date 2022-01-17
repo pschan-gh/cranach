@@ -73,7 +73,11 @@ function showLatex(el, mode = 'report') {
 		.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
 		.replace(/\\class{.*?}/g, '')
 		.replace(/\\cssId{.*?}/g, '')
-		.replace(/&ocirc/g, '\\^o');
+		.replace(/&ocirc/g, '\\^o')
+		.replace(/\\href{([^}]+)}{([^}]+)}/g, (match) => {
+			console.log(match);
+			return match.replace(/_/g, '\\_');
+		});
 
 		let tmp = el.macrosString + "\n" +  latex;
 
@@ -257,9 +261,10 @@ function openXML(renderer, filePath) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	baseRenderer.then(cranach => {
-		document.querySelector('.modal .btn.save')
-		.addEventListener('click', function(event) {
-			saveText(document.getElementById('source_text').value, cranach, event.target.getAttribute('ext'));
-		});
+		document.querySelectorAll('.modal .btn.save').forEach(el =>
+			el.addEventListener('click', function(event) {
+				saveText(document.getElementById('source_text').value, cranach, event.target.getAttribute('ext'));
+			})
+		);
 	});
 });
