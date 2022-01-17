@@ -12,6 +12,9 @@
 
     <xsl:output method="html"/>
 
+    <xsl:param name="contenturl" select="''" />
+	<xsl:param name="contentdir" select="''" />
+
     <xsl:variable name="xh" select="'http://www.w3.org/1999/xhtml'"/>
 
     <xsl:template match="xh:*">
@@ -79,7 +82,85 @@
         </div>
     </xsl:template>
 
-    <xsl:param name="contenturl"/>
+    <xsl:template match="lv:figure">
+		<xsl:variable name="chapter">
+			<xsl:choose>
+				<xsl:when test="ancestor::chapter">
+					<xsl:value-of select="ancestor::lv:chapter/@num"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="@chapter"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="num">
+			<xsl:choose>
+				<xsl:when test="ancestor::chapter">
+					<xsl:number level="any"  count="lv:chapter[@num=$chapter]//lv:figure"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="@num"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="serial">
+			<xsl:choose>
+				<xsl:when test="ancestor::chapter">
+					<xsl:choose>
+						<xsl:when test="ancestor::lv:chapter/@no_serial">
+							<xsl:value-of select="@item"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="concat(ancestor::lv:chapter/@num, '.', $num)"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="@item"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<p wbtag="ignore"/>
+		<div class='image'>
+			<xsl:attribute name="class">
+				<xsl:text>image</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="wbtag">
+				<xsl:value-of select="@wbtag"/>
+			</xsl:attribute>
+			<xsl:attribute name="wbname">
+				<xsl:value-of select="name()"/>
+			</xsl:attribute>
+			<xsl:attribute name="serial">
+				<xsl:value-of select="$serial"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="lv:label"/>
+			<xsl:apply-templates select="*[not(self::lv:caption) and not(self::lv:label)]"/>
+			<xsl:apply-templates select="lv:caption">
+				<xsl:with-param name="serial" select="$serial"/>
+			</xsl:apply-templates>
+		</div>
+	</xsl:template>
+
+	<xsl:template match="lv:caption">
+		<xsl:param name="serial" select="''"/>
+        <div wbtag="skip">
+			<small class="caption" wbtag="ignore">
+				<!-- <xsl:attribute name="wbtag">
+				<xsl:value-of select="'caption'"/>
+			    </xsl:attribute> -->
+				<xsl:value-of select="concat('Figure ', $serial, ' ')"/>
+				<!-- <xsl:apply-templates select="text()"/> -->
+			</small>
+			<small class="caption">
+				<xsl:attribute name="wbtag">
+					<xsl:value-of select="'caption'"/>
+				</xsl:attribute>
+				<!-- <xsl:value-of select="concat('Figure ', $serial, ' ')"/> -->
+				<xsl:apply-templates select="text()"/>
+			</small>
+		</div>
+	</xsl:template>
 
     <xsl:template match="lv:statement">
         <p wbtag="ignore"/>
@@ -735,7 +816,7 @@
         <br/>
     </xsl:template>
 
-    <xsl:template match="lv:image">
+    <!-- <xsl:template match="lv:image">
         <xsl:element name="div">
             <xsl:attribute name="class">
                 <xsl:text>image</xsl:text>
@@ -747,7 +828,32 @@
                 <xsl:attribute name="rendered">0</xsl:attribute>
             </xsl:element>
         </xsl:element>
-    </xsl:template>
+    </xsl:template> -->
+    <xsl:template match="lv:image">
+		<xsl:element name="div">
+			<xsl:attribute name="class">
+				<xsl:text>image</xsl:text>
+			</xsl:attribute>
+			<xsl:copy-of select="@*[name(.)!='src']"/>
+			<xsl:element name="img">
+				<xsl:attribute name="wbtag">ignore</xsl:attribute>
+				<xsl:copy-of select="@*[name(.)!='src']"/>
+				<xsl:attribute name="rendered">0</xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="contains(@data-src, 'http')">
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="@data-src"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="data-src">
+							<xsl:value-of select="concat($contentdir, '/', @data-src)"/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
 
     <!-- <xsl:template match="lv:paragraphs|*[@wbtag='paragraphs']"> -->
     <xsl:template match="lv:paragraphs">
@@ -981,8 +1087,15 @@
         <xsl:value-of select="." disable-output-escaping="yes" />
     </xsl:element>
 </xsl:template>
+
 <xsl:template match="comment()">
     <xsl:copy-of select="current()"/>
     <!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
+</xsl:template>
+<xsl:template match="lv:comment">
+	<xsl:comment>
+		<xsl:copy-of select="current()"/>
+		<!-- <xsl:value-of select="." disable-output-escaping="yes" /> -->
+	</xsl:comment>
 </xsl:template>
 </xsl:stylesheet>
