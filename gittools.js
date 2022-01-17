@@ -1,37 +1,68 @@
-import { Octokit } from "https://cdn.skypack.dev/@octokit/rest@18.5.3";
+// import { Octokit } from "https://cdn.skypack.dev/@octokit/rest@18.5.3";
+import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
 import { createPullRequest } from "https://cdn.skypack.dev/octokit-plugin-create-pull-request";
 const MyOctokit = Octokit.plugin(createPullRequest);
 
 function commitGh(ghRepoUsername, ghRepo, ghHead, ghAccessToken) {
+	const ghModal = document.getElementById('gh_modal');
+	const ghRepoBranch = document.getElementById('ghRepoBranch');
+	const localFilenameRoot = document.getElementById('localFilenameRoot');
 
-	$('#gh_modal .feedback .message').html('');
-	console.log( $('#index_text').val() );
+
+	ghModal.querySelector('.feedback .message').innerHTML = '';
 
 	if (ghAccessToken == "") {
-		$.post("tokens/index.php", { type: "github", username: ghRepoUsername } ).done(function(token) {
-			let octokit = new MyOctokit({
+		fetch("tokens/index.php", {
+			method: 'POST',
+			headers: {
+				"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+			},
+			body: `type=github&username=${ghRepoUsername}`
+		}).then(function(response) {
+			if (!response.ok) {
+				throw Error("CANNOT OBTAIN TOKEN.");
+			}
+			return response.text();
+		}).then(token => {
+			console.log(token);
+			console.log('token obtained');
+			const octokit = new MyOctokit({
 				auth: token,
 			});
-
-			ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
+			ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, ghRepoBranch.value, localFilenameRoot.textContent);
+		}).catch(error => {
+			console.log(error);
 		});
 	} else {
-		let octokit = new MyOctokit({
+		const octokit = new MyOctokit({
 			auth: ghAccessToken,
 		});
-		ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, $('#ghRepoBranch').val(), $('#localFilenameRoot').text());
+		ghCommitFiles(octokit, ghRepoUsername, ghRepo, ghHead, ghRepoBranch.value, localFilenameRoot.textContent);
 	}
 }
 window.commitGh = commitGh;
 
 function ghCommitFiles(octokit, owner, repo, head, branch, fileroot) {
 
-	let wbFile = fileroot + '.wb';
-	let xmlFile = fileroot + '.xml';
+	// console.log(`${octokit}`)
+	// console.log(`${owner}, ${repo}, ${head}, ${branch}, ${fileroot}`);
 
-	$('#gh_modal .loading').show();
-	$('#gh_modal .feedback .message').append('<div><code>Sending pull request: ' + wbFile + ', ' + xmlFile + ', index.xml.</code></div>');
+	// console.log(editor.getValue());
+	// console.log(document.getElementById('cranach_text').value);
+	// console.log(document.getElementById('index_text').value);
 
+	const ghModal = document.getElementById('gh_modal');
+	const wbFile = fileroot + '.wb';
+	const xmlFile = fileroot + '.xml';
+
+	ghModal.querySelector('.loading').classList.remove('hidden');
+
+	let messageDiv = document.createElement('div');
+	messageDiv.innerHTML = `<code>Sending pull request: ${wbFile}, ${xmlFile}, index.xml.</code>`;
+
+	ghModal.querySelector('.feedback .message').appendChild(messageDiv.cloneNode(true));
+
+	console.log(octokit);
 	octokit.createPullRequest({
 		owner: owner,
 		repo: repo,
@@ -44,8 +75,8 @@ function ghCommitFiles(octokit, owner, repo, head, branch, fileroot) {
 				/* optional: if `files` is not passed, an empty commit is created instead */
 				files:  {
 					[wbFile] : editor.getValue(),
-					[xmlFile] : $('#cranach_text').val(),
-					"index.xml" : $('#index_text').val()
+					[xmlFile] : document.getElementById('cranach_text').value,
+					"index.xml" : document.getElementById('index_text').value
 				},
 				commit:
 				"Update " + fileroot,
@@ -54,53 +85,64 @@ function ghCommitFiles(octokit, owner, repo, head, branch, fileroot) {
 	})
 	.then((pr) => {
 		console.log(pr);
-		$('#gh_modal .feedback .message').append('<div><a target="_blank" href="' + pr.data.html_url + '"> ' + pr.data.html_url +  '</a></div>');
-		$('#gh_modal .loading').hide();
+		messageDiv.innerHTML = `<a target="_blank" href="${pr.data.html_url}">${pr.data.html_url} </a>`;
+		ghModal.querySelector('.feedback .message').appendChild(messageDiv.cloneNode(true));
+		ghModal.querySelector('.loading').classList.add('hidden');
 	})
 	.catch(err => {
-		$('#gh_modal .feedback .message').append('<div><code>' +  err + '</code></div>');
-		$('#gh_modal .loading').hide();
+		messageDiv.innerHTML = `<code>${err}</code>`;
+		ghModal.querySelector('.feedback .message').appendChild(messageDiv.cloneNode(true));
+		ghModal.querySelector('.loading').classList.add('hidden');
 	});
 
 }
 
-function ghCommitFile(octokit, owner, repo, branch, filename, string) {
-	$('#gh_modal .loading').show();
+// function ghCommitFile(octokit, owner, repo, branch, filename, string) {
+// 	const ghModal = document.getElementById('gh_modal');
+//
+// 	ghModal.querySelector('.loading').classList.remove('hidden');
+//
+// 	let messageDiv = document.createElement('div');
+//
+// 	octokit.repos.getContent({
+// 		owner: owner,
+// 		repo: repo,
+// 		path: filename,
+// 		ref: branch
+// 	}).then(result => {
+// 		console.log(result);
+// 		var sha = result.data.sha;
+// 		console.log(filename + ' ' + sha);
+// 		return octokit.repos.createOrUpdateFileContents({
+// 			owner: owner,
+// 			repo: repo,
+// 			path: filename,
+// 			message: 'update ' + filename,
+// 			content: btoa(string),
+// 			branch: branch,
+// 			sha: sha
+// 		}).then(response => {
+// 			console.log(response.status);
+// 			messageDiv.innerHTML = '<code>Status ' + response.status +  ' ' + filename + ' pushed.</code>';
+// 			ghModal.querySelector('.feedback .message').appendChild(messageDiv.cloneNode());
+// 			ghModal.querySelector('.loading').classList.add('hidden');
+// 		}).catch(err => {
+// 			messageDiv.innerHTML = '<code> ' + filename + ': ' +  err + '</code>';
+// 			ghModal.querySelector('.feedback .message').appendChild(messageDiv.cloneNode());
+// 			ghModal.querySelector('.loading').classList.add('hidden');
+// 		});
+// 	});
+// }
 
-	octokit.repos.getContent({
-		owner: owner,
-		repo: repo,
-		path: filename,
-		ref: branch
-	}).then(result => {
-		console.log(result);
-		var sha = result.data.sha;
-		console.log(filename + ' ' + sha);
-		return octokit.repos.createOrUpdateFileContents({
-			owner: owner,
-			repo: repo,
-			path: filename,
-			message: 'update ' + filename,
-			content: btoa(string),
-			branch: branch,
-			sha: sha
-		}).then(response => {
-			console.log(response.status);
-			$('#gh_modal .feedback .message').append('<div><code>Status ' + response.status +  ' ' + filename + ' pushed.</code></div>');
-			$('#gh_modal .loading').hide();
-		}).catch(err => {
-			$('#gh_modal .feedback .message').append('<div><code> ' + filename + ': ' +  err + '</code></div>');
-			$('#gh_modal .loading').hide();
-		});
-	});
-}
+document.addEventListener('DOMContentLoaded', () => {
+	const ghModal = document.getElementById('gh_modal');
+	const ghRepo = document.getElementById('ghRepo');
+	const ghRepoUsername = document.getElementById('ghRepoUsername');
+	const ghHead = document.getElementById('ghHead');
+	const ghAccessToken = document.getElementById('ghAccessToken');
 
-$(function() {
-	$('#gh_modal button.commit').click(function(){
-		commitGh($('#ghRepoUsername').val(), $('#ghRepo').val(), $('#ghHead').val(), $('#ghAccessToken').val());warnClose = false;
-	});
-	$('.dropdown-item.persist').on('click', function(e) {
-		e.stopPropagation();
-		e.preventDefault();
+	ghModal.querySelector('button.commit').addEventListener('click', function() {
+		commitGh( ghRepoUsername.value, ghRepo.value, ghHead.value, ghAccessToken.value );
+		warnClose = false;
 	});
 });

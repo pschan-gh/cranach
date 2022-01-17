@@ -1,82 +1,104 @@
 function postprocess(cranach) {
-	console.log('POSTPROCESS CALLED');
+	console.log('POSTPROCESS');
+	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 
-	$('.icon.xml, .icon.latex').show();
+	// document.addEventListener('DOMContentLoaded', () => {
 
-	$(function() {
-		$('#output').attr('data-content-url', cranach.attr['contentURL']);
-		$('#output').attr('data-query', cranach.attr['query']);
-		updateSlideClickEvent();
-		updateScrollEvent();
-		updateKeywords();
-		updateTitle( $('.output:visible div.slide.selected')[0] || $('.output:visible div.slide:lt(1)')[0] );
+	let output = document.getElementById('output');
+	output.dataset.contentUrl = cranach.attr['contentURL'];
+	output.dataset.query = cranach.attr['query'];
+	updateSlideClickEvent();
+	updateScrollEvent();
+	updateKeywords();
+	updateTitle( document.querySelector('.output > div.slide.selected, .output > div.slide') );
+	if (document.getElementById('item_modal') !== null) {
+		updateModal(cranach);
+	}
 
-		$('#output').find('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').each(function() {
-			let text = $(this).text();
-			// $(this).attr('text', text.replace(/[^a-z0-9À-ÿ\s\-\']/ig, ''));
-			$(this).attr('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
-		});
+	updateSlideInfo(document.querySelector('#output > div.slide'));
 
-		$('#output > div.slide:visible').each(function() {
-			if (isElementInViewport(this)) {
-				batchRender(this);
-			}
-		});
-		if (cranach.attr['selectedItem']) {
-			console.log('SELECTED ITEM: ' + cranach.attr['selectedItem']);
+	output.querySelectorAll('b:not([text]), h5:not([text]), h4:not([text]), h3:not([text]), h2:not([text]), h1:not([text])').forEach(e => {
+		let text = e.textContent;
+		// $(this).attr('text', text.replace(/[^a-z0-9À-ÿ\s\-\']/ig, ''));
+		e.setAttribute('text', text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, ''));
+	});
 
-			$item = $('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]').first().closest('.item_title');
-			focusOn($item[0]);
-		} else if (cranach.attr['selectedSection']) {
-			let $section = $('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').first().closest('.section_title').first();
-			let $selectedSlide = $section.closest('.slide');
-			focusOn($section[0]);
-		} else if (cranach.attr['selectedSlide']) {
-			let $selectedSlide = $(`.output:visible div.slide[slide="${cranach.attr['selectedSlide']}"]`);
-			focusOn($selectedSlide[0]);
+	document.querySelectorAll('#right_half:not(.carousel) > .output > div.slide').forEach(e => {
+		if (isElementInViewport(e)) {
+			batchRender(e);
 		}
+	});
 
-		// else if ($('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').length > 0 ){
-		//     let $selectedSlide = $('.output:visible .slide[slide="' + cranach.attr['selectedSlide']  + '"], .label[name="' + cranach.attr['selectedSlide'] + '"]').first().closest('.slide');
-		//     focusOn($selectedSlide);
-		// }
-
-		if (cranach.attr['selectedKeyword']) {
-			let $selectedSlide = $('.output:visible div.slide[slide="' + cranach.attr['selectedSlide']  + '"]');
-			focusOn($selectedSlide[0], cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, ''));
-		}
-
-		// https://stackoverflow.com/questions/13202762/html-inside-twitter-bootstrap-popover
-		$("[data-bs-toggle=popover]").popover({
+	document.querySelectorAll("[data-bs-toggle=popover]").forEach(e => {
+		let html = '<div class="loading">loading...</div>';
+		let popover = new bootstrap.Popover(e, {
 			html : true,
 			content: function() {
-				html = 'Loading...';
 				return html;
 			}
 		});
-		$('[data-bs-toggle="popover"]').on('shown.bs.popover', function() {
-			$('.popover-body').each(function() {
-				let id = $(this).closest('.popover').attr('id');
-				let popoverBody = this;
-				$(popoverBody).html('');
-				$('[aria-describedby="' + id + '"]').find('a.dropdown-item').each(function() {
-					$(popoverBody).append($(this).clone().removeClass('hidden'));
-				});
+		e.addEventListener('shown.bs.popover', function() {
+			let popoverBody =  document.getElementById(this.getAttribute('aria-describedby'))
+			.querySelector('.popover-body');
+			if (popoverBody.querySelector('.loading') !== null) {
+				popoverBody.querySelector('.loading').remove();
+			}
+			this.querySelectorAll('a.dropdown-item').forEach(item => {
+				item.classList.remove('hidden');
+				popoverBody.append(item);
 			});
 		});
-
-		if (cranach.attr['lectureMode']) {
-			console.log('LECTURE MODE');
-			$('[data-lecture-skip="true"]').addClass('lecture_skip');
-		}
-
-		$('#loading_icon').hide();
-		$('#right_half .navbar').show();
-		if (cranach.attr['present']) {
-			console.log('PRESENT MODE');
-			$('#present_button').click();
-		}
-
 	});
 
+	if (cranach.attr['lectureMode']) {
+		console.log('LECTURE MODE');
+		document.querySelectorAll('[data-lecture-skip="true"]').forEach(e => {
+			e.classList.add('lecture_skip');
+		});
+	}
+
+	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
+	document.querySelectorAll('#right_half .navbar').forEach(el => el.classList.remove('hidden'));
+	document.querySelectorAll('#right_half .navbar').forEach(el => el.style.display = 'block');
+	if (cranach.attr['present']) {
+		console.log('PRESENT MODE');
+		showSlide(null, cranach);
+	}
+
+	baseRenderer.then(cranach => {
+		if (cranach.attr['selectedItem']) {
+			document.querySelectorAll('.item_title[serial="' + cranach.attr['selectedItem'] + '"], .item_title[md5="' + cranach.attr['selectedItem'] + '"], .label[name="' + cranach.attr['selectedItem'] + '"]')
+			.forEach(item => focusOn(item.closest('.item_title')));
+		} else if (cranach.attr['selectedSection']) {
+			document.querySelectorAll('.section_title[serial="' + cranach.attr['selectedSection'] + '"], .label[name="' + cranach.attr['selectedSection'] + '"]').forEach(section => focusOn(section.closest('.section_title')));
+		} else if (cranach.attr['selectedSlide']) {
+			document.querySelectorAll(`.output > div.slide[slide="${cranach.attr['selectedSlide']}"]`).forEach(selectedSlide => {
+				selectSlide(selectedSlide);
+				focusOn(selectedSlide);
+			});
+		}
+		if (cranach.attr['selectedKeyword']) {
+			document.querySelectorAll('.output div.slide[slide="' + cranach.attr['selectedSlide']  + '"]')
+			.forEach(selectedSlide => focusOn(selectedSlide, cranach.attr['selectedKeyword'].toLowerCase().replace(/[^a-zA-Z0-9]/g, '')));
+		}
+		updateToc(cranach);
+	});
+	// });
 }
+
+// document.addEventListener('DOMContentLoaded', () => {
+// 	let contentUrlObserver = new MutationObserver(function(mutations) {
+// 		mutations.forEach(function(mutation) {
+// 			if (mutation.type == "attributes") {
+// 				if (mutation.attributeName == `data-content-url`) {
+// 					baseRenderer.then(cranach => {
+// 						updateToc(cranach);
+// 					});
+// 				}
+// 			}
+// 		});
+// 	});
+// 	contentUrlObserver.observe(document.getElementById(`output`), {
+// 		attributes: true,
+// 	});
+// });
