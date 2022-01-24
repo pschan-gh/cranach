@@ -195,18 +195,21 @@
 	        this.drawLine(event.offsetX, event.offsetY, event);
 	    };
 	    CanvasFreeDrawing.prototype.touchStart = function (event) {
-	        if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
-				event.preventDefault();
-	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
-	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
-	            this.touchIdentifier = identifier;
-	            this.drawPoint(x, y);
-
+			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+				return 0; // no finger drawing;
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
+					event.preventDefault();
+					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+					var x = pageX - this.canvas.offsetLeft;
+					var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
+					this.touchIdentifier = identifier;
+					this.drawPoint(x, y);
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchMove = function (event) {
-	        if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
+			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+				return 0; // no finger drawing;
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
 				event.preventDefault();
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
