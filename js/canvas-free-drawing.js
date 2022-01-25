@@ -203,14 +203,16 @@
 				var x = pageX - this.canvas.offsetLeft;
 				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
 				this.touchIdentifier = identifier;
-				this.drawPoint(x, y);
+				this.drawPoint(x, y, event);
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchMove = function (event) {
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
-				if (event.touches[0].force > 0.15) {
+				if (event.touches[0].force <  0.15) {
+					this.touchStart(event);
+				} else {
 					event.preventDefault();
 					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 					var x = pageX - this.canvas.offsetLeft;
@@ -248,7 +250,7 @@
 	        this.isDrawing = false;
 	        this.storeSnapshot();
 	    };
-	    CanvasFreeDrawing.prototype.drawPoint = function (x, y) {
+	    CanvasFreeDrawing.prototype.drawPoint = function (x, y, event) {
 	        if (this.isBucketToolEnabled) {
 	            this.fill(x, y, this.bucketToolColor, {
 	                tolerance: this.bucketToolTolerance,
@@ -258,7 +260,7 @@
 	            this.isDrawing = true;
 	            this.storeDrawing(x, y, false);
 	            this.canvas.dispatchEvent(this.events.mouseDownEvent);
-	            // this.handleDrawing();
+	            this.handleDrawing(null, event);
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.drawLine = function (x, y, event) {
@@ -273,16 +275,26 @@
 	        }
 	        if (this.isDrawing) {
 				this.storeDrawing(x, y, true);
-				this.handleDrawing(this.dispatchEventsOnceEvery);
+				this.handleDrawing(this.dispatchEventsOnceEvery, event);
 	        }
 	    };
-	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery) {
+	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery, event) {
 	        var _this = this;
 	        var positions = [__spreadArrays(this.positions).pop()];
-	        positions.forEach(function (position) {
+			let force;
+			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
+				force = 1;
+			} else {
+				force = event.touches[0].force;
+			}
+			const widthScale = Math.min(1.8, 1 + 0.25*force);
+			let color;
+			positions.forEach(function (position) {
 	            if (position && position[0] && position[0].strokeColor) {
-					_this.context.strokeStyle = _this.rgbaFromArray(position[0].strokeColor);
-					_this.context.lineWidth = position[0].lineWidth;
+					color = position[0].strokeColor.slice();
+					color[3] = 7*force;
+					_this.context.strokeStyle = _this.rgbaFromArray(color);
+					_this.context.lineWidth = widthScale*position[0].lineWidth;
 					_this.draw(position);
 	            }
 	        });
