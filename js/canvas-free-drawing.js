@@ -198,28 +198,30 @@
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) { // event.touches[0].altitudeAngle < 1.2
-					event.preventDefault();
-					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
-					var x = pageX - this.canvas.offsetLeft;
-					var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
-					this.touchIdentifier = identifier;
-					this.drawPoint(x, y);
+				event.preventDefault();
+				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+				var x = pageX - this.canvas.offsetLeft;
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
+				this.touchIdentifier = identifier;
+				this.drawPoint(x, y);
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchMove = function (event) {
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
-			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 && event.touches[0].force > 0.15) {
-				event.preventDefault();
-	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
-	            var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
-	            // check if is multi touch, if it is do nothing
-	            if (identifier != this.touchIdentifier)
-	                return;
-	            this.previousX = x;
-	            this.previousY = y;
-	            this.drawLine(x, y, event);
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
+				if (event.touches[0].force > 0.15) {
+					event.preventDefault();
+					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+					var x = pageX - this.canvas.offsetLeft;
+					var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
+					// check if is multi touch, if it is do nothing
+					if (identifier != this.touchIdentifier)
+					return;
+					this.previousX = x;
+					this.previousY = y;
+					this.drawLine(x, y, event);
+				}
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchEnd = function () {
