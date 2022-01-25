@@ -535,9 +535,7 @@
 		document.querySelector('#container').classList.remove('overview', 'present', 'info', 'wide');document.querySelector('#container').classList.add('compose');editor.resize()
 	}
 
-
     document.addEventListener('DOMContentLoaded', () => {
-
         // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
         window.addEventListener("beforeunload", function (e) {
             if (warnClose) {

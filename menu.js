@@ -102,6 +102,15 @@ function resizeFont(multiplier, element = document.querySelector('#output')) {
 //     document.querySelectorAll('#print_content').find('.hidden_collapse').show();
 // }
 
+// https://stackoverflow.com/a/4819886
+// https://creativecommons.org/licenses/by-sa/4.0/
+function isTouchDevice() {
+	return (('ontouchstart' in window) ||
+	(navigator.maxTouchPoints > 0) ||
+	(navigator.msMaxTouchPoints > 0));
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 	updateSlideSelector();
 
@@ -119,27 +128,29 @@ document.addEventListener('DOMContentLoaded', () => {
 		attributes: true,
 	});
 
-	let menu_timer = null;
-	// document.querySelectorAll('.controls').forEach(e => {
-	// 	e.addEventListener('mouseover', function( event ) {
-	// 		clearTimeout(menu_timer);
-	// 		e.classList.remove('hidden');
-	// 	});
-	// 	e.addEventListener('mouseout', function( event ) {
-	// 		clearTimeout(menu_timer);
-	// 		});
-	// });
-	//
-	// document.querySelector('#right_half').addEventListener('mousemove', function() {
-	// 	clearTimeout(menu_timer);
-	// 	document.querySelectorAll(".present .menu_container .navbar-nav, .controls, .present .slide_number").forEach(e => e.classList.remove('hidden'));
-	// 	menu_timer = setTimeout(function () {
-	// 		document.querySelectorAll(".present .menu_container .navbar-nav, .present .slide_number").forEach(e => {
-	// 			e.classList.add('hidden');
-	// 		});
-	// 		document.querySelectorAll(".controls").forEach(e => e.classList.add('hidden'));
-	// 	}, 1000);
-	// })
+	if ( isTouchDevice() !== true ) {
+		let menu_timer = null;
+		document.querySelectorAll('.controls').forEach(e => {
+			e.addEventListener('mouseover', function( event ) {
+				clearTimeout(menu_timer);
+				e.classList.remove('hidden');
+			});
+			e.addEventListener('mouseout', function( event ) {
+				clearTimeout(menu_timer);
+				});
+		});
+
+		document.querySelector('#right_half').addEventListener('mousemove', function() {
+			clearTimeout(menu_timer);
+			document.querySelectorAll(".present .menu_container .navbar-nav, .controls, .present .slide_number").forEach(e => e.classList.remove('hidden'));
+			menu_timer = setTimeout(function () {
+				document.querySelectorAll(".present .menu_container .navbar-nav, .present .slide_number").forEach(e => {
+					e.classList.add('hidden');
+				});
+				document.querySelectorAll(".controls").forEach(e => e.classList.add('hidden'));
+			}, 1000);
+		})
+	}
 
 	document.querySelector('input.lecture_mode').addEventListener('change', function() {
 		if (this.checked) {
