@@ -195,9 +195,9 @@
 	        this.drawLine(event.offsetX, event.offsetY, event);
 	    };
 	    CanvasFreeDrawing.prototype.touchStart = function (event) {
-			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
-			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) { // event.touches[0].altitudeAngle < 1.2
 					event.preventDefault();
 					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 					var x = pageX - this.canvas.offsetLeft;
@@ -207,9 +207,9 @@
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchMove = function (event) {
-			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
-			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1) {
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 && event.touches[0].force > 0.2) {
 				event.preventDefault();
 	            var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 	            var x = pageX - this.canvas.offsetLeft;
@@ -256,7 +256,7 @@
 	            this.isDrawing = true;
 	            this.storeDrawing(x, y, false);
 	            this.canvas.dispatchEvent(this.events.mouseDownEvent);
-	            this.handleDrawing();
+	            // this.handleDrawing();
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.drawLine = function (x, y, event) {
