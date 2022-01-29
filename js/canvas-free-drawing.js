@@ -87,6 +87,7 @@
 	        this.positions = [];
 	        this.leftCanvasDrawing = false; // to check if user left the canvas drawing, on mouseover resume drawing
 	        this.isDrawing = false;
+			this.inTransition = false;
 	        this.isDrawingModeEnabled = true;
 			this.isErasing = false;
 	        this.imageRestored = false;
@@ -189,7 +190,7 @@
 	    CanvasFreeDrawing.prototype.mouseDown = function (event) {
 	        if (event.button !== 0)
 	            return;
-	        this.drawPoint(event.offsetX, event.offsetY);
+	        this.drawPoint(event.offsetX, event.offsetY, event);
 	    };
 	    CanvasFreeDrawing.prototype.mouseMove = function (event) {
 	        this.drawLine(event.offsetX, event.offsetY, event);
@@ -210,23 +211,35 @@
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
-				if (event.touches[0].force <  0.15) {
-					this.touchStart(event);
-				} else {
-					event.preventDefault();
-					var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
-					var x = pageX - this.canvas.offsetLeft;
-					var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
-					// check if is multi touch, if it is do nothing
-					if (identifier != this.touchIdentifier)
-					return;
-					this.previousX = x;
-					this.previousY = y;
-					this.drawLine(x, y, event);
+				const lastIndex = this.positions.length >= 1 ? this.positions.length - 1 : 0;
+
+				const currForce = event.touches[0].force;
+				const prevForce = Array.isArray(this.positions[lastIndex]) ?
+				this.positions[lastIndex][Math.floor(this.positions[lastIndex].length/2)].force :
+				currForce;
+
+				this.inTransition = true;
+
+				event.preventDefault();
+				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+				var x = pageX - this.canvas.offsetLeft;
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
+				// check if is multi touch, if it is do nothing
+				if (identifier != this.touchIdentifier)
+				return;
+				this.previousX = x;
+				this.previousY = y;
+				this.drawLine(x, y, event);
+
+				if (currForce - prevForce > 0.15 || prevForce - currForce > 0.15 ) {
+					this.storeDrawing(x, y, false, prevForce);
+					this.canvas.dispatchEvent(this.events.mouseDownEvent);
 				}
+
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.touchEnd = function () {
+			this.inTransition = false;
 	        this.handleEndDrawing();
 	        this.canvas.dispatchEvent(this.events.touchEndEvent);
 	    };
@@ -258,9 +271,17 @@
 	        }
 	        else {
 	            this.isDrawing = true;
-	            this.storeDrawing(x, y, false);
+				let force = 1;
+				if (event instanceof TouchEvent) {
+					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+						force = event.touches[0].force;
+					}
+				}
+	            this.storeDrawing(x, y, false, force);
 	            this.canvas.dispatchEvent(this.events.mouseDownEvent);
-	            this.handleDrawing(null, event);
+				if (!this.inTransition) {
+					this.handleDrawing(null, event);
+				}
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.drawLine = function (x, y, event) {
@@ -274,30 +295,40 @@
 	            }
 	        }
 	        if (this.isDrawing) {
-				this.storeDrawing(x, y, true);
+				let force = 1;
+				if (event instanceof TouchEvent) {
+					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+						force = event.touches[0].force;
+					}
+				}
+				this.storeDrawing(x, y, true, force);
 				this.handleDrawing(this.dispatchEventsOnceEvery, event);
 	        }
 	    };
 	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery, event) {
 	        var _this = this;
 	        var positions = [__spreadArrays(this.positions).pop()];
-			let force;
-			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
-				force = 1;
-			} else {
-				force = event.touches[0].force;
+			let force = 1;
+			if (event instanceof TouchEvent) {
+				if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
+					force = 1;
+				} else {
+					force = event.touches[0].force;
+				}
 			}
-			const widthScale = Math.min(1.8, 1 + 0.25*force);
+
+			const widthScale = Math.min(2, 1 + 0.5*force);
 			let color;
 			positions.forEach(function (position) {
-	            if (position && position[0] && position[0].strokeColor) {
+				if (position && position[0] && position[0].strokeColor) {
 					color = position[0].strokeColor.slice();
-					color[3] = 7*force;
+					color[3] = 4*force;
 					_this.context.strokeStyle = _this.rgbaFromArray(color);
 					_this.context.lineWidth = widthScale*position[0].lineWidth;
 					_this.draw(position);
-	            }
-	        });
+				}
+			});
+
 	        if (!dispatchEventsOnceEvery) {
 	            this.canvas.dispatchEvent(this.events.redrawEvent);
 	        }
@@ -318,13 +349,14 @@
 	            }
 	            else {
 	                _this.context.moveTo(x - 1, y);
+					_this.context.moveTo(x, y);
 	            }
 
 				if (!_this.isErasing) {
 					_this.context.lineTo(x, y);
-					_this.context.lineJoin = 'round';
-					_this.context.lineCap = 'round';
-					_this.context.closePath();
+					// _this.context.lineJoin = 'round';
+					// _this.context.lineCap = 'round';
+					// _this.context.closePath();
 					_this.context.stroke();
 				} else {
 					let eraseScale = 10;
@@ -433,7 +465,7 @@
 	    CanvasFreeDrawing.prototype.toggleCursor = function () {
 	        this.canvas.style.cursor = this.isDrawingModeEnabled ? 'crosshair' : 'auto';
 	    };
-	    CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving) {
+	    CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving, force = 0) {
 	        if (moving) {
 	            var lastIndex = this.positions.length - 1;
 	            this.positions[lastIndex].push({
@@ -443,6 +475,7 @@
 	                lineWidth: this.lineWidth,
 	                strokeColor: this.strokeColor,
 	                isBucket: false,
+					force: force,
 	            });
 	        }
 	        else {
@@ -454,6 +487,7 @@
 	                    moving: moving,
 	                    lineWidth: this.lineWidth,
 	                    strokeColor: this.strokeColor,
+						force: force,
 	                },
 	            ]);
 	        }
