@@ -273,7 +273,7 @@
 	        else {
 	            this.isDrawing = true;
 				let force = this.mouseForce;
-				if (event instanceof TouchEvent) {
+				if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
 					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
 						force = event.touches[0].force;
 					}
@@ -297,7 +297,7 @@
 	        }
 	        if (this.isDrawing) {
 				let force = this.mouseForce;
-				if (event instanceof TouchEvent) {
+				if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
 					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
 						force = event.touches[0].force;
 					}
@@ -310,7 +310,7 @@
 	        var _this = this;
 	        var positions = [__spreadArrays(this.positions).pop()];
 			let force = this.mouseForce;
-			if (event instanceof TouchEvent) {
+			if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
 				if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct' ) {
 					force = event.touches[0].force;
 				}
