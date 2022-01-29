@@ -90,6 +90,7 @@
 			this.inTransition = false;
 	        this.isDrawingModeEnabled = true;
 			this.isErasing = false;
+			this.mouseForce = 0.2;
 	        this.imageRestored = false;
 	        this.lineWidth = lineWidth;
 	        this.strokeColor = this.toValidColor(strokeColor);
@@ -231,7 +232,7 @@
 				this.previousY = y;
 				this.drawLine(x, y, event);
 
-				if (currForce - prevForce > 0.15 || prevForce - currForce > 0.15 ) {
+				if (currForce - prevForce > 0.05 || prevForce - currForce > 0.05 ) {
 					this.storeDrawing(x, y, false, prevForce);
 					this.canvas.dispatchEvent(this.events.mouseDownEvent);
 				}
@@ -271,9 +272,9 @@
 	        }
 	        else {
 	            this.isDrawing = true;
-				let force = 1;
+				let force = this.mouseForce;
 				if (event instanceof TouchEvent) {
-					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
 						force = event.touches[0].force;
 					}
 				}
@@ -295,9 +296,9 @@
 	            }
 	        }
 	        if (this.isDrawing) {
-				let force = 1;
+				let force = this.mouseForce;
 				if (event instanceof TouchEvent) {
-					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct') {
+					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
 						force = event.touches[0].force;
 					}
 				}
@@ -308,21 +309,19 @@
 	    CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery, event) {
 	        var _this = this;
 	        var positions = [__spreadArrays(this.positions).pop()];
-			let force = 1;
+			let force = this.mouseForce;
 			if (event instanceof TouchEvent) {
-				if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
-					force = 1;
-				} else {
+				if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct' ) {
 					force = event.touches[0].force;
 				}
 			}
 
-			const widthScale = Math.min(2, 1 + 0.5*force);
+			const widthScale = Math.min(1.8, 0.4 + 3*force);
 			let color;
 			positions.forEach(function (position) {
 				if (position && position[0] && position[0].strokeColor) {
 					color = position[0].strokeColor.slice();
-					color[3] = 4*force;
+					color[3] = 3*force;
 					_this.context.strokeStyle = _this.rgbaFromArray(color);
 					_this.context.lineWidth = widthScale*position[0].lineWidth;
 					_this.draw(position);
