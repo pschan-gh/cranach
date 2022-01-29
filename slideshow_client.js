@@ -535,7 +535,7 @@ function updateSlideClickEvent() {
 		div.addEventListener('click', () => {
 			let slideNum = div.getAttribute('slide');
 
-			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
+			document.querySelectorAll('.highlighted[text], button.highlighted').forEach(e => e.classList.remove('highlighted'));
 
 			if (!div.classList.contains('selected')) {
 				output.dataset.selectedSlide = slideNum;

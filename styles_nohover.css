@@ -212,6 +212,10 @@ mjx-math {
 	margin-top:-5px;
 }
 
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border-color:#aaa !important;
+}
+
 .nav-tabs .nav-link.active {
 	font-weight:bold !important;
 	color:inherit !important;
@@ -878,10 +882,6 @@ tbody:before {
 	display:block;
 }
 
-#info_menu_container {
-	position:absolute;
-}
-
 #output_icon_container {
 	overflow:hidden;
 }
@@ -894,8 +894,9 @@ tbody:before {
 }
 
 #info_menu_container {
-	top:5px;
-	right:5px;
+	position:absolute;
+	top:10px;
+	right:10px;
 	width:auto;
 }
 
