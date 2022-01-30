@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (mutation.attributeName == 'data-selected-slide') {
 					let slide = document.querySelector(`.output div.slide[slide="${document.querySelector('#output').getAttribute('data-selected-slide')}"]`);
 					// console.log('mutation');
-					updateSlideContent(slide, document.querySelectorAll('.carousel-item') !== null);
+					updateSlideContent(slide, document.querySelector('.carousel-item') !== null);
 				}
 			}
 		});

@@ -158,7 +158,7 @@ var dist = createCommonjsModule(function (module, exports) {
 		CanvasFreeDrawing.prototype.addListeners = function () {
 			var _this = this;
 			this.listenersList.forEach(function (event) {
-				_this.canvas.addEventListener(event.toLowerCase(), _this.bindings[event]);
+				_this.canvas.addEventListener(event.toLowerCase(), _this.bindings[event], {passive: true});
 			});
 			document.addEventListener('mouseup', this.bindings.mouseUpDocument);
 		};
@@ -177,13 +177,15 @@ var dist = createCommonjsModule(function (module, exports) {
 			return events;
 		};
 		CanvasFreeDrawing.prototype.enableDrawingMode = function () {
-			this.isDrawingModeEnabled = true;
+            // console.log('enableDrawingMode');
+            this.isDrawingModeEnabled = true;
 			this.addListeners();
 			this.toggleCursor();
 			return this.isDrawingModeEnabled;
 		};
 		CanvasFreeDrawing.prototype.disableDrawingMode = function () {
-			this.isDrawingModeEnabled = false;
+            // console.log('disableDrawingMode');
+            this.isDrawingModeEnabled = false;
 			this.removeListeners();
 			this.toggleCursor();
 			return this.isDrawingModeEnabled;

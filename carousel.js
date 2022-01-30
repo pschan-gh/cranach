@@ -133,7 +133,6 @@ function carouselSlideHandler() {
 		carouselThreeSlides(slideNum, slides);
 	}
 	document.getElementById('output').dataset.selectedSlide = slideNum;
-	updateCanvas(slide);
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -211,9 +210,7 @@ function hideCarousel() {
 		e.classList.add('tex2jax_ignore');
 	});
 
-    // document.querySelectorAll$('#output .slide_content').forEach(e => e.classList.remove('padded'));
-	// css('padding-bottom', '');
-	if (document.querySelector('#output > div.slide.selected') !== null) {
+    if (document.querySelector('#output > div.slide.selected') !== null) {
 		document.querySelector('#output > div.slide.selected').scrollIntoView( {block: "center", behavior: "smooth"} );
 	}
 
@@ -260,8 +257,10 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 	if (!document.querySelector('#right_half').classList.contains('annotate')) {
 		return 0;
 	}
-	let output = document.getElementById('output');
+    let output = document.getElementById('output');
 
+    const wasDrawing = slide.cfd.isDrawingModeEnabled;
+    
 	slide.cfd.disableDrawingMode();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
 	let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
@@ -279,8 +278,10 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 			// slide.cfd.canvas.top = -(voffset);
 			let ctx = slide.cfd.canvas.getContext('2d');
 			ctx.drawImage(img, 0, 0);
-			slide.cfd.enableDrawingMode();
-			slide.cfd.setDraw();
+            if (wasDrawing) {
+                slide.cfd.enableDrawingMode();
+                slide.cfd.setDraw();
+            }
 		});
 	}
 }
@@ -289,6 +290,7 @@ function updateCanvas(slide) {
 	if (document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
+    console.log('updating canvas');
 	if (document.querySelector('#right_half').classList.contains('annotate')) {
 		if (slide.querySelector('canvas') === null) {
 			addCanvas(slide);
@@ -299,16 +301,17 @@ function updateCanvas(slide) {
 			slide.querySelector('canvas').classList.add('hidden');
 		}
 	}
-	// document.querySelector('.canvas-controls').find('*').off();
-	// $('.canvas-controls .annotate').off();
 	canvasControlsDisableEvent(slide);
 }
 
 function canvasControlsDisableEvent(slide) {
-	slide.cfd.disableDrawingMode();
+    // console.log('canvasControlDisableEvent');
+    slide.cfd.disableDrawingMode();
 	slide.cfd.canvas.classList.add('disabled');
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
+    document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+    document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	// $('.carousel').attr('data-bs-touch', "true");
 }
 
@@ -373,13 +376,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.enableDrawingMode();
-		slide.cfd.canvas.classList.remove('hidden');
-		// $(slide.cfd.canvas).css('z-index', 999);
-		slide.cfd.setDraw();
-		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-		evt.currentTarget.classList.add('disabled');
-		slide.cfd.canvas.classList.remove('disabled');
+        
+        slide.cfd.toggleDrawingMode();
+        if (slide.cfd.isDrawingModeEnabled) {
+            slide.cfd.enableDrawingMode();
+    		slide.cfd.canvas.classList.remove('hidden');
+    		slide.cfd.setDraw();
+    		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+    		// evt.currentTarget.classList.add('active');
+            document.querySelector('.annotate.enable .brush').classList.add('hidden');
+            document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+    		slide.cfd.canvas.classList.remove('disabled');
+        } else {
+            let slide = document.querySelector('#output > div.slide.active');
+    		if (slide === null) { return 0; }
+    		canvasControlsDisableEvent(slide);
+            // evt.currentTarget.classList.remove('active');                		
+        }
+        
+		// slide.cfd.enableDrawingMode();
+		// slide.cfd.canvas.classList.remove('hidden');
+		// slide.cfd.setDraw();
+		// document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+		// evt.currentTarget.classList.add('disabled');
+		// slide.cfd.canvas.classList.remove('disabled');
 	}));
 	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
