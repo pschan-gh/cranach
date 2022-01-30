@@ -414,22 +414,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([255, 0, 0])
+		slide.cfd.setDrawingColor([180, 80, 80])
 	}));
 	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 180, 0])
+		slide.cfd.setDrawingColor([0, 139, 69])
 	}));
 	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 0, 255])
+		slide.cfd.setDrawingColor([40, 122, 181])
 	}));
 	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([255, 128, 0])
+		slide.cfd.setDrawingColor([200, 130, 0])
 	}));
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');

@@ -61,7 +61,7 @@ var dist = createCommonjsModule(function (module, exports) {
 		function CanvasFreeDrawing(params) {
 			var elementId = params.elementId, width = params.width, height = params.height, _a = params.backgroundColor,
 			backgroundColor = _a === void 0 ? [255, 255, 255] : _a,
-			_b = params.lineWidth, lineWidth = _b === void 0 ? 5 : _b, _c = params.strokeColor, strokeColor = _c === void 0 ? [255, 0, 0] : _c, disabled = params.disabled, _d = params.showWarnings, showWarnings = _d === void 0 ? false : _d, _e = params.maxSnapshots, maxSnapshots = _e === void 0 ? 10 : _e;
+			_b = params.lineWidth, lineWidth = _b === void 0 ? 5 : _b, _c = params.strokeColor, strokeColor = _c === void 0 ? [180, 80, 80] : _c, disabled = params.disabled, _d = params.showWarnings, showWarnings = _d === void 0 ? false : _d, _e = params.maxSnapshots, maxSnapshots = _e === void 0 ? 10 : _e;
 			this.requiredParam(params, 'elementId');
 			this.requiredParam(params, 'width');
 			this.requiredParam(params, 'height');
@@ -324,7 +324,7 @@ var dist = createCommonjsModule(function (module, exports) {
 				if (position && position[0] && position[0].strokeColor) {
 					color = position[0].strokeColor.slice();
 					color[3] = 3*force;
-					_this.context.strokeStyle = _this.rgbaFromArray(color);
+                    _this.context.strokeStyle = _this.rgbaFromArray(color);
 					_this.context.lineWidth = widthScale*position[0].lineWidth;
 					_this.draw(position);
 				}
