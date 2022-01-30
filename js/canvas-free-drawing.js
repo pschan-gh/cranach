@@ -90,7 +90,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.inTransition = false;
 			this.isDrawingModeEnabled = true;
 			this.isErasing = false;
-			this.mouseForce = 0.05;
+			this.mouseForce = 0.1;
 			this.imageRestored = false;
 			this.lineWidth = lineWidth;
 			this.strokeColor = this.toValidColor(strokeColor);
@@ -340,16 +340,6 @@ var dist = createCommonjsModule(function (module, exports) {
 			let temperedForce = force;
 			let color, dx, dy;
 
-			color = position[0].strokeColor.slice();
-			color[3] = 3.5*force;
-			this.context.strokeStyle = this.rgbaFromArray(color);
-
-			// temperedForce = force*10/( Math.max( 2, Math.abs(dx) + Math.abs(dy) ) );
-
-			widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
-			this.context.lineWidth = widthScale*position[0].lineWidth;
-
-
 			position.forEach((_a, i) => {
 				var x = _a.x, y = _a.y, moving = _a.moving;
 				this.context.beginPath();
@@ -391,6 +381,16 @@ var dist = createCommonjsModule(function (module, exports) {
 					// this.context.lineJoin = 'round';
 					// this.context.lineCap = 'round';
 					// this.context.closePath();
+
+					// temperedForce = force/( Math.max( 2, Math.abs(dx) + Math.abs(dy) ) );
+
+					color = position[0].strokeColor.slice();
+					color[3] = Math.min(1, 4*temperedForce);
+					this.context.strokeStyle = this.rgbaFromArray(color);
+
+					widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
+					this.context.lineWidth = widthScale*position[0].lineWidth;
+
 					this.context.stroke();
 				} else {
 					let eraseScale = 10;
