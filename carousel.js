@@ -260,7 +260,7 @@ function expandCanvas(slide, scale = 1, padding = 0) {
     let output = document.getElementById('output');
 
     const wasDrawing = slide.cfd.isDrawingModeEnabled;
-    
+
 	slide.cfd.disableDrawingMode();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
 	let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-        
+
         slide.cfd.toggleDrawingMode();
         if (slide.cfd.isDrawingModeEnabled) {
             slide.cfd.enableDrawingMode();
@@ -391,9 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let slide = document.querySelector('#output > div.slide.active');
     		if (slide === null) { return 0; }
     		canvasControlsDisableEvent(slide);
-            // evt.currentTarget.classList.remove('active');                		
+            // evt.currentTarget.classList.remove('active');
         }
-        
+
 		// slide.cfd.enableDrawingMode();
 		// slide.cfd.canvas.classList.remove('hidden');
 		// slide.cfd.setDraw();
@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([200, 130, 0])
+		slide.cfd.setDrawingColor([240, 110, 0])
 	}));
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');

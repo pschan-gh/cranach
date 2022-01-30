@@ -90,7 +90,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.inTransition = false;
 			this.isDrawingModeEnabled = true;
 			this.isErasing = false;
-			this.mouseForce = 0.2;
+			this.mouseForce = 0.05;
 			this.imageRestored = false;
 			this.lineWidth = lineWidth;
 			this.strokeColor = this.toValidColor(strokeColor);
@@ -158,7 +158,7 @@ var dist = createCommonjsModule(function (module, exports) {
 		CanvasFreeDrawing.prototype.addListeners = function () {
 			var _this = this;
 			this.listenersList.forEach(function (event) {
-				_this.canvas.addEventListener(event.toLowerCase(), _this.bindings[event], {passive: true});
+				_this.canvas.addEventListener(event.toLowerCase(), _this.bindings[event], {passive: false});
 			});
 			document.addEventListener('mouseup', this.bindings.mouseUpDocument);
 		};
@@ -318,15 +318,9 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 			}
 
-			const widthScale = Math.min(1.8, 0.4 + 3*force);
-			let color;
 			positions.forEach(function (position) {
 				if (position && position[0] && position[0].strokeColor) {
-					color = position[0].strokeColor.slice();
-					color[3] = 3*force;
-                    _this.context.strokeStyle = _this.rgbaFromArray(color);
-					_this.context.lineWidth = widthScale*position[0].lineWidth;
-					_this.draw(position);
+					_this.draw(position, force);
 				}
 			});
 
@@ -339,29 +333,73 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.undos = [];
 			this.redrawCounter += 1;
 		};
-		CanvasFreeDrawing.prototype.draw = function (position) {
-			var _this = this;
+		CanvasFreeDrawing.prototype.draw = function (position, force) {
 			let eraseScale = 20;
-			position.forEach(function (_a, i) {
+
+			let widthScale;
+			let temperedForce = force;
+			let color, dx, dy;
+
+			color = position[0].strokeColor.slice();
+			color[3] = 3.5*force;
+			this.context.strokeStyle = this.rgbaFromArray(color);
+
+			// temperedForce = force*10/( Math.max( 2, Math.abs(dx) + Math.abs(dy) ) );
+
+			widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
+			this.context.lineWidth = widthScale*position[0].lineWidth;
+
+
+			position.forEach((_a, i) => {
 				var x = _a.x, y = _a.y, moving = _a.moving;
-				_this.context.beginPath();
-				if (moving && i) {
-					_this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
-				}
-				else {
-					_this.context.moveTo(x - 1, y);
-					_this.context.moveTo(x, y);
+				this.context.beginPath();
+				if (moving && i > 5) {
+					this.context.moveTo(position[i - 6]['x'], position[i - 6]['y']);
+				} else if (moving && i <= 5 && i > 0) {
+					this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
+				} else if (!moving) {
+					this.context.moveTo(x - 0.5, y);
 				}
 
-				if (!_this.isErasing) {
-					_this.context.lineTo(x, y);
-					// _this.context.lineJoin = 'round';
-					// _this.context.lineCap = 'round';
-					// _this.context.closePath();
-					_this.context.stroke();
+				if (!this.isErasing ) {
+					if ( moving && i > 5) {
+						dx = x - position[i - 1]['x'];
+						dy = y - position[i - 1]['y'];
+
+						if (i % 3 == 0) {
+							this.context.quadraticCurveTo(
+								position[i - 3]['x'],
+								position[i - 3]['y'],
+								x,
+								y,
+							);
+						}
+						// this.context.lineTo(
+						// 	x,
+						// 	y,
+						// );
+					} else if (moving && i <= 5 && i > 0) {
+						this.context.lineTo(
+							x,
+							y,
+						);
+					} else if (!moving) {
+						// this.context.lineTo(x + 0.5, y);
+						this.context.lineTo(x + 0.5, y);
+					}
+
+					// this.context.lineJoin = 'round';
+					// this.context.lineCap = 'round';
+					// this.context.closePath();
+					this.context.stroke();
 				} else {
 					let eraseScale = 10;
-					_this.context.clearRect(x - 0.5*eraseScale*_this.lineWidth, y - 0.5*eraseScale*_this.lineWidth, eraseScale*_this.lineWidth, eraseScale*_this.lineWidth);
+					this.context.clearRect(
+						x - 0.5*eraseScale*this.lineWidth,
+						y - 0.5*eraseScale*this.lineWidth,
+						eraseScale*this.lineWidth,
+						eraseScale*this.lineWidth
+					);
 				}
 			});
 		};
