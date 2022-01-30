@@ -338,7 +338,7 @@
             <div id="output" class="output overview dual pane carousel-inner" data-selected-slide="1"></div>
             <div class="controls carousel-indicators">
             </div>
-            <script src="carousel.js" ></script>
+			<script src="carousel.js" ></script>
             <div class="controls_container controls">
                 <button class="carousel-control-prev" type="button" data-bs-target="#right_half" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -349,26 +349,12 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
-            <div class="canvas-controls">
-                <nav class="navbar navbar-collapse-lg navbar-light">
-                    <div class="container-fluid">
-                        <div>
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
-                                <li class="nav-item"><a class="nav-link annotate expand" href="#"><span class="material-icons">expand</span></a></li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
-                                    <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
-                                        <li><a class="dropdown-item annotate red color" href="#">Red</a></li>
-                                        <li><a class="dropdown-item annotate green color" href="#">Green</a></li>
-                                        <li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
-                                        <li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
-                                        <li><a class="dropdown-item annotate black color" href="#">Black</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
-                                <li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
-                                <li class="nav-item">
+			<div class="canvas-controls">
+				<nav class="navbar navbar-collapse-lg navbar-light">
+					<div class="container-fluid">
+						<div>
+							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<li class="nav-item">
 									<a class="nav-link annotate disable" href="#">
 										<span class="material-icons">
 											near_me
@@ -376,13 +362,7 @@
 										<!-- <span class="material-icons">edit_off</span> -->
 									</a>
 								</li>
-                                <li class="nav-item">
-									<a class="nav-link annotate erase" href="#">
-										<i class="bi bi-eraser-fill"></i>
-										<!-- <span class="material-icons-outlined">mode_edit_outline</span> -->
-									</a>
-								</li>
-                                <li class="nav-item">
+								<li class="nav-item">
 									<a class="nav-link annotate enable" href="#">
 										<span class="material-icons">
 											brush
@@ -391,11 +371,39 @@
 										<!-- <span class="material-icons">mode_edit</span> -->
 									</a>
 								</li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
+									<ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown" style="margin-left:-125px">
+										<li><a class="dropdown-item annotate red color" href="#">Red</a></li>
+										<li><a class="dropdown-item annotate green color" href="#">Green</a></li>
+										<li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
+										<li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
+										<li><a class="dropdown-item annotate black color" href="#">Black</a></li>
+									</ul>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate erase" href="#">
+										<i class="bi bi-eraser-fill"></i>
+										<!-- <span class="material-icons-outlined">mode_edit_outline</span> -->
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate expand" href="#">
+										<span class="material-icons-outlined">
+											aspect_ratio
+										</span>
+										<!-- <span class="material-icons">expand</span> -->
+									</a>
+								</li>
+								<li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+            
             <div class="slide_number">
                 <button class="plain_button slide_button">
                 </button>

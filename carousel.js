@@ -133,6 +133,7 @@ function carouselSlideHandler() {
 		carouselThreeSlides(slideNum, slides);
 	}
 	document.getElementById('output').dataset.selectedSlide = slideNum;
+	updateCanvas(slide);
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -297,7 +298,6 @@ function updateCanvas(slide) {
 		if (slide.querySelector('canvas') !== null) {
 			slide.querySelector('canvas').classList.add('hidden');
 		}
-		return 1;
 	}
 	// document.querySelector('.canvas-controls').find('*').off();
 	// $('.canvas-controls .annotate').off();
