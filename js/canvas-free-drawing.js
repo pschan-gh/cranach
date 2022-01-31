@@ -349,14 +349,15 @@ var dist = createCommonjsModule(function (module, exports) {
 
 			color = position[0].strokeColor.slice();
 			this.context.beginPath();
+
+			let moving = position[0].moving;
+			if (moving) {
+				this.context.moveTo(position[0].x, position[0].y);
+			} else if (!moving) {
+				this.context.moveTo(position[0].x - 1, position[0].y);
+			}
 			position.forEach((_a, i) => {
 				var x = _a.x, y = _a.y, moving = _a.moving;
-
-				if (moving && i ) {
-					this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
-				} else if (!moving) {
-					this.context.moveTo(x - 0.5, y);
-				}
 
 				if (!this.isErasing ) {
 					if ( moving && i ) { // % 2 == 0 && i > 3
@@ -364,24 +365,36 @@ var dist = createCommonjsModule(function (module, exports) {
 						// dy = y - position[i - 1]['y'];
 						//
 
-						if (this.pointerType == 'mouse' && i % 2 == 0 && i > 3 ) {
-							this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
+						if ( this.pointerType == 'mouse' ) {
+							// this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
+							//
+							// this.context.quadraticCurveTo(
+							// 	position[i - 2]['x'],
+							// 	position[i - 2]['y'],
+							// 	x,
+							// 	y,
+							// );
+							//
+							// this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
+							//
+							// this.context.quadraticCurveTo(
+							// 	position[i - 1]['x'],
+							// 	position[i - 1]['y'],
+							// 	x,
+							// 	y,
+							// );
 
-							this.context.quadraticCurveTo(
-								position[i - 2]['x'],
-								position[i - 2]['y'],
-								x,
-								y,
-							);
-
-							this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
-
-							this.context.quadraticCurveTo(
-								position[i - 1]['x'],
-								position[i - 1]['y'],
-								x,
-								y,
-							);
+							// this.context.quadraticCurveTo(
+							// 	(position[i].x + position[i - 1].x) / 2,
+							// 	(position[i].y + position[i - 1].y) / 2,
+							// 	x, y,
+							// );
+							if ( i % 6 == 1 && i < position.length - 6 ) {
+								this.context.quadraticCurveTo(x, y,
+									(x + position[i + 6].x) / 2,
+									(y + position[i + 6].y) / 2
+								);
+							}
 						} else {
 							this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
 							this.context.lineTo(
@@ -390,7 +403,7 @@ var dist = createCommonjsModule(function (module, exports) {
 							);
 						}
 					} else if (!moving) {
-						this.context.lineTo(x + 0.5, y);
+						this.context.lineTo(x, y);
                     }
 
 				} else {
