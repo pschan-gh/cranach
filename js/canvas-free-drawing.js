@@ -340,35 +340,27 @@ var dist = createCommonjsModule(function (module, exports) {
 			let temperedForce = force;
 			let color, dx, dy;
 
+			color = position[0].strokeColor.slice();
 			position.forEach((_a, i) => {
 				var x = _a.x, y = _a.y, moving = _a.moving;
 				this.context.beginPath();
-				if (moving && i > 5) {
-					this.context.moveTo(position[i - 6]['x'], position[i - 6]['y']);
-				} else if (moving && i <= 5 && i > 0) {
+				if (moving && i ) {
 					this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
 				} else if (!moving) {
 					this.context.moveTo(x - 0.5, y);
 				}
 
 				if (!this.isErasing ) {
-					if ( moving && i > 5) {
-						dx = x - position[i - 1]['x'];
-						dy = y - position[i - 1]['y'];
+					if ( moving && i ) {
+						// dx = x - position[i - 1]['x'];
+						// dy = y - position[i - 1]['y'];
 
-						if (i % 3 == 0) {
-							this.context.quadraticCurveTo(
-								position[i - 3]['x'],
-								position[i - 3]['y'],
-								x,
-								y,
-							);
-						}
-						// this.context.lineTo(
+						// this.context.quadraticCurveTo(
+						// 	position[i - 1]['x'],
+						// 	position[i - 1]['y'],
 						// 	x,
 						// 	y,
 						// );
-					} else if (moving && i <= 5 && i > 0) {
 						this.context.lineTo(
 							x,
 							y,
@@ -383,15 +375,13 @@ var dist = createCommonjsModule(function (module, exports) {
 					// this.context.closePath();
 
 					// temperedForce = force/( Math.max( 2, Math.abs(dx) + Math.abs(dy) ) );
-
-					color = position[0].strokeColor.slice();
 					color[3] = Math.min(1, 4*temperedForce);
 					this.context.strokeStyle = this.rgbaFromArray(color);
 
 					widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
 					this.context.lineWidth = widthScale*position[0].lineWidth;
-
 					this.context.stroke();
+
 				} else {
 					let eraseScale = 10;
 					this.context.clearRect(
@@ -401,6 +391,7 @@ var dist = createCommonjsModule(function (module, exports) {
 						eraseScale*this.lineWidth
 					);
 				}
+
 			});
 		};
 		// https://en.wikipedia.org/wiki/Flood_fill
