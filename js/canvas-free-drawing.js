@@ -352,7 +352,7 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 
 				if (!this.isErasing ) {
-					if ( moving && i % 2 == 0 && i > 3) {
+					if ( moving && i % 2 == 0 && i > 3 ) {
 						dx = x - position[i - 1]['x'];
 						dy = y - position[i - 1]['y'];
 
@@ -373,7 +373,8 @@ var dist = createCommonjsModule(function (module, exports) {
 							x,
 							y,
 						);
-						// this.context.lineTo(
+                        // this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
+                        // this.context.lineTo(
 						// 	x,
 						// 	y,
 						// );
