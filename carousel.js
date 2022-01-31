@@ -371,6 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		slide.cfd.setErase();
 		document.querySelectorAll('.canvas-controls .nav-link').forEach(el => el.classList.remove('disabled'));
 		evt.currentTarget.classList.add('disabled');
+        document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+        document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	}));
 	// $('.canvas-controls .enable').off();
 	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {

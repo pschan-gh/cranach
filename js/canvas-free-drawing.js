@@ -179,6 +179,7 @@ var dist = createCommonjsModule(function (module, exports) {
 		CanvasFreeDrawing.prototype.enableDrawingMode = function () {
             // console.log('enableDrawingMode');
             this.isDrawingModeEnabled = true;
+            this.isErasing = false;
 			this.addListeners();
 			this.toggleCursor();
 			return this.isDrawingModeEnabled;
@@ -351,10 +352,19 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 
 				if (!this.isErasing ) {
-					if ( moving && i % 2 == 0 && i > 1) {
+					if ( moving && i % 2 == 0 && i > 3) {
 						dx = x - position[i - 1]['x'];
 						dy = y - position[i - 1]['y'];
 
+                        this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
+                        
+						this.context.quadraticCurveTo(
+							position[i - 2]['x'],
+							position[i - 2]['y'],
+							x,
+							y,
+						);
+                        
                         this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
                         
 						this.context.quadraticCurveTo(
@@ -369,23 +379,7 @@ var dist = createCommonjsModule(function (module, exports) {
 						// );
 					} else if (!moving) {
 						this.context.lineTo(x + 0.5, y);
-					}
-
-					this.context.lineJoin = 'round';
-					this.context.lineCap = 'round';
-					// this.context.closePath();
-
-                    // console.log(Math.abs(dx) + Math.abs(dy));
-					// temperedForce = 0.5*force*( Math.abs(dx) + Math.abs(dy) );
-                    color[3] = Math.min(1, 4*temperedForce);
-                    // color[3] = Math.max(0.25, 2*temperedForce);
-                    // color[3] = 2*temperedForce;
-					this.context.strokeStyle = this.rgbaFromArray(color);
-
-					widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
-                    // widthScale = Math.min( 3, 4*temperedForce );
-					this.context.lineWidth = widthScale*position[0].lineWidth;
-					this.context.stroke();
+                    }                    
 
 				} else {
 					let eraseScale = 10;
@@ -398,6 +392,19 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 
 			});
+            // this.context.lineJoin = 'round';
+            // this.context.lineCap = 'round';
+            // temperedForce = 0.1*force*( Math.abs(dx) + Math.abs(dy) );
+            
+            color[3] = Math.min( 1, 10*temperedForce ); // basic
+            // color[3] = Math.max(0.25, 2*temperedForce);
+            // color[3] = 0.5/(10*temperedForce);
+            this.context.strokeStyle = this.rgbaFromArray(color);
+
+            widthScale = Math.min( 1.8, 0.4 + 7*temperedForce ); // basic
+            // widthScale = Math.min( 3, 5*temperedForce );
+            this.context.lineWidth = widthScale*position[0].lineWidth;
+            this.context.stroke();
 		};
 		// https://en.wikipedia.org/wiki/Flood_fill
 		CanvasFreeDrawing.prototype.fill = function (x, y, newColor, _a) {
@@ -595,7 +602,7 @@ var dist = createCommonjsModule(function (module, exports) {
 		};
 		CanvasFreeDrawing.prototype.toggleDrawingMode = function () {
 			return this.isDrawingModeEnabled
-			? this.disableDrawingMode()
+            ? ( this.isErasing ? this.enableDrawingMode() : this.disableDrawingMode() )
 			: this.enableDrawingMode();
 		};
 		CanvasFreeDrawing.prototype.clear = function () {
