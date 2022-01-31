@@ -87,7 +87,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.positions = [];
 			this.leftCanvasDrawing = false; // to check if user left the canvas drawing, on mouseover resume drawing
 			this.isDrawing = false;
-			this.inTransition = false;
+			// this.inTransition = false;
 			this.isDrawingModeEnabled = true;
 			this.isErasing = false;
 			this.mouseForce = 0.1;
@@ -97,6 +97,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.bucketToolColor = this.toValidColor(strokeColor);
 			this.bucketToolTolerance = 0;
 			this.isBucketToolEnabled = false;
+			this.pointerType = 'mouse';
 			this.listenersList = [
 				'mouseDown',
 				'mouseMove',
@@ -192,6 +193,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			return this.isDrawingModeEnabled;
 		};
 		CanvasFreeDrawing.prototype.mouseDown = function (event) {
+			this.pointerType = 'mouse';
 			if (event.button !== 0)
 			return;
 			this.drawPoint(event.offsetX, event.offsetY, event);
@@ -201,8 +203,10 @@ var dist = createCommonjsModule(function (module, exports) {
 		};
 		CanvasFreeDrawing.prototype.touchStart = function (event) {
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
+				this.pointerType = 'direct';
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) { // event.touches[0].altitudeAngle < 1.2
+				this.pointerType = 'stylus';
 				event.preventDefault();
 				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 				var x = pageX - this.canvas.offsetLeft;
@@ -215,6 +219,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
+				this.pointerType = 'stylus';
 				const lastIndex = this.positions.length >= 1 ? this.positions.length - 1 : 0;
 
 				const currForce = event.touches[0].force;
@@ -222,7 +227,7 @@ var dist = createCommonjsModule(function (module, exports) {
 				this.positions[lastIndex][Math.floor(this.positions[lastIndex].length/2)].force :
 				currForce;
 
-				this.inTransition = true;
+				// this.inTransition = true;
 
 				event.preventDefault();
 				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
@@ -237,13 +242,14 @@ var dist = createCommonjsModule(function (module, exports) {
 
 				if (currForce - prevForce > 0.05 || prevForce - currForce > 0.05 ) {
 					this.storeDrawing(x, y, false, prevForce);
-					this.canvas.dispatchEvent(this.events.mouseDownEvent);
+					// handleDrawing(null, event);
+					// this.canvas.dispatchEvent(this.events.touchEndEvent);
 				}
 
 			}
 		};
 		CanvasFreeDrawing.prototype.touchEnd = function () {
-			this.inTransition = false;
+			// this.inTransition = false;
 			this.handleEndDrawing();
 			this.canvas.dispatchEvent(this.events.touchEndEvent);
 		};
@@ -283,9 +289,9 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 				this.storeDrawing(x, y, false, force);
 				this.canvas.dispatchEvent(this.events.mouseDownEvent);
-				if (!this.inTransition) {
-					this.handleDrawing(null, event);
-				}
+				// if (!this.inTransition) {
+				this.handleDrawing(null, event);
+				// }
 			}
 		};
 		CanvasFreeDrawing.prototype.drawLine = function (x, y, event) {
@@ -342,9 +348,10 @@ var dist = createCommonjsModule(function (module, exports) {
 			let color, dx, dy;
 
 			color = position[0].strokeColor.slice();
+			this.context.beginPath();
 			position.forEach((_a, i) => {
 				var x = _a.x, y = _a.y, moving = _a.moving;
-				this.context.beginPath();
+
 				if (moving && i ) {
 					this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
 				} else if (!moving) {
@@ -352,35 +359,39 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 
 				if (!this.isErasing ) {
-					if ( moving && i % 2 == 0 && i > 3 ) {
-						dx = x - position[i - 1]['x'];
-						dy = y - position[i - 1]['y'];
+					if ( moving && i ) { // % 2 == 0 && i > 3
+						// dx = x - position[i - 1]['x'];
+						// dy = y - position[i - 1]['y'];
+						//
 
-                        this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
-                        
-						this.context.quadraticCurveTo(
-							position[i - 2]['x'],
-							position[i - 2]['y'],
-							x,
-							y,
-						);
-                        
-                        this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
-                        
-						this.context.quadraticCurveTo(
-							position[i - 1]['x'],
-							position[i - 1]['y'],
-							x,
-							y,
-						);
-                        // this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
-                        // this.context.lineTo(
-						// 	x,
-						// 	y,
-						// );
+						if (this.pointerType == 'mouse' && i % 2 == 0 && i > 3 ) {
+							this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
+
+							this.context.quadraticCurveTo(
+								position[i - 2]['x'],
+								position[i - 2]['y'],
+								x,
+								y,
+							);
+
+							this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
+
+							this.context.quadraticCurveTo(
+								position[i - 1]['x'],
+								position[i - 1]['y'],
+								x,
+								y,
+							);
+						} else {
+							this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
+							this.context.lineTo(
+								x,
+								y,
+							);
+						}
 					} else if (!moving) {
 						this.context.lineTo(x + 0.5, y);
-                    }                    
+                    }
 
 				} else {
 					let eraseScale = 10;
@@ -396,13 +407,13 @@ var dist = createCommonjsModule(function (module, exports) {
             // this.context.lineJoin = 'round';
             // this.context.lineCap = 'round';
             // temperedForce = 0.1*force*( Math.abs(dx) + Math.abs(dy) );
-            
-            color[3] = Math.min( 1, 10*temperedForce ); // basic
+
+            color[3] = Math.min( 1, 4*temperedForce ); // basic
             // color[3] = Math.max(0.25, 2*temperedForce);
             // color[3] = 0.5/(10*temperedForce);
             this.context.strokeStyle = this.rgbaFromArray(color);
 
-            widthScale = Math.min( 1.8, 0.4 + 7*temperedForce ); // basic
+            widthScale = Math.min( 1.8, 8*temperedForce ); // basic
             // widthScale = Math.min( 3, 5*temperedForce );
             this.context.lineWidth = widthScale*position[0].lineWidth;
             this.context.stroke();
