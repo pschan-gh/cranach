@@ -351,34 +351,39 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 
 				if (!this.isErasing ) {
-					if ( moving && i ) {
-						// dx = x - position[i - 1]['x'];
-						// dy = y - position[i - 1]['y'];
+					if ( moving && i % 2 == 0 && i > 1) {
+						dx = x - position[i - 1]['x'];
+						dy = y - position[i - 1]['y'];
 
-						// this.context.quadraticCurveTo(
-						// 	position[i - 1]['x'],
-						// 	position[i - 1]['y'],
-						// 	x,
-						// 	y,
-						// );
-						this.context.lineTo(
+                        this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
+                        
+						this.context.quadraticCurveTo(
+							position[i - 1]['x'],
+							position[i - 1]['y'],
 							x,
 							y,
 						);
+						// this.context.lineTo(
+						// 	x,
+						// 	y,
+						// );
 					} else if (!moving) {
-						// this.context.lineTo(x + 0.5, y);
 						this.context.lineTo(x + 0.5, y);
 					}
 
-					// this.context.lineJoin = 'round';
-					// this.context.lineCap = 'round';
+					this.context.lineJoin = 'round';
+					this.context.lineCap = 'round';
 					// this.context.closePath();
 
-					// temperedForce = force/( Math.max( 2, Math.abs(dx) + Math.abs(dy) ) );
-					color[3] = Math.min(1, 4*temperedForce);
+                    // console.log(Math.abs(dx) + Math.abs(dy));
+					// temperedForce = 0.5*force*( Math.abs(dx) + Math.abs(dy) );
+                    color[3] = Math.min(1, 4*temperedForce);
+                    // color[3] = Math.max(0.25, 2*temperedForce);
+                    // color[3] = 2*temperedForce;
 					this.context.strokeStyle = this.rgbaFromArray(color);
 
 					widthScale = Math.min( 1.8, 0.4 + 3*temperedForce );
+                    // widthScale = Math.min( 3, 4*temperedForce );
 					this.context.lineWidth = widthScale*position[0].lineWidth;
 					this.context.stroke();
 
