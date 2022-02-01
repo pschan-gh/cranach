@@ -224,10 +224,10 @@ const CanvasFreeDrawing = (function () {
 
 		const x = position.x,
 		y = position.y,
-		l = positions.length - 1,
-		moving = l > 0,
-		dx = x - positions[l > 0 ? l - 1 : 0].x,
-		dy = y - positions[l > 0 ? l - 1 : 0].y;
+		index = positions.length - 1,
+		moving = index > 0,
+		dx = x - positions[index > 0 ? index - 1 : 0].x,
+		dy = y - positions[index > 0 ? index - 1 : 0].y;
 
 		this.context.lineCap = 'butt';
 		this.context.lineJoin = 'butt';
@@ -244,10 +244,10 @@ const CanvasFreeDrawing = (function () {
 		if (!this.isErasing ) {
 			if ( moving ) { // % 2 == 0 && i > 3
 				if ( this.pointerType == 'mouse' ) {
-					if ( l % 4 == 1 && l > 1) {
-						let endX = ( x + positions[l - 4].x )/2;
-						let endY = ( y + positions[l - 4].y )/2;
-						this.context.quadraticCurveTo(positions[l - 4].x, positions[l - 4].y,
+					if ( index % 4 == 1 && index > 1) {
+						let endX = ( x + positions[index - 4].x )/2;
+						let endY = ( y + positions[index - 4].y )/2;
+						this.context.quadraticCurveTo(positions[index - 4].x, positions[index - 4].y,
 							endX,
 							endY
 						);
@@ -256,17 +256,31 @@ const CanvasFreeDrawing = (function () {
 						this.context.moveTo(endX, endY);
 					}
 				} else {
-					if (true) { // l % 2 == 1 && l > 1
-						let endX = ( x + positions[l - 1].x )/2;
-						let endY = ( y + positions[l - 1].y )/2;
-						this.context.quadraticCurveTo( positions[l - 1].x, positions[l - 1].y,
-							endX,
-							endY
-						);
-						this.context.stroke();
-						this.context.beginPath();
-						this.context.moveTo(endX, endY);
-					}
+					let endX = ( x + positions[index - 1].x )/2;
+					let endY = ( y + positions[index - 1].y )/2;
+					this.context.quadraticCurveTo( positions[index - 1].x, positions[index - 1].y,
+						endX,
+						endY
+					);
+					this.context.stroke();
+					this.context.beginPath();
+					this.context.moveTo(endX, endY);
+					// if (index % 2 == 1 && index > 1) { //
+					// 	let endX = ( x + positions[index - 2].x )/2;
+					// 	let endY = ( y + positions[index - 2].y )/2;
+					// 	this.context.quadraticCurveTo( positions[index - 2].x, positions[index - 2].y,
+					// 		endX,
+					// 		endY
+					// 	);
+					// 	this.context.stroke();
+					// 	this.context.beginPath();
+					// 	this.context.moveTo(endX, endY);
+					// } else if (index == 1) {
+					// 	this.context.LineTo( positions[index - 1].x, positions[index - 1].y );
+					// 	this.context.stroke();
+					// 	this.context.beginPath();
+					// 	this.context.moveTo(positions[index - 1].x, positions[index - 1].y);
+					// }
 				}
 			} else {
 				this.context.lineCap = 'round';
