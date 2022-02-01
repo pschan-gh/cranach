@@ -22,49 +22,62 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory(global.CanvasFreeDrawing = {}));
-}(this, (function (exports) { 'use strict';
+// (function (global, factory) {
+// 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+// 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+// 	(global = global || self, factory(global.CanvasFreeDrawing = {}));
+// }(this, (function (exports) { 'use strict';
 
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+// var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+//
+// function unwrapExports (x) {
+// 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+// }
+//
+// function createCommonjsModule(fn, module) {
+// 	return module = { exports: {} }, fn(module, module.exports), module.exports;
+// }
+//
+// var dist = createCommonjsModule(function (module, exports) {
+// 	var __spreadArrays = (commonjsGlobal && commonjsGlobal.__spreadArrays) || function () {
+// 		for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+// 		for (var r = Array(s), k = 0, i = 0; i < il; i++)
+// 		for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+// 		r[k] = a[j];
+// 		return r;
+// 	};
+// 	Object.defineProperty(exports, "__esModule", { value: true });
 
-function unwrapExports (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
+	// exports.AllowedEvents = void 0;
+	// var AllowedEvents;
+	// (function (AllowedEvents) {
+	// 	AllowedEvents["redraw"] = "redraw";
+	// 	AllowedEvents["fill"] = "fill";
+	// 	AllowedEvents["mouseup"] = "mouseup";
+	// 	AllowedEvents["mousedown"] = "mousedown";
+	// 	AllowedEvents["mouseenter"] = "mouseenter";
+	// 	AllowedEvents["mouseleave"] = "mouseleave";
+	// })(AllowedEvents = exports.AllowedEvents || (exports.AllowedEvents = {}));
 
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var dist = createCommonjsModule(function (module, exports) {
-	var __spreadArrays = (commonjsGlobal && commonjsGlobal.__spreadArrays) || function () {
-		for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-		for (var r = Array(s), k = 0, i = 0; i < il; i++)
-		for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-		r[k] = a[j];
-		return r;
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.AllowedEvents = void 0;
-	var AllowedEvents;
-	(function (AllowedEvents) {
-		AllowedEvents["redraw"] = "redraw";
-		AllowedEvents["fill"] = "fill";
-		AllowedEvents["mouseup"] = "mouseup";
-		AllowedEvents["mousedown"] = "mousedown";
-		AllowedEvents["mouseenter"] = "mouseenter";
-		AllowedEvents["mouseleave"] = "mouseleave";
-	})(AllowedEvents = exports.AllowedEvents || (exports.AllowedEvents = {}));
 	var CanvasFreeDrawing = /** @class */ (function () {
 		function CanvasFreeDrawing(params) {
-			var elementId = params.elementId, width = params.width, height = params.height, _a = params.backgroundColor,
-			backgroundColor = _a === void 0 ? [255, 255, 255] : _a,
-			_b = params.lineWidth, lineWidth = _b === void 0 ? 5 : _b, _c = params.strokeColor, strokeColor = _c === void 0 ? [180, 80, 80] : _c, disabled = params.disabled, _d = params.showWarnings, showWarnings = _d === void 0 ? false : _d, _e = params.maxSnapshots, maxSnapshots = _e === void 0 ? 10 : _e;
-			this.requiredParam(params, 'elementId');
-			this.requiredParam(params, 'width');
-			this.requiredParam(params, 'height');
+			var elementId =
+			params.elementId,
+			width = params.width,
+			height = params.height,
+			_a = params.backgroundColor,
+			backgroundColor = _a === void 0 ?
+			[255, 255, 255] : _a,
+			_b = params.lineWidth,
+			lineWidth = _b === void 0 ? 5 : _b,
+			_c = params.strokeColor,
+			strokeColor = _c === void 0 ? [180, 80, 80] : _c,
+			disabled = params.disabled,
+			_d = params.showWarnings,
+			showWarnings = _d === void 0 ? false : _d,
+			_e = params.maxSnapshots,
+			maxSnapshots = _e === void 0 ? 10 : _e;
+
 			this.elementId = elementId;
 			this.canvasNode = document.getElementById(this.elementId);
 			if (this.canvasNode instanceof HTMLCanvasElement) {
@@ -90,7 +103,8 @@ var dist = createCommonjsModule(function (module, exports) {
 			// this.inTransition = false;
 			this.isDrawingModeEnabled = true;
 			this.isErasing = false;
-			this.mouseForce = 0.1;
+			this.eraseScale = 10;
+			this.mouseForce = 0.2;
 			this.imageRestored = false;
 			this.lineWidth = lineWidth;
 			this.strokeColor = this.toValidColor(strokeColor);
@@ -107,7 +121,6 @@ var dist = createCommonjsModule(function (module, exports) {
 				'touchMove',
 				'touchEnd',
 			];
-			this.allowedEvents = this.getAllowedEvents();
 			this.redrawCounter = 0;
 			this.dispatchEventsOnceEvery = 0; // this may become something like: [{event, counter}]
 			// initialize events
@@ -116,66 +129,37 @@ var dist = createCommonjsModule(function (module, exports) {
 				fillEvent: new Event('cfd_fill'),
 				mouseUpEvent: new Event('cfd_mouseup'),
 				mouseDownEvent: new Event('cfd_mousedown'),
-				mouseEnterEvent: new Event('cfd_mouseenter'),
-				mouseLeaveEvent: new Event('cfd_mouseleave'),
 				touchStartEvent: new Event('cfd_touchstart'),
 				touchEndEvent: new Event('cfd_touchend'),
 			};
 			this.bindings = {
 				mouseDown: this.mouseDown.bind(this),
 				mouseMove: this.mouseMove.bind(this),
-				mouseLeave: this.mouseLeave.bind(this),
 				mouseUp: this.mouseUp.bind(this),
-				mouseUpDocument: this.mouseUpDocument.bind(this),
+				mouseUpDocument: this.mouseUp.bind(this),
 				touchStart: this.touchStart.bind(this),
 				touchMove: this.touchMove.bind(this),
 				touchEnd: this.touchEnd.bind(this),
 			};
 			this.touchIdentifier = undefined;
-			this.previousX = undefined;
-			this.previousY = undefined;
 			this.showWarnings = showWarnings;
-			// cache
 			this.isNodeColorEqualCache = {};
 			this.setDimensions();
-			// this.setBackground(backgroundColor);
 			this.storeSnapshot();
 			if (!disabled)
 			this.enableDrawingMode();
 		}
-		CanvasFreeDrawing.prototype.requiredParam = function (object, param) {
-			if (!object || !object[param]) {
-				throw new Error(param + " is required");
-			}
-		};
-		CanvasFreeDrawing.prototype.logWarning = function () {
-			var args = [];
-			for (var _i = 0; _i < arguments.length; _i++) {
-				args[_i] = arguments[_i];
-			}
-			if (this.showWarnings)
-			console.warn.apply(console, args);
-		};
 		CanvasFreeDrawing.prototype.addListeners = function () {
-			var _this = this;
-			this.listenersList.forEach(function (event) {
-				_this.canvas.addEventListener(event.toLowerCase(), _this.bindings[event], {passive: false});
+			this.listenersList.forEach(event => {
+				this.canvas.addEventListener(event.toLowerCase(), this.bindings[event], {passive: false});
 			});
 			document.addEventListener('mouseup', this.bindings.mouseUpDocument);
 		};
 		CanvasFreeDrawing.prototype.removeListeners = function () {
-			var _this = this;
-			this.listenersList.forEach(function (event) {
-				_this.canvas.removeEventListener(event.toLowerCase(), _this.bindings[event]);
+			this.listenersList.forEach(event => {
+				this.canvas.removeEventListener(event.toLowerCase(), this.bindings[event]);
 			});
 			document.removeEventListener('mouseup', this.bindings.mouseUpDocument);
-		};
-		CanvasFreeDrawing.prototype.getAllowedEvents = function () {
-			var events = [];
-			for (var event_1 in AllowedEvents) {
-				events.push(event_1);
-			}
-			return events;
 		};
 		CanvasFreeDrawing.prototype.enableDrawingMode = function () {
             // console.log('enableDrawingMode');
@@ -196,23 +180,24 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.pointerType = 'mouse';
 			if (event.button !== 0)
 			return;
-			this.drawPoint(event.offsetX, event.offsetY, event);
+			this.drawPoint(event.offsetX, event.offsetY);
 		};
 		CanvasFreeDrawing.prototype.mouseMove = function (event) {
-			this.drawLine(event.offsetX, event.offsetY, event);
+			this.pointerType = 'mouse';
+			this.drawLine(event.offsetX, event.offsetY);
 		};
 		CanvasFreeDrawing.prototype.touchStart = function (event) {
 			if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 				this.pointerType = 'direct';
 				return 0; // no finger drawing;
-			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) { // event.touches[0].altitudeAngle < 1.2
+			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
 				this.pointerType = 'stylus';
 				event.preventDefault();
 				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 				var x = pageX - this.canvas.offsetLeft;
 				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
 				this.touchIdentifier = identifier;
-				this.drawPoint(x, y, event);
+				this.drawPoint(x, y, event.touches[0].force);
 			}
 		};
 		CanvasFreeDrawing.prototype.touchMove = function (event) {
@@ -220,216 +205,136 @@ var dist = createCommonjsModule(function (module, exports) {
 				return 0; // no finger drawing;
 			} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
 				this.pointerType = 'stylus';
-				const lastIndex = this.positions.length >= 1 ? this.positions.length - 1 : 0;
-
-				const currForce = event.touches[0].force;
-				const prevForce = Array.isArray(this.positions[lastIndex]) ?
-				this.positions[lastIndex][Math.floor(this.positions[lastIndex].length/2)].force :
-				currForce;
-
-				// this.inTransition = true;
-
-				event.preventDefault();
 				var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
 				var x = pageX - this.canvas.offsetLeft;
-				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop  + document.getElementById('output').scrollTop;
-				// check if is multi touch, if it is do nothing
-				if (identifier != this.touchIdentifier)
-				return;
-				this.previousX = x;
-				this.previousY = y;
-				this.drawLine(x, y, event);
+				var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + document.getElementById('output').scrollTop;
+				this.drawLine(x, y, event.touches[0].force);
 
-				if (currForce - prevForce > 0.05 || prevForce - currForce > 0.05 ) {
-					this.storeDrawing(x, y, false, prevForce);
-					// handleDrawing(null, event);
-					// this.canvas.dispatchEvent(this.events.touchEndEvent);
-				}
+				// if (currForce - prevForce > 0.05 || prevForce - currForce > 0.05 ) {
+				// this.storeDrawing(x, y, false, prevForce);
+				// }
 
 			}
 		};
 		CanvasFreeDrawing.prototype.touchEnd = function () {
-			// this.inTransition = false;
 			this.handleEndDrawing();
-			this.canvas.dispatchEvent(this.events.touchEndEvent);
+			// this.canvas.dispatchEvent(this.events.touchEndEvent);
 		};
 		CanvasFreeDrawing.prototype.mouseUp = function () {
 			this.handleEndDrawing();
-			this.canvas.dispatchEvent(this.events.mouseUpEvent);
+			// this.canvas.dispatchEvent(this.events.mouseUpEvent);
 		};
 		CanvasFreeDrawing.prototype.mouseUpDocument = function () {
-			this.leftCanvasDrawing = false;
 		};
-		CanvasFreeDrawing.prototype.mouseLeave = function () {
-			if (this.isDrawing)
-			this.leftCanvasDrawing = true;
-			this.isDrawing = false;
-			this.canvas.dispatchEvent(this.events.mouseLeaveEvent);
-		};
-		CanvasFreeDrawing.prototype.mouseEnter = function () {
-			this.canvas.dispatchEvent(this.events.mouseEnterEvent);
-		};
+		// CanvasFreeDrawing.prototype.mouseLeave = function () {
+		// 	if (this.isDrawing)
+		// 	this.leftCanvasDrawing = true;
+		// 	this.isDrawing = false;
+		// 	this.canvas.dispatchEvent(this.events.mouseLeaveEvent);
+		// };
+		//
+		// CanvasFreeDrawing.prototype.mouseEnter = function () {
+		// 	this.canvas.dispatchEvent(this.events.mouseEnterEvent);
+		// };
 		CanvasFreeDrawing.prototype.handleEndDrawing = function () {
 			this.isDrawing = false;
 			this.storeSnapshot();
 		};
-		CanvasFreeDrawing.prototype.drawPoint = function (x, y, event) {
-			if (this.isBucketToolEnabled) {
-				this.fill(x, y, this.bucketToolColor, {
-					tolerance: this.bucketToolTolerance,
-				});
-			}
-			else {
-				this.isDrawing = true;
-				let force = this.mouseForce;
-				if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
-					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
-						force = event.touches[0].force;
-					}
-				}
-				this.storeDrawing(x, y, false, force);
-				this.canvas.dispatchEvent(this.events.mouseDownEvent);
-				// if (!this.inTransition) {
-				this.handleDrawing(null, event);
-				// }
-			}
+		CanvasFreeDrawing.prototype.drawPoint = function (x, y, force = this.mouseForce) {
+			this.isDrawing = true;
+			this.storeDrawing(x, y, false, force);
+			this.handleDrawing(this.dispatchEventsOnceEvery);
 		};
-		CanvasFreeDrawing.prototype.drawLine = function (x, y, event) {
-			if (this.leftCanvasDrawing) {
-				this.leftCanvasDrawing = false;
-				if (event instanceof MouseEvent) {
-					this.mouseDown(event);
-				}
-				else if (event instanceof TouchEvent) {
-					this.touchEnd();
-				}
-			}
+		CanvasFreeDrawing.prototype.drawLine = function (x, y, force = this.mouseForce) {
+			event.preventDefault();
+
 			if (this.isDrawing) {
-				let force = this.mouseForce;
-				if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
-					if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct') {
-						force = event.touches[0].force;
-					}
-				}
 				this.storeDrawing(x, y, true, force);
-				this.handleDrawing(this.dispatchEventsOnceEvery, event);
+				this.handleDrawing(this.dispatchEventsOnceEvery);
 			}
 		};
-		CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery, event) {
-			var _this = this;
-			var positions = [__spreadArrays(this.positions).pop()];
-			let force = this.mouseForce;
-			if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
-				if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType != 'direct' ) {
-					force = event.touches[0].force;
-				}
-			}
+		CanvasFreeDrawing.prototype.handleDrawing = function (dispatchEventsOnceEvery) {
+			// var positions = [__spreadArrays(this.positions).pop()];
+			this.draw(this.positions);
 
-			positions.forEach(function (position) {
-				if (position && position[0] && position[0].strokeColor) {
-					_this.draw(position, force);
-				}
-			});
-
-			if (!dispatchEventsOnceEvery) {
-				this.canvas.dispatchEvent(this.events.redrawEvent);
-			}
-			else if (this.redrawCounter % dispatchEventsOnceEvery === 0) {
-				this.canvas.dispatchEvent(this.events.redrawEvent);
-			}
+			// if (!dispatchEventsOnceEvery) {
+			// 	// this.canvas.dispatchEvent(this.events.redrawEvent);
+			// }
+			// else if (this.redrawCounter % dispatchEventsOnceEvery === 0) {
+			// 	// this.canvas.dispatchEvent(this.events.redrawEvent);
+			// }
 			this.undos = [];
 			this.redrawCounter += 1;
 		};
-		CanvasFreeDrawing.prototype.draw = function (position, force) {
-			let eraseScale = 20;
+		CanvasFreeDrawing.prototype.draw = function (positions) {
+			const position = positions[positions.length - 1];
+			const color = position.strokeColor.slice();
 
 			let widthScale;
-			let temperedForce = force;
-			let color, dx, dy;
+			let temperedForce = position.force;
+			let dx, dy;
 
-			color = position[0].strokeColor.slice();
-			this.context.beginPath();
 
-			let moving = position[0].moving;
-			if (moving) {
-				this.context.moveTo(position[0].x, position[0].y);
-			} else if (!moving) {
-				this.context.moveTo(position[0].x - 1, position[0].y);
-			}
-			position.forEach((_a, i) => {
-				var x = _a.x, y = _a.y, moving = _a.moving;
+			const x = position.x,
+			y = position.y,
+			l = positions.length - 1;
+			moving = l > 1;
 
-				if (!this.isErasing ) {
-					if ( moving && i ) { // % 2 == 0 && i > 3
-						// dx = x - position[i - 1]['x'];
-						// dy = y - position[i - 1]['y'];
-						//
+			// this.context.lineCap = 'round';
+			this.context.lineJoin = 'round';
+			color[3] = Math.min( 1, 4*temperedForce ); // basic
+			// color[3] = Math.max(0.25, 2*temperedForce);
+			// color[3] = 0.5/(10*temperedForce);
+			this.context.strokeStyle = this.rgbaFromArray(color);
 
-						if ( this.pointerType == 'mouse' ) {
-							// this.context.moveTo(position[i - 4]['x'], position[i - 4]['y']);
-							//
-							// this.context.quadraticCurveTo(
-							// 	position[i - 2]['x'],
-							// 	position[i - 2]['y'],
-							// 	x,
-							// 	y,
-							// );
-							//
-							// this.context.moveTo(position[i - 2]['x'], position[i - 2]['y']);
-							//
-							// this.context.quadraticCurveTo(
-							// 	position[i - 1]['x'],
-							// 	position[i - 1]['y'],
-							// 	x,
-							// 	y,
-							// );
+			widthScale = Math.min( 1.8, 8*temperedForce ); // basic
+			// widthScale = Math.min( 3, 5*temperedForce );
+			this.context.lineWidth = widthScale*position.lineWidth;
 
-							// this.context.quadraticCurveTo(
-							// 	(position[i].x + position[i - 1].x) / 2,
-							// 	(position[i].y + position[i - 1].y) / 2,
-							// 	x, y,
-							// );
-							if ( i % 6 == 1 && i < position.length - 6 ) {
-								this.context.quadraticCurveTo(x, y,
-									(x + position[i + 6].x) / 2,
-									(y + position[i + 6].y) / 2
-								);
-							}
-						} else {
-							this.context.moveTo(position[i - 1]['x'], position[i - 1]['y']);
-							this.context.lineTo(
-								x,
-								y,
+			if (!this.isErasing ) {
+				if ( moving ) { // % 2 == 0 && i > 3
+					if ( this.pointerType == 'mouse' ) {
+						if ( l % 4 == 1 ) {
+							let endX = ( x + positions[l - 4].x )/2;
+							let endY = ( y + positions[l - 4].y )/2;
+							this.context.quadraticCurveTo(positions[l - 4].x, positions[l - 4].y,
+								endX,
+								endY
 							);
+							this.context.stroke();
+							this.context.beginPath();
+							this.context.moveTo(endX, endY);
 						}
-					} else if (!moving) {
-						this.context.lineTo(x, y);
-                    }
-
+					} else {
+						let endX = ( x + positions[l - 1].x )/2;
+						let endY = ( y + positions[l - 1].y )/2;
+						this.context.quadraticCurveTo( positions[l - 1].x, positions[l - 1].y,
+							endX,
+							endY
+						);
+						this.context.stroke();
+						this.context.beginPath();
+						this.context.moveTo(endX, endY);
+						// this.context.lineTo(
+						// 	x,
+						// 	y,
+						// );
+					}
 				} else {
-					let eraseScale = 10;
-					this.context.clearRect(
-						x - 0.5*eraseScale*this.lineWidth,
-						y - 0.5*eraseScale*this.lineWidth,
-						eraseScale*this.lineWidth,
-						eraseScale*this.lineWidth
-					);
+					this.context.beginPath();
+					this.context.moveTo(x - 0.5, y);
+					this.context.lineTo(x + 0.5, y);
+					this.context.stroke();
 				}
+			} else {
+				this.context.clearRect(
+					x - 0.5*this.eraseScale*this.lineWidth,
+					y - 0.5*this.eraseScale*this.lineWidth,
+					this.eraseScale*this.lineWidth,
+					this.eraseScale*this.lineWidth
+				);
+			}
 
-			});
-            // this.context.lineJoin = 'round';
-            // this.context.lineCap = 'round';
-            // temperedForce = 0.1*force*( Math.abs(dx) + Math.abs(dy) );
-
-            color[3] = Math.min( 1, 4*temperedForce ); // basic
-            // color[3] = Math.max(0.25, 2*temperedForce);
-            // color[3] = 0.5/(10*temperedForce);
-            this.context.strokeStyle = this.rgbaFromArray(color);
-
-            widthScale = Math.min( 1.8, 8*temperedForce ); // basic
-            // widthScale = Math.min( 3, 5*temperedForce );
-            this.context.lineWidth = widthScale*position[0].lineWidth;
-            this.context.stroke();
 		};
 		// https://en.wikipedia.org/wiki/Flood_fill
 		CanvasFreeDrawing.prototype.fill = function (x, y, newColor, _a) {
@@ -437,8 +342,8 @@ var dist = createCommonjsModule(function (module, exports) {
 			newColor = this.toValidColor(newColor);
 			if (this.positions.length === 0 && !this.imageRestored) {
 				this.setBackground(newColor, false);
-				this.canvas.dispatchEvent(this.events.redrawEvent);
-				this.canvas.dispatchEvent(this.events.fillEvent);
+				// this.canvas.dispatchEvent(this.events.redrawEvent);
+				// this.canvas.dispatchEvent(this.events.fillEvent);
 				return;
 			}
 			var pixels = this.width * this.height;
@@ -474,21 +379,17 @@ var dist = createCommonjsModule(function (module, exports) {
 				}
 			}
 			this.context.putImageData(imageData, 0, 0);
-			this.canvas.dispatchEvent(this.events.redrawEvent);
-			this.canvas.dispatchEvent(this.events.fillEvent);
+			// this.canvas.dispatchEvent(this.events.redrawEvent);
+			// this.canvas.dispatchEvent(this.events.fillEvent);
 		};
 		CanvasFreeDrawing.prototype.toValidColor = function (color) {
 			if (Array.isArray(color) && color.length === 4)
 			return color;
 			if (Array.isArray(color) && color.length === 3) {
-				var validColor = __spreadArrays(color);
+				// var validColor = __spreadArrays(color);
+				var validColor = color;
 				validColor.push(255);
 				return validColor;
-			}
-			else {
-				this.logWarning('Color is not valid!\n' +
-				'It must be an array with RGB values:  [0-255, 0-255, 0-255]');
-				return [0, 0, 0, 255];
 			}
 		};
 		// i = color 1; j = color 2; t = tolerance
@@ -533,31 +434,15 @@ var dist = createCommonjsModule(function (module, exports) {
 			this.canvas.style.cursor = this.isDrawingModeEnabled ? 'crosshair' : 'auto';
 		};
 		CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving, force = 0) {
-			if (moving) {
-				var lastIndex = this.positions.length - 1;
-				this.positions[lastIndex].push({
-					x: x,
-					y: y,
-					moving: moving,
-					lineWidth: this.lineWidth,
-					strokeColor: this.strokeColor,
-					isBucket: false,
-					force: force,
-				});
-			}
-			else {
-				this.positions.push([
-					{
-						x: x,
-						y: y,
-						isBucket: false,
-						moving: moving,
-						lineWidth: this.lineWidth,
-						strokeColor: this.strokeColor,
-						force: force,
-					},
-				]);
-			}
+			this.positions.push({
+				x: x,
+				y: y,
+				moving: moving,
+				lineWidth: this.lineWidth,
+				strokeColor: this.strokeColor,
+				isBucket: false,
+				force: force,
+			});
 		};
 		CanvasFreeDrawing.prototype.storeSnapshot = function () {
 			var imageData = this.getCanvasSnapshot();
@@ -565,6 +450,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			if (this.snapshots.length > this.maxSnapshots) {
 				this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
 			}
+			this.positions = [];
 		};
 		CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
 			return this.context.getImageData(0, 0, this.width, this.height);
@@ -575,16 +461,10 @@ var dist = createCommonjsModule(function (module, exports) {
 		// Public APIs
 		CanvasFreeDrawing.prototype.on = function (params, callback) {
 			var event = params.event, counter = params.counter;
-			this.requiredParam(params, 'event');
-			if (this.allowedEvents.includes(event)) {
-				if (event === 'redraw' && counter && Number.isInteger(counter)) {
-					this.dispatchEventsOnceEvery = counter;
-				}
-				this.canvas.addEventListener('cfd_' + event, function () { return callback(); });
+			if (event === 'redraw' && counter && Number.isInteger(counter)) {
+				this.dispatchEventsOnceEvery = counter;
 			}
-			else {
-				this.logWarning("This event is not allowed: " + event);
-			}
+			this.canvas.addEventListener('cfd_' + event, function () { return callback(); });
 		};
 		CanvasFreeDrawing.prototype.setLineWidth = function (px) {
 			this.lineWidth = px;
@@ -654,6 +534,7 @@ var dist = createCommonjsModule(function (module, exports) {
 			};
 		};
 		CanvasFreeDrawing.prototype.undo = function () {
+			console.log(this.snapshots);
 			var lastSnapshot = this.snapshots[this.snapshots.length - 1];
 			var goToSnapshot = this.snapshots[this.snapshots.length - 2];
 			if (goToSnapshot) {
@@ -662,9 +543,6 @@ var dist = createCommonjsModule(function (module, exports) {
 				this.undos.push(lastSnapshot);
 				this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
 				this.imageRestored = true;
-			}
-			else {
-				this.logWarning('There are no more undos left.');
 			}
 		};
 		CanvasFreeDrawing.prototype.redo = function () {
@@ -676,21 +554,18 @@ var dist = createCommonjsModule(function (module, exports) {
 					this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
 				}
 			}
-			else {
-				this.logWarning('There are no more redo left.');
-			}
 		};
 		return CanvasFreeDrawing;
 	}());
-	exports.default = CanvasFreeDrawing;
-});
+	// exports.default = CanvasFreeDrawing;
+// });
 
-var index = unwrapExports(dist);
-var dist_1 = dist.AllowedEvents;
+// var index = unwrapExports(dist);
+// var dist_1 = dist.AllowedEvents;
+//
+// exports.AllowedEvents = dist_1;
+// exports.default = index;
+//
+// Object.defineProperty(exports, '__esModule', { value: true });
 
-exports.AllowedEvents = dist_1;
-exports.default = index;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+// })));

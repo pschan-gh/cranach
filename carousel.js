@@ -330,7 +330,8 @@ function addCanvas(slide) {
 	let width = output.scrollWidth;
 	let height = output.scrollHeight - 5;
 
-	slide.cfd = new CanvasFreeDrawing.default({
+	// slide.cfd = new CanvasFreeDrawing.default({
+	slide.cfd = new CanvasFreeDrawing({
 		elementId: slide.id,
 		width: width,
 		height: height,
