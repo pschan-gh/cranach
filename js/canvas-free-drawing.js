@@ -89,7 +89,6 @@ const CanvasFreeDrawing = (function () {
 			touchMove: this.touchMove.bind(this),
 			touchEnd: this.touchEnd.bind(this),
 		};
-		this.touchIdentifier = undefined;
 		this.showWarnings = showWarnings;
 		this.isNodeColorEqualCache = {};
 		this.setDimensions();
@@ -130,6 +129,7 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.mouseDown = function (event) {
+		event.preventDefault();
 		this.pointerType = 'mouse';
 		if (event.button !== 0)
 		return;
@@ -138,44 +138,54 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.mouseMove = function (event) {
+		event.preventDefault();
 		this.pointerType = 'mouse';
 		this.drawLine(event.offsetX, event.offsetY);
 	};
 
 	CanvasFreeDrawing.prototype.touchStart = function (event) {
+		event.preventDefault();
 		if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 			this.pointerType = 'direct';
 			return 0; // no finger drawing;
-		} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
+		} else if (event.targetTouches.length > 0 ) {
 			this.pointerType = 'stylus';
+			this.isDrawing = true;
 			event.preventDefault();
-			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-			this.touchIdentifier = identifier;
-			this.drawPoint(x, y, event.touches[0].force);
+			this.drawLine(x, y, event.targetTouches[0].force);
 		}
 	};
 
 	CanvasFreeDrawing.prototype.touchMove = function (event) {
+		event.preventDefault();
 		if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 			return 0; // no finger drawing;
 		} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
 			this.pointerType = 'stylus';
-			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY, identifier = _a.identifier;
+			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 			this.drawLine(x, y, event.touches[0].force);
 		}
 	};
 
-	CanvasFreeDrawing.prototype.touchEnd = function () {
+	CanvasFreeDrawing.prototype.touchEnd = function (event) {
+		event.preventDefault();
+		if (this.positions.length == 1) {
+			this.draw(this.positions, true);
+			// this.drawPoint(this.positions[0].x, this.positions[0].y, 100);
+		}
 		this.handleEndDrawing();
 	};
 
-	CanvasFreeDrawing.prototype.mouseUp = function () {
+	CanvasFreeDrawing.prototype.mouseUp = function (event) {
+		event.preventDefault();
 		if (this.positions.length == 1) {
-			this.drawPoint(event.offsetX, event.offsetY);
+			this.draw(this.positions, true);
+			// this.drawPoint(event.offsetX, event.offsetY);
 		}
 		this.handleEndDrawing();
 	};
@@ -194,8 +204,6 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.drawLine = function (x, y, force = this.mouseForce) {
-		event.preventDefault();
-
 		if (this.isDrawing) {
 			this.storeDrawing(x, y, true, force);
 			this.handleDrawing();
@@ -207,12 +215,12 @@ const CanvasFreeDrawing = (function () {
 		this.undos = [];
 	};
 
-	CanvasFreeDrawing.prototype.draw = function (positions) {
+	CanvasFreeDrawing.prototype.draw = function (positions, point = false) {
 		const position = positions[positions.length - 1];
 		const color = position.strokeColor.slice();
 
 		let widthScale;
-		let temperedForce = this.forceMultiplier*position.force;
+		let temperedForce = point ? 10 : this.forceMultiplier*position.force;
 
 		const x = position.x,
 		y = position.y,
@@ -248,25 +256,31 @@ const CanvasFreeDrawing = (function () {
 						this.context.moveTo(endX, endY);
 					}
 				} else {
-					let endX = ( x + positions[l - 1].x )/2;
-					let endY = ( y + positions[l - 1].y )/2;
-					this.context.quadraticCurveTo( positions[l - 1].x, positions[l - 1].y,
-						endX,
-						endY
-					);
-					this.context.stroke();
-					this.context.beginPath();
-					this.context.moveTo(endX, endY);
+					if (true) { // l % 2 == 1 && l > 1
+						let endX = ( x + positions[l - 1].x )/2;
+						let endY = ( y + positions[l - 1].y )/2;
+						this.context.quadraticCurveTo( positions[l - 1].x, positions[l - 1].y,
+							endX,
+							endY
+						);
+						this.context.stroke();
+						this.context.beginPath();
+						this.context.moveTo(endX, endY);
+					}
 				}
 			} else {
 				this.context.lineCap = 'round';
 				this.context.beginPath();
-				this.context.moveTo(x, y);
-				this.context.lineTo(
-					x,
-					y,
-				);
-				this.context.stroke();
+				if (point) {
+					this.context.moveTo(x - 0.5, y);
+					this.context.lineTo(
+						x + 0.5,
+						y,
+					);
+					this.context.stroke();
+				} else {
+					this.context.moveTo(x, y);
+				}
 			}
 		} else {
 			this.context.clearRect(
@@ -276,7 +290,6 @@ const CanvasFreeDrawing = (function () {
 				this.eraseScale*this.lineWidth
 			);
 		}
-
 	};
 
 	CanvasFreeDrawing.prototype.toValidColor = function (color) {
