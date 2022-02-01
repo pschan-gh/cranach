@@ -39,8 +39,7 @@ const CanvasFreeDrawing = (function () {
 		_d = params.showWarnings,
 		showWarnings = _d === void 0 ? false : _d,
 		_e = params.maxSnapshots,
-		// maxSnapshots = _e === void 0 ? 10 : _e;
-		maxSnapshots = 10;
+		maxSnapshots = _e === void 0 ? 10 : _e;
 
 		this.elementId = elementId;
 		this.canvasNode = document.getElementById(this.elementId);
@@ -320,7 +319,7 @@ const CanvasFreeDrawing = (function () {
 		this.positions = [];
 	};
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
-		return this.context.getImageData(0, 0, this.width, this.height);
+		return this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
 	};
 	CanvasFreeDrawing.prototype.restoreCanvasSnapshot = function (imageData) {
 		this.context.putImageData(imageData, 0, 0);
@@ -348,7 +347,7 @@ const CanvasFreeDrawing = (function () {
 			if (save)
 			this.backgroundColor = validColor;
 			this.context.fillStyle = this.rgbaFromArray(validColor);
-			this.context.fillRect(0, 0, this.width, this.height);
+			this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		}
 	};
 	CanvasFreeDrawing.prototype.setDrawingColor = function (color) {
@@ -364,7 +363,7 @@ const CanvasFreeDrawing = (function () {
 		: this.enableDrawingMode();
 	};
 	CanvasFreeDrawing.prototype.clear = function () {
-		this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
+		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.positions = [];
 		if (this.backgroundColor)
 		this.setBackground(this.backgroundColor);
@@ -387,6 +386,7 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.undo = function () {
 		var lastSnapshot = this.snapshots[this.snapshots.length - 1];
 		var goToSnapshot = this.snapshots[this.snapshots.length - 2];
+		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 		if (goToSnapshot) {
 			this.restoreCanvasSnapshot(goToSnapshot);
 			this.snapshots.pop();

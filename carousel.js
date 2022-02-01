@@ -433,6 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 0, 0])
+		slide.cfd.setDrawingColor([100, 100, 100])
 	}));
 });
