@@ -290,7 +290,6 @@ function updateCanvas(slide) {
 	if (document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
-    console.log('updating canvas');
 	if (document.querySelector('#right_half').classList.contains('annotate')) {
 		if (slide.querySelector('canvas') === null) {
 			addCanvas(slide);
@@ -322,40 +321,37 @@ function clearAllCanvas() {
 	}
 }
 
-function addCanvas(slide) {
+function addCanvas(slide, output = document.getElementById('output')) {
 	if (slide.querySelector('canvas') !== null || document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
-	let output = document.getElementById('output');
 	let width = output.scrollWidth;
 	let height = output.scrollHeight - 5;
 
-	// slide.cfd = new CanvasFreeDrawing.default({
 	slide.cfd = new CanvasFreeDrawing({
 		elementId: slide.id,
 		width: width,
 		height: height,
 		showWarnings: true,
+		output: output,
 	});
 	slide.cfd.setLineWidth(2);
-	slide.redrawCount = slide.querySelector('.annotate.redraw-count');
 	let bodyRect = document.body.getBoundingClientRect();
 	let slideRect = slide.getBoundingClientRect()
-	let voffset = slideRect.top + document.getElementById('output').scrollTop;
-	// slide.cfd.canvas.top = (voffset);
+	let voffset = slideRect.top + output.scrollTop;
 	slide.querySelector('canvas').style.top = -voffset;
-	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
-		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-	});
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.querySelectorAll('.canvas-controls .clear').forEach(el => el.addEventListener('click', function() {
-		let slide = document.querySelector('#output > div.slide.active');
-		if (slide === null) { return 0; }
-		slide.querySelector('canvas').remove();
-		addCanvas(slide);
-	}));
+	document.querySelectorAll('.canvas-controls .clear').forEach(
+		el => el.addEventListener('click', function() {
+			let slide = document.querySelector('#output > div.slide.active');
+			if (slide === null) { return 0; }
+			if (slide.cfd.isDrawingModeEnabled) {
+				slide.cfd.clear();
+			}
+		})
+	);
 	document.querySelectorAll('.canvas-controls .expand').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
