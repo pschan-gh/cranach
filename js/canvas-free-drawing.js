@@ -32,7 +32,7 @@ const CanvasFreeDrawing = (function () {
 		backgroundColor = _a === void 0 ?
 		[255, 255, 255] : _a,
 		_b = params.lineWidth,
-		lineWidth = _b === void 0 ? 5 : _b,
+		lineWidth = _b === void 0 ? 2 : _b,
 		_c = params.strokeColor,
 		strokeColor = _c === void 0 ? [180, 80, 80] : _c,
 		disabled = params.disabled,
@@ -58,6 +58,7 @@ const CanvasFreeDrawing = (function () {
 		this.output = params.output;
 		this.width = width;
 		this.height = height;
+		this.snapshowImage = null;
 		this.maxSnapshots = maxSnapshots;
 		this.snapshots = [];
 		this.undos = [];
@@ -92,7 +93,7 @@ const CanvasFreeDrawing = (function () {
 		this.showWarnings = showWarnings;
 		this.isNodeColorEqualCache = {};
 		this.setDimensions();
-		this.storeSnapshot();
+		this.storeSnapshotImage();
 		if (!disabled)
 		this.enableDrawingMode();
 	}
@@ -134,7 +135,8 @@ const CanvasFreeDrawing = (function () {
 		if (event.button !== 0)
 		return;
 		this.isDrawing = true;
-		this.drawLine(event.offsetX, event.offsetY);
+		this.context.beginPath();
+		this.context.moveTo(event.offsetX, event.offsetY);
 	};
 
 	CanvasFreeDrawing.prototype.mouseMove = function (event) {
@@ -155,7 +157,9 @@ const CanvasFreeDrawing = (function () {
 			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-			this.drawLine(x, y, event.targetTouches[0].force);
+			// this.drawLine(x, y, event.targetTouches[0].force);
+			this.context.beginPath();
+			this.context.moveTo(x, y);
 		}
 	};
 
@@ -174,18 +178,16 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.touchEnd = function (event) {
 		event.preventDefault();
-		if (this.positions.length == 1) {
-			this.draw(this.positions, true);
-			// this.drawPoint(this.positions[0].x, this.positions[0].y, 100);
+		if (this.positions.length == 0) {
+			this.drawPoint(this.positions[0].x, this.positions[0].y, 10);
 		}
 		this.handleEndDrawing();
 	};
 
 	CanvasFreeDrawing.prototype.mouseUp = function (event) {
 		event.preventDefault();
-		if (this.positions.length == 1) {
-			this.draw(this.positions, true);
-			// this.drawPoint(event.offsetX, event.offsetY);
+		if (this.positions.length == 0) {
+			this.drawPoint(event.offsetX, event.offsetY, 10);
 		}
 		this.handleEndDrawing();
 	};
@@ -194,55 +196,67 @@ const CanvasFreeDrawing = (function () {
 		// console.log('handleEndDrawing');
 		this.isDrawing = false;
 		this.storeSnapshot();
+		this.positions = [];
 	};
 
 	CanvasFreeDrawing.prototype.drawPoint = function (x, y, force = this.mouseForce) {
-		this.isDrawing = true;
-		this.positions = [];
-		this.storeDrawing(x, y, false, force);
-		this.handleDrawing();
+		this.storeDrawing(x, y, true, force);
+		this.draw(this.positions);
+		this.context.stroke();
+		this.undos = [];
 	};
 
 	CanvasFreeDrawing.prototype.drawLine = function (x, y, force = this.mouseForce) {
 		if (this.isDrawing) {
 			this.storeDrawing(x, y, true, force);
-			this.handleDrawing();
+			this.draw(this.positions);
+			this.undos = [];
 		}
 	};
 
-	CanvasFreeDrawing.prototype.handleDrawing = function () {
-		this.draw(this.positions);
-		this.undos = [];
-	};
+	// CanvasFreeDrawing.prototype.handleDrawing = function () {
+	// 	this.draw(this.positions);
+	// 	this.undos = [];
+	// };
 
-	CanvasFreeDrawing.prototype.draw = function (positions, point = false) {
-		const position = positions[positions.length - 1];
-		const color = position.strokeColor.slice();
+	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
 
-		let widthScale;
-		let temperedForce = point ? 10 : this.forceMultiplier*position.force;
+		if (this.isErasing ) {
+			this.context.clearRect(
+				x - 0.5*this.eraseScale*this.lineWidth,
+				y - 0.5*this.eraseScale*this.lineWidth,
+				this.eraseScale*this.lineWidth,
+				this.eraseScale*this.lineWidth
+			);
+			return;
+		}
 
-		const x = position.x,
-		y = position.y,
-		index = positions.length - 1,
-		moving = index > 0,
-		dx = x - positions[index > 0 ? index - 1 : 0].x,
-		dy = y - positions[index > 0 ? index - 1 : 0].y;
+		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
+			const position = positions[index];
+			const color = position.strokeColor.slice();
 
-		this.context.lineCap = 'butt';
-		this.context.lineJoin = 'butt';
-		// temperedForce = 7*temperedForce/Math.max(1, (Math.abs(dx) + Math.abs(dy)) );
-		color[3] = Math.min( 1, temperedForce ); // basic
-		// color[3] = Math.max(0.25, 2*temperedForce);
-		// color[3] = 0.5/(10*temperedForce);
-		this.context.strokeStyle = this.rgbaFromArray(color);
+			let widthScale;
+			let temperedForce = this.forceMultiplier*position.force;
 
-		widthScale = Math.min( 1.8, 2*temperedForce ); // basic
-		// widthScale = Math.min( 10, 1/temperedForce );
-		this.context.lineWidth = widthScale*position.lineWidth;
+			const x = position.x,
+			y = position.y,
+			dx = x - positions[index > 0 ? index - 1 : 0].x,
+			dy = y - positions[index > 0 ? index - 1 : 0].y;
 
-		if (!this.isErasing ) {
-			if ( moving ) { // % 2 == 0 && i > 3
+			// temperedForce = 7*temperedForce/Math.max(1, (Math.abs(dx) + Math.abs(dy)) );
+			color[3] = Math.min( 1, temperedForce ); // basic
+			// color[3] = Math.max(0.25, 2*temperedForce);
+			// color[3] = 0.5/(10*temperedForce);
+			this.context.strokeStyle = this.rgbaFromArray(color);
+
+			widthScale = Math.min( 1.8, 2*temperedForce ); // basic
+			// widthScale = Math.min( 10, 1/temperedForce );
+			this.context.lineWidth = widthScale*position.lineWidth;
+
+			this.context.lineCap = 'butt';
+			this.context.lineJoin = 'butt';
+
+			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				if ( this.pointerType == 'mouse' ) {
 					if ( index % 4 == 1 && index > 1) {
 						let endX = ( x + positions[index - 4].x )/2;
@@ -285,24 +299,13 @@ const CanvasFreeDrawing = (function () {
 			} else {
 				this.context.lineCap = 'round';
 				this.context.beginPath();
-				if (point) {
-					this.context.moveTo(x - 0.5, y);
-					this.context.lineTo(
-						x + 0.5,
-						y,
-					);
-					this.context.stroke();
-				} else {
-					this.context.moveTo(x, y);
-				}
+				this.context.moveTo(x, y);
+				this.context.lineTo(
+					x,
+					y,
+				);
+				this.context.stroke();
 			}
-		} else {
-			this.context.clearRect(
-				x - 0.5*this.eraseScale*this.lineWidth,
-				y - 0.5*this.eraseScale*this.lineWidth,
-				this.eraseScale*this.lineWidth,
-				this.eraseScale*this.lineWidth
-			);
 		}
 	};
 
@@ -336,20 +339,61 @@ const CanvasFreeDrawing = (function () {
 			force: force,
 		});
 	};
+
+	CanvasFreeDrawing.prototype.storeSnapshotImage = function () {
+		console.log('storeSnapshotImage');
+		this.snapshotImage = this.getCanvasSnapshot();
+		console.log(this.snapshotImage);
+	};
+
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		// console.log('storeSnapshot');
-		var imageData = this.getCanvasSnapshot();
-		this.snapshots.push(imageData);
+		this.snapshots.push(this.positions);
 		if (this.snapshots.length > this.maxSnapshots) {
+			if ( this.snapshots.length % this.maxSnapshots == 0 ) {
+				console.log('storing image');
+				this.storeSnapshotImage();
+			}
 			this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
+			console.log(this.snapshots);
 		}
-		this.positions = [];
 	};
+
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
 		return this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
 	};
+
 	CanvasFreeDrawing.prototype.restoreCanvasSnapshot = function (imageData) {
 		this.context.putImageData(imageData, 0, 0);
+	};
+
+	CanvasFreeDrawing.prototype.undo = function () {
+		// var lastSnapshot = this.snapshots[this.snapshots.length - 1];
+		// var goToSnapshot = this.snapshots[this.snapshots.length - 2];
+		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+		// if (goToSnapshot) {
+		// console.log( this.snapshots );
+		if (this.snapshots.length > 0) {
+			this.restoreCanvasSnapshot(this.snapshotImage);
+			this.undos.push( this.snapshots.pop() );
+			this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
+			this.snapshots.forEach(positions => {
+				this.context.beginPath();
+				this.draw(positions, positions.length - 1);
+			});
+			this.imageRestored = true;
+		}
+	};
+	CanvasFreeDrawing.prototype.redo = function () {
+		if (this.undos.length > 0) {
+			var lastUndo = this.undos.pop();
+			if (lastUndo) {
+				// this.restoreCanvasSnapshot(lastUndo);
+				this.draw(lastUndo, lastUndo.length - 1);
+				this.snapshots.push(lastUndo);
+				this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
+			}
+		}
 	};
 	// Public APIs
 	CanvasFreeDrawing.prototype.on = function (params, callback) {
@@ -410,27 +454,6 @@ const CanvasFreeDrawing = (function () {
 			callback();
 		};
 	};
-	CanvasFreeDrawing.prototype.undo = function () {
-		var lastSnapshot = this.snapshots[this.snapshots.length - 1];
-		var goToSnapshot = this.snapshots[this.snapshots.length - 2];
-		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-		if (goToSnapshot) {
-			this.restoreCanvasSnapshot(goToSnapshot);
-			this.snapshots.pop();
-			this.undos.push(lastSnapshot);
-			this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
-			this.imageRestored = true;
-		}
-	};
-	CanvasFreeDrawing.prototype.redo = function () {
-		if (this.undos.length > 0) {
-			var lastUndo = this.undos.pop();
-			if (lastUndo) {
-				this.restoreCanvasSnapshot(lastUndo);
-				this.snapshots.push(lastUndo);
-				this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
-			}
-		}
-	};
+
 	return CanvasFreeDrawing;
 }());
