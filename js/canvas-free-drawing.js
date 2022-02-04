@@ -73,6 +73,7 @@ const CanvasFreeDrawing = (function () {
 		this.lineWidth = lineWidth;
 		this.strokeColor = this.toValidColor(strokeColor);
 		this.pointerType = 'mouse';
+        this.timer = null;
 		this.listenersList = [
 			'mouseDown',
 			'mouseMove',
@@ -134,15 +135,10 @@ const CanvasFreeDrawing = (function () {
 		this.pointerType = 'mouse';
 		if (event.button !== 0)
 		return;
+
 		this.isDrawing = true;
 		this.context.beginPath();
 		this.context.moveTo(event.offsetX, event.offsetY);
-	};
-
-	CanvasFreeDrawing.prototype.mouseMove = function (event) {
-		event.preventDefault();
-		this.pointerType = 'mouse';
-		this.drawLine(event.offsetX, event.offsetY);
 	};
 
 	CanvasFreeDrawing.prototype.touchStart = function (event) {
@@ -157,10 +153,37 @@ const CanvasFreeDrawing = (function () {
 			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-			// this.drawLine(x, y, event.targetTouches[0].force);
 			this.context.beginPath();
 			this.context.moveTo(x, y);
 		}
+	};
+
+    CanvasFreeDrawing.prototype.mouseMove = function (event) {
+		event.preventDefault();
+        this.pointerType = 'mouse';
+        clearTimeout(this.timer);
+
+        this.timer = setTimeout(function(msg) {
+			// this.undo();
+			// this.undos.pop();
+			if (this.positions.length > 1) {
+				console.log(this.positions);
+				const positions = this.positions.slice();
+				this.storeSnapshot();
+				console.log(this.snapshots);
+				this.undo();
+				this.undos.pop();
+				const initial = positions[0];
+				const terminal = positions.at(-1);
+				initial.endPoint = true;
+				terminal.endPoint = true;
+				initial.smoothFactor = 1;
+				terminal.smoothFactor = 1;
+				this.positions = [initial, terminal];
+				this.handleStroke(this.positions);
+			}
+		}.bind(this), 1000);
+		this.handleDrawing(event.offsetX, event.offsetY);
 	};
 
 	CanvasFreeDrawing.prototype.touchMove = function (event) {
@@ -172,22 +195,28 @@ const CanvasFreeDrawing = (function () {
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-			this.drawLine(x, y, event.touches[0].force);
+			this.handleDrawing(x, y, event.touches[0].force);
 		}
 	};
 
-	CanvasFreeDrawing.prototype.touchEnd = function (event) {
-		event.preventDefault();
-		if (this.positions.length == 0) {
-			this.drawPoint(this.positions[0].x, this.positions[0].y, 10);
+
+    CanvasFreeDrawing.prototype.mouseUp = function (event) {
+        event.preventDefault();
+        clearTimeout(this.timer);
+        if (this.positions.length == 0) {
+            this.handleDrawing(event.offsetX, event.offsetY, 10);
 		}
 		this.handleEndDrawing();
 	};
 
-	CanvasFreeDrawing.prototype.mouseUp = function (event) {
+
+	CanvasFreeDrawing.prototype.touchEnd = function (event) {
 		event.preventDefault();
 		if (this.positions.length == 0) {
-			this.drawPoint(event.offsetX, event.offsetY, 10);
+			const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
+			const x = pageX - this.canvas.offsetLeft;
+			const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+            this.handleDrawing(x, y, 10);
 		}
 		this.handleEndDrawing();
 	};
@@ -199,25 +228,22 @@ const CanvasFreeDrawing = (function () {
 		this.positions = [];
 	};
 
-	CanvasFreeDrawing.prototype.drawPoint = function (x, y, force = this.mouseForce) {
-		this.storeDrawing(x, y, true, force);
-		this.draw(this.positions);
-		this.context.stroke();
-		this.undos = [];
-	};
-
-	CanvasFreeDrawing.prototype.drawLine = function (x, y, force = this.mouseForce) {
-		if (this.isDrawing) {
+	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, force = this.mouseForce) {
+        if (this.isDrawing) {
 			this.storeDrawing(x, y, true, force);
 			this.draw(this.positions);
 			this.undos = [];
 		}
 	};
 
-	// CanvasFreeDrawing.prototype.handleDrawing = function () {
-	// 	this.draw(this.positions);
-	// 	this.undos = [];
-	// };
+	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
+		if (this.isDrawing) {
+			console.log(positions);
+			this.draw(positions, positions.length - 1, 1);
+			this.undos = [];
+		}
+	};
+
 
 	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
 
@@ -233,6 +259,7 @@ const CanvasFreeDrawing = (function () {
 
 		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
 			const position = positions[index];
+			const smoothFactor = position.smoothFactor;
 			const color = position.strokeColor.slice();
 
 			let widthScale;
@@ -258,10 +285,10 @@ const CanvasFreeDrawing = (function () {
 
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				if ( this.pointerType == 'mouse' ) {
-					if ( index % 4 == 1 && index > 1) {
-						let endX = ( x + positions[index - 4].x )/2;
-						let endY = ( y + positions[index - 4].y )/2;
-						this.context.quadraticCurveTo(positions[index - 4].x, positions[index - 4].y,
+					if ( index % smoothFactor == 0 && index >= smoothFactor ) {
+						let endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
+						let endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+						this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
 							endX,
 							endY
 						);
@@ -272,29 +299,13 @@ const CanvasFreeDrawing = (function () {
 				} else {
 					let endX = ( x + positions[index - 1].x )/2;
 					let endY = ( y + positions[index - 1].y )/2;
-					this.context.quadraticCurveTo( positions[index - 1].x, positions[index - 1].y,
+					this.context.quadraticCurveTo(positions[index - 1].x, positions[index - 1].y,
 						endX,
 						endY
 					);
 					this.context.stroke();
 					this.context.beginPath();
 					this.context.moveTo(endX, endY);
-					// if (index % 2 == 1 && index > 1) { //
-					// 	let endX = ( x + positions[index - 2].x )/2;
-					// 	let endY = ( y + positions[index - 2].y )/2;
-					// 	this.context.quadraticCurveTo( positions[index - 2].x, positions[index - 2].y,
-					// 		endX,
-					// 		endY
-					// 	);
-					// 	this.context.stroke();
-					// 	this.context.beginPath();
-					// 	this.context.moveTo(endX, endY);
-					// } else if (index == 1) {
-					// 	this.context.LineTo( positions[index - 1].x, positions[index - 1].y );
-					// 	this.context.stroke();
-					// 	this.context.beginPath();
-					// 	this.context.moveTo(positions[index - 1].x, positions[index - 1].y);
-					// }
 				}
 			} else {
 				this.context.lineCap = 'round';
@@ -337,6 +348,8 @@ const CanvasFreeDrawing = (function () {
 			lineWidth: this.lineWidth,
 			strokeColor: this.strokeColor,
 			force: force,
+			endPoint: false,
+			smoothFactor: this.pointerType == 'mouse' ? 4 : 1,
 		});
 	};
 
@@ -349,14 +362,13 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		// console.log('storeSnapshot');
 		this.snapshots.push(this.positions);
-		if (this.snapshots.length > this.maxSnapshots) {
-			if ( this.snapshots.length % this.maxSnapshots == 0 ) {
-				console.log('storing image');
-				this.storeSnapshotImage();
-			}
-			this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
-			console.log(this.snapshots);
-		}
+		// if (this.snapshots.length > this.maxSnapshots) {
+		// 	if ( this.snapshots.length % this.maxSnapshots == 0 ) {
+		// 		console.log('storing image');
+		// 		this.storeSnapshotImage();
+		// 	}
+        //     this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
+        // }
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -368,11 +380,8 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.undo = function () {
-		// var lastSnapshot = this.snapshots[this.snapshots.length - 1];
-		// var goToSnapshot = this.snapshots[this.snapshots.length - 2];
 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-		// if (goToSnapshot) {
-		// console.log( this.snapshots );
+        this.restoreCanvasSnapshot(this.snapshotImage);
 		if (this.snapshots.length > 0) {
 			this.restoreCanvasSnapshot(this.snapshotImage);
 			this.undos.push( this.snapshots.pop() );
