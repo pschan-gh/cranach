@@ -149,7 +149,6 @@ const CanvasFreeDrawing = (function () {
 		} else if (event.targetTouches.length > 0 ) {
 			this.pointerType = 'stylus';
 			this.isDrawing = true;
-			event.preventDefault();
 			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
@@ -163,26 +162,26 @@ const CanvasFreeDrawing = (function () {
         this.pointerType = 'mouse';
         clearTimeout(this.timer);
 
-        this.timer = setTimeout(function(msg) {
-			// this.undo();
-			// this.undos.pop();
+        this.timer = setTimeout(function() {
 			if (this.positions.length > 1) {
-				console.log(this.positions);
+				// console.log(this.positions);
 				const positions = this.positions.slice();
-				this.storeSnapshot();
-				console.log(this.snapshots);
-				this.undo();
-				this.undos.pop();
-				const initial = positions[0];
-				const terminal = positions.at(-1);
-				initial.endPoint = true;
-				terminal.endPoint = true;
-				initial.smoothFactor = 1;
-				terminal.smoothFactor = 1;
-				this.positions = [initial, terminal];
-				this.handleStroke(this.positions);
+				setTimeout(() => {
+					this.storeSnapshot();
+					// console.log(this.snapshots);
+					this.undo();
+					this.undos.pop();
+					const initial = positions[0];
+					const terminal = positions[positions.length - 1];
+					initial.endPoint = true;
+					terminal.endPoint = true;
+					initial.smoothFactor = 1;
+					terminal.smoothFactor = 1;
+					this.positions = [initial, terminal];
+					this.handleStroke(this.positions);
+				});
 			}
-		}.bind(this), 1000);
+		}.bind(this), 250);
 		this.handleDrawing(event.offsetX, event.offsetY);
 	};
 
@@ -192,10 +191,36 @@ const CanvasFreeDrawing = (function () {
 			return 0; // no finger drawing;
 		} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
 			this.pointerType = 'stylus';
+
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+
 			this.handleDrawing(x, y, event.touches[0].force);
+
+			clearTimeout(this.timer);
+
+	        this.timer = setTimeout(function() {
+				if (this.positions.length > 1) {
+					// console.log(this.positions);
+					const positions = this.positions.slice();
+					setTimeout(() => {
+						this.storeSnapshot();
+						console.log(this.snapshots);
+						this.undo();
+						this.undos.pop();
+						const initial = positions[0];
+						const terminal = positions[positions.length - 1];
+						initial.endPoint = true;
+						terminal.endPoint = true;
+						initial.smoothFactor = 1;
+						terminal.smoothFactor = 1;
+						this.positions = [initial, terminal];
+						this.handleStroke(this.positions);
+					});
+				}
+			}.bind(this), 250);
+
 		}
 	};
 
@@ -212,6 +237,7 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.touchEnd = function (event) {
 		event.preventDefault();
+		clearTimeout(this.timer);
 		if (this.positions.length == 0) {
 			const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			const x = pageX - this.canvas.offsetLeft;
@@ -284,7 +310,7 @@ const CanvasFreeDrawing = (function () {
 			this.context.lineJoin = 'butt';
 
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
-				if ( this.pointerType == 'mouse' ) {
+				// if ( this.pointerType == 'mouse' ) {
 					if ( index % smoothFactor == 0 && index >= smoothFactor ) {
 						let endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
 						let endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
@@ -296,21 +322,23 @@ const CanvasFreeDrawing = (function () {
 						this.context.beginPath();
 						this.context.moveTo(endX, endY);
 					}
-				} else {
-					let endX = ( x + positions[index - 1].x )/2;
-					let endY = ( y + positions[index - 1].y )/2;
-					this.context.quadraticCurveTo(positions[index - 1].x, positions[index - 1].y,
-						endX,
-						endY
-					);
-					this.context.stroke();
-					this.context.beginPath();
-					this.context.moveTo(endX, endY);
-				}
+				// } else {
+				// 	let endX = position.endPoint ? x : ( x + positions[index - 1].x )/2;
+				// 	let endY = position.endPoint ? y : ( y + positions[index - 1].y )/2;
+				// 	this.context.quadraticCurveTo(positions[index - 1].x, positions[index - 1].y,
+				// 		endX,
+				// 		endY
+				// 	);
+				// 	this.context.stroke();
+				// 	this.context.beginPath();
+				// 	this.context.moveTo(endX, endY);
+				// }
 			} else {
+				color[3] = 1;
+				this.context.strokeStyle = this.rgbaFromArray(color);
 				this.context.lineCap = 'round';
 				this.context.beginPath();
-				this.context.moveTo(x, y);
+				this.context.moveTo(positions[index > 0 ? index - 1 : 0].x, positions[index > 0 ? index - 1 : 0].y);
 				this.context.lineTo(
 					x,
 					y,
