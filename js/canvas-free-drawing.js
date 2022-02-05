@@ -168,17 +168,79 @@ const CanvasFreeDrawing = (function () {
 				const positions = this.positions.slice();
 				setTimeout(() => {
 					this.storeSnapshot();
-					// console.log(this.snapshots);
 					this.undo();
 					this.undos.pop();
-					const initial = positions[0];
-					const terminal = positions[positions.length - 1];
-					initial.endPoint = true;
-					terminal.endPoint = true;
-					initial.smoothFactor = 1;
-					terminal.smoothFactor = 1;
-					this.positions = [initial, terminal];
-					this.handleStroke(this.positions);
+					// const initial = positions[0];
+					// const terminal = positions[positions.length - 1];
+					// initial.endPoint = true;
+					// terminal.endPoint = true;
+					// initial.smoothFactor = 1;
+					// terminal.smoothFactor = 1;
+					// this.positions = [initial, terminal];
+
+					const firstDerivatives = this.differentiate(positions);
+					const secondDerivatives = this.differentiate(firstDerivatives, false);
+
+					// console.log(firstDerivatives);
+					// console.log(secondDerivatives);
+
+					const meanSecond = {
+						x: ( firstDerivatives[firstDerivatives.length - 1].x - firstDerivatives[0].x ) / secondDerivatives.length,
+						y: ( firstDerivatives[firstDerivatives.length - 1].y - firstDerivatives[0].y ) / secondDerivatives.length,
+					}
+					// const meanSecond = {
+					// 	x: secondDerivatives.reduce( (sum, entry) => {
+					// 		return sum + entry.x;
+					// 	}, 0) / secondDerivatives.length,
+					// 	y: secondDerivatives.reduce( (sum, entry) => {
+					// 		return sum + entry.y;
+					// 	}, 0) / secondDerivatives.length
+					// }
+
+					let varSecond = 0;
+
+					secondDerivatives.forEach( entry => {
+						varSecond += Math.sqrt(( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2);
+					});
+
+					// const varSecond = {
+					// 	x: 100*varSumX / ( secondDerivatives.length - 1 ),
+					// 	y: 100*varSumY / ( secondDerivatives.length - 1 ),
+					// }
+
+					// const varSecond = {
+					// 	x: 100*secondDerivatives.reduce( (sum, entry) => {
+					// 		return sum +  ( entry.x - meanSecond.x )**2;
+					// 	}, 0) / ( secondDerivatives.length - 1 ),
+					// 	y: 100*secondDerivatives.reduce( (sum, entry) => {
+					// 		return sum +  ( entry.y - meanSecond.y )**2;
+					// 	}, 0) / ( secondDerivatives.length - 1 ),
+					// }
+
+
+					const mean = Math.sqrt(meanSecond.x**2 + meanSecond.y**2)
+					console.log(mean);
+					console.log(Math.sqrt(varSecond) / (secondDerivatives.length - 1));
+					const steps = Math.ceil( mean*100 + 10*Math.sqrt(varSecond / (secondDerivatives.length - 1)) );
+					console.log('steps: ' + steps);
+
+					const smoothFactor = Math.min(
+						positions.length - 1,
+						Math.round(positions.length / steps)
+					);
+					console.log(smoothFactor);
+
+					positions.forEach( ( position, index ) => {
+						position.smoothFactor = smoothFactor;
+						if (index % smoothFactor == 0 && index + smoothFactor >= positions.length) {
+							position.x = positions[positions.length - 1].x;
+							position.y = positions[positions.length - 1].y;
+							position.endPoint = true;
+						}
+					});
+					this.positions = positions;
+					this.handleStroke(positions);
+					this.positions = positions;
 				});
 			}
 		}.bind(this), 250);
@@ -209,14 +271,49 @@ const CanvasFreeDrawing = (function () {
 						console.log(this.snapshots);
 						this.undo();
 						this.undos.pop();
-						const initial = positions[0];
-						const terminal = positions[positions.length - 1];
-						initial.endPoint = true;
-						terminal.endPoint = true;
-						initial.smoothFactor = 1;
-						terminal.smoothFactor = 1;
-						this.positions = [initial, terminal];
-						this.handleStroke(this.positions);
+
+						const firstDerivatives = this.differentiate(positions);
+						const secondDerivatives = this.differentiate(firstDerivatives, false);
+
+						const meanSecond = {
+							x: secondDerivatives.reduce( (sum, entry) => {
+								return sum + entry.x;
+							}, 0) / secondDerivatives.length,
+							y: secondDerivatives.reduce( (sum, entry) => {
+								return sum + entry.y;
+							}, 0) / secondDerivatives.length
+						}
+
+
+						let varSecond = 0;
+
+						secondDerivatives.forEach( entry => {
+							varSecond += Math.sqrt(( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2);
+						});
+
+						const mean = Math.sqrt(meanSecond.x**2 + meanSecond.y**2)
+						console.log(mean);
+						console.log(Math.sqrt(varSecond) / (secondDerivatives.length - 1));
+						const steps = Math.ceil( mean*100 + 10*Math.sqrt(varSecond / (secondDerivatives.length - 1)) );
+						console.log('steps: ' + steps);
+
+						const smoothFactor = Math.min(
+							positions.length - 1,
+							Math.round(positions.length / steps)
+						);
+						console.log(smoothFactor);
+
+						positions.forEach( ( position, index ) => {
+							position.smoothFactor = smoothFactor;
+							if (index % smoothFactor == 0 && index + smoothFactor >= positions.length) {
+								position.x = positions[positions.length - 1].x;
+								position.y = positions[positions.length - 1].y;
+								position.endPoint = true;
+							}
+						});
+						this.positions = positions;
+						this.handleStroke(positions);
+						this.positions = positions;
 					});
 				}
 			}.bind(this), 250);
@@ -264,7 +361,6 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
 		if (this.isDrawing) {
-			console.log(positions);
 			this.draw(positions, positions.length - 1, 1);
 			this.undos = [];
 		}
@@ -274,6 +370,10 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
 
 		if (this.isErasing ) {
+			const position = positions[positions.length - 1];
+			const x = position.x,
+			y = position.y;
+
 			this.context.clearRect(
 				x - 0.5*this.eraseScale*this.lineWidth,
 				y - 0.5*this.eraseScale*this.lineWidth,
@@ -311,28 +411,17 @@ const CanvasFreeDrawing = (function () {
 
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				// if ( this.pointerType == 'mouse' ) {
-					if ( index % smoothFactor == 0 && index >= smoothFactor ) {
-						let endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
-						let endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
-						this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-							endX,
-							endY
-						);
-						this.context.stroke();
-						this.context.beginPath();
-						this.context.moveTo(endX, endY);
-					}
-				// } else {
-				// 	let endX = position.endPoint ? x : ( x + positions[index - 1].x )/2;
-				// 	let endY = position.endPoint ? y : ( y + positions[index - 1].y )/2;
-				// 	this.context.quadraticCurveTo(positions[index - 1].x, positions[index - 1].y,
-				// 		endX,
-				// 		endY
-				// 	);
-				// 	this.context.stroke();
-				// 	this.context.beginPath();
-				// 	this.context.moveTo(endX, endY);
-				// }
+				if ( index % smoothFactor == 0 && index >= smoothFactor ) {
+					let endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
+					let endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
+						endX,
+						endY
+					);
+					this.context.stroke();
+					this.context.beginPath();
+					this.context.moveTo(endX, endY);
+				}
 			} else {
 				color[3] = 1;
 				this.context.strokeStyle = this.rgbaFromArray(color);
@@ -390,13 +479,6 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		// console.log('storeSnapshot');
 		this.snapshots.push(this.positions);
-		// if (this.snapshots.length > this.maxSnapshots) {
-		// 	if ( this.snapshots.length % this.maxSnapshots == 0 ) {
-		// 		console.log('storing image');
-		// 		this.storeSnapshotImage();
-		// 	}
-        //     this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
-        // }
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -414,10 +496,17 @@ const CanvasFreeDrawing = (function () {
 			this.restoreCanvasSnapshot(this.snapshotImage);
 			this.undos.push( this.snapshots.pop() );
 			this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
-			this.snapshots.forEach(positions => {
-				this.context.beginPath();
-				this.draw(positions, positions.length - 1);
-			});
+
+			// if (this.snapshots.length > 0 && this.snapshots[this.snapshots.length - 1].length > 0) {
+				this.snapshots.forEach(positions => {
+					this.context.beginPath();
+					if (positions.length) {
+						this.draw(positions, positions.length - 1);
+					} else {
+						this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+					}
+				});
+			// }
 			this.imageRestored = true;
 		}
 	};
@@ -473,8 +562,9 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.clear = function () {
 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.positions = [];
-		if (this.backgroundColor)
-		this.setBackground(this.backgroundColor);
+		if (this.backgroundColor) {
+			this.setBackground(this.backgroundColor);
+		}
 		this.handleEndDrawing();
 	};
 	CanvasFreeDrawing.prototype.save = function () {
@@ -491,6 +581,21 @@ const CanvasFreeDrawing = (function () {
 			callback();
 		};
 	};
+
+	CanvasFreeDrawing.prototype.differentiate = function(positions, normalized = true) {
+		const derivatives = [];
+		let dx, dy, length;
+		for (let i = 1; i < positions.length - 5; i++) {
+			dx = positions[i].x - positions[ i - 1 ].x;
+			dy = positions[i].y - positions[ i - 1 ].y;
+			length = Math.sqrt( dx**2 + dy**2 );
+			derivatives.push({
+				x: normalized ? ( length != 0 ? dx/length : 0 ) : dx,
+				y: normalized ? ( length != 0 ? dy/length : 0 ) : dy,
+			});
+		}
+		return derivatives;
+	}
 
 	return CanvasFreeDrawing;
 }());
