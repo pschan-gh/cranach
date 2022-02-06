@@ -178,7 +178,7 @@ const CanvasFreeDrawing = (function () {
 					// terminal.smoothFactor = 1;
 					// this.positions = [initial, terminal];
 
-					const firstDerivatives = this.differentiate(positions, Math.ceil(positions.length / 20));
+					const firstDerivatives = this.differentiate(positions);
 
 					if (firstDerivatives.length == 0) { return; }
 
@@ -193,74 +193,85 @@ const CanvasFreeDrawing = (function () {
 						return sum + entry.length;
 					}, 0);
 					// console.log(arcLength);
-					let length = firstDerivatives.length;
+					let fullLength = firstDerivatives.reduce( (sum, entry) => {
+                        return sum + entry.length;
+                    }, 0);
 
 					const meanFirst = {
 						x: firstDerivatives.reduce( (sum, entry) => {
-							return sum + entry.x;
-						}, 0) / length,
+							return sum + entry.x * entry.length;
+						}, 0) / fullLength,
 						y: firstDerivatives.reduce( (sum, entry) => {
-							return sum + entry.y;
-						}, 0) / length,
+                            return sum + entry.y * entry.length;
+						}, 0) / fullLength,
 					}
 
-					console.log(meanFirst);
-
+                    // console.log(
+                    //     { 
+                    //         x:
+                    //         positions[positions.length - 1].x - positions[0].x,
+                    //         y:
+                    //         positions[positions.length - 1].y - positions[0].y,
+                    //     }
+                    // );
+                        
 					const meanSecond = {
 						x: secondDerivatives.reduce( (sum, entry) => {
-							return sum + entry.x;
-						}, 0) / (length - 1),
+                            return sum + entry.x * entry.length;
+						}, 0) / (fullLength - 1),
 						y: secondDerivatives.reduce( (sum, entry) => {
-							return sum + entry.y;
-						}, 0) / (length - 1),
+                            return sum + entry.y * entry.length;
+						}, 0) / (fullLength - 1),
 					}
 
 					let varFirst = 0;
 
 					firstDerivatives.forEach( entry => {
-						// varFirst += ( entry.x - meanFirst.x )**2 + ( entry.y - meanFirst.y )**2;
-						varFirst += ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2;
+						// varFirst += ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2;
+                        varFirst +=  (
+                            ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2
+                        ) * (entry.length);
 					});
 
-					const sdFirst = Math.sqrt(varFirst / length);
+					const sdFirst = Math.sqrt(varFirst / fullLength);
 
 					let varSecond = 0;
 
-					secondDerivatives.forEach( entry => {
-						// varSecond += ( ( entry.x ) - meanSecond.x )**2 + ( ( entry.y ) - meanSecond.y )**2;
-						if (entry.length > 0) {
-							varSecond += ( 1 -  entry.x * meanSecond.x / (entry.length^2)  - entry.y * meanSecond.y / (entry.length^2) )**2;
-						}
+
+                    let meanLength = Math.sqrt( meanSecond.x**2 + meanSecond.y**2 );
+					secondDerivatives.forEach( ( entry, index ) => {
+						// varSecond += ( 
+                        //     ( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2
+                        // ) * (entry.length);
+                        
+                        let entryLength = Math.sqrt( entry.x**2 + entry.y**2 );
+						if (entryLength * meanLength > 0) {
+                            varSecond += (
+                                ( 1 
+                                    - Math.abs(
+                                        entry.x * meanSecond.x / (entryLength * meanLength)
+                                        + entry.y * meanSecond.y / (entryLength * meanLength)
+                                    )
+                                )**2
+                            ) * (entry.length);
+                        }
 					});
 
-					const sdSecond = Math.sqrt(varSecond / (length - 1));
+					const sdSecond = Math.sqrt(varSecond / (fullLength - 1));
 
-					// const varSecond = {
-					// 	x: 100*varSumX / ( secondDerivatives.length - 1 ),
-					// 	y: 100*varSumY / ( secondDerivatives.length - 1 ),
-					// }
-
-					// const varSecond = {
-					// 	x: 100*secondDerivatives.reduce( (sum, entry) => {
-					// 		return sum +  ( entry.x - meanSecond.x )**2;
-					// 	}, 0) / ( secondDerivatives.length - 1 ),
-					// 	y: 100*secondDerivatives.reduce( (sum, entry) => {
-					// 		return sum +  ( entry.y - meanSecond.y )**2;
-					// 	}, 0) / ( secondDerivatives.length - 1 ),
-					// }
-
-
+                    console.log(meanFirst);
+                    console.log(meanSecond);
 					console.log(sdFirst);
 					console.log(sdSecond);
-					const steps = Math.ceil( 5*sdFirst + 0*sdSecond );
+					const steps = Math.ceil( 7*sdFirst + 7*sdSecond );
+                    // const steps = Math.ceil( (meanLength > 0.0001 ? 1 : 0) + 10*sdSecond );
 					console.log('steps: ' + steps);
 
 					const smoothFactor = Math.min(
 						positions.length - 1,
 						Math.ceil(positions.length / steps)
 					);
-					console.log(smoothFactor);
-
+					
 					// let aux = positions.slice();
 					// const remainder = Math.ceil(( positions.length % smoothFactor ) / 2);
 					positions.forEach( ( position, index ) => {
@@ -483,8 +494,8 @@ const CanvasFreeDrawing = (function () {
 				this.context.stroke();
 			}
 		}
-		const position = positions[positions.length - 1];
-		const smoothFactor = position.smoothFactor;
+		// const position = positions[positions.length - 1];
+		// const smoothFactor = position.smoothFactor;
 		// if (position.endPoint) {
 		// 	this.context.lineTo(
 		// 		position.x,
@@ -641,13 +652,15 @@ const CanvasFreeDrawing = (function () {
 		};
 	};
 
-	CanvasFreeDrawing.prototype.differentiate = function(positions, increment = 4, normalized = true, allowZero = false) {
+	CanvasFreeDrawing.prototype.differentiate = function(positions, increment = 1, normalized = true, allowZero = false) {
 		const derivatives = [];
 		let dx, dy, length;
 		for (let i = increment; i < positions.length - 1; i++) {
 			dx = positions[i].x - positions[ i - increment ].x;
 			dy = positions[i].y - positions[ i - increment ].y;
-			length = Math.sqrt( dx**2 + dy**2 );
+			length = 
+            typeof positions[i].length !== 'undefined' ?
+            positions[i].length : Math.sqrt( dx**2 + dy**2 );
 			if (length > 0 || allowZero) {
 				derivatives.push({
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
