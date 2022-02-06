@@ -178,30 +178,62 @@ const CanvasFreeDrawing = (function () {
 					// terminal.smoothFactor = 1;
 					// this.positions = [initial, terminal];
 
-					const firstDerivatives = this.differentiate(positions);
-					const secondDerivatives = this.differentiate(firstDerivatives, false);
+					const firstDerivatives = this.differentiate(positions, Math.ceil(positions.length / 20));
 
-					// console.log(firstDerivatives);
-					// console.log(secondDerivatives);
+					if (firstDerivatives.length == 0) { return; }
+
+					const secondDerivatives = this.differentiate(firstDerivatives, 1, true, true);
+
+					if (secondDerivatives.length == 0) { return; }
+
+					console.log(firstDerivatives);
+					console.log(secondDerivatives);
+
+					const arcLength = firstDerivatives.reduce( (sum, entry) => {
+						return sum + entry.length;
+					}, 0);
+					// console.log(arcLength);
+					let length = firstDerivatives.length;
+
+					const meanFirst = {
+						x: firstDerivatives.reduce( (sum, entry) => {
+							return sum + entry.x;
+						}, 0) / length,
+						y: firstDerivatives.reduce( (sum, entry) => {
+							return sum + entry.y;
+						}, 0) / length,
+					}
+
+					console.log(meanFirst);
 
 					const meanSecond = {
-						x: ( firstDerivatives[firstDerivatives.length - 1].x - firstDerivatives[0].x ) / secondDerivatives.length,
-						y: ( firstDerivatives[firstDerivatives.length - 1].y - firstDerivatives[0].y ) / secondDerivatives.length,
+						x: secondDerivatives.reduce( (sum, entry) => {
+							return sum + entry.x;
+						}, 0) / (length - 1),
+						y: secondDerivatives.reduce( (sum, entry) => {
+							return sum + entry.y;
+						}, 0) / (length - 1),
 					}
-					// const meanSecond = {
-					// 	x: secondDerivatives.reduce( (sum, entry) => {
-					// 		return sum + entry.x;
-					// 	}, 0) / secondDerivatives.length,
-					// 	y: secondDerivatives.reduce( (sum, entry) => {
-					// 		return sum + entry.y;
-					// 	}, 0) / secondDerivatives.length
-					// }
+
+					let varFirst = 0;
+
+					firstDerivatives.forEach( entry => {
+						// varFirst += ( entry.x - meanFirst.x )**2 + ( entry.y - meanFirst.y )**2;
+						varFirst += ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2;
+					});
+
+					const sdFirst = Math.sqrt(varFirst / length);
 
 					let varSecond = 0;
 
 					secondDerivatives.forEach( entry => {
-						varSecond += Math.sqrt(( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2);
+						// varSecond += ( ( entry.x ) - meanSecond.x )**2 + ( ( entry.y ) - meanSecond.y )**2;
+						if (entry.length > 0) {
+							varSecond += ( 1 -  entry.x * meanSecond.x / (entry.length^2)  - entry.y * meanSecond.y / (entry.length^2) )**2;
+						}
 					});
+
+					const sdSecond = Math.sqrt(varSecond / (length - 1));
 
 					// const varSecond = {
 					// 	x: 100*varSumX / ( secondDerivatives.length - 1 ),
@@ -218,26 +250,28 @@ const CanvasFreeDrawing = (function () {
 					// }
 
 
-					const mean = Math.sqrt(meanSecond.x**2 + meanSecond.y**2)
-					console.log(mean);
-					console.log(Math.sqrt(varSecond) / (secondDerivatives.length - 1));
-					const steps = Math.ceil( mean*100 + 10*Math.sqrt(varSecond / (secondDerivatives.length - 1)) );
+					console.log(sdFirst);
+					console.log(sdSecond);
+					const steps = Math.ceil( 5*sdFirst + 0*sdSecond );
 					console.log('steps: ' + steps);
 
 					const smoothFactor = Math.min(
 						positions.length - 1,
-						Math.round(positions.length / steps)
+						Math.ceil(positions.length / steps)
 					);
 					console.log(smoothFactor);
 
+					// let aux = positions.slice();
+					// const remainder = Math.ceil(( positions.length % smoothFactor ) / 2);
 					positions.forEach( ( position, index ) => {
 						position.smoothFactor = smoothFactor;
-						if (index % smoothFactor == 0 && index + smoothFactor >= positions.length) {
+						if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
 							position.x = positions[positions.length - 1].x;
 							position.y = positions[positions.length - 1].y;
 							position.endPoint = true;
 						}
 					});
+					// positions[positions.length - 1].endPoint = true;
 					this.positions = positions;
 					this.handleStroke(positions);
 					this.positions = positions;
@@ -412,12 +446,26 @@ const CanvasFreeDrawing = (function () {
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				// if ( this.pointerType == 'mouse' ) {
 				if ( index % smoothFactor == 0 && index >= smoothFactor ) {
-					let endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
-					let endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
-					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-						endX,
-						endY
-					);
+					let endX, endY;
+					// if (index - remainder > 0) {
+						endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
+						endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+						this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
+							endX,
+							endY
+						);
+					// } else {
+					// 	endX = position.endPoint ? x : ( x + positions[0].x )/2;
+					// 	endY = position.endPoint ? y : ( y + positions[0].y )/2;
+					// 	this.context.quadraticCurveTo(positions[0].x, positions[0].y,
+					// 		endX,
+					// 		endY
+					// 	);
+					// }
+					// this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
+					// 	endX,
+					// 	endY
+					// );
 					this.context.stroke();
 					this.context.beginPath();
 					this.context.moveTo(endX, endY);
@@ -435,6 +483,17 @@ const CanvasFreeDrawing = (function () {
 				this.context.stroke();
 			}
 		}
+		const position = positions[positions.length - 1];
+		const smoothFactor = position.smoothFactor;
+		// if (position.endPoint) {
+		// 	this.context.lineTo(
+		// 		position.x,
+		// 		position.y
+		// 	);
+		// 	this.context.stroke();
+		// 	this.context.beginPath();
+		// 	this.context.moveTo(position.x, position.y);
+		// }
 	};
 
 	CanvasFreeDrawing.prototype.toValidColor = function (color) {
@@ -582,17 +641,20 @@ const CanvasFreeDrawing = (function () {
 		};
 	};
 
-	CanvasFreeDrawing.prototype.differentiate = function(positions, normalized = true) {
+	CanvasFreeDrawing.prototype.differentiate = function(positions, increment = 4, normalized = true, allowZero = false) {
 		const derivatives = [];
 		let dx, dy, length;
-		for (let i = 1; i < positions.length - 5; i++) {
-			dx = positions[i].x - positions[ i - 1 ].x;
-			dy = positions[i].y - positions[ i - 1 ].y;
+		for (let i = increment; i < positions.length - 1; i++) {
+			dx = positions[i].x - positions[ i - increment ].x;
+			dy = positions[i].y - positions[ i - increment ].y;
 			length = Math.sqrt( dx**2 + dy**2 );
-			derivatives.push({
-				x: normalized ? ( length != 0 ? dx/length : 0 ) : dx,
-				y: normalized ? ( length != 0 ? dy/length : 0 ) : dy,
-			});
+			if (length > 0 || allowZero) {
+				derivatives.push({
+					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
+					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
+					length: length
+				});
+			}
 		}
 		return derivatives;
 	}
