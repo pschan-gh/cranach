@@ -666,7 +666,7 @@ const CanvasFreeDrawing = (function () {
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
 					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
 					length: length,
-                    index: i,
+                    position: i,
 				});
 			}
 		}
@@ -674,22 +674,32 @@ const CanvasFreeDrawing = (function () {
 	}
     
     CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
-		const stationaryPoints = [];
+		let stationaryPoints = [];
         // const fullLength = firstDerivatives.reduce( (sum, entry) => {
         //     return sum + entry.length;
         // }, 0);
         let candidate = 0;
+        let prev = 0;
         let localLength = 0;
+        let dy = 0;
         for (let i = 0; i < firstDerivatives.length; i++ ) {
+            dy += firstDerivatives[i].y * firstDerivatives[i].length;
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
-                if (localLength == 0) {
-                    candidate = firstDerivatives[i].index;
+                console.log(firstDerivatives[i].position);
+                console.log(dy);
+                if (localLength == 0 && (Math.abs(dy) > 50)) {
+                    candidate = firstDerivatives[i].position;
+                    // console.log(candidate);
                 }                
                 localLength += firstDerivatives[i].length;
             } else {
-                if ( localLength > 5 && (stationaryPoints.length == 0 || candidate > ) {
+                // console.log(candidate);
+                if ( localLength > 2 && candidate != prev) {
                     stationaryPoints.push(candidate);
-                }
+                    // console.log(stationaryPoints);
+                    prev = candidate;
+                    dy = 0;
+                }                
                 localLength = 0;
             }
         }
