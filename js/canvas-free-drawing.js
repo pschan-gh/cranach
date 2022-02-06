@@ -162,133 +162,7 @@ const CanvasFreeDrawing = (function () {
         this.pointerType = 'mouse';
         clearTimeout(this.timer);
 
-        this.timer = setTimeout(function() {
-			if (this.positions.length > 1) {
-				// console.log(this.positions);
-				const positions = this.positions.slice();
-				setTimeout(() => {
-					this.storeSnapshot();
-					this.undo();
-					this.undos.pop();
-					// const initial = positions[0];
-					// const terminal = positions[positions.length - 1];
-					// initial.endPoint = true;
-					// terminal.endPoint = true;
-					// initial.smoothFactor = 1;
-					// terminal.smoothFactor = 1;
-					// this.positions = [initial, terminal];
-
-					const firstDerivatives = this.differentiate(positions);
-
-					if (firstDerivatives.length == 0) { return; }
-
-					const secondDerivatives = this.differentiate(firstDerivatives, 1, true, true);
-
-					if (secondDerivatives.length == 0) { return; }
-
-					console.log(firstDerivatives);
-					// console.log(secondDerivatives);
-
-                    console.log('stationaryPoints');
-                    console.log(this.stationaryPoints(firstDerivatives));
-
-					let fullLength = firstDerivatives.reduce( (sum, entry) => {
-                        return sum + entry.length;
-                    }, 0);
-                    console.log(fullLength);
-
-					const meanFirst = {
-						x: firstDerivatives.reduce( (sum, entry) => {
-							return sum + entry.x * entry.length;
-						}, 0) / fullLength,
-						y: firstDerivatives.reduce( (sum, entry) => {
-                            return sum + entry.y * entry.length;
-						}, 0) / fullLength,
-					}
-
-                    // console.log(
-                    //     { 
-                    //         x:
-                    //         positions[positions.length - 1].x - positions[0].x,
-                    //         y:
-                    //         positions[positions.length - 1].y - positions[0].y,
-                    //     }
-                    // );
-                        
-					const meanSecond = {
-						x: secondDerivatives.reduce( (sum, entry) => {
-                            return sum + entry.x * entry.length;
-						}, 0) / (fullLength - 1),
-						y: secondDerivatives.reduce( (sum, entry) => {
-                            return sum + entry.y * entry.length;
-						}, 0) / (fullLength - 1),
-					}
-
-					let varFirst = 0;
-
-					firstDerivatives.forEach( entry => {
-						// varFirst += ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2;
-                        varFirst +=  (
-                            ( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2
-                        ) * (entry.length);
-					});
-
-					const sdFirst = Math.sqrt(varFirst / fullLength);
-
-					let varSecond = 0;
-
-
-                    let meanLength = Math.sqrt( meanSecond.x**2 + meanSecond.y**2 );
-					secondDerivatives.forEach( ( entry, index ) => {
-						// varSecond += ( 
-                        //     ( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2
-                        // ) * (entry.length);
-                        
-                        let entryLength = Math.sqrt( entry.x**2 + entry.y**2 );
-						if (entryLength * meanLength > 0) {
-                            varSecond += (
-                                ( 1 
-                                    - Math.abs(
-                                        entry.x * meanSecond.x / (entryLength * meanLength)
-                                        + entry.y * meanSecond.y / (entryLength * meanLength)
-                                    )
-                                )**2
-                            ) * (entry.length);
-                        }
-					});
-
-					const sdSecond = Math.sqrt(varSecond / (fullLength - 1));
-
-                    console.log(meanFirst);
-                    console.log(meanSecond);
-					console.log(sdFirst);
-					console.log(sdSecond);
-					const steps = Math.ceil( 7*sdFirst + 7*sdSecond );
-                    // const steps = Math.ceil( (meanLength > 0.0001 ? 1 : 0) + 10*sdSecond );
-					console.log('steps: ' + steps);
-
-					const smoothFactor = Math.min(
-						positions.length - 1,
-						Math.ceil(positions.length / steps)
-					);
-					
-					// let aux = positions.slice();
-					// const remainder = Math.ceil(( positions.length % smoothFactor ) / 2);
-					positions.forEach( ( position, index ) => {
-						position.smoothFactor = smoothFactor;
-						if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
-							position.x = positions[positions.length - 1].x;
-							position.y = positions[positions.length - 1].y;
-							position.endPoint = true;
-						}
-					});
-					// positions[positions.length - 1].endPoint = true;
-					this.positions = positions;
-					this.handleStroke(positions);
-					this.positions = positions;
-				});
-			}
-		}.bind(this), 250);
+        this.timer = setTimeout(this.curveSmoothing.bind(this), 250);
 		this.handleDrawing(event.offsetX, event.offsetY);
 	};
 
@@ -303,69 +177,98 @@ const CanvasFreeDrawing = (function () {
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 
-			this.handleDrawing(x, y, event.touches[0].force);
-
 			clearTimeout(this.timer);
-
-	        this.timer = setTimeout(function() {
-				if (this.positions.length > 1) {
-					// console.log(this.positions);
-					const positions = this.positions.slice();
-					setTimeout(() => {
-						this.storeSnapshot();
-						console.log(this.snapshots);
-						this.undo();
-						this.undos.pop();
-
-						const firstDerivatives = this.differentiate(positions);
-						const secondDerivatives = this.differentiate(firstDerivatives, false);
-
-						const meanSecond = {
-							x: secondDerivatives.reduce( (sum, entry) => {
-								return sum + entry.x;
-							}, 0) / secondDerivatives.length,
-							y: secondDerivatives.reduce( (sum, entry) => {
-								return sum + entry.y;
-							}, 0) / secondDerivatives.length
-						}
-
-
-						let varSecond = 0;
-
-						secondDerivatives.forEach( entry => {
-							varSecond += Math.sqrt(( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2);
-						});
-
-						const mean = Math.sqrt(meanSecond.x**2 + meanSecond.y**2)
-						console.log(mean);
-						console.log(Math.sqrt(varSecond) / (secondDerivatives.length - 1));
-						const steps = Math.ceil( mean*100 + 10*Math.sqrt(varSecond / (secondDerivatives.length - 1)) );
-						console.log('steps: ' + steps);
-
-						const smoothFactor = Math.min(
-							positions.length - 1,
-							Math.round(positions.length / steps)
-						);
-						console.log(smoothFactor);
-
-						positions.forEach( ( position, index ) => {
-							position.smoothFactor = smoothFactor;
-							if (index % smoothFactor == 0 && index + smoothFactor >= positions.length) {
-								position.x = positions[positions.length - 1].x;
-								position.y = positions[positions.length - 1].y;
-								position.endPoint = true;
-							}
-						});
-						this.positions = positions;
-						this.handleStroke(positions);
-						this.positions = positions;
-					});
-				}
-			}.bind(this), 250);
-
+			this.timer = setTimeout(this.curveSmoothing.bind(this), 250);
+			this.handleDrawing(x, y, event.touches[0].force);
 		}
 	};
 
+	CanvasFreeDrawing.prototype.curveSmoothing = function() {
+		if (this.positions.length > 1) {
+			// console.log(this.positions);
+			const positions = this.positions.slice();
+			setTimeout(() => {
+				this.storeSnapshot();
+				this.undo();
+				this.undos.pop();
+
+				const firstDerivatives = this.differentiate(positions);
+
+				if (firstDerivatives.length == 0) { return; }
+
+				// const secondDerivatives = this.differentiate(firstDerivatives, 1, true, true);
+				//
+				// if (secondDerivatives.length == 0) { return; }
+
+				// console.log(firstDerivatives);
+				// // console.log(secondDerivatives);
+				//
+				// console.log('stationaryPoints');
+				// console.log(this.stationaryPoints(firstDerivatives));
+
+				const stationaryPoints = [ positions[0] ];
+				stationaryPoints[0].isSpline = true;
+				this.stationaryPoints(firstDerivatives).forEach( index => {
+					stationaryPoints.push( positions[index] );
+				});
+				stationaryPoints.push( positions[positions.length - 1] );
+
+				console.log(stationaryPoints);
+
+				let fullLength = firstDerivatives.reduce( (sum, entry) => {
+					return sum + entry.length;
+				}, 0);
+				// console.log(fullLength);
+
+				const meanFirst = {
+					x: firstDerivatives.reduce( (sum, entry) => {
+						return sum + entry.x * entry.length;
+					}, 0) / fullLength,
+					y: firstDerivatives.reduce( (sum, entry) => {
+						return sum + entry.y * entry.length;
+					}, 0) / fullLength,
+				}
+
+
+				let varFirst = 0;
+
+				firstDerivatives.forEach( entry => {
+					varFirst +=  (
+						( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2
+					) * (entry.length);
+				});
+
+				const sdFirst = Math.sqrt(varFirst / fullLength);
+				console.log(sdFirst);
+
+				const steps = Math.ceil( 25*sdFirst );
+				console.log('steps: ' + steps);
+
+				const smoothFactor = Math.min(
+					positions.length - 1,
+					Math.ceil(positions.length / steps)
+				);
+				console.log('smoothFactor: ' + smoothFactor);
+
+				if (stationaryPoints.length > 2 && sdFirst > 0.1) {
+					this.pseudoSpline(stationaryPoints);
+					this.positions = stationaryPoints;
+				} else {
+					positions.forEach( ( position, index ) => {
+						position.smoothFactor = smoothFactor;
+						position.isSpline = false;
+						if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
+							position.x = positions[positions.length - 1].x;
+							position.y = positions[positions.length - 1].y;
+							position.endPoint = true;
+						}
+					});
+					this.handleStroke(positions);
+					this.positions = positions;
+				}
+			});
+		}
+	};
 
     CanvasFreeDrawing.prototype.mouseUp = function (event) {
         event.preventDefault();
@@ -398,7 +301,7 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, force = this.mouseForce) {
         if (this.isDrawing) {
-			this.storeDrawing(x, y, true, force);
+			this.storeDrawing(x, y, true, force, this.isErasing);
 			this.draw(this.positions);
 			this.undos = [];
 		}
@@ -413,70 +316,48 @@ const CanvasFreeDrawing = (function () {
 
 
 	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
-
-		if (this.isErasing ) {
-			const position = positions[positions.length - 1];
+		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
+			const position = positions[index];
 			const x = position.x,
 			y = position.y;
 
-			this.context.clearRect(
-				x - 0.5*this.eraseScale*this.lineWidth,
-				y - 0.5*this.eraseScale*this.lineWidth,
-				this.eraseScale*this.lineWidth,
-				this.eraseScale*this.lineWidth
-			);
-			return;
-		}
+			if ( position.isErasing ) {
+				this.context.clearRect(
+					x - 0.5*this.eraseScale*this.lineWidth,
+					y - 0.5*this.eraseScale*this.lineWidth,
+					this.eraseScale*this.lineWidth,
+					this.eraseScale*this.lineWidth
+				);
+				continue;
+			}
 
-		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
-			const position = positions[index];
 			const smoothFactor = position.smoothFactor;
 			const color = position.strokeColor.slice();
 
 			let widthScale;
 			let temperedForce = this.forceMultiplier*position.force;
 
-			const x = position.x,
-			y = position.y,
-			dx = x - positions[index > 0 ? index - 1 : 0].x,
+			const dx = x - positions[index > 0 ? index - 1 : 0].x,
 			dy = y - positions[index > 0 ? index - 1 : 0].y;
 
-			// temperedForce = 7*temperedForce/Math.max(1, (Math.abs(dx) + Math.abs(dy)) );
 			color[3] = Math.min( 1, temperedForce ); // basic
-			// color[3] = Math.max(0.25, 2*temperedForce);
-			// color[3] = 0.5/(10*temperedForce);
 			this.context.strokeStyle = this.rgbaFromArray(color);
 
 			widthScale = Math.min( 1.8, 2*temperedForce ); // basic
-			// widthScale = Math.min( 10, 1/temperedForce );
 			this.context.lineWidth = widthScale*position.lineWidth;
 
 			this.context.lineCap = 'butt';
 			this.context.lineJoin = 'butt';
 
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
-				// if ( this.pointerType == 'mouse' ) {
 				if ( index % smoothFactor == 0 && index >= smoothFactor ) {
 					let endX, endY;
-					// if (index - remainder > 0) {
-						endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
-						endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
-						this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-							endX,
-							endY
-						);
-					// } else {
-					// 	endX = position.endPoint ? x : ( x + positions[0].x )/2;
-					// 	endY = position.endPoint ? y : ( y + positions[0].y )/2;
-					// 	this.context.quadraticCurveTo(positions[0].x, positions[0].y,
-					// 		endX,
-					// 		endY
-					// 	);
-					// }
-					// this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-					// 	endX,
-					// 	endY
-					// );
+					endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
+					endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
+						endX,
+						endY
+					);
 					this.context.stroke();
 					this.context.beginPath();
 					this.context.moveTo(endX, endY);
@@ -494,17 +375,78 @@ const CanvasFreeDrawing = (function () {
 				this.context.stroke();
 			}
 		}
-		// const position = positions[positions.length - 1];
-		// const smoothFactor = position.smoothFactor;
-		// if (position.endPoint) {
-		// 	this.context.lineTo(
-		// 		position.x,
-		// 		position.y
-		// 	);
-		// 	this.context.stroke();
-		// 	this.context.beginPath();
-		// 	this.context.moveTo(position.x, position.y);
-		// }
+	};
+
+	CanvasFreeDrawing.prototype.pseudoSpline = function (positions) {
+		this.undos = [];
+		this.context.beginPath();
+		this.context.moveTo(positions[0].x, positions[0].y);
+		for ( let index = 1; index < positions.length; index++ ) {
+			const position = positions[index];
+			const x = position.x,
+			y = position.y;
+
+			const smoothFactor = position.smoothFactor;
+			const color = position.strokeColor.slice();
+
+			let widthScale;
+			let temperedForce = this.forceMultiplier*position.force;
+
+			const dx = x - positions[index > 0 ? index - 1 : 0].x,
+			dy = y - positions[index > 0 ? index - 1 : 0].y;
+
+			color[3] = Math.min( 1, temperedForce ); // basic
+			this.context.strokeStyle = this.rgbaFromArray(color);
+
+			widthScale = Math.min( 1.8, 2*temperedForce ); // basic
+			this.context.lineWidth = widthScale*position.lineWidth;
+
+			this.context.lineCap = 'butt';
+			this.context.lineJoin = 'butt';
+
+			if ( index > 1 && index < positions.length - 1) {
+				let
+				midX = ( x + positions[index - 1].x )/2,
+				midY = ( y + positions[index - 1].y )/2,
+				cp1X = ( midX + positions[index - 1].x )/2,
+				cp1Y = positions[index - 1].y;
+
+				this.context.quadraticCurveTo(cp1X, cp1Y, midX, midY);
+
+				let
+				midmidX = ( x + midX )/2,
+				midmidY = ( y + midY )/2,
+				cp2X = midmidX,
+				cp2Y = y;
+
+				this.context.quadraticCurveTo(cp2X, cp2Y, x, y);
+				this.context.stroke();
+				this.context.beginPath();
+				this.context.moveTo(x, y);
+			} else if ( index == 1 ){
+				let
+				midX = ( x + positions[index - 1].x )/2,
+				midY = ( y + positions[index - 1].y )/2,
+				cpX = midX,
+				cpY = y;
+
+				this.context.quadraticCurveTo(cpX, cpY, x, y);
+				this.context.stroke();
+				this.context.beginPath();
+				this.context.moveTo(x, y);
+			} else if ( index == positions.length - 1 ){
+				let
+				midX = ( x + positions[index - 1].x )/2,
+				midY = ( y + positions[index - 1].y )/2,
+				cpX = midX,
+				cpY = positions[index - 1].y;
+
+				this.context.quadraticCurveTo(cpX, cpY, x, y);
+				this.context.stroke();
+				this.context.beginPath();
+				this.context.moveTo(x, y);
+			}
+		}
 	};
 
 	CanvasFreeDrawing.prototype.toValidColor = function (color) {
@@ -527,7 +469,7 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.toggleCursor = function () {
 		this.canvas.style.cursor = this.isDrawingModeEnabled ? 'crosshair' : 'auto';
 	};
-	CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving, force = 0) {
+	CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving, force = 0, isErasing = false) {
 		this.positions.push({
 			x: x,
 			y: y,
@@ -537,18 +479,21 @@ const CanvasFreeDrawing = (function () {
 			force: force,
 			endPoint: false,
 			smoothFactor: this.pointerType == 'mouse' ? 4 : 1,
+			isErasing: isErasing,
+			isSpline: false,
 		});
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshotImage = function () {
 		console.log('storeSnapshotImage');
 		this.snapshotImage = this.getCanvasSnapshot();
-		console.log(this.snapshotImage);
+		// console.log(this.snapshotImage);
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		// console.log('storeSnapshot');
 		this.snapshots.push(this.positions);
+		// console.log(this.snapshots);
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -567,16 +512,20 @@ const CanvasFreeDrawing = (function () {
 			this.undos.push( this.snapshots.pop() );
 			this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
 
-			// if (this.snapshots.length > 0 && this.snapshots[this.snapshots.length - 1].length > 0) {
-				this.snapshots.forEach(positions => {
-					this.context.beginPath();
-					if (positions.length) {
+			// console.log(this.undos);
+
+			this.snapshots.forEach(positions => {
+				this.context.beginPath();
+				if (positions.length) {
+					if (!positions[0].isSpline) {
 						this.draw(positions, positions.length - 1);
 					} else {
-						this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+						this.pseudoSpline(positions);
 					}
-				});
-			// }
+				} else {
+					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+				}
+			});
 			this.imageRestored = true;
 		}
 	};
@@ -584,8 +533,11 @@ const CanvasFreeDrawing = (function () {
 		if (this.undos.length > 0) {
 			var lastUndo = this.undos.pop();
 			if (lastUndo) {
-				// this.restoreCanvasSnapshot(lastUndo);
-				this.draw(lastUndo, lastUndo.length - 1);
+				if (!lastUndo[0].isSpline) {
+					this.draw(lastUndo, lastUndo.length - 1);
+				} else {
+					this.pseudoSpline(lastUndo);
+				}
 				this.snapshots.push(lastUndo);
 				this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
 			}
@@ -629,6 +581,7 @@ const CanvasFreeDrawing = (function () {
 		? ( this.isErasing ? this.enableDrawingMode() : this.disableDrawingMode() )
 		: this.enableDrawingMode();
 	};
+
 	CanvasFreeDrawing.prototype.clear = function () {
 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.positions = [];
@@ -658,7 +611,7 @@ const CanvasFreeDrawing = (function () {
 		for (let i = increment; i < positions.length - 1; i++) {
 			dx = positions[i].x - positions[ i - increment ].x;
 			dy = positions[i].y - positions[ i - increment ].y;
-			length = 
+			length =
             typeof positions[i].length !== 'undefined' ?
             positions[i].length : Math.sqrt( dx**2 + dy**2 );
 			if (length > 0 || allowZero) {
@@ -672,12 +625,12 @@ const CanvasFreeDrawing = (function () {
 		}
 		return derivatives;
 	}
-    
+
     CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
 		let stationaryPoints = [];
-        // const fullLength = firstDerivatives.reduce( (sum, entry) => {
-        //     return sum + entry.length;
-        // }, 0);
+        const fullLength = firstDerivatives.reduce( (sum, entry) => {
+            return sum + entry.length;
+        }, 0);
         let candidate = 0;
         let prev = 0;
         let localLength = 0;
@@ -685,12 +638,10 @@ const CanvasFreeDrawing = (function () {
         for (let i = 0; i < firstDerivatives.length; i++ ) {
             dy += firstDerivatives[i].y * firstDerivatives[i].length;
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
-                console.log(firstDerivatives[i].position);
-                console.log(dy);
-                if (localLength == 0 && (Math.abs(dy) > 50)) {
+				if (localLength == 0 && (Math.abs(dy) > fullLength*0.05)) {
                     candidate = firstDerivatives[i].position;
                     // console.log(candidate);
-                }                
+                }
                 localLength += firstDerivatives[i].length;
             } else {
                 // console.log(candidate);
@@ -699,7 +650,7 @@ const CanvasFreeDrawing = (function () {
                     // console.log(stationaryPoints);
                     prev = candidate;
                     dy = 0;
-                }                
+                }
                 localLength = 0;
             }
         }
@@ -708,3 +659,43 @@ const CanvasFreeDrawing = (function () {
 
 	return CanvasFreeDrawing;
 }());
+
+
+// const meanSecond = {
+// 	x: secondDerivatives.reduce( (sum, entry) => {
+// 		return sum + entry.x * entry.length;
+// 	}, 0) / (fullLength - 1),
+// 	y: secondDerivatives.reduce( (sum, entry) => {
+// 		return sum + entry.y * entry.length;
+// 	}, 0) / (fullLength - 1),
+// }
+//
+//
+// let varSecond = 0;
+//
+//
+// let meanLength = Math.sqrt( meanSecond.x**2 + meanSecond.y**2 );
+// secondDerivatives.forEach( ( entry, index ) => {
+// 	// varSecond += (
+// 	//     ( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2
+// 	// ) * (entry.length);
+//
+// 	let entryLength = Math.sqrt( entry.x**2 + entry.y**2 );
+// 	if (entryLength * meanLength > 0) {
+// 		varSecond += (
+// 			( 1
+// 				- Math.abs(
+// 					entry.x * meanSecond.x / (entryLength * meanLength)
+// 					+ entry.y * meanSecond.y / (entryLength * meanLength)
+// 				)
+// 			)**2
+// 		) * (entry.length);
+// 	}
+// });
+//
+// const sdSecond = Math.sqrt(varSecond / (fullLength - 1));
+//
+// console.log(meanFirst);
+// console.log(meanSecond);
+// console.log(sdFirst);
+// console.log(sdSecond);

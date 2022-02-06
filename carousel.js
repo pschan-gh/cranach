@@ -305,8 +305,10 @@ function updateCanvas(slide) {
 
 function canvasControlsDisableEvent(slide) {
     // console.log('canvasControlDisableEvent');
-    slide.cfd.disableDrawingMode();
-	slide.cfd.canvas.classList.add('disabled');
+	if (typeof slide.cfd != 'undefined') {
+		slide.cfd.disableDrawingMode();
+		slide.cfd.canvas.classList.add('disabled');
+	}
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
     document.querySelector('.annotate.enable .brush').classList.remove('hidden');
