@@ -187,15 +187,15 @@ const CanvasFreeDrawing = (function () {
 					if (secondDerivatives.length == 0) { return; }
 
 					console.log(firstDerivatives);
-					console.log(secondDerivatives);
+					// console.log(secondDerivatives);
 
-					const arcLength = firstDerivatives.reduce( (sum, entry) => {
-						return sum + entry.length;
-					}, 0);
-					// console.log(arcLength);
+                    console.log('stationaryPoints');
+                    console.log(this.stationaryPoints(firstDerivatives));
+
 					let fullLength = firstDerivatives.reduce( (sum, entry) => {
                         return sum + entry.length;
                     }, 0);
+                    console.log(fullLength);
 
 					const meanFirst = {
 						x: firstDerivatives.reduce( (sum, entry) => {
@@ -665,11 +665,35 @@ const CanvasFreeDrawing = (function () {
 				derivatives.push({
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
 					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
-					length: length
+					length: length,
+                    index: i,
 				});
 			}
 		}
 		return derivatives;
+	}
+    
+    CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
+		const stationaryPoints = [];
+        // const fullLength = firstDerivatives.reduce( (sum, entry) => {
+        //     return sum + entry.length;
+        // }, 0);
+        let candidate = 0;
+        let localLength = 0;
+        for (let i = 0; i < firstDerivatives.length; i++ ) {
+            if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
+                if (localLength == 0) {
+                    candidate = firstDerivatives[i].index;
+                }                
+                localLength += firstDerivatives[i].length;
+            } else {
+                if ( localLength > 5 && (stationaryPoints.length == 0 || candidate > ) {
+                    stationaryPoints.push(candidate);
+                }
+                localLength = 0;
+            }
+        }
+        return stationaryPoints;
 	}
 
 	return CanvasFreeDrawing;
