@@ -148,11 +148,12 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.touchStart = function (event) {
-		event.preventDefault();
+		// event.preventDefault();
 		if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 			this.pointerType = 'direct';
 			return 0; // no finger drawing;
 		} else if (event.targetTouches.length > 0 ) {
+			event.preventDefault();
 			this.pointerType = 'stylus';
 			this.isDrawing = true;
 			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
@@ -193,10 +194,11 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.touchMove = function (event) {
-		event.preventDefault();
+		// event.preventDefault();
 		if (typeof event.touches[0].touchType != 'undefined' && event.touches[0].touchType == 'direct' ) {
 			return 0; // no finger drawing;
 		} else if (event.targetTouches.length == 1 && event.changedTouches.length == 1 ) {
+			event.preventDefault();
 			this.pointerType = 'stylus';
 			clearTimeout(this.timer);
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
