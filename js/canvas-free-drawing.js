@@ -1,6 +1,7 @@
-// https://github.com/federico-moretti/canvas-free-drawing
-//
 // The MIT License (MIT)
+// Copyright (c) 2022-present, Ping-Shun Chan
+
+// Heavily modified from https://github.com/federico-moretti/canvas-free-drawing
 //
 // Copyright (c) 2018-present, Federico Moretti
 //
@@ -202,13 +203,21 @@ const CanvasFreeDrawing = (function () {
 			var x = pageX - this.canvas.offsetLeft;
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 
-
 			if (this.isDrawing) {
 				this.handleDrawing(x, y, event.touches[0].force);
 			} else if (this.positions.length > 0) {
-				this.positions[this.positions.length - 1].x = x;
-				this.positions[this.positions.length - 1].y = y;
 				this.timer = setTimeout(() => {
+					if( this.positions[0].isSpline ) {
+						this.positions[this.positions.length - 1].x = x;
+						this.positions[this.positions.length - 1].y = y;
+					} else {
+						let smoothFactor = this.positions[0].smoothFactor;
+						let n = Math.floor( this.positions.length / smoothFactor );
+						let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
+						this.positions[m].x = x;
+						this.positions[m].y = y;
+						this.positions[m].endPoint = true;
+					}
 					this.storeSnapshot();
 					this.undo();
 					canvasUndos.pop();
