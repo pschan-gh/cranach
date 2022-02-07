@@ -22,6 +22,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+let canvasSnapshots = [];
+
 const CanvasFreeDrawing = (function () {
 	function CanvasFreeDrawing(params) {
 		var elementId =
@@ -60,7 +62,7 @@ const CanvasFreeDrawing = (function () {
 		this.height = height;
 		this.snapshowImage = null;
 		this.maxSnapshots = maxSnapshots;
-		this.snapshots = [];
+		canvasSnapshots = [];
 		this.undos = [];
 		this.positions = [];
 		this.isDrawing = false;
@@ -213,7 +215,7 @@ const CanvasFreeDrawing = (function () {
 				});
 				stationaryPoints.push( positions[positions.length - 1] );
 
-				console.log(stationaryPoints);
+				// console.log(stationaryPoints);
 
 				let fullLength = firstDerivatives.reduce( (sum, entry) => {
 					return sum + entry.length;
@@ -239,19 +241,18 @@ const CanvasFreeDrawing = (function () {
 				});
 
 				const sdFirst = Math.sqrt(varFirst / fullLength);
-				console.log(sdFirst);
+				// console.log(sdFirst);
 
 				const steps = Math.ceil( 25*sdFirst );
-				console.log('steps: ' + steps);
+				// console.log('steps: ' + steps);
 
 				const smoothFactor = Math.min(
 					positions.length - 1,
 					Math.ceil(positions.length / steps)
 				);
-				console.log('smoothFactor: ' + smoothFactor);
+				// console.log('smoothFactor: ' + smoothFactor);
 
 				if (stationaryPoints.length > 2 && sdFirst > 0.1) {
-					this.pseudoSpline(stationaryPoints);
 					this.positions = stationaryPoints;
 				} else {
 					positions.forEach( ( position, index ) => {
@@ -263,9 +264,9 @@ const CanvasFreeDrawing = (function () {
 							position.endPoint = true;
 						}
 					});
-					this.handleStroke(positions);
 					this.positions = positions;
 				}
+				this.handleStroke(this.positions);
 			});
 		}
 	};
@@ -309,7 +310,11 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
 		if (this.isDrawing) {
-			this.draw(positions, positions.length - 1, 1);
+			if (!positions[0].isSpline) {
+				this.draw(positions, positions.length - 1);
+			} else {
+				this.pseudoSpline(positions);
+			}
 			this.undos = [];
 		}
 	};
@@ -492,8 +497,8 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		// console.log('storeSnapshot');
-		this.snapshots.push(this.positions);
-		// console.log(this.snapshots);
+		canvasSnapshots.push(this.positions);
+		// console.log(canvasSnapshots);
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -505,16 +510,13 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.undo = function () {
-		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.restoreCanvasSnapshot(this.snapshotImage);
-		if (this.snapshots.length > 0) {
-			this.restoreCanvasSnapshot(this.snapshotImage);
-			this.undos.push( this.snapshots.pop() );
-			this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
+		if (canvasSnapshots.length > 0) {
+			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+	        this.restoreCanvasSnapshot(this.snapshotImage);
+			this.undos.push( canvasSnapshots.pop() );
+			// this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
 
-			// console.log(this.undos);
-
-			this.snapshots.forEach(positions => {
+			canvasSnapshots.forEach(positions => {
 				this.context.beginPath();
 				if (positions.length) {
 					if (!positions[0].isSpline) {
@@ -531,15 +533,15 @@ const CanvasFreeDrawing = (function () {
 	};
 	CanvasFreeDrawing.prototype.redo = function () {
 		if (this.undos.length > 0) {
-			var lastUndo = this.undos.pop();
-			if (lastUndo) {
-				if (!lastUndo[0].isSpline) {
-					this.draw(lastUndo, lastUndo.length - 1);
+			let positions = this.undos.pop();
+			if (positions.length) {
+				if (!positions[0].isSpline) {
+					this.draw(positions, positions.length - 1);
 				} else {
-					this.pseudoSpline(lastUndo);
+					this.pseudoSpline(positions);
 				}
-				this.snapshots.push(lastUndo);
-				this.snapshots = this.snapshots.splice(-Math.abs(this.maxSnapshots));
+				canvasSnapshots.push(positions);
+				// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
 			}
 		}
 	};
@@ -659,43 +661,3 @@ const CanvasFreeDrawing = (function () {
 
 	return CanvasFreeDrawing;
 }());
-
-
-// const meanSecond = {
-// 	x: secondDerivatives.reduce( (sum, entry) => {
-// 		return sum + entry.x * entry.length;
-// 	}, 0) / (fullLength - 1),
-// 	y: secondDerivatives.reduce( (sum, entry) => {
-// 		return sum + entry.y * entry.length;
-// 	}, 0) / (fullLength - 1),
-// }
-//
-//
-// let varSecond = 0;
-//
-//
-// let meanLength = Math.sqrt( meanSecond.x**2 + meanSecond.y**2 );
-// secondDerivatives.forEach( ( entry, index ) => {
-// 	// varSecond += (
-// 	//     ( entry.x - meanSecond.x )**2 + ( entry.y - meanSecond.y )**2
-// 	// ) * (entry.length);
-//
-// 	let entryLength = Math.sqrt( entry.x**2 + entry.y**2 );
-// 	if (entryLength * meanLength > 0) {
-// 		varSecond += (
-// 			( 1
-// 				- Math.abs(
-// 					entry.x * meanSecond.x / (entryLength * meanLength)
-// 					+ entry.y * meanSecond.y / (entryLength * meanLength)
-// 				)
-// 			)**2
-// 		) * (entry.length);
-// 	}
-// });
-//
-// const sdSecond = Math.sqrt(varSecond / (fullLength - 1));
-//
-// console.log(meanFirst);
-// console.log(meanSecond);
-// console.log(sdFirst);
-// console.log(sdSecond);

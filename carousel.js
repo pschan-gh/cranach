@@ -133,6 +133,10 @@ function carouselSlideHandler() {
 		carouselThreeSlides(slideNum, slides);
 	}
 	document.getElementById('output').dataset.selectedSlide = slideNum;
+
+	if (typeof canvasSnapshots != 'undefined') {
+		canvasSnapshots = [];
+	}
 }
 
 function updateCarouselSlide(slide, content = null) {
