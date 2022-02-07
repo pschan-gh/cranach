@@ -22,7 +22,7 @@ function updateSlideSelector() {
 function hide() {
 	document.querySelector('#cover_half').style.display = 'block';
 	document.querySelector('#container').style['height'] =  '50%';
-	document.querySelectorAll('.slide_button').forEach(e => e.classList.add('hide'));
+	document.querySelectorAll('.slide_button').forEach(e => e.classList.add('half'));
 
 }
 
@@ -30,7 +30,7 @@ function unhide() {
 	document.querySelector('#cover_half').style.display = 'none';
 	document.querySelector('#container').style['position'] =  '';
 	document.querySelector('#container').style['height'] =  '';
-	document.querySelector('.slide_button').classList.remove('hidden');
+	document.querySelector('.slide_button').classList.remove('half');
 
 }
 

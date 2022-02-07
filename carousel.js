@@ -133,6 +133,10 @@ function carouselSlideHandler() {
 		carouselThreeSlides(slideNum, slides);
 	}
 	document.getElementById('output').dataset.selectedSlide = slideNum;
+
+	if (typeof canvasSnapshots != 'undefined') {
+		canvasSnapshots = [];
+	}
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -210,9 +214,7 @@ function hideCarousel() {
 		e.classList.add('tex2jax_ignore');
 	});
 
-    // document.querySelectorAll$('#output .slide_content').forEach(e => e.classList.remove('padded'));
-	// css('padding-bottom', '');
-	if (document.querySelector('#output > div.slide.selected') !== null) {
+    if (document.querySelector('#output > div.slide.selected') !== null) {
 		document.querySelector('#output > div.slide.selected').scrollIntoView( {block: "center", behavior: "smooth"} );
 	}
 
@@ -259,7 +261,9 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 	if (!document.querySelector('#right_half').classList.contains('annotate')) {
 		return 0;
 	}
-	let output = document.getElementById('output');
+    let output = document.getElementById('output');
+
+    const wasDrawing = slide.cfd.isDrawingModeEnabled;
 
 	slide.cfd.disableDrawingMode();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
@@ -278,8 +282,10 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 			// slide.cfd.canvas.top = -(voffset);
 			let ctx = slide.cfd.canvas.getContext('2d');
 			ctx.drawImage(img, 0, 0);
-			slide.cfd.enableDrawingMode();
-			slide.cfd.setDraw();
+            if (wasDrawing) {
+                slide.cfd.enableDrawingMode();
+                slide.cfd.setDraw();
+            }
 		});
 	}
 }
@@ -297,18 +303,20 @@ function updateCanvas(slide) {
 		if (slide.querySelector('canvas') !== null) {
 			slide.querySelector('canvas').classList.add('hidden');
 		}
-		return 1;
 	}
-	// document.querySelector('.canvas-controls').find('*').off();
-	// $('.canvas-controls .annotate').off();
 	canvasControlsDisableEvent(slide);
 }
 
 function canvasControlsDisableEvent(slide) {
-	slide.cfd.disableDrawingMode();
-	slide.cfd.canvas.classList.add('disabled');
+    // console.log('canvasControlDisableEvent');
+	if (typeof slide.cfd != 'undefined') {
+		slide.cfd.disableDrawingMode();
+		slide.cfd.canvas.classList.add('disabled');
+	}
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
+    document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+    document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	// $('.carousel').attr('data-bs-touch', "true");
 }
 
@@ -319,39 +327,37 @@ function clearAllCanvas() {
 	}
 }
 
-function addCanvas(slide) {
+function addCanvas(slide, output = document.getElementById('output')) {
 	if (slide.querySelector('canvas') !== null || document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
-	let output = document.getElementById('output');
 	let width = output.scrollWidth;
 	let height = output.scrollHeight - 5;
 
-	slide.cfd = new CanvasFreeDrawing.default({
+	slide.cfd = new CanvasFreeDrawing({
 		elementId: slide.id,
 		width: width,
 		height: height,
 		showWarnings: true,
+		output: output,
 	});
 	slide.cfd.setLineWidth(2);
-	slide.redrawCount = slide.querySelector('.annotate.redraw-count');
 	let bodyRect = document.body.getBoundingClientRect();
 	let slideRect = slide.getBoundingClientRect()
-	let voffset = slideRect.top + document.getElementById('output').scrollTop;
-	// slide.cfd.canvas.top = (voffset);
+	let voffset = slideRect.top + output.scrollTop;
 	slide.querySelector('canvas').style.top = -voffset;
-	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
-		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-	});
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.querySelectorAll('.canvas-controls .clear').forEach(el => el.addEventListener('click', function() {
-		let slide = document.querySelector('#output > div.slide.active');
-		if (slide === null) { return 0; }
-		slide.querySelector('canvas').remove();
-		addCanvas(slide);
-	}));
+	document.querySelectorAll('.canvas-controls .clear').forEach(
+		el => el.addEventListener('click', function() {
+			let slide = document.querySelector('#output > div.slide.active');
+			if (slide === null) { return 0; }
+			if (slide.cfd.isDrawingModeEnabled) {
+				slide.cfd.clear();
+			}
+		})
+	);
 	document.querySelectorAll('.canvas-controls .expand').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
@@ -368,18 +374,37 @@ document.addEventListener('DOMContentLoaded', () => {
 		slide.cfd.setErase();
 		document.querySelectorAll('.canvas-controls .nav-link').forEach(el => el.classList.remove('disabled'));
 		evt.currentTarget.classList.add('disabled');
+        document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+        document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	}));
 	// $('.canvas-controls .enable').off();
 	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.enableDrawingMode();
-		slide.cfd.canvas.classList.remove('hidden');
-		// $(slide.cfd.canvas).css('z-index', 999);
-		slide.cfd.setDraw();
-		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-		evt.currentTarget.classList.add('disabled');
-		slide.cfd.canvas.classList.remove('disabled');
+
+        slide.cfd.toggleDrawingMode();
+        if (slide.cfd.isDrawingModeEnabled) {
+            slide.cfd.enableDrawingMode();
+    		slide.cfd.canvas.classList.remove('hidden');
+    		slide.cfd.setDraw();
+    		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+    		// evt.currentTarget.classList.add('active');
+            document.querySelector('.annotate.enable .brush').classList.add('hidden');
+            document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+    		slide.cfd.canvas.classList.remove('disabled');
+        } else {
+            let slide = document.querySelector('#output > div.slide.active');
+    		if (slide === null) { return 0; }
+    		canvasControlsDisableEvent(slide);
+            // evt.currentTarget.classList.remove('active');
+        }
+
+		// slide.cfd.enableDrawingMode();
+		// slide.cfd.canvas.classList.remove('hidden');
+		// slide.cfd.setDraw();
+		// document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+		// evt.currentTarget.classList.add('disabled');
+		// slide.cfd.canvas.classList.remove('disabled');
 	}));
 	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
@@ -394,26 +419,26 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([255, 0, 0])
+		slide.cfd.setDrawingColor([180, 80, 80])
 	}));
 	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 180, 0])
+		slide.cfd.setDrawingColor([0, 139, 69])
 	}));
 	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 0, 255])
+		slide.cfd.setDrawingColor([40, 122, 181])
 	}));
 	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([255, 128, 0])
+		slide.cfd.setDrawingColor([240, 110, 0])
 	}));
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 0, 0])
+		slide.cfd.setDrawingColor([100, 100, 100])
 	}));
 });

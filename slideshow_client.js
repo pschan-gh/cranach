@@ -119,18 +119,26 @@ function renderSlide(slide) {
         return 0;
 	}
 	// console.log('renderSlide');
-    // console.log(`initiating collapse on ${slide.getAttribute('slide')}.`);
-    slide.querySelectorAll('.hidden_collapse').forEach(e => {
+
+	slide.querySelectorAll('.hidden_collapse').forEach(e => {
 		e.classList.add('collapse');
 		e.classList.remove('hidden_collapse');
 		e.addEventListener('shown.bs.collapse', function() {
 			updateCarouselSlide(slide, e);
-			if (typeof focusOnItem !== 'undefined' && focusOnItem !== null) {
-				console.log('scrolling to');
-				console.log(focusOnItem);
-				focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
-				focusOnItem = null;
-			}
+			MathJax.startup.promise.then(() => {
+				if (typeof focusOnItem !== 'undefined' && focusOnItem !== null) {
+					focusOnItem.scrollIntoView( {block: "center", behavior: "smooth"} );
+				}
+				const sanitizedText = focusOnText.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
+				const textItems = slide.querySelectorAll(`*[text="${sanitizedText}"]`);
+				if (textItems.length > 0) {
+					textItems[0].scrollIntoView( {block: "center", behavior: "smooth"} );
+				}
+				// window.requestAnimationFrame( () => {
+				// 	focusOnItem = null;
+				// 	focusOnText = '';
+				// });
+			});
 		});
 		e.addEventListener('hidden.bs.collapse', function() {
 			updateCarouselSlide(slide);
@@ -237,26 +245,26 @@ function resetSteps(el) {
 function collapseToggle(slideNum, forced = '') {
 
 	let slide = document.querySelector('.output div.slide[slide="' + slideNum + '"]');
-	MathJax.startup.promise.then(() => {
-        if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {
-            slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => {
-				bootstrap.Collapse
-				.getOrCreateInstance(
-					document.querySelector(e.getAttribute('href'))
-				).toggle();
-			});
-            document.getElementById('uncollapse_button').textContent = 'Collapse';
-            slide.classList.remove('collapsed');
-        } else {
-            slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => {
-				bootstrap.Collapse.getOrCreateInstance(
-					document.querySelector(e.getAttribute('href'))
-				).toggle();
-			});
-            document.getElementById('uncollapse_button').textContent = 'Uncollapse';
-            slide.classList.add('collapsed');
-        }
-	});
+
+	if (forced == 'show' || (forced == '' && slide.classList.contains('collapsed'))) {
+		slide.querySelectorAll('a.collapsea[aria-expanded="false"]').forEach(e => {
+			bootstrap.Collapse
+			.getOrCreateInstance(
+				document.querySelector(e.getAttribute('href'))
+			).toggle();
+		});
+		document.getElementById('uncollapse_button').textContent = 'Collapse';
+		slide.classList.remove('collapsed');
+
+	} else {
+		slide.querySelectorAll('a.collapsea[aria-expanded="true"]').forEach(e => {
+			bootstrap.Collapse.getOrCreateInstance(
+				document.querySelector(e.getAttribute('href'))
+			).toggle();
+		});
+		document.getElementById('uncollapse_button').textContent = 'Uncollapse';
+		slide.classList.add('collapsed');
+	}
 }
 
 function focusOn(item, text = '') {
@@ -268,42 +276,48 @@ function focusOn(item, text = '') {
 
 	const slideNum = slide.getAttribute('slide');
 
-	focusOnItem = item;
+	item.scrollIntoView( {block: "center", behavior: "smooth"} );
 
+	focusOnItem = item;
+	focusOnText = text;
 	renderSlide(slide);
-	MathJax.startup.promise.then(() => {
-		if (text != '') {
-			const sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
-			// console.log(sanitizedText);
-			// let $textItem = $item.find('*[text="' + text.replace(/[^a-zÀ-ÿ0-9\s\-\']/ig, '') + '"]').addClass('highlighted');
-			const textItem = item.querySelector(`*[text="${sanitizedText}"]`);
-			if (textItem !== null) {
-				textItem.classList.add('highlighted');
-				if (textItem.closest('.collapse, .hidden_collapse') !== null) {
+	window.requestAnimationFrame(() => {
+		MathJax.startup.promise.then(() => {
+			if (focusOnText != '') {
+				console.log(focusOnText);
+				const sanitizedText = text.replace(/\r/ig, 'r').toLowerCase().replace(/[^a-z0-9]/ig, '');
+				const textItems = item.querySelectorAll(`*[text="${sanitizedText}"]`);
+				if (textItems.length > 0) {
+					textItems.forEach(item => item.classList.add('highlighted'));
+					if (textItems[0].closest('.collapse, .hidden_collapse') !== null) {
+						collapseToggle(slideNum, 'show');
+					} else {
+						item.scrollIntoView( {block: "center", behavior: "smooth"} );
+					}
+				}
+			} else {
+				item.classList.add('highlighted');
+				if (item.closest('.collapse, .hidden_collapse') !== null) {
 					collapseToggle(slideNum, 'show');
-				} else {
-					item.scrollIntoView( {block: "center", behavior: "smooth"} );
 				}
 			}
-		} else {
-			item.classList.add('highlighted');
-			if (item.closest('.collapse, .hidden_collapse') !== null) {
-				collapseToggle(slideNum, 'show');
-			} else {
-				item.scrollIntoView( {block: "center", behavior: "smooth"} );
-			}
-		}
-		focusOnItem = null;
+			window.requestAnimationFrame(() => {
+				focusOnItem = null;
+				focusOnText = '';
+			});
+		});
 	});
 }
 
 function jumpToSlide(output, slide) {
-	baseRenderer.then(cranach => {
-		// slide.scrollIntoView( {block: "center"} );
-		slide.scrollIntoView();
-		if ( document.getElementById('right_half').classList.contains('present') ) {
-			showSlide(slide, cranach);
-		}
+	slide.scrollIntoView();
+	window.requestAnimationFrame(() => {
+		baseRenderer.then(cranach => {
+			slide.scrollIntoView();
+			if ( document.getElementById('right_half').classList.contains('present') ) {
+				showSlide(slide, cranach);
+			}
+		});
 	});
 }
 
@@ -521,7 +535,7 @@ function updateSlideClickEvent() {
 		div.addEventListener('click', () => {
 			let slideNum = div.getAttribute('slide');
 
-			document.querySelectorAll('*[text], button').forEach(e => e.classList.remove('highlighted'));
+			document.querySelectorAll('.highlighted[text], button.highlighted').forEach(e => e.classList.remove('highlighted'));
 
 			if (!div.classList.contains('selected')) {
 				output.dataset.selectedSlide = slideNum;
@@ -564,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (mutation.attributeName == 'data-selected-slide') {
 					let slide = document.querySelector(`.output div.slide[slide="${document.querySelector('#output').getAttribute('data-selected-slide')}"]`);
 					// console.log('mutation');
-					updateSlideContent(slide, document.querySelectorAll('.carousel-item') !== null);
+					updateSlideContent(slide, document.querySelector('.carousel-item') !== null);
 				}
 			}
 		});
