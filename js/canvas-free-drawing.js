@@ -583,10 +583,10 @@ const CanvasFreeDrawing = (function () {
 		}
 	};
 	// Public APIs
-	CanvasFreeDrawing.prototype.on = function (params, callback) {
-		var event = params.event;
-		this.canvas.addEventListener('cfd_' + event, function () { return callback(); });
-	};
+	// CanvasFreeDrawing.prototype.on = function (params, callback) {
+	// 	var event = params.event;
+	// 	this.canvas.addEventListener('cfd_' + event, function () { return callback(); });
+	// };
 	CanvasFreeDrawing.prototype.setLineWidth = function (px) {
 		this.lineWidth = px;
 	};
@@ -679,15 +679,13 @@ const CanvasFreeDrawing = (function () {
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
 				if (localLength == 0 && (Math.abs(dy) > fullLength*0.05)) {
                     candidate = firstDerivatives[i].position;
-                    // console.log(candidate);
-                }
+				}
                 localLength += firstDerivatives[i].length;
             } else {
-                // console.log(candidate);
                 if ( localLength > 2 && candidate != prev) {
-                    stationaryPoints.push(candidate);
-                    // console.log(stationaryPoints);
-                    prev = candidate;
+					let midpoint = Math.floor( (candidate + i)/2 );
+                    stationaryPoints.push(midpoint);
+                    prev = midpoint;
                     dy = 0;
                 }
                 localLength = 0;
