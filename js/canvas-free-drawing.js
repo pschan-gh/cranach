@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 
 let canvasSnapshots = [];
+let canvasUndos = [];
 
 const CanvasFreeDrawing = (function () {
 	function CanvasFreeDrawing(params) {
@@ -63,7 +64,7 @@ const CanvasFreeDrawing = (function () {
 		this.snapshowImage = null;
 		this.maxSnapshots = maxSnapshots;
 		canvasSnapshots = [];
-		this.undos = [];
+		canvasUndos = [];
 		this.positions = [];
 		this.isDrawing = false;
 		this.isDrawingModeEnabled = true;
@@ -192,7 +193,7 @@ const CanvasFreeDrawing = (function () {
 			setTimeout(() => {
 				this.storeSnapshot();
 				this.undo();
-				this.undos.pop();
+				canvasUndos.pop();
 
 				const firstDerivatives = this.differentiate(positions);
 
@@ -304,7 +305,7 @@ const CanvasFreeDrawing = (function () {
         if (this.isDrawing) {
 			this.storeDrawing(x, y, true, force, this.isErasing);
 			this.draw(this.positions);
-			this.undos = [];
+			canvasUndos = [];
 		}
 	};
 
@@ -315,7 +316,6 @@ const CanvasFreeDrawing = (function () {
 			} else {
 				this.pseudoSpline(positions);
 			}
-			this.undos = [];
 		}
 	};
 
@@ -383,7 +383,6 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.pseudoSpline = function (positions) {
-		this.undos = [];
 		this.context.beginPath();
 		this.context.moveTo(positions[0].x, positions[0].y);
 		for ( let index = 1; index < positions.length; index++ ) {
@@ -513,8 +512,8 @@ const CanvasFreeDrawing = (function () {
 		if (canvasSnapshots.length > 0) {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 	        this.restoreCanvasSnapshot(this.snapshotImage);
-			this.undos.push( canvasSnapshots.pop() );
-			// this.undos = this.undos.splice(-Math.abs(this.maxSnapshots));
+			canvasUndos.push( canvasSnapshots.pop() );
+			// canvasUndos = canvasUndos.splice(-Math.abs(this.maxSnapshots));
 
 			canvasSnapshots.forEach(positions => {
 				this.context.beginPath();
@@ -532,8 +531,8 @@ const CanvasFreeDrawing = (function () {
 		}
 	};
 	CanvasFreeDrawing.prototype.redo = function () {
-		if (this.undos.length > 0) {
-			let positions = this.undos.pop();
+		if (canvasUndos.length > 0) {
+			let positions = canvasUndos.pop();
 			if (positions.length) {
 				if (!positions[0].isSpline) {
 					this.draw(positions, positions.length - 1);

@@ -137,6 +137,9 @@ function carouselSlideHandler() {
 	if (typeof canvasSnapshots != 'undefined') {
 		canvasSnapshots = [];
 	}
+	if (typeof canvasUndos != 'undefined') {
+		canvasUndos = [];
+	}
 }
 
 function updateCarouselSlide(slide, content = null) {
