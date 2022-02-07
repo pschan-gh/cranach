@@ -255,8 +255,12 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
 		// console.log('handleEndDrawing');
 		this.isDrawing = false;
-		this.storeSnapshot();
-		this.positions = [];
+		if (this.positions.length) {
+			this.storeSnapshot();
+		}
+		// setTimeout( function() {
+			this.positions = [];
+		// }.bind(this));
 	};
 
 	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, force = this.mouseForce) {

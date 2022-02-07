@@ -269,12 +269,13 @@ function expandCanvas(slide, scale = 1, padding = 0) {
     const wasDrawing = slide.cfd.isDrawingModeEnabled;
 
 	slide.cfd.disableDrawingMode();
+	// slide.cfd.storeSnapshotImage();
 	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-	let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-	let img = new Image();
-	img.src = oldCanvas;
-	img.onload = function (){
-		MathJax.startup.promise.then(() => {
+	// let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
+	// let img = new Image();
+	// img.src = oldCanvas;
+	// img.onload = function (){
+	// 	MathJax.startup.promise.then(() => {
 			// https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
 			let bodyRect = document.body.getBoundingClientRect();
 			let slideRect = slide.getBoundingClientRect();
@@ -283,14 +284,27 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 			let voffset = slideRect.top + document.getElementById('output').scrollTop;
 			slide.querySelector('canvas').style.top = -voffset;
 			// slide.cfd.canvas.top = -(voffset);
+			// let ctx = slide.cfd.canvas.getContext('2d');
+			// ctx.drawImage(img, 0, 0);
+			// alert('restoring');
+			// slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
 			let ctx = slide.cfd.canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0);
+			canvasSnapshots.forEach(positions => {
+				ctx.beginPath();
+				if (positions.length) {
+					if (!positions[0].isSpline) {
+						slide.cfd.draw(positions, positions.length - 1);
+					} else {
+						slide.cfd.pseudoSpline(positions);
+					}
+				}
+			});
             if (wasDrawing) {
                 slide.cfd.enableDrawingMode();
                 slide.cfd.setDraw();
             }
-		});
-	}
+	// 	});
+	// }
 }
 
 function updateCanvas(slide) {
