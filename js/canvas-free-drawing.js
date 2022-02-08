@@ -367,7 +367,7 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.pseudoSpline = function (positions) {
-		console.log(positions);
+		// console.log(positions);
 		this.context.beginPath();
 		this.context.moveTo(positions[0].x, positions[0].y);
 		for ( let index = 1; index < positions.length; index++ ) {
@@ -468,7 +468,7 @@ const CanvasFreeDrawing = (function () {
 		});
 		stationaryPoints.push( positions[positions.length - 1] );
 
-		console.log(stationaryPoints);
+		// console.log(stationaryPoints);
 
 		let fullLength = firstDerivatives.reduce( (sum, entry) => {
 			return sum + entry.length;
@@ -570,13 +570,14 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshotImage = function () {
-		console.log('storeSnapshotImage');
+		// console.log('storeSnapshotImage');
 		this.snapshotImage = this.getCanvasSnapshot();
 		// console.log(this.snapshotImage);
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		canvasSnapshots.push(this.positions);
+		this.storeSnapshotImage();
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -590,15 +591,14 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.undo = function () {
 		if (canvasSnapshots.length > 0) {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-	        this.restoreCanvasSnapshot(this.snapshotImage);
 			canvasUndos.push( canvasSnapshots.pop() );
 			// canvasUndos = canvasUndos.splice(-Math.abs(this.maxSnapshots));
 
 			canvasSnapshots.forEach(positions => {
-				this.context.beginPath();
 				if (positions == null) {
 					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 				} else if (positions.length) {
+					this.context.beginPath();
 					if (!positions[0].isSpline) {
 						this.draw(positions, positions.length - 1);
 					} else {
@@ -607,20 +607,25 @@ const CanvasFreeDrawing = (function () {
 				}
 			});
 			this.imageRestored = true;
+		} else {
+			this.restoreCanvasSnapshot(this.snapshotImage);
 		}
 	};
 	CanvasFreeDrawing.prototype.redo = function () {
 		if (canvasUndos.length > 0) {
 			let positions = canvasUndos.pop();
-			if (positions.length) {
+			if (positions == null) {
+				this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+			} else if (positions.length) {
+				this.context.beginPath();
 				if (!positions[0].isSpline) {
 					this.draw(positions, positions.length - 1);
 				} else {
 					this.pseudoSpline(positions);
 				}
-				canvasSnapshots.push(positions);
-				// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
 			}
+			canvasSnapshots.push(positions);
+			// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
 		}
 	};
 	// Public APIs

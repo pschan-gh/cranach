@@ -177,6 +177,10 @@ function updateCarouselSlide(slide, content = null) {
 			}
 		}
 		adjustHeight();
+		if (typeof slide.cfd != 'undefined') {
+			console.log(slide.cfd.snapshotImage);
+			slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
+		}
 	});
 }
 
@@ -268,43 +272,35 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 
     const wasDrawing = slide.cfd.isDrawingModeEnabled;
 
-	slide.cfd.disableDrawingMode();
-	// slide.cfd.storeSnapshotImage();
-	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-	// let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-	// let img = new Image();
-	// img.src = oldCanvas;
-	// img.onload = function (){
-	// 	MathJax.startup.promise.then(() => {
-			// https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
-			let bodyRect = document.body.getBoundingClientRect();
-			let slideRect = slide.getBoundingClientRect();
-			slide.cfd.canvas.width = output.scrollWidth;
-			slide.cfd.canvas.height = output.scrollHeight*scale + padding;
-			let voffset = slideRect.top + document.getElementById('output').scrollTop;
-			slide.querySelector('canvas').style.top = -voffset;
-			// slide.cfd.canvas.top = -(voffset);
-			// let ctx = slide.cfd.canvas.getContext('2d');
-			// ctx.drawImage(img, 0, 0);
-			// alert('restoring');
-			// slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
-			let ctx = slide.cfd.canvas.getContext('2d');
-			canvasSnapshots.forEach(positions => {
+	canvasControlsDisableEvent(slide);
+
+	let bodyRect = document.body.getBoundingClientRect();
+	let slideRect = slide.getBoundingClientRect();
+	slide.cfd.canvas.width = output.scrollWidth;
+	slide.cfd.canvas.height = output.scrollHeight*scale + padding;
+	let voffset = slideRect.top + document.getElementById('output').scrollTop;
+	// slide.querySelector('canvas').style.top = -voffset;
+	slide.cfd.canvas.style.top = -voffset;
+
+	if ( canvasSnapshots.length > 0 ) {
+		let ctx = slide.cfd.context;
+		canvasSnapshots.forEach(positions => {
+			if (positions == null) {
+				console.log('clearing canvas');
+				ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			} else if (positions.length) {
 				ctx.beginPath();
-				if (positions.length) {
-					if (!positions[0].isSpline) {
-						slide.cfd.draw(positions, positions.length - 1);
-					} else {
-						slide.cfd.pseudoSpline(positions);
-					}
+				if (!positions[0].isSpline) {
+					slide.cfd.draw(positions, positions.length - 1);
+				} else {
+					slide.cfd.pseudoSpline(positions);
 				}
-			});
-            if (wasDrawing) {
-                slide.cfd.enableDrawingMode();
-                slide.cfd.setDraw();
-            }
-	// 	});
-	// }
+			}
+		});
+		if (wasDrawing) {
+			canvasControlsEnableEvent(slide)
+		}
+	}
 }
 
 function updateCanvas(slide) {
@@ -322,6 +318,16 @@ function updateCanvas(slide) {
 		}
 	}
 	canvasControlsDisableEvent(slide);
+}
+
+function canvasControlsEnableEvent(slide) {
+	slide.cfd.enableDrawingMode();
+	slide.cfd.canvas.classList.remove('hidden');
+	slide.cfd.setDraw();
+	document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+	document.querySelector('.annotate.enable .brush').classList.add('hidden');
+	document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+	slide.cfd.canvas.classList.remove('disabled');
 }
 
 function canvasControlsDisableEvent(slide) {
@@ -401,27 +407,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         slide.cfd.toggleDrawingMode();
         if (slide.cfd.isDrawingModeEnabled) {
-            slide.cfd.enableDrawingMode();
-    		slide.cfd.canvas.classList.remove('hidden');
-    		slide.cfd.setDraw();
-    		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-    		// evt.currentTarget.classList.add('active');
-            document.querySelector('.annotate.enable .brush').classList.add('hidden');
-            document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
-    		slide.cfd.canvas.classList.remove('disabled');
+            canvasControlsEnableEvent(slide);
         } else {
             let slide = document.querySelector('#output > div.slide.active');
     		if (slide === null) { return 0; }
     		canvasControlsDisableEvent(slide);
-            // evt.currentTarget.classList.remove('active');
-        }
-
-		// slide.cfd.enableDrawingMode();
-		// slide.cfd.canvas.classList.remove('hidden');
-		// slide.cfd.setDraw();
-		// document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-		// evt.currentTarget.classList.add('disabled');
-		// slide.cfd.canvas.classList.remove('disabled');
+		}
 	}));
 	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
