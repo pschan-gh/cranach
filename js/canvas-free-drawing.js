@@ -503,7 +503,7 @@ const CanvasFreeDrawing = (function () {
 			positions.length - 1,
 			Math.ceil(positions.length / steps)
 		);
-		console.log('smoothFactor: ' + smoothFactor);
+		// console.log('smoothFactor: ' + smoothFactor);
 
 		if (stationaryPoints.length > 2 && sdFirst > 0.1) {
 			this.positions = stationaryPoints;
@@ -742,5 +742,33 @@ const CanvasFreeDrawing = (function () {
         return stationaryPoints;
 	}
 
+	// CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
+	// 	let stationaryPoints = [];
+    //     const fullLength = firstDerivatives.reduce( (sum, entry) => {
+    //         return sum + entry.length;
+    //     }, 0);
+    //     let candidate = 0;
+    //     let prev = 0;
+    //     let localLength = 0;
+    //     let dy = 0;
+    //     for (let i = 0; i < firstDerivatives.length; i++ ) {
+    //         dy += firstDerivatives[i].y * firstDerivatives[i].length;
+    //         if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
+	// 			if (localLength == 0 && (Math.abs(dy) > fullLength*0.05)) {
+    //                 candidate = firstDerivatives[i].position;
+	// 			}
+    //             localLength += firstDerivatives[i].length;
+    //         } else {
+    //             if ( localLength > 2 && candidate != prev) {
+	// 				let midpoint = Math.floor( (candidate + i)/2 );
+    //                 stationaryPoints.push(midpoint);
+    //                 prev = midpoint;
+    //                 dy = 0;
+    //             }
+    //             localLength = 0;
+    //         }
+    //     }
+    //     return stationaryPoints;
+	// }
 	return CanvasFreeDrawing;
 }());

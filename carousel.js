@@ -427,26 +427,36 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([180, 80, 80])
+		let color = [180, 80, 80];
+		slide.cfd.setDrawingColor(color)
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 139, 69])
+		let color = [0, 139, 69];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([40, 122, 181])
+		let color = [40, 122, 181];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([240, 110, 0])
+		let color = [240, 110, 0];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([100, 100, 100])
+		let color = [100, 100, 100];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 });
