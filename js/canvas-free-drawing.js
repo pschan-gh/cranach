@@ -67,6 +67,8 @@ const CanvasFreeDrawing = (function () {
 		canvasSnapshots = [];
 		canvasUndos = [];
 		this.positions = [];
+		this.x = 0;
+		this.y = 0;
 		this.isDrawing = false;
 		this.isDrawingModeEnabled = true;
 		this.isErasing = false;
@@ -109,14 +111,16 @@ const CanvasFreeDrawing = (function () {
 		this.listenersList.forEach(event => {
 			this.canvas.addEventListener(event.toLowerCase(), this.bindings[event], {passive: false});
 		});
-		document.addEventListener('mouseup', this.bindings.mouseUpDocument);
+		document.addEventListener('touchcancel', this.bindings.touchEnd);
+		// document.addEventListener('mouseup', this.bindings.mouseUpDocument);
 	};
 
 	CanvasFreeDrawing.prototype.removeListeners = function () {
 		this.listenersList.forEach(event => {
 			this.canvas.removeEventListener(event.toLowerCase(), this.bindings[event]);
 		});
-		document.removeEventListener('mouseup', this.bindings.mouseUpDocument);
+		document.removeEventListener('touchcancel', this.bindings.touchEnd);
+		// document.removeEventListener('mouseup', this.bindings.mouseUpDocument);
 	};
 
 	CanvasFreeDrawing.prototype.enableDrawingMode = function () {
@@ -156,11 +160,13 @@ const CanvasFreeDrawing = (function () {
 			event.preventDefault();
 			this.pointerType = 'stylus';
 			this.isDrawing = true;
-			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			var x = pageX - this.canvas.offsetLeft;
-			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
+			let x = pageX - this.canvas.offsetLeft;
+			let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
+			this.x = x;
+			this.y = y;
 		}
 	};
 
@@ -235,6 +241,8 @@ const CanvasFreeDrawing = (function () {
         clearTimeout(this.timer);
         if (this.positions.length == 0) {
             this.handleDrawing(event.offsetX, event.offsetY, {force: 10, smoothFactor: 0});
+		} else {
+			this.handleDrawing(event.offsetX, event.offsetY, {smoothFactor: 0});
 		}
 		this.handleEndDrawing();
 	};
@@ -243,24 +251,13 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.touchEnd = function (event) {
 		event.preventDefault();
 		clearTimeout(this.timer);
-		if (this.positions.length == 0) {
-			const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			const x = pageX - this.canvas.offsetLeft;
-			const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-            this.handleDrawing(x, y, {force: 10, smoothFactor: 0});
+		if (this.positions.length < 3) {
+			// const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
+			// const x = pageX - this.canvas.offsetLeft;
+			// const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			this.handleDrawing(this.x, this.y, {force: 10, smoothFactor: 0});
 		}
 		this.handleEndDrawing();
-	};
-
-	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
-		// console.log('handleEndDrawing');
-		if (this.isDrawing || this.positions == null) {
-			if (this.positions == null || this.positions.length) {
-				this.storeSnapshot();
-			}
-		}
-		this.positions = [];
-		this.isDrawing = false;
 	};
 
 	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, customParams = null) {
@@ -282,6 +279,17 @@ const CanvasFreeDrawing = (function () {
 			canvasUndos = [];
 			this.timer = this.curveSmoothingTimer();
 		}
+	};
+
+	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
+		// console.log('handleEndDrawing');
+		if (this.isDrawing || this.positions == null) {
+			if (this.positions == null || this.positions.length) {
+				this.storeSnapshot();
+			}
+		}
+		this.positions = [];
+		this.isDrawing = false;
 	};
 
 	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
@@ -327,6 +335,7 @@ const CanvasFreeDrawing = (function () {
 			this.context.lineCap = 'butt';
 			this.context.lineJoin = 'butt';
 
+			// console.log(position);
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				if ( smoothFactor == 0 || ( index % smoothFactor == 0 && index >= smoothFactor )) {
 					let endX, endY;
@@ -509,7 +518,7 @@ const CanvasFreeDrawing = (function () {
 				}
 			});
 			this.positions = positions;
-			console.log(this.positions);
+			// console.log(this.positions);
 		}
 		this.handleStroke(this.positions);
 		if (this.positions === null || this.positions.length) {
@@ -686,6 +695,8 @@ const CanvasFreeDrawing = (function () {
             positions[i].length : Math.sqrt( dx**2 + dy**2 );
 			if (length > 0 || allowZero) {
 				derivatives.push({
+					positionX : positions[i].x,
+					positionY : positions[i].y,
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
 					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
 					length: length,
