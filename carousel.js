@@ -234,7 +234,9 @@ function adjustHeight() {
 	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
 	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
 		output.classList.add('long');
-		expandCanvas(slide);
+		if (typeof slide.cfd != 'undefined') {
+			slide.cfd.expandCanvas();
+		}
 	} else {
 		output.classList.remove('long');
 	}
@@ -259,51 +261,6 @@ function annotate() {
 		showAnnotate();
 	}
 	updateCanvas(document.querySelector('.present #output > div.slide.active'));
-}
-
-function expandCanvas(slide, scale = 1, padding = 0) {
-	if (!document.querySelector('#right_half').classList.contains('annotate')) {
-		return 0;
-	}
-    let output = document.getElementById('output');
-
-    const wasDrawing = slide.cfd.isDrawingModeEnabled;
-
-	canvasControlsDisableEvent(slide);
-
-	let bodyRect = document.body.getBoundingClientRect();
-	let slideRect = slide.getBoundingClientRect();
-	slide.cfd.canvas.width = output.scrollWidth;
-	slide.cfd.canvas.height = output.scrollHeight*scale + padding;
-	let voffset = slideRect.top + document.getElementById('output').scrollTop;
-	// slide.querySelector('canvas').style.top = -voffset;
-	slide.cfd.canvas.style.top = -voffset;
-
-	if ( canvasSnapshots.length > 0 ) {
-		console.log(canvasSnapshots);
-		let ctx = slide.cfd.context;
-		slide.cfd.reconstruct(canvasSnapshots);
-		// canvasSnapshots.forEach(positions => {
-		// 	if (positions == null) {
-		// 		console.log('clearing canvas');
-		// 		ctx.beginPath();
-		// 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		// 	} else if (positions.length) {
-		// 		console.log('redoing paths');
-		// 		ctx.beginPath();
-		// 		if (!positions[0].isSpline) {
-		// 			slide.cfd.draw(positions, positions.length - 1);
-		// 		} else {
-		// 			slide.cfd.pseudoSpline(positions);
-		// 		}
-		// 	}
-		// });
-		if (wasDrawing) {
-			canvasControlsEnableEvent(slide)
-		}
-	} else {
-		slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
-	}
 }
 
 function updateCanvas(slide) {
@@ -389,7 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .expand').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		expandCanvas(slide, 1, 300);
+		if (typeof slide.cfd != 'undefined') {
+			slide.cfd.expandCanvas(1, 300);
+		}
 	}));
 	document.querySelectorAll('.canvas-controls .disable').forEach(el => el.addEventListener('click', function() {
 		let slide = document.querySelector('#output > div.slide.active');
