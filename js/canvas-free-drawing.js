@@ -67,6 +67,8 @@ const CanvasFreeDrawing = (function () {
 		canvasSnapshots = [];
 		canvasUndos = [];
 		this.positions = [];
+		this.x = 0;
+		this.y = 0;
 		this.isDrawing = false;
 		this.isDrawingModeEnabled = true;
 		this.isErasing = false;
@@ -109,14 +111,16 @@ const CanvasFreeDrawing = (function () {
 		this.listenersList.forEach(event => {
 			this.canvas.addEventListener(event.toLowerCase(), this.bindings[event], {passive: false});
 		});
-		document.addEventListener('mouseup', this.bindings.mouseUpDocument);
+		document.addEventListener('touchcancel', this.bindings.touchEnd);
+		// document.addEventListener('mouseup', this.bindings.mouseUpDocument);
 	};
 
 	CanvasFreeDrawing.prototype.removeListeners = function () {
 		this.listenersList.forEach(event => {
 			this.canvas.removeEventListener(event.toLowerCase(), this.bindings[event]);
 		});
-		document.removeEventListener('mouseup', this.bindings.mouseUpDocument);
+		document.removeEventListener('touchcancel', this.bindings.touchEnd);
+		// document.removeEventListener('mouseup', this.bindings.mouseUpDocument);
 	};
 
 	CanvasFreeDrawing.prototype.enableDrawingMode = function () {
@@ -156,11 +160,13 @@ const CanvasFreeDrawing = (function () {
 			event.preventDefault();
 			this.pointerType = 'stylus';
 			this.isDrawing = true;
-			var _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			var x = pageX - this.canvas.offsetLeft;
-			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
+			let x = pageX - this.canvas.offsetLeft;
+			let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
+			this.x = x;
+			this.y = y;
 		}
 	};
 
@@ -174,17 +180,8 @@ const CanvasFreeDrawing = (function () {
 			this.handleDrawing(x, y);
 		} else if (this.positions.length > 0) {
 			this.timer = setTimeout(() => {
-				if( this.positions[0].isSpline ) {
-					this.positions[this.positions.length - 1].x = x;
-					this.positions[this.positions.length - 1].y = y;
-				} else {
-					let smoothFactor = this.positions[0].smoothFactor;
-					let n = Math.floor( this.positions.length / smoothFactor );
-					let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
-					this.positions[m].x = x;
-					this.positions[m].y = y;
-					this.positions[m].smoothFactor = 0;
-				}
+				this.positions[this.positions.length - 1].x = x;
+				this.positions[this.positions.length - 1].y = y;
 				this.storeSnapshot();
 				this.undo();
 				canvasUndos.pop();
@@ -235,6 +232,8 @@ const CanvasFreeDrawing = (function () {
         clearTimeout(this.timer);
         if (this.positions.length == 0) {
             this.handleDrawing(event.offsetX, event.offsetY, {force: 10, smoothFactor: 0});
+		} else {
+			this.handleDrawing(event.offsetX, event.offsetY, {smoothFactor: 0});
 		}
 		this.handleEndDrawing();
 	};
@@ -243,24 +242,13 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.touchEnd = function (event) {
 		event.preventDefault();
 		clearTimeout(this.timer);
-		if (this.positions.length == 0) {
-			const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			const x = pageX - this.canvas.offsetLeft;
-			const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-            this.handleDrawing(x, y, {force: 10, smoothFactor: 0});
+		if (this.positions.length < 3) {
+			// const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
+			// const x = pageX - this.canvas.offsetLeft;
+			// const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			this.handleDrawing(this.x, this.y, {force: 10, smoothFactor: 0});
 		}
 		this.handleEndDrawing();
-	};
-
-	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
-		// console.log('handleEndDrawing');
-		if (this.isDrawing || this.positions == null) {
-			if (this.positions == null || this.positions.length) {
-				this.storeSnapshot();
-			}
-		}
-		this.positions = [];
-		this.isDrawing = false;
 	};
 
 	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, customParams = null) {
@@ -284,16 +272,36 @@ const CanvasFreeDrawing = (function () {
 		}
 	};
 
+	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
+		// console.log('handleEndDrawing');
+		if (this.isDrawing || this.positions == null) {
+			if (this.positions == null || this.positions.length) {
+				this.storeSnapshot();
+			}
+		}
+		this.positions = [];
+		this.isDrawing = false;
+	};
+
 	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
-		if (!positions[0].isSpline) {
-			this.draw(positions, positions.length - 1);
-		} else {
-			this.pseudoSpline(positions);
+		if (positions == null) {
+			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+		} else if (positions.length) {
+			this.context.beginPath();
+			if (!positions[0].isSpline) {
+				this.draw(positions, positions.length - 1);
+			} else {
+				this.pseudoSpline(positions);
+			}
 		}
 	};
 
 
 	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
+		let endX, endY;
+
+		let cpX = null;
+		let cpY = null;
 		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
 			const position = positions[index];
 			const x = position.x,
@@ -327,20 +335,25 @@ const CanvasFreeDrawing = (function () {
 			this.context.lineCap = 'butt';
 			this.context.lineJoin = 'butt';
 
+			// console.log(position);
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				if ( smoothFactor == 0 || ( index % smoothFactor == 0 && index >= smoothFactor )) {
-					let endX, endY;
+					if (cpX == null) {
+						cpX = positions[index - smoothFactor].x;
+					}
+					if (cpY == null) {
+						cpY = positions[index - smoothFactor].y;
+					}
 					// endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
 					// endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
 					endX = ( x + positions[index - smoothFactor].x )/2;
 					endY = ( y + positions[index - smoothFactor].y )/2;
-					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-						endX,
-						endY
-					);
+					this.context.quadraticCurveTo(cpX, cpY, endX, endY);
 					this.context.stroke();
 					this.context.beginPath();
 					this.context.moveTo(endX, endY);
+					cpX = x;
+					cpY = y;
 				}
 			} else {
 				color[3] = 1;
@@ -358,7 +371,7 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.pseudoSpline = function (positions) {
-		console.log(positions);
+		// console.log(positions);
 		this.context.beginPath();
 		this.context.moveTo(positions[0].x, positions[0].y);
 		for ( let index = 1; index < positions.length; index++ ) {
@@ -452,14 +465,16 @@ const CanvasFreeDrawing = (function () {
 
 		if (firstDerivatives.length == 0) { return; }
 
-		const stationaryPoints = [ positions[0] ];
-		stationaryPoints[0].isSpline = true;
-		this.stationaryPoints(firstDerivatives).forEach( index => {
-			stationaryPoints.push( positions[index] );
-		});
-		stationaryPoints.push( positions[positions.length - 1] );
+		// const stationaryPoints = [ positions[0] ];
+		// stationaryPoints[0].isSpline = true;
+		// this.stationaryPoints(firstDerivatives).forEach( index => {
+		// 	stationaryPoints.push( positions[index] );
+		// });
+		// stationaryPoints.push( positions[positions.length - 1] );
 
-		console.log(stationaryPoints);
+		const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
+
+		// console.log(stationaryPoints);
 
 		let fullLength = firstDerivatives.reduce( (sum, entry) => {
 			return sum + entry.length;
@@ -488,13 +503,12 @@ const CanvasFreeDrawing = (function () {
 		// console.log(sdFirst);
 
 		const steps = Math.ceil( 25*sdFirst );
-		// console.log('steps: ' + steps);
 
 		const smoothFactor = Math.min(
 			positions.length - 1,
 			Math.ceil(positions.length / steps)
 		);
-		console.log('smoothFactor: ' + smoothFactor);
+		// console.log('smoothFactor: ' + smoothFactor);
 
 		if (stationaryPoints.length > 2 && sdFirst > 0.1) {
 			this.positions = stationaryPoints;
@@ -502,14 +516,9 @@ const CanvasFreeDrawing = (function () {
 			positions.forEach( ( position, index ) => {
 				position.smoothFactor = smoothFactor;
 				position.isSpline = false;
-				if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
-					position.x = positions[positions.length - 1].x;
-					position.y = positions[positions.length - 1].y;
-					position.smoothFactor = 0;
-				}
 			});
+			positions[positions.length - 1].smoothFactor = 0;
 			this.positions = positions;
-			console.log(this.positions);
 		}
 		this.handleStroke(this.positions);
 		if (this.positions === null || this.positions.length) {
@@ -560,13 +569,14 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshotImage = function () {
-		console.log('storeSnapshotImage');
+		// console.log('storeSnapshotImage');
 		this.snapshotImage = this.getCanvasSnapshot();
 		// console.log(this.snapshotImage);
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshot = function () {
 		canvasSnapshots.push(this.positions);
+		this.storeSnapshotImage();
 	};
 
 	CanvasFreeDrawing.prototype.getCanvasSnapshot = function () {
@@ -580,37 +590,69 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.undo = function () {
 		if (canvasSnapshots.length > 0) {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-	        this.restoreCanvasSnapshot(this.snapshotImage);
 			canvasUndos.push( canvasSnapshots.pop() );
 			// canvasUndos = canvasUndos.splice(-Math.abs(this.maxSnapshots));
 
-			canvasSnapshots.forEach(positions => {
-				this.context.beginPath();
-				if (positions == null) {
-					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-				} else if (positions.length) {
-					if (!positions[0].isSpline) {
-						this.draw(positions, positions.length - 1);
-					} else {
-						this.pseudoSpline(positions);
-					}
-				}
-			});
+			this.reconstruct(canvasSnapshots);
+			// canvasSnapshots.forEach(positions => {
+			// 	if (positions == null) {
+			// 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+			// 	} else if (positions.length) {
+			// 		this.context.beginPath();
+			// 		if (!positions[0].isSpline) {
+			// 			this.draw(positions, positions.length - 1);
+			// 		} else {
+			// 			this.pseudoSpline(positions);
+			// 		}
+			// 	}
+			// });
 			this.imageRestored = true;
+		} else {
+			this.restoreCanvasSnapshot(this.snapshotImage);
 		}
+		this.storeSnapshotImage();
 	};
-	CanvasFreeDrawing.prototype.redo = function () {
-		if (canvasUndos.length > 0) {
-			let positions = canvasUndos.pop();
-			if (positions.length) {
+
+	CanvasFreeDrawing.prototype.reconstruct = function(snapshots) {
+		let offset = 0;
+		for (let i = snapshots.length - 1; i >= 0; i--) {
+			if (snapshots[i] == null) {
+				offset = i;
+				break;
+			}
+		}
+		let positions;
+		for ( let i = offset; i < snapshots.length; i++ ) {
+			positions = snapshots[i];
+			// canvasSnapshots.forEach(positions => {
+			if (positions == null) {
+				this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+			} else if (positions.length) {
+				this.context.beginPath();
 				if (!positions[0].isSpline) {
 					this.draw(positions, positions.length - 1);
 				} else {
 					this.pseudoSpline(positions);
 				}
-				canvasSnapshots.push(positions);
-				// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
 			}
+		}
+		// });
+		// setTimeout(() => {
+		// 	let positions = snapshots.shift();
+		// 	this.handleStroke(positions);
+		// 	if (snapshots.length) {
+		// 		this.reconstruct(snapshots.slice());
+		// 	}
+		// });
+	}
+
+	CanvasFreeDrawing.prototype.redo = function () {
+		if (canvasUndos.length > 0) {
+			let positions = canvasUndos.pop();
+			this.handleStroke(positions);
+			canvasSnapshots.push(positions);
+			// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
+			this.storeSnapshotImage();
 		}
 	};
 	// Public APIs
@@ -686,6 +728,8 @@ const CanvasFreeDrawing = (function () {
             positions[i].length : Math.sqrt( dx**2 + dy**2 );
 			if (length > 0 || allowZero) {
 				derivatives.push({
+					positionX : positions[i].x,
+					positionY : positions[i].y,
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
 					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
 					length: length,
@@ -696,7 +740,68 @@ const CanvasFreeDrawing = (function () {
 		return derivatives;
 	}
 
-    CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
+    // CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives, positions) {
+	// 	let stationaryPoints = [];
+    //     const fullLength = firstDerivatives.reduce( (sum, entry) => {
+    //         return sum + entry.length;
+    //     }, 0);
+	// 	console.log(fullLength);
+    //     let initial = 0;
+	// 	let terminal = 0;
+    //     let localLength = 0;
+    //     let dx = firstDerivatives[0].x;
+	// 	let dy = firstDerivatives[0].y;
+	// 	let sign;
+	// 	let point = positions[0];
+	//
+	// 	point.isSpline = true;
+	// 	stationaryPoints.push(point);
+	//
+	// 	let ds = firstDerivatives[0].length;
+	// 	let prevSign = Math.sign(dx * dy);
+	// 	console.log('start');
+	// 	console.log(firstDerivatives[0]);
+    //     for (let i = 1; i < firstDerivatives.length; i++ ) {
+	// 		ds += firstDerivatives[i].length;
+	// 		dx = firstDerivatives[i].x;
+	// 		dy = firstDerivatives[i].y;
+	// 		if ( dy * dx != 0 ) {
+	// 			if ( Math.abs( dy / dx ) < 0.1 ) {
+	// 				sign = Math.sign( dx * dy );
+	// 				if ( sign != prevSign && ds > fullLength*0.3 ) {
+	// 					console.log('flat');
+	// 					console.log(ds);
+	// 					console.log(firstDerivatives[i]);
+	//
+	// 					initial = firstDerivatives[i - 1].position;
+	// 					ds = 0;
+	// 					prevSign = sign;
+	// 				}
+	// 			} else if ( Math.abs( dy / dx ) > 0.1 ) {
+	// 				sign = Math.sign( dx * dy );
+	// 				if ( sign != prevSign && ds > fullLength*0.3 ) {
+	// 					console.log('slope');
+	// 					console.log(ds);
+	// 					console.log(firstDerivatives[i]);
+	//
+	// 					terminal = firstDerivatives[i].position;
+	// 					ds = 0;
+	// 					prevSign = sign;
+	// 					let point = positions[ Math.floor( (initial + terminal) / 2 ) ];
+	// 					// point.x = ( positions[initial].x + positions[terminal].x ) / 2;
+	// 					// point.y = ( positions[initial].y + positions[terminal].y ) / 2;
+	// 					console.log(point);
+	// 					stationaryPoints.push( point );
+	// 				}
+	// 			}
+	// 		}
+    //     }
+	// 	stationaryPoints.push(positions[positions.length - 1]);
+	// 	console.log(stationaryPoints);
+    //     return stationaryPoints;
+	// }
+
+	CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives, positions) {
 		let stationaryPoints = [];
         const fullLength = firstDerivatives.reduce( (sum, entry) => {
             return sum + entry.length;
@@ -705,6 +810,9 @@ const CanvasFreeDrawing = (function () {
         let prev = 0;
         let localLength = 0;
         let dy = 0;
+		let point = positions[0];
+		point.isSpline = true;
+		stationaryPoints.push(point);
         for (let i = 0; i < firstDerivatives.length; i++ ) {
             dy += firstDerivatives[i].y * firstDerivatives[i].length;
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
@@ -714,16 +822,18 @@ const CanvasFreeDrawing = (function () {
                 localLength += firstDerivatives[i].length;
             } else {
                 if ( localLength > 2 && candidate != prev) {
-					let midpoint = Math.floor( (candidate + i)/2 );
-                    stationaryPoints.push(midpoint);
+					let midpoint = Math.floor( (candidate + firstDerivatives[i].position)/2 );
+					let point = positions[ midpoint ];
+					stationaryPoints.push( point );
                     prev = midpoint;
                     dy = 0;
                 }
                 localLength = 0;
             }
         }
+		stationaryPoints.push(positions[positions.length - 1]);
         return stationaryPoints;
-	}
+	};
 
 	return CanvasFreeDrawing;
 }());

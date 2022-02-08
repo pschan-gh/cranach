@@ -178,6 +178,7 @@ function updateCarouselSlide(slide, content = null) {
 		}
 		adjustHeight();
 	});
+
 }
 
 function showSlide(slide, cranach) {
@@ -268,43 +269,41 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 
     const wasDrawing = slide.cfd.isDrawingModeEnabled;
 
-	slide.cfd.disableDrawingMode();
-	// slide.cfd.storeSnapshotImage();
-	// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-	// let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-	// let img = new Image();
-	// img.src = oldCanvas;
-	// img.onload = function (){
-	// 	MathJax.startup.promise.then(() => {
-			// https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
-			let bodyRect = document.body.getBoundingClientRect();
-			let slideRect = slide.getBoundingClientRect();
-			slide.cfd.canvas.width = output.scrollWidth;
-			slide.cfd.canvas.height = output.scrollHeight*scale + padding;
-			let voffset = slideRect.top + document.getElementById('output').scrollTop;
-			slide.querySelector('canvas').style.top = -voffset;
-			// slide.cfd.canvas.top = -(voffset);
-			// let ctx = slide.cfd.canvas.getContext('2d');
-			// ctx.drawImage(img, 0, 0);
-			// alert('restoring');
-			// slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
-			let ctx = slide.cfd.canvas.getContext('2d');
-			canvasSnapshots.forEach(positions => {
-				ctx.beginPath();
-				if (positions.length) {
-					if (!positions[0].isSpline) {
-						slide.cfd.draw(positions, positions.length - 1);
-					} else {
-						slide.cfd.pseudoSpline(positions);
-					}
-				}
-			});
-            if (wasDrawing) {
-                slide.cfd.enableDrawingMode();
-                slide.cfd.setDraw();
-            }
-	// 	});
-	// }
+	canvasControlsDisableEvent(slide);
+
+	let bodyRect = document.body.getBoundingClientRect();
+	let slideRect = slide.getBoundingClientRect();
+	slide.cfd.canvas.width = output.scrollWidth;
+	slide.cfd.canvas.height = output.scrollHeight*scale + padding;
+	let voffset = slideRect.top + document.getElementById('output').scrollTop;
+	// slide.querySelector('canvas').style.top = -voffset;
+	slide.cfd.canvas.style.top = -voffset;
+
+	if ( canvasSnapshots.length > 0 ) {
+		console.log(canvasSnapshots);
+		let ctx = slide.cfd.context;
+		slide.cfd.reconstruct(canvasSnapshots);
+		// canvasSnapshots.forEach(positions => {
+		// 	if (positions == null) {
+		// 		console.log('clearing canvas');
+		// 		ctx.beginPath();
+		// 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		// 	} else if (positions.length) {
+		// 		console.log('redoing paths');
+		// 		ctx.beginPath();
+		// 		if (!positions[0].isSpline) {
+		// 			slide.cfd.draw(positions, positions.length - 1);
+		// 		} else {
+		// 			slide.cfd.pseudoSpline(positions);
+		// 		}
+		// 	}
+		// });
+		if (wasDrawing) {
+			canvasControlsEnableEvent(slide)
+		}
+	} else {
+		slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
+	}
 }
 
 function updateCanvas(slide) {
@@ -321,7 +320,19 @@ function updateCanvas(slide) {
 			slide.querySelector('canvas').classList.add('hidden');
 		}
 	}
+	document.querySelector('#colorDropdown').style.color = '';
 	canvasControlsDisableEvent(slide);
+}
+
+function canvasControlsEnableEvent(slide) {
+	slide.cfd.enableDrawingMode();
+	slide.cfd.canvas.classList.remove('hidden');
+	slide.cfd.setDraw();
+	document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+	document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+	document.querySelector('.annotate.enable .cursor').classList.add('hidden');
+	slide.cfd.canvas.classList.remove('disabled');
+	document.querySelector('#colorDropdown').style.color = `rgb(${slide.cfd.strokeColor})`;
 }
 
 function canvasControlsDisableEvent(slide) {
@@ -332,9 +343,9 @@ function canvasControlsDisableEvent(slide) {
 	}
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
-    document.querySelector('.annotate.enable .brush').classList.remove('hidden');
-    document.querySelector('.annotate.enable .cursor').classList.add('hidden');
-	// $('.carousel').attr('data-bs-touch', "true");
+    document.querySelector('.annotate.enable .brush').classList.add('hidden');
+    document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+	document.querySelector('#colorDropdown').style.color = '';
 }
 
 function clearAllCanvas() {
@@ -401,27 +412,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         slide.cfd.toggleDrawingMode();
         if (slide.cfd.isDrawingModeEnabled) {
-            slide.cfd.enableDrawingMode();
-    		slide.cfd.canvas.classList.remove('hidden');
-    		slide.cfd.setDraw();
-    		document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-    		// evt.currentTarget.classList.add('active');
-            document.querySelector('.annotate.enable .brush').classList.add('hidden');
-            document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
-    		slide.cfd.canvas.classList.remove('disabled');
+            canvasControlsEnableEvent(slide);
         } else {
             let slide = document.querySelector('#output > div.slide.active');
     		if (slide === null) { return 0; }
     		canvasControlsDisableEvent(slide);
-            // evt.currentTarget.classList.remove('active');
-        }
-
-		// slide.cfd.enableDrawingMode();
-		// slide.cfd.canvas.classList.remove('hidden');
-		// slide.cfd.setDraw();
-		// document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-		// evt.currentTarget.classList.add('disabled');
-		// slide.cfd.canvas.classList.remove('disabled');
+		}
 	}));
 	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
@@ -436,26 +432,36 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([180, 80, 80])
+		let color = [180, 80, 80];
+		slide.cfd.setDrawingColor(color)
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([0, 139, 69])
+		let color = [0, 139, 69];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([40, 122, 181])
+		let color = [40, 122, 181];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([240, 110, 0])
+		let color = [240, 110, 0];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		slide.cfd.setDrawingColor([100, 100, 100])
+		let color = [100, 100, 100];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
 });
