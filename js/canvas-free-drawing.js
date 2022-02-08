@@ -178,10 +178,27 @@ const CanvasFreeDrawing = (function () {
 		let y = event.offsetY;
 		if (this.isDrawing) {
 			this.handleDrawing(x, y);
+			this.x = x;
+			this.y = y;
 		} else if (this.positions.length > 0) {
 			this.timer = setTimeout(() => {
-				this.positions[this.positions.length - 1].x = x;
-				this.positions[this.positions.length - 1].y = y;
+				if (typeof this.positions[0].radiusX == 'undefined') {
+					this.positions[this.positions.length - 1].x = x;
+					this.positions[this.positions.length - 1].y = y;
+				} else {
+					let dx = this.x > this.positions[0].x ?
+					x - this.x : this.x - x;
+					let dy = this.y > this.positions[0].y ?
+					y - this.y : this.y - y;
+					this.positions[0].radiusX = Math.abs(
+						this.positions[0].radiusX + dx
+					);
+					this.positions[0].radiusY = Math.abs(
+						this.positions[0].radiusY + dy
+					);
+					this.x = x;
+					this.y = y;
+				}
 				this.storeSnapshot();
 				this.undo();
 				this.undos.pop();
@@ -255,7 +272,6 @@ const CanvasFreeDrawing = (function () {
 		let params = {
 			force: this.mouseForce,
 			isErasing: this.isErasing,
-			// smoothFactor: this.pointerType == 'mouse' ? this.mouseSmoothFactor : this.stylusSmoothFactor,
 		};
 		if (customParams != null) {
 			for (param in customParams) {
@@ -287,8 +303,37 @@ const CanvasFreeDrawing = (function () {
 		if (positions == null) {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 		} else if (positions.length) {
+			let position = positions[0];
+
+			const smoothFactor = position.smoothFactor;
+			const color = position.strokeColor.slice();
+			let widthScale;
+			let temperedForce = this.forceMultiplier*position.force;
+
+			color[3] = Math.min( 1, temperedForce ); // basic
+			this.context.strokeStyle = this.rgbaFromArray(color);
+
+			widthScale = Math.min( 1.8, 2*temperedForce ); // basic
+			this.context.lineWidth = widthScale*position.lineWidth;
+
+			this.context.lineCap = 'butt';
+			this.context.lineJoin = 'butt';
 			this.context.beginPath();
-			if (!positions[0].isSpline) {
+
+			if (typeof position.radiusX != 'undefined') {
+
+				this.context.beginPath();
+				this.context.ellipse(
+					position.x,
+					position.y,
+					position.radiusX,
+					position.radiusY,
+					0,
+					0,
+					2 * Math.PI
+				);
+				this.context.stroke();
+			} else if (!position.isSpline) {
 				this.draw(positions, positions.length - 1);
 			} else {
 				this.pseudoSpline(positions);
@@ -465,13 +510,6 @@ const CanvasFreeDrawing = (function () {
 
 		if (firstDerivatives.length == 0) { return; }
 
-		// const stationaryPoints = [ positions[0] ];
-		// stationaryPoints[0].isSpline = true;
-		// this.stationaryPoints(firstDerivatives).forEach( index => {
-		// 	stationaryPoints.push( positions[index] );
-		// });
-		// stationaryPoints.push( positions[positions.length - 1] );
-
 		const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
 
 		// console.log(stationaryPoints);
@@ -510,7 +548,15 @@ const CanvasFreeDrawing = (function () {
 		);
 		// console.log('smoothFactor: ' + smoothFactor);
 
-		if (stationaryPoints.length > 2 && sdFirst > 0.1) {
+		const ellipse = this.detectLoop(firstDerivatives, positions);
+		// console.log(ellipse);
+		if (ellipse !== null) {
+			let point = positions[0];
+			for (param in ellipse) {
+				point[param] = ellipse[param];
+			}
+			positions = [ point ];
+		} else if (stationaryPoints.length > 2 && sdFirst > 0.1) {
 			this.positions = stationaryPoints;
 		} else {
 			positions.forEach( ( position, index ) => {
@@ -613,25 +659,8 @@ const CanvasFreeDrawing = (function () {
 		for ( let i = offset; i < snapshots.length; i++ ) {
 			positions = snapshots[i];
 			// this.snapshots.forEach(positions => {
-			if (positions == null) {
-				this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-			} else if (positions.length) {
-				this.context.beginPath();
-				if (!positions[0].isSpline) {
-					this.draw(positions, positions.length - 1);
-				} else {
-					this.pseudoSpline(positions);
-				}
-			}
+			this.handleStroke(positions);
 		}
-		// });
-		// setTimeout(() => {
-		// 	let positions = snapshots.shift();
-		// 	this.handleStroke(positions);
-		// 	if (snapshots.length) {
-		// 		this.reconstruct(snapshots.slice());
-		// 	}
-		// });
 	}
 
 	CanvasFreeDrawing.prototype.redo = function () {
@@ -726,7 +755,7 @@ const CanvasFreeDrawing = (function () {
 			}
 		}
 		return derivatives;
-	}    
+	}
 
 	CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives, positions) {
 		let stationaryPoints = [];
@@ -761,6 +790,59 @@ const CanvasFreeDrawing = (function () {
 		stationaryPoints.push(positions[positions.length - 1]);
         return stationaryPoints;
 	};
+
+	CanvasFreeDrawing.prototype.detectLoop = function(firstDerivatives, positions) {
+		const initialPoint = positions[0];
+		const endPoint = positions[positions.length - 1];
+
+		let left = null, right = null, up = null, down = null;
+
+		for ( let i = 0; i < firstDerivatives.length; i++ ) {
+			if (left == null && firstDerivatives[i].x < 0) {
+				left = true;
+			}
+			if (right == null && firstDerivatives[i].x > 0) {
+				right = true;
+			}
+			if (up == null && firstDerivatives[i].y < 0) {
+				up = true;
+			}
+			if (down == null && firstDerivatives[i].y > 0) {
+				down = true;
+			}
+		}
+
+		if ( !( left && right && up && down ) ) {
+			return null;
+		}
+
+		if ( (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
+			return null;
+		}
+
+		let dSquared;
+		let maxdSquared = 0;
+		let maxdSquaredIndex = 0;
+
+		for ( let i = 0; i < positions.length; i++ ) {
+			dSquared = (positions[i].x - initialPoint.x)**2 + (positions[i].y - initialPoint.y)**2
+			if (dSquared > maxdSquared) {
+				maxdSquared = dSquared;
+				maxdSquaredIndex = i;
+			}
+		}
+		const antipodal = positions[maxdSquaredIndex];
+		const radius = Math.floor( Math.sqrt( maxdSquared ) / 2 );
+		// console.log(initialPoint);
+		// console.log(antipodal);
+		return {
+			x: (antipodal.x + initialPoint.x) / 2,
+			y: (antipodal.y + initialPoint.y) / 2,
+			radiusX: radius,
+			radiusY: radius,
+		}
+	};
+
 
 	CanvasFreeDrawing.prototype.expandCanvas = function(scale = 1, padding = 0, output = document.getElementById('output')) {
 
