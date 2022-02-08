@@ -293,10 +293,15 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.handleStroke = function (positions) {
-		if (!positions[0].isSpline) {
-			this.draw(positions, positions.length - 1);
-		} else {
-			this.pseudoSpline(positions);
+		if (positions == null) {
+			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+		} else if (positions.length) {
+			this.context.beginPath();
+			if (!positions[0].isSpline) {
+				this.draw(positions, positions.length - 1);
+			} else {
+				this.pseudoSpline(positions);
+			}
 		}
 	};
 
@@ -461,12 +466,14 @@ const CanvasFreeDrawing = (function () {
 
 		if (firstDerivatives.length == 0) { return; }
 
-		const stationaryPoints = [ positions[0] ];
-		stationaryPoints[0].isSpline = true;
-		this.stationaryPoints(firstDerivatives).forEach( index => {
-			stationaryPoints.push( positions[index] );
-		});
-		stationaryPoints.push( positions[positions.length - 1] );
+		// const stationaryPoints = [ positions[0] ];
+		// stationaryPoints[0].isSpline = true;
+		// this.stationaryPoints(firstDerivatives).forEach( index => {
+		// 	stationaryPoints.push( positions[index] );
+		// });
+		// stationaryPoints.push( positions[positions.length - 1] );
+
+		const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
 
 		// console.log(stationaryPoints);
 
@@ -594,26 +601,38 @@ const CanvasFreeDrawing = (function () {
 			canvasUndos.push( canvasSnapshots.pop() );
 			// canvasUndos = canvasUndos.splice(-Math.abs(this.maxSnapshots));
 
-			canvasSnapshots.forEach(positions => {
-				if (positions == null) {
-					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-				} else if (positions.length) {
-					this.context.beginPath();
-					if (!positions[0].isSpline) {
-						this.draw(positions, positions.length - 1);
-					} else {
-						this.pseudoSpline(positions);
-					}
-				}
-			});
+			this.reconstruct(canvasSnapshots);
+			// canvasSnapshots.forEach(positions => {
+			// 	if (positions == null) {
+			// 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+			// 	} else if (positions.length) {
+			// 		this.context.beginPath();
+			// 		if (!positions[0].isSpline) {
+			// 			this.draw(positions, positions.length - 1);
+			// 		} else {
+			// 			this.pseudoSpline(positions);
+			// 		}
+			// 	}
+			// });
 			this.imageRestored = true;
 		} else {
 			this.restoreCanvasSnapshot(this.snapshotImage);
 		}
+		this.storeSnapshotImage();
 	};
-	CanvasFreeDrawing.prototype.redo = function () {
-		if (canvasUndos.length > 0) {
-			let positions = canvasUndos.pop();
+
+	CanvasFreeDrawing.prototype.reconstruct = function(snapshots) {
+		let offset = 0;
+		for (let i = snapshots.length - 1; i >= 0; i--) {
+			if (snapshots[i] == null) {
+				offset = i;
+				break;
+			}
+		}
+		let positions;
+		for ( let i = offset; i < snapshots.length; i++ ) {
+			positions = snapshots[i];
+			// canvasSnapshots.forEach(positions => {
 			if (positions == null) {
 				this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 			} else if (positions.length) {
@@ -624,8 +643,24 @@ const CanvasFreeDrawing = (function () {
 					this.pseudoSpline(positions);
 				}
 			}
+		}
+		// });
+		// setTimeout(() => {
+		// 	let positions = snapshots.shift();
+		// 	this.handleStroke(positions);
+		// 	if (snapshots.length) {
+		// 		this.reconstruct(snapshots.slice());
+		// 	}
+		// });
+	}
+
+	CanvasFreeDrawing.prototype.redo = function () {
+		if (canvasUndos.length > 0) {
+			let positions = canvasUndos.pop();
+			this.handleStroke(positions);
 			canvasSnapshots.push(positions);
 			// canvasSnapshots = canvasSnapshots.splice(-Math.abs(this.maxSnapshots));
+			this.storeSnapshotImage();
 		}
 	};
 	// Public APIs
@@ -713,7 +748,68 @@ const CanvasFreeDrawing = (function () {
 		return derivatives;
 	}
 
-    CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
+    // CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives, positions) {
+	// 	let stationaryPoints = [];
+    //     const fullLength = firstDerivatives.reduce( (sum, entry) => {
+    //         return sum + entry.length;
+    //     }, 0);
+	// 	console.log(fullLength);
+    //     let initial = 0;
+	// 	let terminal = 0;
+    //     let localLength = 0;
+    //     let dx = firstDerivatives[0].x;
+	// 	let dy = firstDerivatives[0].y;
+	// 	let sign;
+	// 	let point = positions[0];
+	//
+	// 	point.isSpline = true;
+	// 	stationaryPoints.push(point);
+	//
+	// 	let ds = firstDerivatives[0].length;
+	// 	let prevSign = Math.sign(dx * dy);
+	// 	console.log('start');
+	// 	console.log(firstDerivatives[0]);
+    //     for (let i = 1; i < firstDerivatives.length; i++ ) {
+	// 		ds += firstDerivatives[i].length;
+	// 		dx = firstDerivatives[i].x;
+	// 		dy = firstDerivatives[i].y;
+	// 		if ( dy * dx != 0 ) {
+	// 			if ( Math.abs( dy / dx ) < 0.1 ) {
+	// 				sign = Math.sign( dx * dy );
+	// 				if ( sign != prevSign && ds > fullLength*0.3 ) {
+	// 					console.log('flat');
+	// 					console.log(ds);
+	// 					console.log(firstDerivatives[i]);
+	//
+	// 					initial = firstDerivatives[i - 1].position;
+	// 					ds = 0;
+	// 					prevSign = sign;
+	// 				}
+	// 			} else if ( Math.abs( dy / dx ) > 0.1 ) {
+	// 				sign = Math.sign( dx * dy );
+	// 				if ( sign != prevSign && ds > fullLength*0.3 ) {
+	// 					console.log('slope');
+	// 					console.log(ds);
+	// 					console.log(firstDerivatives[i]);
+	//
+	// 					terminal = firstDerivatives[i].position;
+	// 					ds = 0;
+	// 					prevSign = sign;
+	// 					let point = positions[ Math.floor( (initial + terminal) / 2 ) ];
+	// 					// point.x = ( positions[initial].x + positions[terminal].x ) / 2;
+	// 					// point.y = ( positions[initial].y + positions[terminal].y ) / 2;
+	// 					console.log(point);
+	// 					stationaryPoints.push( point );
+	// 				}
+	// 			}
+	// 		}
+    //     }
+	// 	stationaryPoints.push(positions[positions.length - 1]);
+	// 	console.log(stationaryPoints);
+    //     return stationaryPoints;
+	// }
+
+	CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives, positions) {
 		let stationaryPoints = [];
         const fullLength = firstDerivatives.reduce( (sum, entry) => {
             return sum + entry.length;
@@ -722,6 +818,9 @@ const CanvasFreeDrawing = (function () {
         let prev = 0;
         let localLength = 0;
         let dy = 0;
+		let point = positions[0];
+		point.isSpline = true;
+		stationaryPoints.push(point);
         for (let i = 0; i < firstDerivatives.length; i++ ) {
             dy += firstDerivatives[i].y * firstDerivatives[i].length;
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
@@ -731,44 +830,18 @@ const CanvasFreeDrawing = (function () {
                 localLength += firstDerivatives[i].length;
             } else {
                 if ( localLength > 2 && candidate != prev) {
-					let midpoint = Math.floor( (candidate + i)/2 );
-                    stationaryPoints.push(midpoint);
+					let midpoint = Math.floor( (candidate + firstDerivatives[i].position)/2 );
+					let point = positions[ midpoint ];
+					stationaryPoints.push( point );
                     prev = midpoint;
                     dy = 0;
                 }
                 localLength = 0;
             }
         }
+		stationaryPoints.push(positions[positions.length - 1]);
         return stationaryPoints;
-	}
+	};
 
-	// CanvasFreeDrawing.prototype.stationaryPoints = function(firstDerivatives) {
-	// 	let stationaryPoints = [];
-    //     const fullLength = firstDerivatives.reduce( (sum, entry) => {
-    //         return sum + entry.length;
-    //     }, 0);
-    //     let candidate = 0;
-    //     let prev = 0;
-    //     let localLength = 0;
-    //     let dy = 0;
-    //     for (let i = 0; i < firstDerivatives.length; i++ ) {
-    //         dy += firstDerivatives[i].y * firstDerivatives[i].length;
-    //         if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
-	// 			if (localLength == 0 && (Math.abs(dy) > fullLength*0.05)) {
-    //                 candidate = firstDerivatives[i].position;
-	// 			}
-    //             localLength += firstDerivatives[i].length;
-    //         } else {
-    //             if ( localLength > 2 && candidate != prev) {
-	// 				let midpoint = Math.floor( (candidate + i)/2 );
-    //                 stationaryPoints.push(midpoint);
-    //                 prev = midpoint;
-    //                 dy = 0;
-    //             }
-    //             localLength = 0;
-    //         }
-    //     }
-    //     return stationaryPoints;
-	// }
 	return CanvasFreeDrawing;
 }());

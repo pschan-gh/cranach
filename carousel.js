@@ -177,11 +177,8 @@ function updateCarouselSlide(slide, content = null) {
 			}
 		}
 		adjustHeight();
-		if (typeof slide.cfd != 'undefined') {
-			console.log(slide.cfd.snapshotImage);
-			slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
-		}
 	});
+
 }
 
 function showSlide(slide, cranach) {
@@ -283,23 +280,29 @@ function expandCanvas(slide, scale = 1, padding = 0) {
 	slide.cfd.canvas.style.top = -voffset;
 
 	if ( canvasSnapshots.length > 0 ) {
+		console.log(canvasSnapshots);
 		let ctx = slide.cfd.context;
-		canvasSnapshots.forEach(positions => {
-			if (positions == null) {
-				console.log('clearing canvas');
-				ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-			} else if (positions.length) {
-				ctx.beginPath();
-				if (!positions[0].isSpline) {
-					slide.cfd.draw(positions, positions.length - 1);
-				} else {
-					slide.cfd.pseudoSpline(positions);
-				}
-			}
-		});
+		slide.cfd.reconstruct(canvasSnapshots);
+		// canvasSnapshots.forEach(positions => {
+		// 	if (positions == null) {
+		// 		console.log('clearing canvas');
+		// 		ctx.beginPath();
+		// 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		// 	} else if (positions.length) {
+		// 		console.log('redoing paths');
+		// 		ctx.beginPath();
+		// 		if (!positions[0].isSpline) {
+		// 			slide.cfd.draw(positions, positions.length - 1);
+		// 		} else {
+		// 			slide.cfd.pseudoSpline(positions);
+		// 		}
+		// 	}
+		// });
 		if (wasDrawing) {
 			canvasControlsEnableEvent(slide)
 		}
+	} else {
+		slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
 	}
 }
 
@@ -325,8 +328,8 @@ function canvasControlsEnableEvent(slide) {
 	slide.cfd.canvas.classList.remove('hidden');
 	slide.cfd.setDraw();
 	document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
-	document.querySelector('.annotate.enable .brush').classList.add('hidden');
-	document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+	document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+	document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	slide.cfd.canvas.classList.remove('disabled');
 }
 
@@ -338,8 +341,8 @@ function canvasControlsDisableEvent(slide) {
 	}
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
-    document.querySelector('.annotate.enable .brush').classList.remove('hidden');
-    document.querySelector('.annotate.enable .cursor').classList.add('hidden');
+    document.querySelector('.annotate.enable .brush').classList.add('hidden');
+    document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
 	// $('.carousel').attr('data-bs-touch', "true");
 }
 
