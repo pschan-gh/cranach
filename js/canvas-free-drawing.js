@@ -183,7 +183,7 @@ const CanvasFreeDrawing = (function () {
 					let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
 					this.positions[m].x = x;
 					this.positions[m].y = y;
-					this.positions[m].endPoint = true;
+					this.positions[m].smoothFactor = 0;
 				}
 				this.storeSnapshot();
 				this.undo();
@@ -206,7 +206,7 @@ const CanvasFreeDrawing = (function () {
 			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 
 			if (this.isDrawing) {
-				this.handleDrawing(x, y, event.touches[0].force);
+				this.handleDrawing(x, y, {force: event.touches[0].force});
 			} else if (this.positions.length > 0) {
 				this.timer = setTimeout(() => {
 					if( this.positions[0].isSpline ) {
@@ -218,7 +218,7 @@ const CanvasFreeDrawing = (function () {
 						let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
 						this.positions[m].x = x;
 						this.positions[m].y = y;
-						this.positions[m].endPoint = true;
+						this.positions[m].smoothFactor = 0;
 					}
 					this.storeSnapshot();
 					this.undo();
@@ -234,7 +234,7 @@ const CanvasFreeDrawing = (function () {
         event.preventDefault();
         clearTimeout(this.timer);
         if (this.positions.length == 0) {
-            this.handleDrawing(event.offsetX, event.offsetY, 10);
+            this.handleDrawing(event.offsetX, event.offsetY, {force: 10, smoothFactor: 0});
 		}
 		this.handleEndDrawing();
 	};
@@ -247,25 +247,37 @@ const CanvasFreeDrawing = (function () {
 			const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			const x = pageX - this.canvas.offsetLeft;
 			const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
-            this.handleDrawing(x, y, 10);
+            this.handleDrawing(x, y, {force: 10, smoothFactor: 0});
 		}
 		this.handleEndDrawing();
 	};
 
 	CanvasFreeDrawing.prototype.handleEndDrawing = function () {
 		// console.log('handleEndDrawing');
-		this.isDrawing = false;
-		if (this.positions.length) {
-			this.storeSnapshot();
+		if (this.isDrawing || this.positions == null) {
+			if (this.positions == null || this.positions.length) {
+				this.storeSnapshot();
+			}
 		}
-		// setTimeout( function() {
-			this.positions = [];
-		// }.bind(this));
+		this.positions = [];
+		this.isDrawing = false;
 	};
 
-	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, force = this.mouseForce) {
+	CanvasFreeDrawing.prototype.handleDrawing = function (x, y, customParams = null) {
+		let params = {
+			force: this.mouseForce,
+			isErasing: this.isErasing,
+			// smoothFactor: this.pointerType == 'mouse' ? this.mouseSmoothFactor : this.stylusSmoothFactor,
+		};
+		if (customParams != null) {
+			for (param in customParams) {
+				if (customParams[param] != null) {
+					params[param] = customParams[param];
+				}
+			}
+		}
         if (this.isDrawing) {
-			this.storeDrawing(x, y, true, force, this.isErasing);
+			this.storeDrawing(x, y, params);
 			this.draw(this.positions);
 			canvasUndos = [];
 			this.timer = this.curveSmoothingTimer();
@@ -316,10 +328,12 @@ const CanvasFreeDrawing = (function () {
 			this.context.lineJoin = 'butt';
 
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
-				if ( index % smoothFactor == 0 && index >= smoothFactor ) {
+				if ( smoothFactor == 0 || ( index % smoothFactor == 0 && index >= smoothFactor )) {
 					let endX, endY;
-					endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
-					endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+					// endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
+					// endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
+					endX = ( x + positions[index - smoothFactor].x )/2;
+					endY = ( y + positions[index - smoothFactor].y )/2;
 					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
 						endX,
 						endY
@@ -344,6 +358,7 @@ const CanvasFreeDrawing = (function () {
 	};
 
 	CanvasFreeDrawing.prototype.pseudoSpline = function (positions) {
+		console.log(positions);
 		this.context.beginPath();
 		this.context.moveTo(positions[0].x, positions[0].y);
 		for ( let index = 1; index < positions.length; index++ ) {
@@ -444,7 +459,7 @@ const CanvasFreeDrawing = (function () {
 		});
 		stationaryPoints.push( positions[positions.length - 1] );
 
-		// console.log(stationaryPoints);
+		console.log(stationaryPoints);
 
 		let fullLength = firstDerivatives.reduce( (sum, entry) => {
 			return sum + entry.length;
@@ -479,7 +494,7 @@ const CanvasFreeDrawing = (function () {
 			positions.length - 1,
 			Math.ceil(positions.length / steps)
 		);
-		// console.log('smoothFactor: ' + smoothFactor);
+		console.log('smoothFactor: ' + smoothFactor);
 
 		if (stationaryPoints.length > 2 && sdFirst > 0.1) {
 			this.positions = stationaryPoints;
@@ -490,12 +505,16 @@ const CanvasFreeDrawing = (function () {
 				if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
 					position.x = positions[positions.length - 1].x;
 					position.y = positions[positions.length - 1].y;
-					position.endPoint = true;
+					position.smoothFactor = 0;
 				}
 			});
 			this.positions = positions;
+			console.log(this.positions);
 		}
 		this.handleStroke(this.positions);
+		if (this.positions === null || this.positions.length) {
+			this.storeSnapshot();
+		}
 		this.isDrawing = false;
 	}
 
@@ -519,19 +538,25 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.toggleCursor = function () {
 		this.canvas.style.cursor = this.isDrawingModeEnabled ? 'crosshair' : 'auto';
 	};
-	CanvasFreeDrawing.prototype.storeDrawing = function (x, y, moving, force = 0, isErasing = false) {
-		this.positions.push({
+	CanvasFreeDrawing.prototype.storeDrawing = function (x, y, params) { // moving, force = 0, isErasing = false, smoothFactor
+		let position = {
 			x: x,
 			y: y,
-			moving: moving,
+			// moving: moving,
 			lineWidth: this.lineWidth,
 			strokeColor: this.strokeColor,
-			force: force,
-			endPoint: false,
+			force: this.mouseForce,
+			// endPoint: false,
 			smoothFactor: this.pointerType == 'mouse' ? this.mouseSmoothFactor : this.stylusSmoothFactor,
-			isErasing: isErasing,
+			isErasing: this.isErasing,
 			isSpline: false,
-		});
+		};
+		for (const param in params) {
+			if (params[param] != null) {
+				position[param] = params[param];
+			}
+		}
+		this.positions.push(position);
 	};
 
 	CanvasFreeDrawing.prototype.storeSnapshotImage = function () {
@@ -561,14 +586,14 @@ const CanvasFreeDrawing = (function () {
 
 			canvasSnapshots.forEach(positions => {
 				this.context.beginPath();
-				if (positions.length) {
+				if (positions == null) {
+					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+				} else if (positions.length) {
 					if (!positions[0].isSpline) {
 						this.draw(positions, positions.length - 1);
 					} else {
 						this.pseudoSpline(positions);
 					}
-				} else {
-					this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 				}
 			});
 			this.imageRestored = true;
@@ -629,7 +654,7 @@ const CanvasFreeDrawing = (function () {
 
 	CanvasFreeDrawing.prototype.clear = function () {
 		this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.positions = [];
+		this.positions = null;
 		if (this.backgroundColor) {
 			this.setBackground(this.backgroundColor);
 		}
