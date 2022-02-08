@@ -223,16 +223,22 @@ const CanvasFreeDrawing = (function () {
 				this.handleDrawing(x, y, {force: event.touches[0].force});
 			} else if (this.positions.length > 0) {
 				this.timer = setTimeout(() => {
-					if( this.positions[0].isSpline ) {
+					if (typeof this.positions[0].radiusX == 'undefined') {
 						this.positions[this.positions.length - 1].x = x;
 						this.positions[this.positions.length - 1].y = y;
 					} else {
-						let smoothFactor = this.positions[0].smoothFactor;
-						let n = Math.floor( this.positions.length / smoothFactor );
-						let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
-						this.positions[m].x = x;
-						this.positions[m].y = y;
-						this.positions[m].smoothFactor = 0;
+						let dx = this.x > this.positions[0].x ?
+						x - this.x : this.x - x;
+						let dy = this.y > this.positions[0].y ?
+						y - this.y : this.y - y;
+						this.positions[0].radiusX = Math.abs(
+							this.positions[0].radiusX + dx
+						);
+						this.positions[0].radiusY = Math.abs(
+							this.positions[0].radiusY + dy
+						);
+						this.x = x;
+						this.y = y;
 					}
 					this.storeSnapshot();
 					this.undo();
