@@ -511,12 +511,13 @@ const CanvasFreeDrawing = (function () {
 			positions.forEach( ( position, index ) => {
 				position.smoothFactor = smoothFactor;
 				position.isSpline = false;
-				if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
-					position.x = positions[positions.length - 1].x;
-					position.y = positions[positions.length - 1].y;
-					position.smoothFactor = 0;
-				}
+				// if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
+				// 	position.x = positions[positions.length - 1].x;
+				// 	position.y = positions[positions.length - 1].y;
+				// 	position.smoothFactor = 0;
+				// }
 			});
+			positions[positions.length - 1].smoothFactor = 0;
 			this.positions = positions;
 			// console.log(this.positions);
 		}
