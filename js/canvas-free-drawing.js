@@ -180,17 +180,8 @@ const CanvasFreeDrawing = (function () {
 			this.handleDrawing(x, y);
 		} else if (this.positions.length > 0) {
 			this.timer = setTimeout(() => {
-				if( this.positions[0].isSpline ) {
-					this.positions[this.positions.length - 1].x = x;
-					this.positions[this.positions.length - 1].y = y;
-				} else {
-					let smoothFactor = this.positions[0].smoothFactor;
-					let n = Math.floor( this.positions.length / smoothFactor );
-					let m = n * smoothFactor >= this.positions.length ? this.positions.length - 1 : n * smoothFactor;
-					this.positions[m].x = x;
-					this.positions[m].y = y;
-					this.positions[m].smoothFactor = 0;
-				}
+				this.positions[this.positions.length - 1].x = x;
+				this.positions[this.positions.length - 1].y = y;
 				this.storeSnapshot();
 				this.undo();
 				canvasUndos.pop();
@@ -307,6 +298,10 @@ const CanvasFreeDrawing = (function () {
 
 
 	CanvasFreeDrawing.prototype.draw = function (positions, offset = 0) {
+		let endX, endY;
+
+		let cpX = null;
+		let cpY = null;
 		for ( let index = positions.length - 1 - offset; index < positions.length; index++ ) {
 			const position = positions[index];
 			const x = position.x,
@@ -343,18 +338,22 @@ const CanvasFreeDrawing = (function () {
 			// console.log(position);
 			if ( positions.length > 1 && index > 0) { // % 2 == 0 && i > 3
 				if ( smoothFactor == 0 || ( index % smoothFactor == 0 && index >= smoothFactor )) {
-					let endX, endY;
+					if (cpX == null) {
+						cpX = positions[index - smoothFactor].x;
+					}
+					if (cpY == null) {
+						cpY = positions[index - smoothFactor].y;
+					}
 					// endX = position.endPoint ? x : ( x + positions[index - smoothFactor].x )/2;
 					// endY = position.endPoint ? y : ( y + positions[index - smoothFactor].y )/2;
 					endX = ( x + positions[index - smoothFactor].x )/2;
 					endY = ( y + positions[index - smoothFactor].y )/2;
-					this.context.quadraticCurveTo(positions[index - smoothFactor].x, positions[index - smoothFactor].y,
-						endX,
-						endY
-					);
+					this.context.quadraticCurveTo(cpX, cpY, endX, endY);
 					this.context.stroke();
 					this.context.beginPath();
 					this.context.moveTo(endX, endY);
+					cpX = x;
+					cpY = y;
 				}
 			} else {
 				color[3] = 1;
@@ -504,7 +503,6 @@ const CanvasFreeDrawing = (function () {
 		// console.log(sdFirst);
 
 		const steps = Math.ceil( 25*sdFirst );
-		// console.log('steps: ' + steps);
 
 		const smoothFactor = Math.min(
 			positions.length - 1,
@@ -518,15 +516,9 @@ const CanvasFreeDrawing = (function () {
 			positions.forEach( ( position, index ) => {
 				position.smoothFactor = smoothFactor;
 				position.isSpline = false;
-				// if ( index % smoothFactor == 0 && index + smoothFactor > positions.length - 1) {
-				// 	position.x = positions[positions.length - 1].x;
-				// 	position.y = positions[positions.length - 1].y;
-				// 	position.smoothFactor = 0;
-				// }
 			});
 			positions[positions.length - 1].smoothFactor = 0;
 			this.positions = positions;
-			// console.log(this.positions);
 		}
 		this.handleStroke(this.positions);
 		if (this.positions === null || this.positions.length) {

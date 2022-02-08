@@ -320,6 +320,7 @@ function updateCanvas(slide) {
 			slide.querySelector('canvas').classList.add('hidden');
 		}
 	}
+	document.querySelector('#colorDropdown').style.color = '';
 	canvasControlsDisableEvent(slide);
 }
 
@@ -331,6 +332,7 @@ function canvasControlsEnableEvent(slide) {
 	document.querySelector('.annotate.enable .brush').classList.remove('hidden');
 	document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	slide.cfd.canvas.classList.remove('disabled');
+	document.querySelector('#colorDropdown').style.color = `rgb(${slide.cfd.strokeColor})`;
 }
 
 function canvasControlsDisableEvent(slide) {
@@ -343,7 +345,7 @@ function canvasControlsDisableEvent(slide) {
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
     document.querySelector('.annotate.enable .brush').classList.add('hidden');
     document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
-	// $('.carousel').attr('data-bs-touch', "true");
+	document.querySelector('#colorDropdown').style.color = '';
 }
 
 function clearAllCanvas() {
