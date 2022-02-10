@@ -757,9 +757,10 @@ const CanvasFreeDrawing = (function () {
 	CanvasFreeDrawing.prototype.differentiate = function(positions, threshold = 2, normalized = true, allowZero = false) {
 		const derivatives = [];
 		let dx, dy, length;
+        let prevPosition = positions[0];
 		for (let i = 1; i < positions.length - 1; i++) {
-			dx = positions[i].x - positions[ i - 1].x;
-			dy = positions[i].y - positions[ i - 1 ].y;
+			dx = positions[i].x - prevPosition.x;
+			dy = positions[i].y - prevPosition.y;
 			length =
             typeof positions[i].length !== 'undefined' ?
             positions[i].length : Math.sqrt( dx**2 + dy**2 );
@@ -772,6 +773,7 @@ const CanvasFreeDrawing = (function () {
 					length: length,
                     position: i,
 				});
+                prevPosition = positions[ i ];
 			}
 		}
 		return derivatives;
@@ -884,16 +886,6 @@ const CanvasFreeDrawing = (function () {
 
 		this.restoreCanvasSnapshot(this.snapshotImage);
 
-		// if ( canvasSnapshots.length > 0 ) {
-		// 	console.log(canvasSnapshots);
-		// 	let ctx = slide.cfd.context;
-		// 	slide.cfd.reconstruct(canvasSnapshots);
-		// 	if (wasDrawing) {
-		// 		canvasControlsEnableEvent(slide)
-		// 	}
-		// } else {
-		// 	slide.cfd.restoreCanvasSnapshot(slide.cfd.snapshotImage);
-		// }
 	}
 
 	return CanvasFreeDrawing;
