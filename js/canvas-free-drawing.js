@@ -181,6 +181,7 @@ const CanvasFreeDrawing = (function () {
 			this.x = x;
 			this.y = y;
 		} else if (this.positions.length > 0) {
+            // console.log('correcting');
 			this.timer = setTimeout(() => {
 				if (typeof this.positions[0].radiusX == 'undefined') {
 					this.positions[this.positions.length - 1].x = x;
@@ -525,14 +526,26 @@ const CanvasFreeDrawing = (function () {
 		}, 0);
 		// console.log(fullLength);
 
-		const meanFirst = {
-			x: firstDerivatives.reduce( (sum, entry) => {
-				return sum + entry.x * entry.length;
-			}, 0) / fullLength,
-			y: firstDerivatives.reduce( (sum, entry) => {
-				return sum + entry.y * entry.length;
-			}, 0) / fullLength,
+        const displacement = {
+            x: positions[positions.length - 1].x - positions[0].x,
+            y: positions[positions.length - 1].y - positions[0].y,
+        }
+        const displacementLength = Math.sqrt( displacement.x**2 + displacement.y**2 );
+        
+        const meanFirst = {
+			x: displacement.x / displacementLength,
+			y: displacement.y / displacementLength,
 		}
+        // console.log(meanFirst);
+        
+		// const meanFirst = {
+		// 	x: firstDerivatives.reduce( (sum, entry) => {
+		// 		return sum + entry.x * entry.length;
+		// 	}, 0) / fullLength,
+		// 	y: firstDerivatives.reduce( (sum, entry) => {
+		// 		return sum + entry.y * entry.length;
+		// 	}, 0) / fullLength,
+		// }
 
 
 		let varFirst = 0;
@@ -572,7 +585,8 @@ const CanvasFreeDrawing = (function () {
 			positions[positions.length - 1].smoothFactor = 0;
 			this.positions = positions;
 		}
-		this.handleStroke(this.positions);
+		
+        this.handleStroke(this.positions);
 		if (this.positions === null || this.positions.length) {
 			this.storeSnapshot();
 		}
@@ -740,16 +754,16 @@ const CanvasFreeDrawing = (function () {
 		};
 	};
 
-	CanvasFreeDrawing.prototype.differentiate = function(positions, increment = 1, normalized = true, allowZero = false) {
+	CanvasFreeDrawing.prototype.differentiate = function(positions, threshold = 2, normalized = true, allowZero = false) {
 		const derivatives = [];
 		let dx, dy, length;
-		for (let i = increment; i < positions.length - 1; i++) {
-			dx = positions[i].x - positions[ i - increment ].x;
-			dy = positions[i].y - positions[ i - increment ].y;
+		for (let i = 1; i < positions.length - 1; i++) {
+			dx = positions[i].x - positions[ i - 1].x;
+			dy = positions[i].y - positions[ i - 1 ].y;
 			length =
             typeof positions[i].length !== 'undefined' ?
             positions[i].length : Math.sqrt( dx**2 + dy**2 );
-			if (length > 0 || allowZero) {
+			if (length > threshold || allowZero) {
 				derivatives.push({
 					positionX : positions[i].x,
 					positionY : positions[i].y,
