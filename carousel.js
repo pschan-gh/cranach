@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		let color = [100, 100, 100];
+		let color = [115, 115, 115];
 		slide.cfd.setDrawingColor(color);
 		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));

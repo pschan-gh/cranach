@@ -570,11 +570,11 @@ const CanvasFreeDrawing = (function () {
 		const ellipse = this.detectLoop(firstDerivatives, positions);
 		// console.log(ellipse);
 		if (ellipse !== null) {
-			let point = positions[0];
+			let point = positions[ Math.floor( (positions.length - 1) / 2 ) ];
 			for (param in ellipse) {
 				point[param] = ellipse[param];
 			}
-			positions = [ point ];
+            this.positions = [ point ];
 		} else if (stationaryPoints.length > 2 && sdFirst > 0.1) {
 			this.positions = stationaryPoints;
 		} else {
@@ -862,7 +862,7 @@ const CanvasFreeDrawing = (function () {
 			y: (antipodal.y + initialPoint.y) / 2,
 			radiusX: radius,
 			radiusY: radius,
-		}
+        }
 	};
 
 
