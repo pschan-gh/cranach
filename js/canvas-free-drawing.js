@@ -146,6 +146,8 @@ const CanvasFreeDrawing = (function () {
 		if (event.button !== 0)
 		return;
 
+		this.undos = [];
+
 		this.isDrawing = true;
 		this.context.beginPath();
 		this.context.moveTo(event.offsetX, event.offsetY);
@@ -159,6 +161,9 @@ const CanvasFreeDrawing = (function () {
 		} else if (event.targetTouches.length > 0 ) {
 			event.preventDefault();
 			this.pointerType = 'stylus';
+
+			this.undos = [];
+
 			this.isDrawing = true;
 			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
 			let x = pageX - this.canvas.offsetLeft;
@@ -187,22 +192,26 @@ const CanvasFreeDrawing = (function () {
 					this.positions[this.positions.length - 1].x = x;
 					this.positions[this.positions.length - 1].y = y;
 				} else {
-					let dx = this.x > this.positions[0].x ?
-					x - this.x : this.x - x;
-					let dy = this.y > this.positions[0].y ?
-					y - this.y : this.y - y;
-					this.positions[0].radiusX = Math.abs(
-						this.positions[0].radiusX + dx
-					);
-					this.positions[0].radiusY = Math.abs(
-						this.positions[0].radiusY + dy
-					);
+					// let dx = this.x > this.positions[0].x ?
+					// x - this.x : this.x - x;
+					// let dy = this.y > this.positions[0].y ?
+					// y - this.y : this.y - y;
+					let dx = x - this.x;
+					let dy = y - this.y
+					this.positions[0].x += dx;
+					this.positions[0].y += dy;
+					// this.positions[0].radiusX = Math.abs(
+					// 	this.positions[0].radiusX + dx
+					// );
+					// this.positions[0].radiusY = Math.abs(
+					// 	this.positions[0].radiusY + dy
+					// );
 					this.x = x;
 					this.y = y;
 				}
 				this.storeSnapshot();
 				this.undo();
-				this.undos.pop();
+				// this.undos.pop();
 				this.handleStroke(this.positions);
 			}, 250);
 		}
@@ -243,7 +252,7 @@ const CanvasFreeDrawing = (function () {
 					}
 					this.storeSnapshot();
 					this.undo();
-					this.undos.pop();
+					// this.undos.pop();
 					this.handleStroke(this.positions);
 				}, 250);
 			}
@@ -290,7 +299,7 @@ const CanvasFreeDrawing = (function () {
         if (this.isDrawing) {
 			this.storeDrawing(x, y, params);
 			this.draw(this.positions);
-			this.undos = [];
+			// this.undos = [];
 			this.timer = this.curveSmoothingTimer();
 		}
 	};
@@ -499,6 +508,9 @@ const CanvasFreeDrawing = (function () {
 			if (this.positions.length > 1) {
 				// console.log(this.positions);
 				const positions = this.positions.slice();
+				this.storeSnapshot();
+				this.undo();
+				this.undos.pop();
 				setTimeout(function() {
 					this.curveSmooth(this.positions);
 				}.bind(this));
@@ -509,88 +521,76 @@ const CanvasFreeDrawing = (function () {
 
 
 	CanvasFreeDrawing.prototype.curveSmooth = function(positions) {
-		this.storeSnapshot();
-		this.undo();
-		this.undos.pop();
 
-		const firstDerivatives = this.differentiate(positions);
+		setTimeout(() => {
+			const firstDerivatives = this.differentiate(positions);
 
-		if (firstDerivatives.length == 0) { return; }
+			if (firstDerivatives.length == 0) { return; }
 
-		const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
+			const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
 
-		// console.log(stationaryPoints);
+			// console.log(stationaryPoints);
 
-		let fullLength = firstDerivatives.reduce( (sum, entry) => {
-			return sum + entry.length;
-		}, 0);
-		// console.log(fullLength);
+			let fullLength = firstDerivatives.reduce( (sum, entry) => {
+				return sum + entry.length;
+			}, 0);
+			// console.log(fullLength);
 
-        const displacement = {
-            x: positions[positions.length - 1].x - positions[0].x,
-            y: positions[positions.length - 1].y - positions[0].y,
-        }
-        const displacementLength = Math.sqrt( displacement.x**2 + displacement.y**2 );
-
-        const meanFirst = {
-			x: displacement.x / displacementLength,
-			y: displacement.y / displacementLength,
-		}
-        // console.log(meanFirst);
-
-		// const meanFirst = {
-		// 	x: firstDerivatives.reduce( (sum, entry) => {
-		// 		return sum + entry.x * entry.length;
-		// 	}, 0) / fullLength,
-		// 	y: firstDerivatives.reduce( (sum, entry) => {
-		// 		return sum + entry.y * entry.length;
-		// 	}, 0) / fullLength,
-		// }
-
-
-		let varFirst = 0;
-
-		firstDerivatives.forEach( entry => {
-			varFirst +=  (
-				( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2
-			) * (entry.length);
-		});
-
-		const sdFirst = Math.sqrt(varFirst / fullLength);
-		// console.log(sdFirst);
-
-		const steps = Math.ceil( 25*sdFirst );
-
-		const smoothFactor = Math.min(
-			positions.length - 1,
-			Math.ceil(positions.length / steps)
-		);
-		// console.log('smoothFactor: ' + smoothFactor);
-
-		const ellipse = this.detectLoop(firstDerivatives, positions);
-		// console.log(ellipse);
-		if (ellipse !== null) {
-			let point = positions[ Math.floor( (positions.length - 1) / 2 ) ];
-			for (param in ellipse) {
-				point[param] = ellipse[param];
+			const displacement = {
+				x: positions[positions.length - 1].x - positions[0].x,
+				y: positions[positions.length - 1].y - positions[0].y,
 			}
-            this.positions = [ point ];
-		} else if (stationaryPoints.length > 2 && sdFirst > 0.1) {
-			this.positions = stationaryPoints;
-		} else {
-			positions.forEach( ( position, index ) => {
-				position.smoothFactor = smoothFactor;
-				position.isSpline = false;
-			});
-			positions[positions.length - 1].smoothFactor = 0;
-			this.positions = positions;
-		}
+			const displacementLength = Math.sqrt( displacement.x**2 + displacement.y**2 );
 
-        this.handleStroke(this.positions);
-		if (this.positions === null || this.positions.length) {
-			this.storeSnapshot();
-		}
-		this.isDrawing = false;
+			const meanFirst = {
+				x: displacement.x / displacementLength,
+				y: displacement.y / displacementLength,
+			}
+
+			let varFirst = 0;
+
+			firstDerivatives.forEach( entry => {
+				varFirst +=  (
+					( 1 - ( entry.x * meanFirst.x ) - ( entry.y * meanFirst.y ) )**2
+				) * (entry.length);
+			});
+
+			const sdFirst = Math.sqrt(varFirst / fullLength);
+			// console.log(sdFirst);
+
+			const steps = Math.ceil( 25*sdFirst );
+
+			const smoothFactor = Math.min(
+				positions.length - 1,
+				Math.ceil(positions.length / steps)
+			);
+			// console.log('smoothFactor: ' + smoothFactor);
+
+			const ellipse = this.getEllipse(firstDerivatives, positions);
+			// console.log(ellipse);
+			if (ellipse !== null) {
+				let point = positions[ Math.floor( (positions.length - 1) / 2 ) ];
+				for (param in ellipse) {
+					point[param] = ellipse[param];
+				}
+				this.positions = [ point ];
+			} else if (stationaryPoints.length > 2 && sdFirst > 0.1) {
+				this.positions = stationaryPoints;
+			} else {
+				positions.forEach( ( position, index ) => {
+					position.smoothFactor = smoothFactor;
+					position.isSpline = false;
+				});
+				positions[positions.length - 1].smoothFactor = 0;
+				this.positions = positions;
+			}
+
+			this.handleStroke(this.positions);
+			if (this.positions === null || this.positions.length) {
+				this.storeSnapshot();
+			}
+			this.isDrawing = false;
+		});
 	}
 
 	CanvasFreeDrawing.prototype.toValidColor = function (color) {
@@ -813,7 +813,7 @@ const CanvasFreeDrawing = (function () {
         return stationaryPoints;
 	};
 
-	CanvasFreeDrawing.prototype.detectLoop = function(firstDerivatives, positions) {
+	CanvasFreeDrawing.prototype.getEllipse = function(firstDerivatives, positions) {
 		const initialPoint = positions[0];
 		const endPoint = positions[positions.length - 1];
 
