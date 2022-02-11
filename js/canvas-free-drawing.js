@@ -338,7 +338,7 @@ const CanvasFreeDrawing = (function () {
 					position.y,
 					position.radiusX,
 					position.radiusY,
-					0,
+					position.angle,
 					0,
 					2 * Math.PI
 				);
@@ -843,55 +843,45 @@ const CanvasFreeDrawing = (function () {
 			return null;
 		}
 
-		// const fullLength = firstDerivatives.reduce( (sum, entry) => {
-		// 	return sum + entry.length;
-		// }, 0);
-		//
-		// const antipodal = positions[ this.getPosition( firstDerivatives, fullLength / 2 ) ];
-		// const centre = {
-		// 	x: ( antipodal.x + positions[0].x ) / 2,
-		// 	y: ( antipodal.y + positions[0].y ) / 2,
-		// };
-		//
-		// const quarterPoint = positions[  this.getPosition( firstDerivatives, fullLength / 4 ) ];
-		//
-		// const radiusX = Math.sqrt( (antipodal.x - positions[0].x)**2 + (antipodal.y - positions[0].y)**2 ) / 2;
-		// const radiusY = Math.sqrt( (quarterPoint.x - centre.x)**2 + (quarterPoint.y - centre.y)**2 );
-
 		const xValues = positions.map( position => position.x );
 		const yValues = positions.map( position => position.y );
 
-		const radiusX = ( Math.max( ...xValues ) - Math.min( ...xValues ) ) / 2;
-		const radiusY = ( Math.max( ...yValues ) - Math.min( ...yValues ) ) / 2;
 		const centre = {
 			x: ( Math.max( ...xValues ) + Math.min( ...xValues ) ) / 2,
 			y: ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2,
 		};
 
+		let radiusXSquared = (positions[0].x - centre.x)**2 + (positions[0].y - centre.y)**2;
+		let radiusYSquared = radiusXSquared;
+		let vertex = { x: 1, y: 0 };
 
-		// const mainAxis = firstDerivatives.reduce( ( sum, vector )=> {
-		// 	if (vector.x * vector.y >= 0)   {
-		// 		return {
-		// 			x : sum.x + Math.abs(vector.x) * vector.length,
-		// 			y : sum.y + Math.abs(vector.y) * vector.length
-		// 		}
-		// 	}else {
-		// 		return sum;
-		// 	}
-		// }, { x : 0, y: 0 });
-		//
-		// console.log( Math.atan2( mainAxis.y, mainAxis.x ) * 180 / Math.PI );
+		for (let i = 0; i < positions.length; i++) {
+			if ( positions[i].x > centre.x ) {
+				let dSquared = (positions[i].x - centre.x)**2 + (positions[i].y - centre.y)**2;
+				if (  dSquared > radiusXSquared ) {
+					radiusXSquared = dSquared;
+					vertex = { x: positions[i].x - centre.x, y: positions[i].y - centre.y };
+				}
+				radiusYSquared = Math.min( radiusYSquared, dSquared );
+			}
+		}
+
+		const radiusX = Math.sqrt(radiusXSquared);
+		const radiusYActual = Math.sqrt(radiusYSquared);
+		const radiusYSnap = radiusX / radiusYActual < 1.5 ? radiusX : radiusYActual;
+
+		const angle = Math.round( Math.atan2( vertex.y, vertex.x ) / (Math.PI / 4) ) * (Math.PI / 4);
 
 		return {
 			x: centre.x,
 			y: centre.y,
 			radiusX: radiusX,
-			radiusY: radiusY,
+			radiusY: radiusYSnap,
+			angle: angle
 			// angle: Math.atan2(
-			// 	antipodal.y - positions[0].y,
-			// 	antipodal.x - positions[0].x
+			// 	vertex.y,
+			// 	vertex.x
 			//  ),
-			angle: 0,
         }
 	};
 
