@@ -211,7 +211,7 @@ const CanvasFreeDrawing = (function () {
 				}
 				this.storeSnapshot();
 				this.undo();
-				// this.undos.pop();
+				this.undos.pop();
 				this.handleStroke(this.positions);
 			}, 250);
 		}
@@ -237,22 +237,16 @@ const CanvasFreeDrawing = (function () {
 						this.positions[this.positions.length - 1].x = x;
 						this.positions[this.positions.length - 1].y = y;
 					} else {
-						let dx = this.x > this.positions[0].x ?
-						x - this.x : this.x - x;
-						let dy = this.y > this.positions[0].y ?
-						y - this.y : this.y - y;
-						this.positions[0].radiusX = Math.abs(
-							this.positions[0].radiusX + dx
-						);
-						this.positions[0].radiusY = Math.abs(
-							this.positions[0].radiusY + dy
-						);
+						let dx = x - this.x;
+						let dy = y - this.y
+						this.positions[0].x += dx;
+						this.positions[0].y += dy;
 						this.x = x;
 						this.y = y;
 					}
 					this.storeSnapshot();
 					this.undo();
-					// this.undos.pop();
+					this.undos.pop();
 					this.handleStroke(this.positions);
 				}, 250);
 			}
@@ -507,10 +501,9 @@ const CanvasFreeDrawing = (function () {
 		return setTimeout(function() {
 			if (this.positions.length > 1) {
 				// console.log(this.positions);
-				const positions = this.positions.slice();
+				const positions = this.positions;
 				this.storeSnapshot();
 				this.undo();
-				this.undos.pop();
 				setTimeout(function() {
 					this.curveSmooth(this.positions);
 				}.bind(this));
@@ -661,10 +654,6 @@ const CanvasFreeDrawing = (function () {
 			this.reconstruct(this.snapshots);
 			this.imageRestored = true;
 		}
-		// else {
-		// 	this.restoreCanvasSnapshot(this.snapshotImage);
-		// }
-		// this.storeSnapshotImage();
 	};
 
 	CanvasFreeDrawing.prototype.reconstruct = function(snapshots) {
@@ -788,7 +777,7 @@ const CanvasFreeDrawing = (function () {
         let prev = 0;
         let localLength = 0;
         let dy = 0;
-		let point = positions[0];
+		let point = { ...positions[0] };
 		point.isSpline = true;
 		stationaryPoints.push(point);
         for (let i = 0; i < firstDerivatives.length; i++ ) {
@@ -811,6 +800,18 @@ const CanvasFreeDrawing = (function () {
         }
 		stationaryPoints.push(positions[positions.length - 1]);
         return stationaryPoints;
+	};
+
+	CanvasFreeDrawing.prototype.getPosition = function(firstDerivatives, arclength) {
+		let i;
+		let length = 0;
+		for( i = 0; i < firstDerivatives.length - 1; i++ ) {
+			length += firstDerivatives[i].length;
+			if (length > arclength) {
+				return firstDerivatives[i > 0 ? i - 1 : 0 ].position;
+			}
+		}
+		return null;
 	};
 
 	CanvasFreeDrawing.prototype.getEllipse = function(firstDerivatives, positions) {
@@ -842,19 +843,55 @@ const CanvasFreeDrawing = (function () {
 			return null;
 		}
 
+		// const fullLength = firstDerivatives.reduce( (sum, entry) => {
+		// 	return sum + entry.length;
+		// }, 0);
+		//
+		// const antipodal = positions[ this.getPosition( firstDerivatives, fullLength / 2 ) ];
+		// const centre = {
+		// 	x: ( antipodal.x + positions[0].x ) / 2,
+		// 	y: ( antipodal.y + positions[0].y ) / 2,
+		// };
+		//
+		// const quarterPoint = positions[  this.getPosition( firstDerivatives, fullLength / 4 ) ];
+		//
+		// const radiusX = Math.sqrt( (antipodal.x - positions[0].x)**2 + (antipodal.y - positions[0].y)**2 ) / 2;
+		// const radiusY = Math.sqrt( (quarterPoint.x - centre.x)**2 + (quarterPoint.y - centre.y)**2 );
+
 		const xValues = positions.map( position => position.x );
 		const yValues = positions.map( position => position.y );
 
 		const radiusX = ( Math.max( ...xValues ) - Math.min( ...xValues ) ) / 2;
 		const radiusY = ( Math.max( ...yValues ) - Math.min( ...yValues ) ) / 2;
-		const centreX = ( Math.max( ...xValues ) + Math.min( ...xValues ) ) / 2;
-		const centreY = ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2;
+		const centre = {
+			x: ( Math.max( ...xValues ) + Math.min( ...xValues ) ) / 2,
+			y: ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2,
+		};
+
+
+		// const mainAxis = firstDerivatives.reduce( ( sum, vector )=> {
+		// 	if (vector.x * vector.y >= 0)   {
+		// 		return {
+		// 			x : sum.x + Math.abs(vector.x) * vector.length,
+		// 			y : sum.y + Math.abs(vector.y) * vector.length
+		// 		}
+		// 	}else {
+		// 		return sum;
+		// 	}
+		// }, { x : 0, y: 0 });
+		//
+		// console.log( Math.atan2( mainAxis.y, mainAxis.x ) * 180 / Math.PI );
 
 		return {
-			x: centreX,
-			y: centreY,
+			x: centre.x,
+			y: centre.y,
 			radiusX: radiusX,
 			radiusY: radiusY,
+			// angle: Math.atan2(
+			// 	antipodal.y - positions[0].y,
+			// 	antipodal.x - positions[0].x
+			//  ),
+			angle: 0,
         }
 	};
 
