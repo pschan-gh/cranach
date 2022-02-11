@@ -531,13 +531,13 @@ const CanvasFreeDrawing = (function () {
             y: positions[positions.length - 1].y - positions[0].y,
         }
         const displacementLength = Math.sqrt( displacement.x**2 + displacement.y**2 );
-        
+
         const meanFirst = {
 			x: displacement.x / displacementLength,
 			y: displacement.y / displacementLength,
 		}
         // console.log(meanFirst);
-        
+
 		// const meanFirst = {
 		// 	x: firstDerivatives.reduce( (sum, entry) => {
 		// 		return sum + entry.x * entry.length;
@@ -585,7 +585,7 @@ const CanvasFreeDrawing = (function () {
 			positions[positions.length - 1].smoothFactor = 0;
 			this.positions = positions;
 		}
-		
+
         this.handleStroke(this.positions);
 		if (this.positions === null || this.positions.length) {
 			this.storeSnapshot();
@@ -842,26 +842,19 @@ const CanvasFreeDrawing = (function () {
 			return null;
 		}
 
-		let dSquared;
-		let maxdSquared = 0;
-		let maxdSquaredIndex = 0;
+		const xValues = positions.map( position => position.x );
+		const yValues = positions.map( position => position.y );
 
-		for ( let i = 0; i < positions.length; i++ ) {
-			dSquared = (positions[i].x - initialPoint.x)**2 + (positions[i].y - initialPoint.y)**2
-			if (dSquared > maxdSquared) {
-				maxdSquared = dSquared;
-				maxdSquaredIndex = i;
-			}
-		}
-		const antipodal = positions[maxdSquaredIndex];
-		const radius = Math.floor( Math.sqrt( maxdSquared ) / 2 );
-		// console.log(initialPoint);
-		// console.log(antipodal);
+		const radiusX = ( Math.max( ...xValues ) - Math.min( ...xValues ) ) / 2;
+		const radiusY = ( Math.max( ...yValues ) - Math.min( ...yValues ) ) / 2;
+		const centreX = ( Math.max( ...xValues ) + Math.min( ...xValues ) ) / 2;
+		const centreY = ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2;
+
 		return {
-			x: (antipodal.x + initialPoint.x) / 2,
-			y: (antipodal.y + initialPoint.y) / 2,
-			radiusX: radius,
-			radiusY: radius,
+			x: centreX,
+			y: centreY,
+			radiusX: radiusX,
+			radiusY: radiusY,
         }
 	};
 
