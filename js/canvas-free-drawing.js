@@ -26,7 +26,10 @@
 // let canvasSnapshots = [];
 // let canvasUndos = [];
 
+
+
 const CanvasFreeDrawing = (function () {
+        
 	function CanvasFreeDrawing(params) {
 		var elementId =
 		params.elementId,
@@ -522,8 +525,6 @@ const CanvasFreeDrawing = (function () {
 
 			const stationaryPoints = this.stationaryPoints(firstDerivatives, positions);
 
-			// console.log(stationaryPoints);
-
 			let fullLength = firstDerivatives.reduce( (sum, entry) => {
 				return sum + entry.length;
 			}, 0);
@@ -572,9 +573,9 @@ const CanvasFreeDrawing = (function () {
 			} else {
 				positions.forEach( ( position, index ) => {
 					position.smoothFactor = smoothFactor;
-					position.isSpline = false;
+					// position.isSpline = false;
 				});
-				positions[positions.length - 1].smoothFactor = 0;
+                positions[positions.length - 1].smoothFactor = 0;
 				this.positions = positions;
 			}
 
@@ -760,7 +761,7 @@ const CanvasFreeDrawing = (function () {
 					x: normalized ? ( length > 0 ? dx/length : 0 ) : dx,
 					y: normalized ? ( length > 0 ? dy/length : 0 ) : dy,
 					length: length,
-                    position: i,
+                    positionIndex: i,
 				});
                 prevPosition = positions[ i ];
 			}
@@ -778,27 +779,33 @@ const CanvasFreeDrawing = (function () {
         let localLength = 0;
         let dy = 0;
 		let point = { ...positions[0] };
-		point.isSpline = true;
+        point.isSpline = true;
 		stationaryPoints.push(point);
         for (let i = 0; i < firstDerivatives.length; i++ ) {
+            if (firstDerivatives[i].x < 0) {
+                return [ { ...positions[0] } ];
+                break;
+            }
             dy += firstDerivatives[i].y * firstDerivatives[i].length;
             if ( firstDerivatives[i].y == 0 && firstDerivatives[i].x != 0 ) {
 				if (localLength == 0 && (Math.abs(dy) > fullLength*0.05)) {
-                    candidate = firstDerivatives[i].position;
+                    candidate = firstDerivatives[i].positionIndex;
 				}
                 localLength += firstDerivatives[i].length;
             } else {
                 if ( localLength > 2 && candidate != prev) {
-					let midpoint = Math.floor( (candidate + firstDerivatives[i].position)/2 );
-					let point = positions[ midpoint ];
-					stationaryPoints.push( point );
+					let midpoint = Math.floor( (candidate + firstDerivatives[i].positionIndex)/2 );
+                    let point = positions[ midpoint ];
+                    stationaryPoints.push( point );
                     prev = midpoint;
                     dy = 0;
                 }
                 localLength = 0;
             }
         }
-		stationaryPoints.push(positions[positions.length - 1]);
+        
+        stationaryPoints.push(positions[positions.length - 1]);
+        
         return stationaryPoints;
 	};
 
@@ -808,7 +815,7 @@ const CanvasFreeDrawing = (function () {
 		for( i = 0; i < firstDerivatives.length - 1; i++ ) {
 			length += firstDerivatives[i].length;
 			if (length > arclength) {
-				return firstDerivatives[i > 0 ? i - 1 : 0 ].position;
+				return firstDerivatives[i > 0 ? i - 1 : 0 ].positionIndex;
 			}
 		}
 		return null;
@@ -818,31 +825,37 @@ const CanvasFreeDrawing = (function () {
 		const initialPoint = positions[0];
 		const endPoint = positions[positions.length - 1];
 
-		let left = null, right = null, up = null, down = null;
+		// let left = null, right = null, up = null, down = null;
+        // 
+		// for ( let i = 0; i < firstDerivatives.length; i++ ) {
+		// 	if (left == null && firstDerivatives[i].x < 0) {
+		// 		left = true;
+		// 	}
+		// 	if (right == null && firstDerivatives[i].x > 0) {
+		// 		right = true;
+		// 	}
+		// 	if (up == null && firstDerivatives[i].y < 0) {
+		// 		up = true;
+		// 	}
+		// 	if (down == null && firstDerivatives[i].y > 0) {
+		// 		down = true;
+		// 	}
+		// }
+        // 
+		// if ( !( left && right && up && down ) ) {
+		// 	return null;
+		// }
 
-		for ( let i = 0; i < firstDerivatives.length; i++ ) {
-			if (left == null && firstDerivatives[i].x < 0) {
-				left = true;
-			}
-			if (right == null && firstDerivatives[i].x > 0) {
-				right = true;
-			}
-			if (up == null && firstDerivatives[i].y < 0) {
-				up = true;
-			}
-			if (down == null && firstDerivatives[i].y > 0) {
-				down = true;
-			}
-		}
-
-		if ( !( left && right && up && down ) ) {
-			return null;
-		}
-
-		if ( (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
-			return null;
-		}
-
+		// if ( (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
+		// 	return null;
+		// }
+        
+        // const inflectionPoints = this.getInflectionPoints( firstDerivatives, positions );
+        // console.log(inflectionPoints);
+        // if (inflectionPoints.length > 0) {
+        //     return null;
+        // }
+        
 		const xValues = positions.map( position => position.x );
 		const yValues = positions.map( position => position.y );
 
@@ -850,6 +863,14 @@ const CanvasFreeDrawing = (function () {
 			x: ( Math.max( ...xValues ) + Math.min( ...xValues ) ) / 2,
 			y: ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2,
 		};
+
+        const testVector = this.displacement( centre, positions[ Math.round( positions.length / 8 )] );
+        const vectorStart = this.displacement(centre, initialPoint);
+        const vectorEnd = this.displacement(centre, endPoint);
+
+        if ( this.orientation( vectorStart, vectorEnd ) != this.orientation( vectorStart, testVector ) && (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
+            return null;
+        }
 
 		let radiusXSquared = (positions[0].x - centre.x)**2 + (positions[0].y - centre.y)**2;
 		let radiusYSquared = radiusXSquared;
@@ -907,6 +928,47 @@ const CanvasFreeDrawing = (function () {
 		this.restoreCanvasSnapshot(this.snapshotImage);
 
 	}
+    
+    CanvasFreeDrawing.prototype.displacement = function(vectorA, vectorB) {
+        return {
+            x: vectorB.x - vectorA.x,
+            y: vectorB.y - vectorA.y,
+        }
+    }
 
+    CanvasFreeDrawing.prototype.vectorLength = function(vector) {
+        return Math.sqrt( (vector.x)**2 + (vector.y)**2 );    
+    }
+
+    CanvasFreeDrawing.prototype.orientation = function(vectorA, vectorB) {
+        const zComponent = vectorA.x * vectorB.y - vectorA.y * vectorB.x;
+        if ( this.vectorLength( zComponent ) < 0.1 ) {
+            return 0;
+        } else {
+            return Math.sign( zComponent );
+        }
+    }
+
+    CanvasFreeDrawing.prototype.getInflectionPoints = function(vectors, positions) {
+        let inflectionPoints = [];
+        let prevOrientation = 0;
+        let orientation;
+        
+        for ( let i = 10; i < positions.length; i++ ) {
+            let vectorA = this.displacement(positions[i], positions[i - 5]);
+            let vectorB = this.displacement(positions[i - 5], positions[i - 10]);
+            console.log(vectorA);
+            console.log(vectorB);
+            orientation = this.orientation( vectorA, vectorB );
+            if (  orientation != prevOrientation ) {
+                console.log(orientation);
+                // inflectionPoints.push( positions[ vectors[i].positionIndex ] );
+                inflectionPoints.push( positions[ i ] );
+                prevOrientation = orientation;
+            }
+        }
+        return inflectionPoints;
+    }
+    
 	return CanvasFreeDrawing;
 }());
