@@ -29,7 +29,7 @@
 
 
 const CanvasFreeDrawing = (function () {
-        
+
 	function CanvasFreeDrawing(params) {
 		var elementId =
 		params.elementId,
@@ -552,7 +552,14 @@ const CanvasFreeDrawing = (function () {
 			const sdFirst = Math.sqrt(varFirst / fullLength);
 			// console.log(sdFirst);
 
+			// const inflectionPoints = this.getInflectionPoints( firstDerivatives.slice(), positions.slice() );
+	        // console.log(inflectionPoints);
+	        // if (inflectionPoints.length > 0) {
+	        //     return null;
+	        // }
+
 			const steps = Math.ceil( 25*sdFirst );
+			// console.log(steps);
 
 			const smoothFactor = Math.min(
 				positions.length - 1,
@@ -803,9 +810,9 @@ const CanvasFreeDrawing = (function () {
                 localLength = 0;
             }
         }
-        
+
         stationaryPoints.push(positions[positions.length - 1]);
-        
+
         return stationaryPoints;
 	};
 
@@ -826,7 +833,7 @@ const CanvasFreeDrawing = (function () {
 		const endPoint = positions[positions.length - 1];
 
 		let left = null, right = null, up = null, down = null;
-        
+
 		for ( let i = 0; i < firstDerivatives.length; i++ ) {
 			if (left == null && firstDerivatives[i].x < 0) {
 				left = true;
@@ -841,17 +848,11 @@ const CanvasFreeDrawing = (function () {
 				down = true;
 			}
 		}
-        
+
 		if ( !( left && right && up && down ) ) {
 			return null;
 		}
-        
-        // const inflectionPoints = this.getInflectionPoints( firstDerivatives, positions );
-        // console.log(inflectionPoints);
-        // if (inflectionPoints.length > 0) {
-        //     return null;
-        // }
-        
+
 		const xValues = positions.map( position => position.x );
 		const yValues = positions.map( position => position.y );
 
@@ -860,11 +861,23 @@ const CanvasFreeDrawing = (function () {
 			y: ( Math.max( ...yValues ) + Math.min( ...yValues ) ) / 2,
 		};
 
-        const testVector = this.displacement( centre, positions[ Math.round( positions.length / 8 )] );
+        const testVector1 = this.displacement( centre, positions[ Math.round( positions.length / 8 )] );
+		const testVector2 = this.displacement( centre, positions[ Math.round( positions.length / 4 )] );
+		const testVector3 = this.displacement( centre, positions[ Math.round( positions.length / 2 )] );
         const vectorStart = this.displacement(centre, initialPoint);
         const vectorEnd = this.displacement(centre, endPoint);
 
-        if ( this.orientation( vectorStart, vectorEnd ) != this.orientation( vectorStart, testVector ) && (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
+		const orientation1 = this.orientation( vectorStart, testVector1 );
+		const orientation2 = this.orientation( testVector1, testVector2 );
+		if (orientation2 != orientation1) {
+			return null;
+		}
+		const orientation3 = this.orientation( testVector2, testVector3 );
+		if (orientation3 != orientation1) {
+			return null;
+		}
+
+        if ( this.orientation( vectorStart, vectorEnd ) != orientation1 && (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
             return null;
         }
 
@@ -924,23 +937,31 @@ const CanvasFreeDrawing = (function () {
 		this.restoreCanvasSnapshot(this.snapshotImage);
 
 	}
-    
+
     CanvasFreeDrawing.prototype.displacement = function(vectorA, vectorB) {
+		let x = vectorB.x - vectorA.x;
+		let y = vectorB.y - vectorA.y;
         return {
-            x: vectorB.x - vectorA.x,
-            y: vectorB.y - vectorA.y,
+            x: x,
+            y: y,
+			length: Math.sqrt(x**2 + y**2),
         }
     }
 
     CanvasFreeDrawing.prototype.vectorLength = function(vector) {
-        return Math.sqrt( (vector.x)**2 + (vector.y)**2 );    
+        return Math.sqrt( (vector.x)**2 + (vector.y)**2 );
     }
 
-    CanvasFreeDrawing.prototype.orientation = function(vectorA, vectorB) {
+    CanvasFreeDrawing.prototype.orientation = function(vectorA, vectorB, weight = 1) {
         const zComponent = vectorA.x * vectorB.y - vectorA.y * vectorB.x;
-        if ( this.vectorLength( zComponent ) < 0.1 ) {
+
+		// console.log( zComponent );
+		// console.log( weight );
+		// console.log( zComponent * weight );
+        if ( Math.abs( zComponent ) * weight < 0.05 ) {
             return 0;
         } else {
+			// console.log( zComponent * weight );
             return Math.sign( zComponent );
         }
     }
@@ -949,14 +970,21 @@ const CanvasFreeDrawing = (function () {
         let inflectionPoints = [];
         let prevOrientation = 0;
         let orientation;
-        
-        for ( let i = 10; i < positions.length; i++ ) {
-            let vectorA = this.displacement(positions[i], positions[i - 5]);
-            let vectorB = this.displacement(positions[i - 5], positions[i - 10]);
-            console.log(vectorA);
-            console.log(vectorB);
-            orientation = this.orientation( vectorA, vectorB );
-            if (  orientation != prevOrientation ) {
+		const fullLength = vectors.reduce( (sum, entry) => {
+			return sum + entry.length;
+		}, 0);
+		console.log(fullLength);
+        for ( let i = 20; i < positions.length; i++ ) {
+		// for ( let i = 1; i < vectors.length; i++ ) {
+			// let vectorA = vectors[i];
+            // let vectorB = vectors[i - 1];
+            let vectorA = this.displacement(positions[i], positions[i - 10]);
+            let vectorB = this.displacement(positions[i - 10], positions[i - 20]);
+            // console.log(vectorA);
+            // console.log(vectorB);
+            orientation = this.orientation( vectorA, vectorB, vectorA.length * vectorB.length / fullLength );
+            if ( orientation != 0 &&  orientation != prevOrientation ) {
+				console.log(i + ' ' + vectors.length);
                 console.log(orientation);
                 // inflectionPoints.push( positions[ vectors[i].positionIndex ] );
                 inflectionPoints.push( positions[ i ] );
@@ -965,6 +993,6 @@ const CanvasFreeDrawing = (function () {
         }
         return inflectionPoints;
     }
-    
+
 	return CanvasFreeDrawing;
 }());
