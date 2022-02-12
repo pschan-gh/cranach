@@ -825,30 +825,26 @@ const CanvasFreeDrawing = (function () {
 		const initialPoint = positions[0];
 		const endPoint = positions[positions.length - 1];
 
-		// let left = null, right = null, up = null, down = null;
-        // 
-		// for ( let i = 0; i < firstDerivatives.length; i++ ) {
-		// 	if (left == null && firstDerivatives[i].x < 0) {
-		// 		left = true;
-		// 	}
-		// 	if (right == null && firstDerivatives[i].x > 0) {
-		// 		right = true;
-		// 	}
-		// 	if (up == null && firstDerivatives[i].y < 0) {
-		// 		up = true;
-		// 	}
-		// 	if (down == null && firstDerivatives[i].y > 0) {
-		// 		down = true;
-		// 	}
-		// }
-        // 
-		// if ( !( left && right && up && down ) ) {
-		// 	return null;
-		// }
-
-		// if ( (initialPoint.x - endPoint.x)**2 + (initialPoint.y - endPoint.y)**2 > 1000 ) {
-		// 	return null;
-		// }
+		let left = null, right = null, up = null, down = null;
+        
+		for ( let i = 0; i < firstDerivatives.length; i++ ) {
+			if (left == null && firstDerivatives[i].x < 0) {
+				left = true;
+			}
+			if (right == null && firstDerivatives[i].x > 0) {
+				right = true;
+			}
+			if (up == null && firstDerivatives[i].y < 0) {
+				up = true;
+			}
+			if (down == null && firstDerivatives[i].y > 0) {
+				down = true;
+			}
+		}
+        
+		if ( !( left && right && up && down ) ) {
+			return null;
+		}
         
         // const inflectionPoints = this.getInflectionPoints( firstDerivatives, positions );
         // console.log(inflectionPoints);
@@ -891,7 +887,7 @@ const CanvasFreeDrawing = (function () {
 		const radiusYActual = Math.sqrt(radiusYSquared);
 		const radiusYSnap = radiusX / radiusYActual < 1.5 ? radiusX : radiusYActual;
 
-		const angle = Math.round( Math.atan2( vertex.y, vertex.x ) / (Math.PI / 4) ) * (Math.PI / 4);
+		const angle = Math.round( Math.atan2( vertex.y, vertex.x ) / (Math.PI / 12) ) * (Math.PI / 12);
 
 		return {
 			x: centre.x,
