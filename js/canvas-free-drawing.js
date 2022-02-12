@@ -789,7 +789,7 @@ const CanvasFreeDrawing = (function () {
         point.isSpline = true;
 		stationaryPoints.push(point);
         for (let i = 0; i < firstDerivatives.length; i++ ) {
-            if (firstDerivatives[i].x < 0) {
+            if (firstDerivatives[i].x < 0 && i / firstDerivatives.length > 0.1 && i / firstDerivatives.length < 0.9) {
                 return [ { ...positions[0] } ];
                 break;
             }
