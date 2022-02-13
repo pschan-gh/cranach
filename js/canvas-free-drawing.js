@@ -84,7 +84,7 @@ const CanvasFreeDrawing = (function () {
 		this.pointerType = 'mouse';
 		this.mouseSmoothFactor = 4;
 		this.stylusSmoothFactor = 2;
-        this.shakyThreshold = 2;
+        this.shakyThreshold = 4;
         this.timer = null;
 		this.listenersList = [
 			'mouseDown',
@@ -554,7 +554,7 @@ const CanvasFreeDrawing = (function () {
 			});
 
 			const sdFirst = Math.sqrt(varFirst / fullLength );
-			// console.log(sdFirst * 10);
+			// console.log(sdFirst * 25);
 
 			// const inflectionPoints = this.getInflectionPoints( firstDerivatives.slice(), positions.slice() );
 	        // console.log(inflectionPoints);
@@ -562,7 +562,7 @@ const CanvasFreeDrawing = (function () {
 	        //     return null;
 	        // }
 
-			const steps = Math.ceil( sdFirst * 10 );
+			const steps = Math.ceil( sdFirst * 20 );
 			// console.log(steps);
 
 			const smoothFactor = Math.min(
@@ -586,7 +586,7 @@ const CanvasFreeDrawing = (function () {
 					position.smoothFactor = smoothFactor;
                 });
                 positions[positions.length - 1].smoothFactor = 0;
-                
+
                 if (steps == 1 && meanFirst.y * meanFirst.x != 0) {
                     if ( Math.abs( meanFirst.y / meanFirst.x ) < 0.15 ) {
                         positions[positions.length - 1].y = positions[0].y;
@@ -599,7 +599,7 @@ const CanvasFreeDrawing = (function () {
                         // positions[0].y - fullLength;
                     }
                 }
-                
+
 				this.positions = positions;
 			}
 
@@ -772,13 +772,12 @@ const CanvasFreeDrawing = (function () {
 		const derivatives = [];
 		let dx, dy;
         let prevPosition = positions[0];
-        let length = 0;
+        let length;
 		for (let i = 1; i < positions.length - 1; i++) {
 			dx = positions[i].x - prevPosition.x;
 			dy = positions[i].y - prevPosition.y;
-			length +=
-            typeof positions[i].length !== 'undefined' ?
-            positions[i].length : Math.sqrt( dx**2 + dy**2 );
+			length = typeof positions[i].length !== 'undefined' ?
+			positions[i].length : Math.sqrt( dx**2 + dy**2 );
 			if (length > threshold || allowZero) {
 				derivatives.push({
 					positionX : positions[i].x,
@@ -789,7 +788,6 @@ const CanvasFreeDrawing = (function () {
                     positionIndex: i,
 				});
                 prevPosition = positions[ i ];
-                length = 0;
 			}
 		}
 		return derivatives;
