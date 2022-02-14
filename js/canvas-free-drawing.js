@@ -900,7 +900,7 @@ const CanvasFreeDrawing = (function () {
 
 		let radiusXSquared = (positions[0].x - centre.x)**2 + (positions[0].y - centre.y)**2;
 		let radiusYSquared = radiusXSquared;
-		let vertex = { x: 1, y: 0 };
+		let vertex = { x: positions[0].x - centre.x, y: positions[0].y - centre.y };
 
 		for (let i = 0; i < positions.length; i++) {
 			if ( positions[i].x > centre.x ) {
@@ -913,23 +913,30 @@ const CanvasFreeDrawing = (function () {
 			}
 		}
 
-		const radiusX = Math.sqrt(radiusXSquared);
-		const radiusYActual = Math.sqrt(radiusYSquared);
-		const radiusYSnap = radiusX / radiusYActual < 1.5 ? radiusX : radiusYActual;
+		const preRadiusX = Math.sqrt(radiusXSquared);
+		const preRadiusY = Math.sqrt(radiusYSquared);
 
+		let radiusX, radiusY;
+
+		let radius = preRadiusX;
+		if ( preRadiusX / preRadiusY < 1.45 ) {
+			radius = ( preRadiusX + preRadiusY ) / 2;
+			radiusX = radius;
+			radiusY = radius;
+		} else {
+			radiusX = preRadiusX;
+			radiusY = preRadiusY;
+		}
+		// console.log(vertex);
 		const angle = Math.round( Math.atan2( vertex.y, vertex.x ) / (Math.PI / 12) ) * (Math.PI / 12);
 
 		return {
 			x: centre.x,
 			y: centre.y,
 			radiusX: radiusX,
-			radiusY: radiusYSnap,
-			angle: angle
-			// angle: Math.atan2(
-			// 	vertex.y,
-			// 	vertex.x
-			//  ),
-        }
+			radiusY: radiusY,
+			angle: angle,
+		}
 	};
 
 
