@@ -84,7 +84,7 @@ const CanvasFreeDrawing = (function () {
 		this.pointerType = 'mouse';
 		this.mouseSmoothFactor = 4;
 		this.stylusSmoothFactor = 2;
-        this.shakyThreshold = 4;
+        this.shakyThreshold = 2.5;
         this.timer = null;
 		this.listenersList = [
 			'mouseDown',
