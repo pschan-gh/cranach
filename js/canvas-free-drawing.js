@@ -833,17 +833,17 @@ const CanvasFreeDrawing = (function () {
         return stationaryPoints;
 	};
 
-	CanvasFreeDrawing.prototype.getPosition = function(firstDerivatives, arclength) {
-		let i;
-		let length = 0;
-		for( i = 0; i < firstDerivatives.length - 1; i++ ) {
-			length += firstDerivatives[i].length;
-			if (length > arclength) {
-				return firstDerivatives[i > 0 ? i - 1 : 0 ].positionIndex;
-			}
-		}
-		return null;
-	};
+	// CanvasFreeDrawing.prototype.getPosition = function(firstDerivatives, arclength) {
+	// 	let i;
+	// 	let length = 0;
+	// 	for( i = 0; i < firstDerivatives.length - 1; i++ ) {
+	// 		length += firstDerivatives[i].length;
+	// 		if (length > arclength) {
+	// 			return firstDerivatives[i > 0 ? i - 1 : 0 ].positionIndex;
+	// 		}
+	// 	}
+	// 	return null;
+	// };
 
 	CanvasFreeDrawing.prototype.getEllipse = function(firstDerivatives, positions) {
 		const initialPoint = positions[0];
@@ -990,36 +990,36 @@ const CanvasFreeDrawing = (function () {
         }
     }
 
-    CanvasFreeDrawing.prototype.getInflectionPoints = function(vectors, positions) {
-        let inflectionPoints = [];
-        let orientations = [];
-        let prevOrientation = 0;
-        let orientation;
-		const fullLength = vectors.reduce( (sum, entry) => {
-			return sum + entry.length;
-		}, 0);
-		console.log(fullLength);
-        // for ( let i = 20; i < positions.length; i++ ) {
-		for ( let i = 1; i < vectors.length; i++ ) {
-			let vectorA = vectors[i];
-            let vectorB = vectors[i - 1];
-            // let vectorA = this.displacement(positions[i], positions[i - 10]);
-            // let vectorB = this.displacement(positions[i - 10], positions[i - 20]);
-            // console.log(vectorA);
-            // console.log(vectorB);
-            orientation = this.orientation( vectorA, vectorB, vectorA.length / fullLength );
-            if ( orientation != 0 &&  orientation != prevOrientation ) {
-                orientations.push( orientation );
-				// console.log(i + ' ' + vectors.length);
-                // console.log(orientation);
-                // inflectionPoints.push( positions[ vectors[i].positionIndex ] );
-                inflectionPoints.push( positions[ i ] );
-                prevOrientation = orientation;
-            }
-        }
-        console.log( orientations );
-        return inflectionPoints;
-    }
+    // CanvasFreeDrawing.prototype.getInflectionPoints = function(vectors, positions) {
+    //     let inflectionPoints = [];
+    //     let orientations = [];
+    //     let prevOrientation = 0;
+    //     let orientation;
+	// 	const fullLength = vectors.reduce( (sum, entry) => {
+	// 		return sum + entry.length;
+	// 	}, 0);
+	// 	console.log(fullLength);
+    //     // for ( let i = 20; i < positions.length; i++ ) {
+	// 	for ( let i = 1; i < vectors.length; i++ ) {
+	// 		let vectorA = vectors[i];
+    //         let vectorB = vectors[i - 1];
+    //         // let vectorA = this.displacement(positions[i], positions[i - 10]);
+    //         // let vectorB = this.displacement(positions[i - 10], positions[i - 20]);
+    //         // console.log(vectorA);
+    //         // console.log(vectorB);
+    //         orientation = this.orientation( vectorA, vectorB, vectorA.length / fullLength );
+    //         if ( orientation != 0 &&  orientation != prevOrientation ) {
+    //             orientations.push( orientation );
+	// 			// console.log(i + ' ' + vectors.length);
+    //             // console.log(orientation);
+    //             // inflectionPoints.push( positions[ vectors[i].positionIndex ] );
+    //             inflectionPoints.push( positions[ i ] );
+    //             prevOrientation = orientation;
+    //         }
+    //     }
+    //     console.log( orientations );
+    //     return inflectionPoints;
+    // }
 
 	return CanvasFreeDrawing;
 }());
