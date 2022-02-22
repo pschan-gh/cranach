@@ -44,7 +44,6 @@
 					//lv:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]
 				"/>
 				<xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref|//idx:ref|//lv:ref"/>
-				<!-- <xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label|//idx:label|//lv:label"/> -->
 				<xsl:apply-templates select="
 					//idx:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]|
 					//lv:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]"/>
@@ -108,7 +107,18 @@
 		</entry>
 	</xsl:template>
 
-	<xsl:template match="//idx:course|//idx:chapter|//idx:section|//idx:subsection|//idx:subsubsection">
+	<xsl:template match="
+		//idx:course
+		|//idx:chapter
+		|//idx:section
+		|//idx:subsection
+		|//idx:subsubsection
+		|//lv:course
+		|//lv:chapter
+		|//lv:section
+		|//lv:subsection
+		|//lv:subsubsection
+		">
 		<xsl:element name="{local-name()}" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="idx:label|lv:label"/>
