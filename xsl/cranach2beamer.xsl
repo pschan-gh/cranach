@@ -17,7 +17,20 @@
 	</xsl:template>
 
 	<xsl:template match="lv:document">
-		<xsl:text>\documentclass[a4paper,12pt]{report}</xsl:text>
+		<xsl:text>\documentclass{beamer}</xsl:text>
+		<!-- https://tex.stackexchange.com/questions/178800/creating-sections-each-with-title-pages-in-beamers-slides -->
+		<xsl:text>
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+		</xsl:text>
 		<xsl:call-template name="latex-preamble" />
 		<xsl:text>\begin{document}&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:course|lv:week|lv:lecture|lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides|lv:bare" />
@@ -42,37 +55,39 @@
 \usepackage{epic,eepic}
 \usepackage{fancyhdr}
 \usepackage{hyperref}
-\usepackage[capitalise]{cleveref}
+<!-- \usepackage[capitalise]{cleveref} -->
 \usepackage{tikz}
 \usepackage{float}
 \usepackage{csquotes}
 <!-- \usepackage{booktabs} -->
 
+\setbeamertemplate{theorems}[numbered]
 \newcounter{statement}
-\numberwithin{statement}{chapter}
+\numberwithin{statement}{lecture}
 
 \newtheorem{thm}[statement]{Theorem}
 \newtheorem{prop}[statement]{Proposition}
-\newtheorem{lemma}[statement]{Lemma}
+<!-- \newtheorem{lemma}[statement]{Lemma} -->
 \newtheorem{claim}[statement]{Claim}
 \newtheorem{cor}[statement]{Corollary}
-\newtheorem{fact}[statement]{Fact}
+<!-- \newtheorem{fact}[statement]{Fact} -->
 
-\numberwithin{equation}{chapter}
-\numberwithin{section}{chapter}
+\numberwithin{equation}{lecture}
+\numberwithin{section}{lecture}
 \numberwithin{subsection}{section}
 
 \theoremstyle{definition}
 \newtheorem{defn}[statement]{Definition}
-\newtheorem{example}[statement]{\bf Example}
+<!-- \newtheorem{example}[statement]{\bf Example} -->
 \newtheorem{eg}[statement]{\bf Example}
 \newtheorem{ex}[statement]{\bf Exercise}
 \newtheorem*{notation}{\bf Notation}
 \newtheorem*{sol}{\bf Solution}
 \newtheorem*{remark}{\bf Remark}
 
-\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesection}{\thelecture.\arabic{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand\thetheorem{\arabic{lecture}.\arabic{theorem}}
 
 <!-- \renewcommand{\thesection}{} -->
 </xsl:template>
@@ -83,24 +98,29 @@
 
 	<xsl:template match="lv:course">
 		<xsl:text>&#xa;</xsl:text>
-		<xsl:value-of select="concat('\title{', ./lv:title/text() , '}')"/>
+		<xsl:text>\begin{frame}</xsl:text>
+		<xsl:value-of select="concat('{\Large ', ./lv:title/text() , '}')"/>
+		<xsl:text>\end{frame}</xsl:text>
+		<xsl:text>&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:week|lv:lecture|lv:chapter|lv:section|lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
 	<xsl:template match="lv:week|lv:lecture|lv:chapter">
 		<xsl:text>&#xa;</xsl:text>
-		<xsl:value-of select="concat('\setcounter{chapter}{', ./@num, '}')"/>
+		<xsl:text>\begin{frame}</xsl:text>
+		<xsl:value-of select="concat('\setcounter{lecture}{', ./@num, '}')"/>
 		<xsl:text>\setcounter{section}{0}&#xa;\setcounter{subsection}{0}&#xa;\setcounter{statement}{0}&#xa;</xsl:text>
-		<xsl:text>\chapter*{</xsl:text>
-		<xsl:value-of select="concat(ancestor::lv:course/@title, ' ', @chapter_type, ' ', @num)"/>
+		<!-- <xsl:text>\lecture*{</xsl:text> -->
+		<xsl:value-of select="concat('{\large ', ancestor::lv:course/@title, ' ', @chapter_type, ' ', @num)"/>
 		<xsl:apply-templates select="lv:title"/>
-		<xsl:text>}</xsl:text>
-		<!-- <xsl:text>{\bf Topics: }</xsl:text> -->
+		<xsl:text>}&#xa;</xsl:text>
 		<xsl:if test="lv:topic">
 			<xsl:text>&#xa;</xsl:text>
 			<xsl:apply-templates select="lv:topic" />
 			<xsl:text>\quad\newline\hrule\quad\newline</xsl:text>
 		</xsl:if>
+		<xsl:text>\end{frame}</xsl:text>
+		<xsl:text>&#xa;</xsl:text>
 		<xsl:apply-templates select="lv:section|lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
@@ -114,11 +134,12 @@
 	</xsl:template>
 
 	<xsl:template match="lv:section|lv:subsection|lv:subsubsection">
-		<xsl:text>&#xa;</xsl:text>
-		<!-- <xsl:value-of select="concat('\', local-name(), '{', @serial)"/> -->
-		<xsl:value-of select="concat('\', local-name(), '{')"/>
+		<!-- <xsl:text>&#xa;\begin{frame}</xsl:text> -->
+		<xsl:value-of select="concat('\', local-name(), '{', @serial, ' ')"/>
+		<!-- <xsl:value-of select="concat('\', local-name(), '{')"/> -->
 		<xsl:apply-templates select="lv:title"/>
 		<xsl:text>}</xsl:text>
+		<!-- &#xa;\end{frame} -->
 		<xsl:apply-templates select="lv:subsection|lv:subsubsection|lv:slides" />
 	</xsl:template>
 
@@ -133,20 +154,22 @@
 
 	<xsl:template match="lv:slide">
 		<xsl:text>&#xa;</xsl:text>
-		<xsl:text>&#xa;</xsl:text>
+		<xsl:text>\begin{frame}</xsl:text>
 		<xsl:apply-templates select="*[not(self::lv:topic)]" />
+		<xsl:text>&#xa;</xsl:text>
+		<xsl:text>\end{frame}</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="lv:keywords|lv:keyword|lv:hc_keyword|lv:title"/>
 
 	<xsl:template match="xh:a[@href]">
 		<xsl:value-of select="concat('\href{',  @href, '}{')"/>
-		<xsl:apply-templates select="*|text()" />
+		<xsl:apply-templates select="*|text()|comment()" />
 		<xsl:text>}</xsl:text>
 	</xsl:template>
     <xsl:template match="xh:a[@lcref]">
 		<xsl:value-of select="concat('\href{',  @lcref, '}{')"/>
-		<xsl:apply-templates select="*|text()" />
+		<xsl:apply-templates select="*|text()|comment()" />
 		<xsl:text>}</xsl:text>
 	</xsl:template>
 
@@ -154,7 +177,7 @@
 	<xsl:if test="not(preceding-sibling::lv:inline_keyword or preceding-sibling::lv:ref or parent::lv:title) and preceding-sibling::lv:*[@wbtag!='']">
 		<xsl:text>&#xa;</xsl:text>
 	</xsl:if>
-	<xsl:apply-templates select="text()" />
+	<xsl:apply-templates select="text()|comment()" />
 </xsl:template>
 
 <xsl:template match="lv:newcol|lv:collapse">
@@ -189,14 +212,14 @@
 			<xsl:text>}</xsl:text>
 		</xsl:when>
 	</xsl:choose>
-	<xsl:apply-templates select="*[not(self::lv:of-title)]" />
+	<xsl:apply-templates select="*[not(self::lv:of-title)]|comment()" />
 	<xsl:text>&#xa;\end{</xsl:text>
 	<xsl:value-of select="@wbtag"/>
 	<xsl:text>}</xsl:text>
 </xsl:template>
 
 <xsl:template match="lv:section/lv:title|lv:subsection/lv:title|lv:subsubsection/lv:title">
-	<xsl:apply-templates select="*">
+	<xsl:apply-templates select="*|comment()">
 	</xsl:apply-templates>
 </xsl:template>
 
@@ -325,7 +348,7 @@
 	<xsl:text>&#xa;&#xa;</xsl:text>
 </xsl:template>
 <xsl:template match="xh:iframe">
-    <xsl:variable name="url">
+    <!-- <xsl:variable name="url">
         <xsl:choose>
     		<xsl:when test="@data-src">
                 <xsl:value-of select="@data-src"/>
@@ -344,7 +367,7 @@
             <xsl:value-of select="concat('{\bf \href{http://www.math.cuhk.edu.hk/~pschan/cranach-dev/', $url, '}{Open in browser}}')"/>
         </xsl:otherwise>
     </xsl:choose>
-    <xsl:text>&#xa;&#xa;</xsl:text>
+    <xsl:text>&#xa;&#xa;</xsl:text> -->
 </xsl:template>
 
 <xsl:template match="lv:figure">
@@ -377,24 +400,14 @@
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="lv:title/@custom = 'true'">
-							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, ' (', lv:title/text(), ')}')"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, '}')"/>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:otherwise>
-				<!-- <xsl:otherwise>
-					<xsl:choose>
 						<xsl:when test="not(@name)">
-						<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @type, ' ', @item, ' (', lv:title/text(), ')}')"/>
+							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', lv:title/text(), '}')"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:value-of select="concat('\href{', $contenturldir, '/' , @src-filename, '&amp;slide=', @src-slide, '&amp;item=', @item, '}{', @name, '}')"/>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:otherwise> -->
+				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -422,11 +435,12 @@
 	<xsl:value-of select="@argument"/>
 </xsl:template>
 
-<xsl:template match="lv:comment" />
-
 <xsl:template match="text()" >
 	<!-- <xsl:value-of select="normalize-space(.)" /> -->
 	<xsl:value-of select="." />
+</xsl:template>
+
+<xsl:template match="lv:comment" >
 </xsl:template>
 
 <xsl:template match="comment()" >

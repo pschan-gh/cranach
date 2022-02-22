@@ -34,37 +34,38 @@ function collectNewcommands(str) {
 	return commandsStr;
 }
 
-function showLatex(el) {
-	$('.modal-footer').find('.btn').hide();
-	$('.modal-footer').find('.btn.save').show();
+function showLatex(el, mode = 'report') {
+	const textModal = document.getElementById('text_modal');
 
-	let xsltProcessor = new XSLTProcessor();
-	$('#text_modal button.save').attr('ext', 'tex');
-	$('#text_modal .modal-title').html('LaTeX');
+	textModal.querySelector('.modal-footer').classList.add('latex');
 
-	let docCranach = el.cranachDoc;
-	let contentURLDir = el.attr['contentURLDir'];
-	let contentURL = el.attr['contentURL'];
+	textModal.querySelector('button.save').setAttribute('ext', 'tex');
+	textModal.querySelector('.modal-title').textContent = 'LaTeX';
 
-	$.ajax({
-		url: 'xsl/cranach2latex.xsl?' + 'version=' + Math.random(),
-		dataType: 'xml'
-	})
-	.done(function(xsl) {
-		let oParser = new DOMParser();
-		let xml = new XMLSerializer().serializeToString(docCranach);
+	const docCranach = el.cranachDoc;
+	const contentURLDir = el.attr['contentURLDir'];
+	const contentURL = el.attr['contentURL'];
+
+	const xslFile = mode == 'report' ?  'xsl/cranach2latex.xsl' : 'xsl/cranach2beamer.xsl';
+
+	fetch(xslFile + '?version=' + Math.random())
+    .then(response => response.text())
+    .then(xsl => {
+        let xml = new XMLSerializer().serializeToString(docCranach);
 		xml = xml.replace(/&lt;(div|table|thead|tr|td|th|a)\s*.*?&gt;/g, '<$1>');
 		xml = xml.replace(/&lt;\/(div|table|thead|tr|td|th|a)\s*&gt;/g, '</$1>');
 		xml = xml.replace(/#/g, '\#');
-		report(xml);
-		let xmlDOM = oParser.parseFromString(xml, "application/xml");
-		xsltProcessor.importStylesheet(xsl);
+
+		let xmlDOM = domparser.parseFromString(xml, "application/xml");
+        let xsltProcessor = new XSLTProcessor();
+		xsltProcessor.importStylesheet(domparser.parseFromString(xsl, "text/xml"));
 		xsltProcessor.setParameter('', 'contenturldir', contentURLDir);
 		xsltProcessor.setParameter('', 'contenturl', contentURL);
-		fragment = xsltProcessor.transformToFragment(xmlDOM, document);
+
+		let fragment = xsltProcessor.transformToFragment(xmlDOM, document);
 		report(fragment);
 		fragmentStr = new XMLSerializer().serializeToString(fragment);
-		$('#source_text').val('');
+
 		let latex = fragmentStr.replace(/\n\n\n*/g, "\n\n")
 		.replace(/\n(\ )*/g, "\n")
 		.replace(/\<!--.*?--\>/g, '')
@@ -72,43 +73,50 @@ function showLatex(el) {
 		.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
 		.replace(/\\class{.*?}/g, '')
 		.replace(/\\cssId{.*?}/g, '')
-		.replace(/&ocirc/g, '\\^o');
+		.replace(/&ocirc/g, '\\^o')
+		.replace(/\\href{([^}]+)}{([^}]+)}/g, (match) => {
+			console.log(match);
+			return match.replace(/_/g, '\\_');
+		});
+
 		let tmp = el.macrosString + "\n" +  latex;
+
 		latex = collectNewcommands(tmp) + latex.replace(
 			/(\\newcommand{.*?}(?:\[\d+\])*{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{(?:([^{}]*)|(?:{[^{}]*}))*}))*}))+})/g, '')
 		.replace(/section{\s*(.*?)\s*}/g, "section{$1}");
-		$('#source_text').val(latex);
+
+		document.getElementById('source_text').value = latex;
 	});
 }
 
 function showXML(el) {
-	$('.modal-footer').find('.btn').hide();
-	$('.modal-footer .github').css('display', 'inline-block')
-	$('.modal-footer').find('.btn.commit').show();
-	$('.modal-footer').find('.btn.save').show();
-	$('.modal-footer').find('.btn.render').show();
+	const textModal = document.getElementById('text_modal');
 
-	$('#source_text').val('');
-	$('#text_modal').find('button.save').attr('ext', 'xml');
-	$('#text_modal').find('.modal-title').text('Cranach XML');
-	$('#source_text').val(new XMLSerializer().serializeToString(el.cranachDoc));
+	textModal.querySelector('.modal-footer').classList.add('xml');
+
+	textModal.querySelector('button.save').setAttribute('ext', 'xml');
+	textModal.querySelector('.modal-title').textContent = 'Cranach XML';
+
+	document.getElementById('source_text').value =
+	new XMLSerializer().serializeToString(el.cranachDoc);
 }
 
 function initGhDialog(editor) {
 
-	$('#gh_modal .feedback .message').html('');
+	const ghModal = document.getElementById('gh_modal');
+	ghModal.querySelector('.feedback .message').innerHTML = '';
 
-	let contentURL = window.location.href;
-	let params = window.location.href.match(/\?(.*?)(#|$)/);
+	const contentURL = window.location.href;
+	const params = window.location.href.match(/\?(.*?)(#|$)/);
 
-	let urlParams = new URLSearchParams(params[1]);
-	let pathname = urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
-	let localFilenameRoot = pathname.match(/(local|([^\/]+))\.(?:wb|xml)$/)[1];
+	const urlParams = new URLSearchParams(params[1]);
+	const pathname =
+	urlParams.has('wb') ? urlParams.get('wb') : urlParams.get('xml');
+	const localFilenameRoot = pathname.match(/(local|([^\/]+))\.(?:wb|xml)$/)[1];
 
 	let ghRepoUsername;
 	let ghRepo;
 
-	console.log(contentURL);
 	let gh_match = contentURL.match(/raw\.githubusercontent.com\/(.*?)\/(.*?)\//);
 	if (gh_match) {
 		ghRepoUsername = gh_match[1];
@@ -119,56 +127,49 @@ function initGhDialog(editor) {
 		ghRepo = gh_match ? gh_match[1] : '';
 	}
 
-	console.log(ghRepoUsername + ' ' + ghRepo);
+	document.getElementById('ghRepo').value = ghRepo;
+	document.getElementById('ghRepoUsername').value = ghRepoUsername;
+	document.getElementById('localFilenameRoot').textContent =
+	localFilenameRoot;
 
-	$('#ghRepo').val(ghRepo);
-	$('#ghRepoUsername').val(ghRepoUsername);
-	$('#localFilenameRoot').text(localFilenameRoot);
-	$('#gh_modal button.commit').hide();
+	ghModal.querySelector('button.commit').classList.add('hidden');
 
 
-	let message = '';
-	message = "Updating .wb";
-	let $wb_msg = $('<div><code>' + message + '</code></div>').appendTo( $('#gh_modal .feedback .message') );
+	let wbMsg = document.createElement('div');
+	wbMsg.innerHTML = '<code></code>';
+	ghModal.querySelector('.feedback .message').appendChild(wbMsg);
+	let message = "Updating .wb";
+	ghModal.querySelector('.feedback .message code').innerHTML = message;
 
 	commitWb(editor);
 
 	message += "&nbsp; &#x2713;";
-	$wb_msg.find('code').html(message);
-	message = "Updating .xml";
-	$wb_msg = $('<div><code>' + message + '</code></div>').appendTo( $('#gh_modal .feedback .message') );
+	ghModal.querySelector('.feedback .message code').innerHTML = message;
+
+	message += "<br/>Updating .xml";
+	ghModal.querySelector('.feedback .message code').innerHTML = message;
+
 	let baseRenderer = new Cranach(window.location.href).setup({'query':''}).then(cranach => {
 		console.log(cranach);
 		MathJax.typesetClear();
 		return cranach.setOutput(document.getElementById('output')).renderWb(editor.getValue());
 	}).then(cranach => {
 		postprocess(cranach);
-		let cranach_text = new XMLSerializer().serializeToString(cranach.cranachDoc);
-		let index_text = new XMLSerializer().serializeToString(cranach.indexDoc);
-		$('#cranach_text').val(cranach_text);
-		$('#index_text').val(index_text);
+
+		const cranach_text =
+		new XMLSerializer().serializeToString(cranach.cranachDoc);
+		const index_text =
+		new XMLSerializer().serializeToString(cranach.indexDoc);
+
+		document.getElementById('cranach_text').value = cranach_text;
+		document.getElementById('index_text').value = index_text;
+
 		message += "&nbsp; &#x2713;";
-		$wb_msg.find('code').html(message);
-		$('#gh_modal button.commit').show();
+		ghModal.querySelector('.feedback .message code').innerHTML = message;
+		ghModal.querySelector('button.commit').classList.remove('hidden');
 	});
 
 }
-
-// function showIndex(promise) {
-//     $('.modal-footer').find('.btn').hide();
-//     $('.modal-footer').find('.btn.save').show();
-//     $('.modal-footer').find('.btn.update-index').show();
-//     $('.modal-footer').find('.btn.load-index').show();
-//     $('#text_modal').find('button.save').attr('ext', 'xml');
-//     $('#text_modal').find('.modal-title').text('Index XML');
-//
-//     $('#source_text').val('');
-//     promise.then(el => {
-//         if (el.indexDoc) {
-//             $('#source_text').val(new XMLSerializer().serializeToString(el.indexDoc));
-//         }
-//     });
-// }
 
 function openWb(filePath) {
 
@@ -206,8 +207,11 @@ function openXML(renderer, filePath) {
 
 	let reader  = new FileReader();
 
-	$('.progress-bar').css('width', '20%').attr('aria-valuenow', '20');
-	$('#loading_icon').show();
+	const progressBar = document.querySelector('.progress-bar');
+	progressBar.style.width = '20%';
+	progressBar.setAttribute('aria-valuenow', '20');
+
+	document.getElementById('loading_icon').classList.remove('hidden');
 
 	if (file) {
 		// https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
@@ -227,21 +231,26 @@ function openXML(renderer, filePath) {
 
 	console.log(filename);
 	reader.addEventListener("load", function () {
-		$('.progress-bar').css('width', '50%').attr('aria-valuenow', '50');
+		progressBar.style.width = '50%';
+		progressBar.setAttribute('aria-valuenow', '50');
+
 		let cranachDoc = new DOMParser().parseFromString(reader.result, "application/xml");
 		baseRenderer = renderer.then(cranach => {
-			$('.progress-bar').css('width', '75%').attr('aria-valuenow', '75');
+			progressBar.style.width = '75%';
+			progressBar.setAttribute('aria-valuenow', '75');
+
 			cranach.attr['localName'] = filename;
 			cranach.attr['dir'] = dir;
 			cranach.cranachDoc = cranachDoc;
+
 			MathJax.startup.document.state(0);
 			MathJax.texReset();
 			MathJax.typesetClear();
+
 			return cranach.displayCranachDocToHtml();
 		}).then(cranach => {
 			postprocess(cranach);
-			convertCranachDocToWb(cranach.cranachDoc, editor);
-			$('#loading_icon').hide();
+            document.getElementById('loading_icon').classList.add('hidden');
 			return cranach;
 		});
 	}, false);
@@ -250,10 +259,12 @@ function openXML(renderer, filePath) {
 
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	baseRenderer.then(cranach => {
-		$('.modal .btn.save').click(function() {
-			saveText($('#source_text').val(), cranach, $(this).attr('ext'));
-		});
+		document.querySelectorAll('.modal .btn.save').forEach(el =>
+			el.addEventListener('click', function(event) {
+				saveText(document.getElementById('source_text').value, cranach, event.target.getAttribute('ext'));
+			})
+		);
 	});
 });

@@ -212,6 +212,10 @@ mjx-math {
 	margin-top:-5px;
 }
 
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border-color:#aaa !important;
+}
+
 .nav-tabs .nav-link.active {
 	font-weight:bold !important;
 	color:inherit !important;
@@ -219,7 +223,7 @@ mjx-math {
 	border:none !important;
 }
 
-.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+.nav-tabs .nav-link:focus,  {
 	border-color:#aaa !important;
 }
 
@@ -231,11 +235,6 @@ mjx-math {
 .nav-tabs {
 	border-bottom:none;
 	border-color:#ccc !important;
-}
-
-#right_half .dropdown-menu > a:hover {
-	background:SteelBlue;
-	color:white !important;
 }
 
 #right_half > .navbar {
@@ -790,7 +789,7 @@ tbody:before {
 	color:SteelBlue;
 }
 
-.slide_button.hide {
+.slide_button.half {
 	color:black;
 }
 
@@ -883,10 +882,6 @@ tbody:before {
 	display:block;
 }
 
-#info_menu_container {
-	position:absolute;
-}
-
 #output_icon_container {
 	overflow:hidden;
 }
@@ -899,8 +894,9 @@ tbody:before {
 }
 
 #info_menu_container {
-	top:5px;
-	right:5px;
+	position:absolute;
+	top:10px;
+	right:10px;
 	width:auto;
 }
 
@@ -1101,7 +1097,7 @@ blockquote {
 	border:none;
 }
 
-a:link, a:visited, a:hover, a:active {
+a:link, a:visited,  a:active {
 	color:SteelBlue;
 	text-decoration: none;
 }
@@ -1119,7 +1115,7 @@ a:link, a:visited, a:hover, a:active {
 	overflow:hidden;
 }
 
-.plain_button:focus, .plain_button:hover, .plain_button:active {
+.plain_button:focus, .plain_button:active {
 	background-color:transparent !important;
 	outline:none !important;
 	box-shadow:none !important;
@@ -1132,7 +1128,7 @@ a:link, a:visited, a:hover, a:active {
 	border:none !important;
 }
 
-#main_menu_button:hover, #main_menu_button:active, #main_menu_button:focus, #main_menu_button.active, #left_button:hover, #right_button:hover {
+#main_menu_button:active, #main_menu_button:focus, #main_menu_button.active {
 	background-color:transparent !important;
 	color:SteelBlue !important;
 	border:none !important;
@@ -1155,12 +1151,6 @@ a:link, a:visited, a:hover, a:active {
 
 .dropdown-menu.keywords > a {
 	padding:5px;
-}
-
-.dropdown-menu.keywords > a:hover {
-	color:#fff;
-	background-color: SteelBlue;
-	background-image: none;
 }
 
 .dropdown-toggle::after {

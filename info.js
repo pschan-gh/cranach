@@ -1,229 +1,244 @@
+const dataKeys = ['course', 'chapter_type', 'chapter', 'section', 'subsection', 'subsubsection'];
+
 function updateTitle(slide) {
+	// console.log(slide);
+	const slideNum = slide.hasAttribute(`slide`) ? slide.getAttribute(`slide`) : 1;
+	const metadata = {};
 
-	let index = $(slide).attr(`slide`);
+	dataKeys.forEach(key => {
+		metadata[key] = slide.getAttribute(key) ? slide.getAttribute(key) : '';
+	});
 
-	let course = $(slide).attr(`course`) ? $(slide).attr(`course`) : ``;
-	let chapterType = $(slide).attr(`chapter_type`) ? $(slide).attr(`chapter_type`):``;
-	let chapter = $(slide).attr(`chapter`) ? $(slide).attr(`chapter`) : ``;
-	let section = $(slide).attr(`section`) ? $(slide).attr(`section`) : ``;
-	let subsection = $(slide).attr(`subsection`) ? $(slide).attr(`subsection`) : ``;
-	let subsubsection = $(slide).attr(`subsubsection`) ? $(slide).attr(`subsubsection`) : ``;
+	document.querySelectorAll(`#toc a`).forEach(el => el.classList.remove(`highlighted`));
+
+	document.querySelectorAll(`#toc a.chapter[chapter="${metadata.chapter}"]`).forEach(el => el.classList.add(`highlighted`));
+
+	document.querySelectorAll(`#toc a.section[chapter="${metadata.chapter}"][section="${metadata.section}"]`).forEach(el => el.classList.add(`highlighted`));
+
+	document.querySelectorAll(`#toc a.subsection[chapter="${metadata.chapter}"][section="${metadata.section}"][subsection="${metadata.subsection}"]`)
+	.forEach(el => {
+		el.classList.add(`highlighted`);
+	});
+	document.querySelectorAll(`#toc a.subsection[chapter="${metadata.chapter}"]
+	[section="${metadata.section}"]
+	[subsection="${metadata.subsection}"]
+	[subsubsection="${metadata.subsubsection}"]`)
+	.forEach(el => {
+		el.classList.add(`highlighted`);
+	});
 
 	let topics = ``;
-
-	$(`#toc a`).removeClass(`highlighted`);
-
-	$(`#toc a.chapter[chapter="${chapter}"]`).addClass(`highlighted`);
-
-	$(`#toc a.section[chapter="${chapter}"][section="${section}"]`).addClass(`highlighted`);
-
-	$(`#toc a.subsection`)
-	.filter(`[chapter="${chapter}"]`)
-	.filter(`[section="${section}"]`)
-	.filter(`[subsection="${subsection}"]`)
-	.addClass(`highlighted`);
-
-	$(`#toc a.subsubsection`)
-	.filter(`[chapter="${chapter}"]`)
-	.filter(`[section="${section}"]`)
-	.filter(`[subsection="${subsection}"]`)
-	.filter(`[subsubsection="${subsubsection}"]`)
-	.addClass(`highlighted`);
-
-	$(`.topic[chapter="${chapter}"]`).each(function(index, element) {
+	document.querySelectorAll(`.topic[chapter="${metadata.chapter}"]`).forEach(( el, index ) => {
 		if (index > 0) {
 			topics += `, `;
 		}
-		topics += $(this).html();
+		topics += el.innerHTML;
 	});
 
-	let chapterTitle = $(slide).attr(`chapter_title`) ? $(slide).attr(`chapter_title`) : $(slide).prevAll(`[chapter_title!=""]:first`).attr(`chapter_title`);
+	// let chapterTitle = slide.getAttribute(`chapter_title`) ? slide.getAttribute(`chapter_title`) : $(slide).prevAll(`[chapter_title!=""]:first`).getAttribute(`chapter_title`);
+	// const chapterTitleSlide = document.querySelector('#output div.slide[chapter_title!=""][chapter=${metadata.chapter}]');
+	let chapterTitleSpan = document.querySelector(`a.chapter.highlighted span.title`);
+	let sectionTitleSpan = document.querySelector(`a.section.highlighted span.title`);
 
-	chapterTitle = chapterTitle ? chapterTitle : ``;
+	chapterTitle = chapterTitleSpan ? chapterTitleSpan.innerHTML : ``;
+	sectionTitle = sectionTitleSpan ? sectionTitleSpan.innerHTML : ``;
 
-	section = $(slide).attr(`section`) ? `${chapter}.${$(slide).attr('section')}` : ``;
+	document.querySelectorAll(`.current_course`).forEach(el => el.innerHTML = metadata.course);
+	document.querySelectorAll(`.current_chapter`).forEach(el => el.innerHTML = `${metadata.chapter_type} ${metadata.chapter}`);
+	document.querySelectorAll(`.current_chapter_title`).forEach(el => el.innerHTML = chapterTitle);
+	document.querySelectorAll(`.current_topics`).forEach(el => el.innerHTML = topics);
 
-	let sectionTitle = $(`a.section.highlighted`).find(`span.title`).html();
-
-	sectionTitle = sectionTitle ? sectionTitle : ``;
-
-	$(`.current_course`).html(course);
-	$(`.current_chapter`).html(chapterType + ` ` + chapter);
-	$(`.current_chapter_title`).html(chapterTitle);
-	$(`.current_topics`).html(topics);
-
-	if (section != ``) {
-		$(`.current_section`).html(`Section ${section}<br/>${sectionTitle}`);
+	if (metadata.section != ``) {
+		document.querySelectorAll(`.current_section`).forEach(el => el.innerHTML = `Section ${metadata.chapter}.${metadata.section}<br/>${sectionTitle}`);
 	} else {
-		$(`.current_section`).html(``);
+		document.querySelectorAll(`.current_section`).forEach(el => el.innerHTML = ``);
 	}
-	$(`.current_slide`).html(`Slide ` + index);
-	if (course != `` || chapter != `` || topics != ``) {
-		$(`title`).text(course);
+	document.querySelectorAll(`.current_slide`).forEach(el => el.innerHTML = `Slide ${slideNum}`);
+	if (metadata.course != `` || metadata.chapter != `` || topics != ``) {
+		document.querySelectorAll(`title`).forEach(el => el.innerHTML = course);
 	}
 
-	$(`#info_half div.keywords[environ="course"], div.keywords[environ="root"]`).show();
-	$(`#info_half div.keywords[environ="chapter"][chapter="${chapter}"][slide="all"]`).show();
+	document.querySelectorAll(`#info_half div.keywords[environ="course"], div.keywords[environ="root"]`).forEach(el => el.classList.remove('hidden'));
+	document.querySelectorAll(`#info_half div.keywords[environ="chapter"][chapter="${metadata.chapter}"][slide="all"]`).forEach(el => el.classList.remove('hidden'));
 
-	$(`#info_half div.keywords[slide!="all"]`).hide();
-	$(`#info_half div.keywords[chapter="${chapter}"][slide="${index}"]`).show();
+	document.querySelectorAll(`#info_half div.keywords:not([slide="all"])`).forEach(el => el.classList.add('hidden'));
+	document.querySelectorAll(`#info_half div.keywords[chapter="${metadata.chapter}"][slide="${slideNum}"]`).forEach(el => el.classList.remove('hidden'));
 
 }
 
 function updateToc(cranach) {
 	console.log(`UPDATING TOC`);
+	const output = document.getElementById('output');
+
 	let url = cranach.attr[`contentURL`];
 
-	if ($(`.toc`).length == 0) {
+	if (document.querySelector(`.toc`) === null) {
 		return 0;
 	}
-
-	$(`.toc`).each(function() {
-		$(`#toc`).html(``).append($(`#output`).find(`.toc_src`).first());
-	});
-	$(`#output`).find(`.toc_src`).hide();
-
-	$(`.toc`).find(`a`).find(`span.serial`).each(function() {
-		let string = $(this).text();
-		$(this).text(string.charAt(0).toUpperCase() + string.slice(1));
+	document.querySelectorAll(`.toc`).forEach(el => {
+		el.innerHTML = '';
+		if (document.querySelector(`#output .toc_src`) !== null) {
+			el.appendChild(document.querySelector(`#output .toc_src`));
+		}
 	});
 
-	$(`#info_statements`).html(``);
-	$(`.toc`).find(`a.chapter`).each(function() {
-		let chapter = $(this).attr(`chapter`);
-		let statements = new Array();
-		$(`#output div[wbname="statement"][chapter="${chapter}"]`).each(function() {
-			if (!($(this).attr(`type`) in statements)) {
-				statements[$(this).attr(`type`)] = ``;
+	document.querySelectorAll(`.toc a span.serial`).forEach(el => {
+		const string = el.textContent;
+		el.textContent = string.charAt(0).toUpperCase() + string.slice(1);
+	});
+
+	document.querySelectorAll(`#info_statements`).forEach(el => el.innerHTML = ``);
+
+	document.querySelectorAll(`.toc a.chapter`).forEach(el => {
+		const chapter = el.getAttribute(`chapter`);
+		const statements = new Array();
+		let serial, html = '';
+
+		document.querySelectorAll(`#output div[wbname="statement"][chapter="${chapter}"]`).forEach( div => {
+			if (!(div.getAttribute(`type`) in statements)) {
+				statements[div.getAttribute(`type`)] = ``;
 			}
-
-			let serial = $(this).attr(`item`);
-			let $item = $(`div[serial="${$(this).attr('item')}"]`).closest(`div.statement`).first();
-			let slide = $item.closest(`.slide`).attr(`slide`);
-
-			statements[$(this).attr(`type`)] += `<a style="margin:1px 10px 1px 10px;" class="info_statements_num" serial="${serial}" href="javascript:void(0)">${serial}</a>`;
+			serial = div.getAttribute(`item`);
+			statements[div.getAttribute(`type`)] += `<a style="margin:1px 10px 1px 10px;" class="info_statements_num" serial="${serial}" href="javascript:void(0)">${serial}</a>`;
 		});
-		let html = ``;
+		html = '';
 		for (let key in statements) {
 			html += `<br/><a class="info_statements" target="_blank" href="${url}&query=//lv:statement[@chapter=${chapter} and @type=%27${key}%27]">${key}</a><em>${statements[key]}</em>`;
 		}
 
-		$(`#info_statements`).append(`<div class="statements chapter" chapter="${chapter}" style="display:none">${html}</div>`);
+		const div = document.createElement('div');
+		div.classList.add('statements', 'chapter', 'hidden');
+		div.setAttribute('chapter', chapter);
+		div.innerHTML = html;
 
-		let $item;
-		$(`#info_statements`).find(`.info_statements_num`).click(function() {
-			$item = $(`.item_title[serial="${$(this).attr('serial')}"]`).first();
-			focusOn($item, ``);
-			highlight($(this).attr(`serial`));
-		});
+		document.querySelector(`#info_statements`).appendChild(div);
 
-		let $slide = $(`.output:visible .slide[chapter="${$(this).attr('chapter')}"]`).first();
-		$(this).off();
-		$(this).click(function() {
-			console.log($slide);
-			jumpToSlide($(`.output:visible`).first(), $slide);
+		el.addEventListener('click', () => {
+			jumpToSlide(
+				output,
+				output.querySelector(`:scope > div.slide[chapter="${el.getAttribute('chapter')}"]`)
+			);
+			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
 
-	$(`.toc`).find(`a.section`).each(function() {
-		let $slide = $(`.slide[section="${$(this).attr('section')}"][chapter="${$(this).attr('chapter')}"]`).first();
-		$(this).click(function() {
-			jumpToSlide($(`#output`), $slide);
-			$slide.click();
+	document.querySelectorAll(`.toc a.section`).forEach(a => {
+		let slide = output.querySelector(`:scope > div.slide[section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
+		a.addEventListener('click', () => {
+			console.log(slide);
+			jumpToSlide(output, slide);
+			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
-	$(`.toc a.subsection`).each(function() {
-		let $slide = $(`.slide[subsection="${$(this).attr('subsection')}"][section="${$(this).attr('section')}"][chapter="${$(this).attr('chapter')}"]`).first();
-		$(this).click(function() {
-			jumpToSlide($(`#output`), $slide);
-			$slide.click();
+	document.querySelectorAll(`.toc a.subsection`).forEach(a => {
+		let slide = output.querySelector(`:scope > div.slide[subsection="${a.getAttribute('subsection')}"][section="${a.getAttribute('section')}"][chapter="${a.getAttribute('chapter')}"]`);
+		a.addEventListener('click', event => {
+			jumpToSlide(output, slide);
+			output.dataset.selectedSlide = slide.getAttribute('slide');
 		});
 	});
+
+	document.querySelectorAll(`#info_statements .info_statements_num`).forEach(el => {
+		el.addEventListener('click', event => {
+			const serial = event.target.getAttribute('serial');
+			const item = document.querySelector(`.item_title[serial="${serial}"]`);
+			console.log(`jumping to ${serial}`);
+			focusOn(item, ``);
+			highlight(el.getAttribute(`serial`));
+		});
+	});
+
+
 	MathJax.startup.promise = typeset([document.getElementById(`toc`)]);
 }
 
 function updateKeywords() {
-
-	if ($(`.info`).length == 0) {
+	if (document.querySelector(`.info`) === null) {
 		return 0;
 	}
 
-	$(`#info_keywords_course`).html(``);
-	$(`div.keywords[slide="all"][environ="course"]`).each(function() {
-		if ($(`#info_keywords_course`)) {
-			$(`#info_keywords_course`).append($(this));
+	document.querySelectorAll(`div.keywords[slide="all"][environ="course"], div.keywords[slide="all"][environ="root"]`)
+	.forEach(div => {
+		if (document.getElementById(`info_keywords_course`)) {
+			document.querySelector(`#info_keywords_course`).innerHTML = ``;
+			document.getElementById(`info_keywords_course`).appendChild(div);
 		} else {
-			$(this).hide();
+			div.classList.add('hidden');
 		}
 	});
-	$(`div.keywords[slide="all"][environ="root"]`).each(function() {
-		if ($(`#info_keywords_course`)) {
-			$(`#info_keywords_course`).append($(this));
+
+	document.querySelectorAll(`div.keywords[slide="all"][environ="chapter"]`).forEach(div => {
+		if (document.getElementById(`info_keywords_chapter`)) {
+			document.querySelector(`#info_keywords_chapter`).innerHTML = ``;
+			document.querySelector(`#info_keywords_chapter`).appendChild(div);
 		} else {
-			$(this).hide();
+			div.classList.add('hidden');
 		}
 	});
-	$(`#info_keywords_chapter`).html(``);
-	$(`div.keywords[slide="all"][environ="chapter"]`).each(function() {
-		if ($(`#info_keywords_chapter`)) {
-			$(`#info_keywords_chapter`).append($(this));
+
+	document.querySelectorAll(`div.keywords:not([slide="all"])`).forEach(div => {
+		if (document.querySelector(`#slide_keywords`) !== null) {
+			document.querySelector(`#slide_keywords`).innerHTML = '';
+			document.querySelector(`#slide_keywords`).appendChild(div);
 		} else {
-			$(this).hide();
+			div.classList.add('hidden');
 		}
 	});
-	if ($(`#slide_keywords`)) {
-		$(`#slide_keywords`).html(``).append($(`div.keywords[slide!="all"]`));
-	}
 }
 
 function updateSlideInfo(slide) {
 
-	updateTitle(slide);
-
-	let slideNum = +$(slide).attr(`slide`);
-
-	let course = $(slide).attr(`course`);
-	let chapterType = $(slide).attr(`chapter_type`);
-	let chapter = $(slide).attr(`chapter`);
-	let statements = new Array();
-	let url = $(`#output`).attr(`data-content-url`);
-	let query = $('#output').attr('query') ? `&query=${$('#output').attr('query')}` : ``;
-	let urlSlide = `${$('#output').attr('data-content-url')}${query}&slide=${slideNum}`;
-
-	$(`#url_open`).attr(`href`, urlSlide);
-	$(`.url.share_text`).val(urlSlide);
-	$(`.hyperlink.share_text`).val(`<a href="${urlSlide}" target="_blank" title="Course:${course}">Chapter ${chapter} Slide ${slideNum}</a>`);
-
-	$(`.hyperref.share_text`).val(`\\href{${urlSlide.replace(`#`, `\\#`)}}{Chapter ${chapter} Slide ${slideNum}}`);
-
-	$(`#slide_info`).show();
-
-	if ($(`.current_chapter`).first().text() != $(slide).attr(`chapter`)) {
-		$(`#info_statements .chapter`).hide();
-		$(`#info_statements .chapter[chapter="${$(slide).attr('chapter')}"]`).show();
+	if ( document.getElementById('slide_info') === null ) {
+		return 0;
 	}
 
-	$(`#output div.slide`).removeClass(`selected`);
-	$(slide).addClass(`selected`);
+	updateTitle(slide);
+
+	let slideNum = +(slide.getAttribute(`slide`));
+
+	const metadata = {};
+
+	dataKeys.forEach(key => {
+		metadata[key] = slide.getAttribute(key) ? slide.getAttribute(key) : '';
+	});
+
+	const statements = new Array();
+	const url = document.querySelector(`#output`).dataset.contentUrl;
+	const query = document.querySelector('#output').getAttribute('query') !== null ?
+	`&query=${document.querySelector('#output').getAttribute('query')}` : ``;
+	const urlSlide = `${document.querySelector('#output').dataset.contentUrl}${query}&slide=${slideNum}`;
+
+	if (document.querySelector(`#url_open`) !== null) {
+		document.querySelector(`#url_open`).setAttribute(`href`, urlSlide);
+	}
+	document.querySelectorAll(`.url.share_text`).forEach(el => el.value = urlSlide);
+	document.querySelectorAll(`.hyperlink.share_text`).forEach(el => el.value = `<a href="${urlSlide}" target="_blank" title="Course:${metadata.course}">Chapter ${metadata.chapter} Slide ${slideNum}</a>`);
+
+	document.querySelectorAll(`.hyperref.share_text`).forEach(el => el.value = `\\href{${urlSlide.replace(`#`, `\\#`)}}{Chapter ${metadata.chapter} Slide ${slideNum}}`);
+
+	document.querySelectorAll(`#slide_info`).forEach(el => el.classList.remove('hidden'));
+
+	if (document.querySelector(`.current_chapter`).textContent != slide.getAttribute(`chapter`)) {
+		document.querySelectorAll(`#info_statements .chapter`).forEach(el => el.classList.add('hidden'));
+		document.querySelectorAll(`#info_statements .chapter[chapter="${slide.getAttribute('chapter')}"]`).forEach( chapter => {
+			chapter.classList.remove('hidden');
+		});
+	}
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', function () {
+	const output = document.querySelector(`#output`);
 	let infoObserver = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type == "attributes") {
 				if (mutation.attributeName == `data-selected-slide`) {
-					let $slide = $(`#output div.slide[slide="${$('#output').attr('data-selected-slide')}"]`);
-					updateSlideInfo($slide[0]);
-				}
-				if (mutation.attributeName == `data-content-url`) {
-					baseRenderer.then(cranach => {
-						updateToc(cranach);
-					});
+					let slide = output.querySelector(`:scope > div.slide[slide="${output.dataset.selectedSlide}"]`);
+					updateSlideInfo(slide);
 				}
 			}
 		});
 	});
-	infoObserver.observe(document.getElementById(`output`), {
+	infoObserver.observe(output, {
 		attributes: true,
 	});
 });

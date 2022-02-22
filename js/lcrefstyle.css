@@ -56,7 +56,6 @@ div > *[lcref], p > *[lcref] {
    border-bottom: 0;
 }
 .lcref-output {
-//  background: #eef;
   background: hsl(355, 20%, 97.5%);
 /*
 border-top: 10px solid #ddf;
@@ -70,7 +69,7 @@ border-top: 10px solid #ddf;
 */
   border: 4px solid #cbb;
   border-radius:12px;
-  display: none;
+  /* display: none; */
   padding: 0px;
   margin-top: 10px;
   margin-bottom: 0px;
@@ -145,7 +144,7 @@ border-top: 10px solid #ddf;
 
 .lcref-output.processing {
   display:block!important;
-  height:0pt;
+  /* height:0pt; */
   overflow:hidden;
 }
 

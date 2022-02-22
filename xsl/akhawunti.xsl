@@ -23,7 +23,8 @@
 		//lv:figure[@md5]" use="@md5"
 	/>
 
-	<xsl:key name="ref_branches" match="//idx:refby[@md5]|//idx:ref[@md5]" use="concat(@file_md5, '-', @slide, '-', @md5)"/>
+	<!-- <xsl:key name="ref_branches" match="//idx:refby[@md5]|//idx:ref[@md5]" use="concat(@file_md5, '-', @slide, '-', @md5)"/> -->
+	<!-- <xsl:key name="ref_branches" match="//idx:ref[@referrer-md5]|//lv:ref[@referrer-md5]" use="@referrer-md5"/> -->
 
 	<xsl:template match="/">
 		<document>
@@ -42,8 +43,11 @@
 					//idx:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]|
 					//lv:figure[@md5 and (generate-id() = generate-id(key('statement_branches', @md5)[1]))]
 				"/>
-				<xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref"/>
-				<xsl:apply-templates select="/idx:preindex/idx:label|/idx:preindex/lv:label"/>
+				<xsl:apply-templates select="/idx:preindex/idx:ref|/idx:preindex/lv:ref|//idx:ref|//lv:ref"/>
+				<xsl:apply-templates select="
+					//idx:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]|
+					//lv:ref[@referrer-md5 and (generate-id() = generate-id(key('ref_branches', @referrer-md5)[1]))]"/>
+				<!-- <xsl:apply-templates select="//idx:label|//lv:label"/> -->
 				<xsl:apply-templates select="
 					//idx:course|
 					//idx:chapter|
@@ -103,7 +107,18 @@
 		</entry>
 	</xsl:template>
 
-	<xsl:template match="//idx:course|//idx:chapter|//idx:section|//idx:subsection|//idx:subsubsection">
+	<xsl:template match="
+		//idx:course
+		|//idx:chapter
+		|//idx:section
+		|//idx:subsection
+		|//idx:subsubsection
+		|//lv:course
+		|//lv:chapter
+		|//lv:section
+		|//lv:subsection
+		|//lv:subsubsection
+		">
 		<xsl:element name="{local-name()}" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="idx:label|lv:label"/>
@@ -121,15 +136,19 @@
 	<xsl:template match="idx:title|lv:title">
 		<xsl:element name="title" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="*|text()"/>
+			<xsl:apply-templates select="*|text()"/>
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="idx:ref|lv:ref">
 		<xsl:element name="ref" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="*|text()"/>
+			<xsl:apply-templates select="key('ref_branches', @referrer-md5)[1]/*|key('ref_branches', @referrer-md5)[1]/text()"/>
 		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="text()">
+        <xsl:value-of select="." disable-output-escaping="no" />
 	</xsl:template>
 
 </xsl:stylesheet>

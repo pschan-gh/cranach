@@ -9,11 +9,11 @@ MathJax = {
 				return MathJax.startup.promise;
 			};
 			MathJax.getAllJax = function (name) {
-				let list = Array.from(MathJax.startup.document.math);
+				const list = Array.from(MathJax.startup.document.math);
 				if (!name) return list;
-				let container = document.getElementById(name);
+				const container = document.getElementById(name);
 				if (!container) return list;
-				let filtered = list.filter((node) => container.contains(node.start.node));
+				const filtered = list.filter((node) => container.contains(node.start.node));
 				return filtered;
 			};
 
@@ -31,15 +31,7 @@ MathJax = {
 			}, {
 				HandleRef(parser, name) {
 					const url = parser.GetArgument(name);
-					let arg = parser.ParseArg(name);
-					// if (!NodeUtil.isInferred(arg)) {
-					// 	return arg;
-					// }
-					// let children = NodeUtil.getChildren(arg);
-					// if (children.length === 1) {
-					// 	parser.Push(children[0]);
-					// 	return 1;
-					// }
+					const arg = parser.ParseArg(name);
 					const mrow = parser.create('node', 'mrow');
 					NodeUtil.copyChildren(arg, mrow);
 					NodeUtil.copyAttributes(arg, mrow);
@@ -49,15 +41,16 @@ MathJax = {
 				}
 			});
 			//
-      //  Create the package for the overridden macros
-      //
-      Configuration.create('knowl', {
-        handler: {macro: ['knowl']}
-      });
+            //  Create the package for the overridden macros
+            //
+            Configuration.create('knowl', {
+                handler: {macro: ['knowl']}
+            });
 
-			$('.icon.latex, .icon.xml').hide();
+			document.querySelectorAll('.icon.latex, .icon.xml').forEach(el => el.classList.add('hidden'));
+			const body = document.querySelector('body');
 			baseRenderer.then(cranach => {
-				let output = cranach.bare ?  $('body')[0] : document.getElementById('output');
+				let output = cranach.bare ?  body : document.getElementById('output');
 				return cranach.render(output);
 			}).then(renderer => {
 				if (renderer.bare) {
@@ -68,14 +61,12 @@ MathJax = {
 				if (renderer.bare) {
 					return renderer;
 				} else {
-					if ($('.editor.ace_editor').length > 0) {
+					const editorElement = document.querySelector('.editor.ace_editor');
+					if (editorElement !== null) {
 						convertCranachDocToWb(renderer.cranachDoc, editor);
 					}
-					if ($('#item_modal').length > 0) {
-						updateModal(renderer);
-					}
-					$('#render_sel').prop('disabled', false);
-					$('#wb_button').prop('disabled', false);
+					document.querySelectorAll('#render_sel').forEach(el => el.disabled = false);
+					document.querySelectorAll('#wb_button').forEach(el => el.disabled = false);
 					return renderer;
 				}
 			}).then(renderer => {

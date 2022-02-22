@@ -1,337 +1,426 @@
+const indicatorButton = document.createElement('button');
+indicatorButton.setAttribute('type', 'button');
+indicatorButton.dataset['bsTarget'] = "#right_half";
+indicatorButton.dataset['bsToggle'] = "tooltip";
+indicatorButton.dataset['bsPlacement'] = "bottom";
+
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
 
-	let $slides = $('#output > div.slide');
+    let slides = document.querySelectorAll('#output > div.slide');
 
-    if ($slides.length == null || $slides.length == 0) {
+    if (slides === null) {
         return 0;
     }
+	bootstrap.Carousel.getOrCreateInstance(document.querySelector('#right_half'), {
+		dispose: true
+	});
 
-    let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-    let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
+	// $('.tooltip').remove();
+	// $('.carousel-indicators div.tooltip').remove();
+	document.querySelector(".carousel-indicators").innerHTML = '';
+	document.querySelector('.carousel-indicators').outerHTML = document.querySelector('.carousel-indicators').outerHTML;
+	document.querySelector('.controls_container').outerHTML = document.querySelector('.controls_container').outerHTML;
 
-	$('.tooltip').remove();
-	$('.carousel-indicators div.tooltip').remove();
-	$(".carousel-indicators").html('');
-
-    if ($slides.length > 50) {
-		$('#output > div.slide').removeClass('carousel-item').addClass('hidden');
-		$('#output > div.slide[slide="' + slideNum + '"]').addClass('carousel-item').removeClass('hidden');
-		$('#output > div.slide[slide="' + prevNum + '"]').addClass('carousel-item').removeClass('hidden');
-		$('#output > div.slide[slide="' + nextNum + '"]').addClass('carousel-item').removeClass('hidden');
-
-		if (prevNum < slideNum) {
-			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}">`);
-		}
-		$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}">`);
-		if (nextNum > slideNum) {
-			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}">`);
-		}
-		$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
+    if (slides.length > 50) {
+		carouselThreeSlides(slideNum, slides);
     } else {
-		$('#output > div.slide').addClass('carousel-item').removeClass('hidden');
+		document.querySelectorAll('#output > div.slide').forEach(e => {
+            e.classList.add('carousel-item');
+            e.classList.remove('hidden');
+        });
 		let activeIndex = 0;
-		$slides.each(function(index) {
-			$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
-			if (this.getAttribute('slide') == slideNum) {
+        slides.forEach((e, index) => {
+            let button = indicatorButton.cloneNode(true);
+            button.setAttribute('aria-label', `Slide ${e.getAttribute('slide')}`);
+            button.setAttribute('title', `Slide ${e.getAttribute('slide')}`);
+            button.dataset['bsSlideTo'] = `${index}`;
+
+			// $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
+			if (e.getAttribute('slide') == slideNum) {
 				activeIndex = index;
+                button.classList.add('active');
+                button.setAttribute('aria-current', 'true');
 			}
+            document.querySelector(".carousel-indicators").appendChild(button);
 		});
-		$(`.carousel-indicators button[data-bs-slide-to="${activeIndex}"]`)
-		.addClass('active')
-		.attr('aria-current', "true");
+		document.querySelectorAll(".carousel-indicators button").forEach(e => {
+	        bootstrap.Tooltip.getOrCreateInstance(e, {
+	            delay: { "show": 0, "hide": 0 }
+	        });
+	    });
     }
 
-	$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+    // tooltip({'delay': { show: 0, hide: 0 }});
 
-	$('#output > div.slide.carousel-item[slide="' + slideNum + '"]').addClass('active');
-    $('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-    $('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
+	document.querySelector('#output > div.slide.carousel-item[slide="' + slideNum + '"]').classList.add('active');
+    document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + slideNum;
+    document.querySelector('#right_half .slide_number button').setAttribute('slide', slideNum);
 
-	$('#right_half').addClass('carousel').addClass('slide');
+	new bootstrap.Carousel(document.querySelector('#right_half'));
+	document.getElementById('right_half').classList.add('carousel', 'slide');
+	document.querySelector('.carousel').removeEventListener('slid.bs.carousel', carouselSlideHandler);
+    document.querySelector('.carousel').addEventListener('slid.bs.carousel', carouselSlideHandler);
 }
 
-function updateCarouselSlide() {
+function carouselThreeSlides(slideNum, slides) {
+
+	let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
+	// let prevNum = slideNum - 1;
+    let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
+	// let nextNum = slideNum + 1;
+
+	document.querySelector(".carousel-indicators").innerHTML = '';
+
+	document.querySelectorAll('#output > div.slide:not([slide="' + slideNum + '"]').forEach(e => {
+		e.classList.remove('carousel-item');
+		e.classList.add('hidden');
+	});
+	document.querySelectorAll(`#output > div.slide[slide="${prevNum}"], #output > div.slide[slide="${slideNum}"], #output > div.slide[slide="${nextNum}"]`).forEach(e => {
+		e.classList.add('carousel-item');
+		e.classList.remove('hidden');
+	});
+
+	if (prevNum < slideNum) {
+	// if (prevNum > 0) {
+		let button = indicatorButton.cloneNode(true);
+		button.setAttribute('aria-label', `Slide ${prevNum}`);
+		button.setAttribute('title', `Slide ${prevNum}`);
+		button.dataset['bsSlideTo'] = `0`;
+		button.dataset['bsSlideTo'] = nextNum > slideNum ? `0` : `1`;
+		document.querySelector(".carousel-indicators").appendChild(button);
+	}
+	let button = indicatorButton.cloneNode(true);
+	button.setAttribute('aria-label', `Slide ${slideNum}`);
+	button.setAttribute('title', `Slide ${slideNum}`);
+	// button.dataset['bsSlideTo'] = prevNum < slideNum ? `1` : `0`;
+	button.classList.add('active');
+	button.setAttribute('aria-current', "true");
+	document.querySelector(".carousel-indicators").appendChild(button);
+	if (nextNum > slideNum) {
+	// if (nextNum <= slides.length) {
+		let button = indicatorButton.cloneNode(true);
+		button.setAttribute('aria-label', `Slide ${nextNum}`);
+		button.setAttribute('title', `Slide ${nextNum}`);
+		button.dataset['bsSlideTo'] = prevNum < slideNum ? `2` : `1`;
+		// button.dataset['bsSlideTo'] = prevNum > 0 ? `2` : `1`;
+		document.querySelector(".carousel-indicators").appendChild(button);
+	}
+	document.querySelectorAll(".carousel-indicators button").forEach(e => {
+		bootstrap.Tooltip.getOrCreateInstance(e, {
+			delay: { "show": 0, "hide": 0 }
+		});
+	});
+}
+
+function carouselSlideHandler() {
+	// console.log('carousel slide event');
+
+	document.querySelectorAll('.tooltip').forEach(e => e.remove());
+
+	document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + document.querySelector('.carousel-item.active').getAttribute('slide');
+	document.querySelector('#right_half .slide_number button').setAttribute('slide', document.querySelector('.carousel-item.active').getAttribute('slide'));
+
+	let slide = document.querySelector('#output > div.carousel-item.active');
+	let slideNum = parseInt(slide.getAttribute('slide'));
+	document.querySelector('#output > div.slide[slide="' + slideNum + '"]').classList.add('selected');
+
+	let slides = document.querySelectorAll('#output > div.slide');
+	let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
+	let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
+
+	if (slides.length > 50) {
+		carouselThreeSlides(slideNum, slides);
+	}
+	document.getElementById('output').dataset.selectedSlide = slideNum;
+
+	if (typeof canvasSnapshots != 'undefined') {
+		canvasSnapshots = [];
+	}
+	if (typeof canvasUndos != 'undefined') {
+		canvasUndos = [];
+	}
+}
+
+function updateCarouselSlide(slide, content = null) {
 	// console.log('updateCarouselSlide');
-	if ($('.carousel-item').length == 0) {
+	if (document.querySelector('.carousel-item') === null) {
 		return 1;
 	}
 
-	$('#output > div.slide.active .slide_container > .slide_content').css('padding-bottom', '');
-	let content = $('#output > div.slide.active .slide_content').first()[0];
-	let $mathJaxContent = $('#output > div.slide.active .slide_content .MathJax');
+	let outerContent = slide.querySelector(':scope > .slide_container > .slide_content');
 
-	$mathJaxContent.each(function() {
-		if (!this.style.fontSize.match(/em$/)) {
-			this.style.fontSize = "1.2em";
-		}
-	});
+	// outerContent.style['padding-bottom'] = '';
 
 	let bufferedWidth = 0;
 	MathJax.startup.promise.then(() => {
-		while (content.scrollWidth > content.clientWidth
-			&& content.scrollWidth != bufferedWidth
-			&& parseFloat($mathJaxContent.first()[0].style.fontSize.replace(/em$/, '')) > 0.8) {
-				console.log('adjusting width');
-				bufferedWidth = content.scrollWidth;
-				$mathJaxContent.each(function() {
-					this.style.fontSize = (parseFloat(this.style.fontSize.replace(/em$/, '')) - 0.1).toString() + 'em';
-					// resizeFont(-0.5, content);
-				});
+		let mathJaxContentList = content == null ? outerContent.querySelectorAll('.MathJax') : content.querySelectorAll('.MathJax');
+
+		if (mathJaxContentList.length > 0) {
+			mathJaxContentList.forEach(e => {
+				if (e.hasAttribute('style')) {
+					if (!e.style.fontSize.match(/em$/)) {
+						e.style.fontSize = "1.2em";
+					}
+				} else {
+					e.style.fontSize = "1.2em";
+				}
+			});
+			while (outerContent.scrollWidth > outerContent.clientWidth
+				&& outerContent.scrollWidth != bufferedWidth
+				&& parseFloat(mathJaxContentList[0].style.fontSize.replace(/em$/, '')) > 0.8) {
+					console.log('adjusting width');
+					bufferedWidth = outerContent.scrollWidth;
+					mathJaxContentList.forEach(e => {
+						e.style.fontSize = (parseFloat(e.style.fontSize.replace(/em$/, '')) - 0.1).toString() + 'em';
+					});
+			}
 		}
 		adjustHeight();
 	});
+
 }
 
 function showSlide(slide, cranach) {
 	console.log('showSlide');
-    $('.pane').removeClass('info')
-    .removeClass('overview')
-    .removeClass('compose')
-    .addClass('present');
+	if (slide == null) {
+        if (document.querySelector('div.slide.selected, div.slide.active') !== null) {
+            slide = document.querySelector('div.slide.selected, div.slide.active');
+        } else {
+            slide = document.querySelector('#output > div.slide');
+			slide.classList.add('selected');
+        }
+    }
+    document.querySelector('#container').classList.remove('info', 'overview', 'compose');
+	document.querySelector('#container').classList.add('present');
 
-    $('#output').addClass('present');
-
-    let $slide = $(slide);
-	$slide.addClass('selected');
-	let slideNum = parseInt($slide.attr('slide'));
+    let slideNum = parseInt(slide.getAttribute('slide'));
 
 	updateCarousel(slideNum);
-	updateCarouselEvent();
+	updateCarouselSlide(slide);
 
-    cranach.then(renderer => {
-        updateModal(renderer);
-    });
-
-	// $('#output').attr('data-selected-slide', slideNum);
+    // cranach.then(renderer => {
+    //     updateModal(renderer);
+    // });
 }
 
 function hideCarousel() {
-    if ($('.output.present:visible').first().hasClass('annotate')) {
+    if (document.getElementById('right_half').classList.contains('annotate')) {
         hideAnnotate();
     }
 
-    $('#container').removeClass('wide');
-    $('.present')
-	// .removeClass('slide')
-    .removeClass('present')
-    .removeClass('overview')
-    .addClass($('#left_half')
-    .attr('mode'));
+    document.getElementById('container').classList.remove('wide');
+    document.getElementById('container').classList.remove('present', 'overview');
+	document.getElementById('container').classList.add(document.getElementById('left_half').getAttribute('mode'));
 
-	$('#output > div.slide')
-    .removeClass('carousel-item')
-    .removeClass('active')
-    .removeClass('hidden')
-    .addClass('tex2jax_ignore');
-    $('.controls').hide();
-    $('#output .slide_content').css('padding-bottom', '');
+	document.querySelectorAll('#output > div.slide').forEach(e => {
+		e.classList.remove('carousel-item', 'active', 'hidden');
+		e.classList.add('tex2jax_ignore');
+	});
 
-    $('#output > div.slide.selected')[0].scrollIntoView();
-
-    $('.separator').css('font-weight', 'normal');
-    $('.separator').find('a').css('color', 'pink');
-
-    $('.slide.selected').find('.separator').css('font-weight', 'bold');
-    $('.slide.selected').find('.separator').find('a').css('color', 'red');
+    if (document.querySelector('#output > div.slide.selected') !== null) {
+		document.querySelector('#output > div.slide.selected').scrollIntoView( {block: "center", behavior: "smooth"} );
+	}
 
 }
 
 function adjustHeight() {
-	let $output = $('#output');
-	if ($('.carousel-item').length == 0) {
+	// console.log('adjustHeight');
+	let output = document.getElementById('output');
+	if (document.querySelector('.carousel-item') === null) {
 		 return 1;
 	}
-	let $slide = $(`#output > div.slide[slide="${$('#output').attr('data-selected-slide')}"]`);
-	$slide.find('.slide_content').css('padding-bottom', '');
-	if ($slide[0].scrollHeight >  $output.innerHeight() || $output.hasClass('annotate')) {
-		$output.css('display', 'block');
+	let selectedSlideNum = output.dataset.selectedSlide;
+	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
+	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
+		output.classList.add('long');
+		if (typeof slide.cfd != 'undefined') {
+			slide.cfd.expandCanvas();
+		}
 	} else {
-		$output.css('display', '');
+		output.classList.remove('long');
 	}
 }
 
 function hideAnnotate() {
-	$('canvas').hide();
-	$('canvas').closest('div.slide').find('.canvas-controls .disable').click();
-	$('.output:visible').removeClass('annotate');
-	$('#right_half').removeClass('annotate');
+	document.querySelectorAll('canvas').forEach(e => e.classList.add('hidden'));
+	canvasControlsDisableEvent(document.querySelector('div.slide.active'));
+	document.querySelector('#right_half').classList.remove('annotate');
 }
 
 function showAnnotate() {
-	$('#right_half').addClass('annotate');
-	$('.output.present:visible').first().addClass('annotate');
-	$('.carousel').attr('data-bs-touch', "false");
+	document.querySelector('#right_half').classList.add('annotate');
+	document.getElementById('output').classList.add('long');
+	document.querySelector('.carousel').dataset.bsTouch = "false";
 }
 
 function annotate() {
-	if ($('.output.present:visible').first().hasClass('annotate')) {
+	if (document.getElementById('right_half').classList.contains('annotate')) {
 		hideAnnotate();
 	} else {
 		showAnnotate();
 	}
-	updateCanvas($('.output.present:visible div.slide.active')[0]);
+	updateCanvas(document.querySelector('.present #output > div.slide.active'));
 }
 
 function updateCanvas(slide) {
-	if ($('.carousel-item').length == 0) {
+	if (document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
-	if ($('.output.present:visible').first().hasClass('annotate')) {
-		if (!$(slide).find('canvas').length) {
+	if (document.querySelector('#right_half').classList.contains('annotate')) {
+		if (slide.querySelector('canvas') === null) {
 			addCanvas(slide);
 		}
-		$(slide).find('canvas').show();
+		slide.querySelector('canvas').classList.remove('hidden');
 	} else {
-		if ($(slide).find('canvas').length) {
-			$(slide).find('canvas').hide();
+		if (slide.querySelector('canvas') !== null) {
+			slide.querySelector('canvas').classList.add('hidden');
 		}
-		return 1;
 	}
-	$('.canvas-controls').find('*').off();
-	// $('.canvas-controls .annotate').off();
-	$('.canvas-controls .clear').click(function() {
-		$(slide).find('canvas').remove();
-		addCanvas(slide);
-	});
-	// $('.canvas-controls .expand').off();
-	$('.canvas-controls .expand').click(function() {
-		slide.cfd.disableDrawingMode();
-		// https://stackoverflow.com/questions/331052/how-to-resize-html-canvas-element
-		let oldCanvas = slide.cfd.canvas.toDataURL("image/png");
-		let img = new Image();
-		img.src = oldCanvas;
-		img.onload = function (){
-			$(slide.cfd.canvas).first()[0].width = $('.output.present:visible').first()[0].scrollWidth;
-			$(slide.cfd.canvas).first()[0].height = $('.output.present:visible').first()[0].scrollHeight;
-			let ctx = slide.cfd.canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0);
-			slide.cfd.enableDrawingMode();
-			slide.cfd.setDraw();
-		}
-	});
-	// $('.canvas-controls .disable').off();
-	$('.canvas-controls .disable').click(function() {
-		slide.cfd.disableDrawingMode();
-		$(slide.cfd.canvas).css('z-index', 0);
-		$('.canvas-controls .nav-link').not('.enable').addClass('disabled');
-		$('.canvas-controls .enable').removeClass('disabled');
-		// $('.carousel').attr('data-bs-touch', "true");
-	});
-	// $('.canvas-controls .erase').off();
-	$('.canvas-controls .erase').click(function() {
-		slide.cfd.setErase();
-		$('.canvas-controls .nav-link').removeClass('disabled');
-		$(this).addClass('disabled');
-	});
-	// $('.canvas-controls .enable').off();
-	$('.canvas-controls .enable').click(function() {
-		slide.cfd.enableDrawingMode();
-		$(slide.cfd.canvas).show();
-		$(slide.cfd.canvas).css('z-index', 999);
-		slide.cfd.setDraw();
-		$('.canvas-controls .nav-link').removeClass('disabled');
-		$(this).addClass('disabled');
-	});
-	$('.canvas-controls .undo').click(() => slide.cfd.undo());
-	$('.canvas-controls .redo').click(() => slide.cfd.redo());
-	$('.canvas-controls .red').click(() => slide.cfd.setDrawingColor([255, 0, 0]));
-	$('.canvas-controls .green').click(() => slide.cfd.setDrawingColor([0, 180, 0]));
-	$('.canvas-controls .blue').click(() => slide.cfd.setDrawingColor([0, 0, 255]));
-	$('.canvas-controls .orange').click(() => slide.cfd.setDrawingColor([255, 128, 0]));
-	$('.canvas-controls .black').click(() => slide.cfd.setDrawingColor([0, 0, 0]));
+	document.querySelector('#colorDropdown').style.color = '';
+	canvasControlsDisableEvent(slide);
+}
 
-	$('.canvas-controls .disable').click();
+function canvasControlsEnableEvent(slide) {
+	slide.cfd.enableDrawingMode();
+	slide.cfd.canvas.classList.remove('hidden');
+	slide.cfd.setDraw();
+	document.querySelectorAll('.canvas-controls .nav-link').forEach(e => e.classList.remove('disabled'));
+	document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+	document.querySelector('.annotate.enable .cursor').classList.add('hidden');
+	slide.cfd.canvas.classList.remove('disabled');
+	document.querySelector('#colorDropdown').style.color = `rgb(${slide.cfd.strokeColor})`;
+}
+
+function canvasControlsDisableEvent(slide) {
+    // console.log('canvasControlDisableEvent');
+	if (typeof slide.cfd != 'undefined') {
+		slide.cfd.disableDrawingMode();
+		slide.cfd.canvas.classList.add('disabled');
+	}
+	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
+	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
+    document.querySelector('.annotate.enable .brush').classList.add('hidden');
+    document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+	document.querySelector('#colorDropdown').style.color = '';
 }
 
 function clearAllCanvas() {
 	if (window.confirm("Are you sure?")) {
 		hideAnnotate();
-		$('canvas').remove();
+		document.querySelectorAll('canvas').forEach(e => e.remove());
 	}
 }
 
-function addCanvas(slide) {
-	if ($(slide).find('canvas').length || !$(slide).closest('.output.present:visible').hasClass('present')) {
+function addCanvas(slide, output = document.getElementById('output')) {
+	if (slide.querySelector('canvas') !== null || document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
+	let width = output.scrollWidth;
+	let height = output.scrollHeight - 5;
 
-	let width = $('.output.present:visible').first()[0].scrollWidth;
-	let height = $('.output.present:visible').first()[0].scrollHeight;
-
-	slide.cfd = new CanvasFreeDrawing.default({
+	slide.cfd = new CanvasFreeDrawing({
 		elementId: slide.id,
 		width: width,
 		height: height,
 		showWarnings: true,
+		output: output,
 	});
 	slide.cfd.setLineWidth(2);
-	slide.redrawCount = $(slide).find('.annotate.redraw-count').first()[0];
-	slide.cfd.on({ event: 'redraw', counter: 0 }, () => {
-		slide.redrawCount.innerText = parseInt(slide.redrawCount.innerText) + 1;
-	});
-
+	let bodyRect = document.body.getBoundingClientRect();
+	let slideRect = slide.getBoundingClientRect()
+	let voffset = slideRect.top + output.scrollTop;
+	slide.querySelector('canvas').style.top = -voffset;
 }
 
-function updateCarouselEvent() {
-	$(function() {
-		$('.carousel').on('slid.bs.carousel', function () {
-			$('#right_half .slide_number button').text('Slide ' + $('.carousel-item.active').attr('slide'));
-			$('#right_half .slide_number button').attr('slide', $('.carousel-item.active').attr('slide'));
-
-			let $slide = $('#output > div.carousel-item.active').first();
-			let slideNum = parseInt($slide.attr('slide'));
-			$('#output > div.slide[slide="' + slideNum + '"]').addClass('selected');
-
-			let $slides = $('#output > div.slide');
-			let prevNum = ((slideNum - 2 + $slides.length) % $slides.length) + 1;
-			let nextNum = slideNum == $slides.length - 1 ? $slides.length : (slideNum + 1) % $slides.length;
-
-			if ($slides.length > 50) {
-				$('.tooltip').remove();
-				$('.carousel-indicators div.tooltip').remove();
-				$(".carousel-indicators").html('');
-
-				$('#output > div.slide').not('.slide[slide="' + slideNum + '"]').removeClass('carousel-item').addClass('hidden');
-				$(`#output > div.slide[slide="${prevNum}"]`).addClass('carousel-item').removeClass('hidden');
-				$(`#output > div.slide[slide="${nextNum}"]`).addClass('carousel-item').removeClass('hidden');
-
-				if (prevNum < slideNum) {
-					$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="0" aria-label="Slide ${prevNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${prevNum}"">`);
-				}
-				$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="1" aria-label="Slide ${slideNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${slideNum}"">`);
-				if (nextNum > slideNum) {
-					$(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="2" aria-label="Slide ${nextNum}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${nextNum}"">`);
-				}
-				$('.carousel-indicators button[data-bs-slide-to="1"]').addClass('active').attr('aria-current', "true");
-				$(".carousel-indicators button").tooltip({'delay': { show: 0, hide: 0 }});
+document.addEventListener('DOMContentLoaded', () => {
+	document.querySelectorAll('.canvas-controls .clear').forEach(
+		el => el.addEventListener('click', function() {
+			let slide = document.querySelector('#output > div.slide.active');
+			if (slide === null) { return 0; }
+			if (slide.cfd.isDrawingModeEnabled) {
+				slide.cfd.clear();
 			}
-			$('#output').attr('data-selected-slide', slideNum);
-		});
-
-		$('.carousel').on('shown.bs.collapse', 'div.collapse', function() {
-			updateCarouselSlide();
-		});
-		$('.carousel').on('hidden.bs.collapse', 'div.collapse', function() {
-			updateCarouselSlide();
-		});
-
-	});
-}
-$(function() {
-	$('#output.present').scroll(function(event) {
-		let element = event.target;
-		if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-			$('#output > div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
+		})
+	);
+	document.querySelectorAll('.canvas-controls .expand').forEach(el => el.addEventListener('click', function() {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		if (typeof slide.cfd != 'undefined') {
+			slide.cfd.expandCanvas(1, 300);
 		}
-	});
+	}));
+	document.querySelectorAll('.canvas-controls .disable').forEach(el => el.addEventListener('click', function() {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		canvasControlsDisableEvent(slide);
+	}));
+	document.querySelectorAll('.canvas-controls .erase').forEach(el => el.addEventListener('click', function(evt) {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		slide.cfd.setErase();
+		document.querySelectorAll('.canvas-controls .nav-link').forEach(el => el.classList.remove('disabled'));
+		evt.currentTarget.classList.add('disabled');
+        document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+        document.querySelector('.annotate.enable .cursor').classList.add('hidden');
+	}));
+	// $('.canvas-controls .enable').off();
+	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
 
-	$('#output')[0].addEventListener('wheel', function(event) {
-		let element = $('#output')[0];
-		if (event.deltaY > 0) {
-			if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-				$('#output div.slide.active > .slide_container > .slide_content').css('padding-bottom', '15em');
-			}
+        slide.cfd.toggleDrawingMode();
+        if (slide.cfd.isDrawingModeEnabled) {
+            canvasControlsEnableEvent(slide);
+        } else {
+            let slide = document.querySelector('#output > div.slide.active');
+    		if (slide === null) { return 0; }
+    		canvasControlsDisableEvent(slide);
 		}
-	});
+	}));
+	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		slide.cfd.undo()
+	}));
+	document.querySelectorAll('.canvas-controls .redo').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		slide.cfd.redo()
+	}));
+	document.querySelectorAll('.canvas-controls .red').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		let color = [180, 80, 80];
+		slide.cfd.setDrawingColor(color)
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
+	}));
+	document.querySelectorAll('.canvas-controls .green').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		let color = [0, 139, 69];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
+	}));
+	document.querySelectorAll('.canvas-controls .blue').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		let color = [40, 122, 181];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
+	}));
+	document.querySelectorAll('.canvas-controls .orange').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		let color = [240, 110, 0];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
+	}));
+	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
+		let slide = document.querySelector('#output > div.slide.active');
+		if (slide === null) { return 0; }
+		let color = [115, 115, 115];
+		slide.cfd.setDrawingColor(color);
+		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
+	}));
 });

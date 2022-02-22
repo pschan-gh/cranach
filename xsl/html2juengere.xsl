@@ -206,19 +206,27 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="*[@class='comment']">
+		<xsl:element name="comment" namespace="{$lv}">
+			<xsl:apply-templates select="*|text()|comment()" />
+		</xsl:element>
+	</xsl:template>
+
 	<xsl:template match="text()" >
 		<xsl:value-of select="." disable-output-escaping="no"/>
 	</xsl:template>
 
-	<xsl:template match="comment()" >
+    <xsl:template match="*[@class='comment']/comment()">
+		<!-- <xsl:comment> -->
+			<xsl:value-of select="." disable-output-escaping="no"/>
+		<!-- </xsl:comment> -->
+	</xsl:template>
+
+	<xsl:template match="comment()">
 		<xsl:comment>
 			<xsl:value-of select="." disable-output-escaping="no"/>
 		</xsl:comment>
 	</xsl:template>
 
-	<xsl:template match="*[@class='comment']">
-		<xsl:element name="comment" namespace="{$lv}">
-			<xsl:apply-templates select="*|text()" />
-		</xsl:element>
-	</xsl:template>
+
 </xsl:stylesheet>

@@ -337,13 +337,13 @@
 				<xsl:value-of select="@wbtag"/>
 			</xsl:attribute>
 			<div class="slide_container" wbtag="ignore">
-				<div class="separator" style="position:relative; width:100%; height:1.5em; text-align:center;" wbtag="ignore">
+				<div class="separator" wbtag="ignore">
 					<xsl:attribute name="slide">
 						<xsl:value-of select="$slide"/>
 					</xsl:attribute>
 					<hr style="border-top:2px dotted pink" />
 					<div style="position:absolute;top:-0.75em;left:0;width:100%;text-align:center">
-						<a href="javascript:void(0)" style="font-size:1em;color:pink" class="slide_label">
+						<span class="slide_label">
 							<xsl:choose>
 								<xsl:when test="@canon_num">
 									<xsl:value-of select="concat(' slide ', @canon_num, ' ')"/>
@@ -352,7 +352,7 @@
 									<xsl:value-of select="concat(' slide ', $slide, ' ')"/>
 								</xsl:otherwise>
 							</xsl:choose>
-						</a>
+						</span>
 					</div>
 					<div style="margin-top:-0.75em">
 						<button href="#" class="plain_button collapse_icon" style="float:right" wbtag="ignore">
@@ -944,7 +944,7 @@
 					<xsl:value-of select="@slide"/>
 				</xsl:attribute>
 				<xsl:attribute name="onclick">
-					<xsl:value-of select="concat('focusOn($(&quot;#s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
+					<xsl:value-of select="concat('focusOn(document.getElementById(&quot;s', @slide , '&quot;), &quot;' , $keyword , '&quot;)')"/>
 				</xsl:attribute>
 				<xsl:value-of select="concat('Slide ', @slide)"/>
 			</a>
@@ -1023,7 +1023,7 @@
 	</xsl:element>
 </xsl:template>
 
-<xsl:template match="xh:iframe">
+<xsl:template match="xh:iframe|iframe">
 	<div class="loading_icon" wbtag="ignore">
 		<div class="spinner-border text-secondary" style="margin:2em" role="status">
 			<span class="visually-hidden">Loading...</span>
@@ -1033,7 +1033,7 @@
 	</div>
 	<xsl:element name="{local-name()}" namespace="{$xh}">
 		<xsl:copy-of select="@*[(name(.)!='src') and (name(.)!='environment')]"/>
-		<xsl:attribute name="style">display:none</xsl:attribute>
+		<xsl:attribute name="class"><xsl:text>hidden</xsl:text></xsl:attribute>
 		<xsl:if test="@src">
 			<xsl:choose>
 				<xsl:when test="contains(@src, 'http')">
@@ -1192,7 +1192,7 @@
 				<br/>
 				<div style="margin-top:-2.25cm" class="text-muted">Click to Load.</div>
 			</div>
-			<iframe style="overflow-x:auto;overflow-y:hidden;display:none" class="webwork">
+			<iframe style="overflow-x:auto;overflow-y:hidden;" class="webwork hidden">
 				<xsl:attribute name="rendered">0</xsl:attribute>
 				<xsl:attribute name="data-src">
 					<!-- <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/> -->
@@ -1248,7 +1248,9 @@
 
 <xsl:template match="lv:comment">
 	<div class="comment">
-		<xsl:value-of select="text()" disable-output-escaping="yes"/>
+		<xsl:comment>
+			<xsl:value-of select="text()" disable-output-escaping="yes"/>
+		</xsl:comment>
 	</div>
 </xsl:template>
 
