@@ -2,8 +2,6 @@ function postprocess(cranach) {
   console.log('POSTPROCESS');
 	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 
-	// document.addEventListener('DOMContentLoaded', () => {
-
 	let output = document.getElementById('output');
 	output.dataset.contentUrl = cranach.attr['contentURL'];
 	output.dataset.query = cranach.attr['query'];
@@ -83,22 +81,22 @@ function postprocess(cranach) {
 		}
 		updateToc(cranach);
 	});
-	// });
-}
 
-// document.addEventListener('DOMContentLoaded', () => {
-// 	let contentUrlObserver = new MutationObserver(function(mutations) {
-// 		mutations.forEach(function(mutation) {
-// 			if (mutation.type == "attributes") {
-// 				if (mutation.attributeName == `data-content-url`) {
-// 					baseRenderer.then(cranach => {
-// 						updateToc(cranach);
-// 					});
-// 				}
-// 			}
-// 		});
-// 	});
-// 	contentUrlObserver.observe(document.getElementById(`output`), {
-// 		attributes: true,
-// 	});
-// });
+	const resizeObserver = new ResizeObserver(entries => {
+		for (let entry of entries) {
+			if (document.querySelector('.carousel-item') === null) {
+				 return 1;
+			}
+			const output = document.getElementById('output');
+			const slide = entry.target;
+			if ( slide.scrollHeight >  0.9*output.clientHeight ) {
+				output.classList.add('long');
+			} else {
+				output.classList.remove('long');
+			}
+		}
+	});
+	document.querySelectorAll('.output > div.slide').forEach(slide => {
+		resizeObserver.observe(slide);
+	});
+}

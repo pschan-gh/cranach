@@ -46,7 +46,7 @@ function inlineEdit(enableEdit, editor) {
 		editor.container.style.pointerEvents="auto";
 		editor.container.style.opacity = 1; // or use svg filter to make it gray
 		editor.renderer.setStyle("disabled", false);
-		adjustHeight();
+		// adjustHeight();
 	} else {
 		removeTypeset(slide);
 		slide.classList.add('edit');
@@ -179,7 +179,7 @@ function updateSlideContent(slide, carousel = false) {
 		if (e.closest('div.comment') !== null) {
 			return 0;
 		}
-		e.onload = adjustHeight;
+		// e.onload = adjustHeight;
 		e.src = e.getAttribute('data-src');
 		e.classList.remove('hidden');
 		e.style.display = '';

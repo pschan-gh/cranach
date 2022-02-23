@@ -61,6 +61,14 @@ const CanvasFreeDrawing = (function () {
 		else {
 			throw new Error("No element found with following id: " + this.elementId);
 		}
+		
+		const resizeObserver = new ResizeObserver(entries => {
+			for (let entry of entries) {
+				this.expandCanvas();
+			}
+		});
+		resizeObserver.observe(this.canvasNode);
+
 		this.context = this.canvas.getContext('2d');
 		this.container = params.container;
 		this.width = width;
