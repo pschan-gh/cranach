@@ -84,15 +84,16 @@ function postprocess(cranach) {
 
 	const resizeObserver = new ResizeObserver(entries => {
 		for (let entry of entries) {
-			if (document.querySelector('.carousel-item') === null) {
+			const slide = entry.target;
+			if ( !( slide.classList.contains('carousel-item') && slide.classList.contains('active') ) ) {
 				 return 1;
 			}
 			const output = document.getElementById('output');
-			const slide = entry.target;
-			if ( slide.scrollHeight >  0.9*output.clientHeight ) {
-				output.classList.add('long');
-			} else {
+
+			if ( slide.scrollHeight <= 0.9*output.clientHeight ) {
 				output.classList.remove('long');
+			} else {
+				output.classList.add('long');
 			}
 		}
 	});

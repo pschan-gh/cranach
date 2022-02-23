@@ -140,6 +140,7 @@ function carouselSlideHandler() {
 	if (typeof canvasUndos != 'undefined') {
 		canvasUndos = [];
 	}
+	adjustHeight();
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -224,23 +225,20 @@ function hideCarousel() {
 
 }
 
-// function adjustHeight() {
-// 	// console.log('adjustHeight');
-// 	let output = document.getElementById('output');
-// 	if (document.querySelector('.carousel-item') === null) {
-// 		 return 1;
-// 	}
-// 	let selectedSlideNum = output.dataset.selectedSlide;
-// 	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
-// 	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
-// 		output.classList.add('long');
-// 		if (typeof slide.cfd != 'undefined') {
-// 			slide.cfd.expandCanvas();
-// 		}
-// 	} else {
-// 		output.classList.remove('long');
-// 	}
-// }
+function adjustHeight() {
+	// console.log('adjustHeight');
+	const output = document.querySelector('#output');
+	const slide = document.querySelector(`.output > div.slide.carousel-item.active`);
+
+	if (slide === null) {
+		 return 1;
+	}
+	if ( slide.scrollHeight <=  0.9*output.clientHeight ) {
+		output.classList.remove('long');
+	} else {
+		output.classList.add('long');
+	}
+}
 
 function hideAnnotate() {
 	document.querySelectorAll('canvas').forEach(e => e.classList.add('hidden'));

@@ -396,7 +396,7 @@ flex-direction: column;
 	display:none;
 }
 
-.present #right_half #output.long {
+.present #right_half #output.long, #right_half.annotate #output {
 	display:block;
 }
 
