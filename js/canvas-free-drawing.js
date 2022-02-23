@@ -62,7 +62,7 @@ const CanvasFreeDrawing = (function () {
 			throw new Error("No element found with following id: " + this.elementId);
 		}
 		this.context = this.canvas.getContext('2d');
-		this.output = params.output;
+		this.container = params.container;
 		this.width = width;
 		this.height = height;
 		this.snapshowImage = null;
@@ -170,8 +170,11 @@ const CanvasFreeDrawing = (function () {
 
 			this.isDrawing = true;
 			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			let x = pageX - this.canvas.offsetLeft;
-			let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			// let x = pageX - this.canvas.offsetLeft;
+			// let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
+			const viewportOffset = this.canvas.getBoundingClientRect();
+			const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
+			const y = pageY - viewportOffset.y; // + this.container.scrollTop;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
 			this.x = x;
@@ -196,20 +199,10 @@ const CanvasFreeDrawing = (function () {
 					this.positions[this.positions.length - 1].x = x;
 					this.positions[this.positions.length - 1].y = y;
 				} else {
-					// let dx = this.x > this.positions[0].x ?
-					// x - this.x : this.x - x;
-					// let dy = this.y > this.positions[0].y ?
-					// y - this.y : this.y - y;
 					let dx = x - this.x;
 					let dy = y - this.y
 					this.positions[0].x += dx;
 					this.positions[0].y += dy;
-					// this.positions[0].radiusX = Math.abs(
-					// 	this.positions[0].radiusX + dx
-					// );
-					// this.positions[0].radiusY = Math.abs(
-					// 	this.positions[0].radiusY + dy
-					// );
 					this.x = x;
 					this.y = y;
 				}
@@ -230,8 +223,11 @@ const CanvasFreeDrawing = (function () {
 			this.pointerType = 'stylus';
 			clearTimeout(this.timer);
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			var x = pageX - this.canvas.offsetLeft;
-			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
+			// var x = pageX - this.canvas.offsetLeft;
+			// var y = pageY - this.canvas.offsetTop;
+			const viewportOffset = this.canvas.getBoundingClientRect();
+			const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
+			const y = pageY - viewportOffset.y; // + this.container.scrollTop;
 
 			if (this.isDrawing) {
 				this.handleDrawing(x, y, {force: event.touches[0].force});
@@ -274,9 +270,6 @@ const CanvasFreeDrawing = (function () {
 		event.preventDefault();
 		clearTimeout(this.timer);
 		if (this.positions.length < 3) {
-			// const _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			// const x = pageX - this.canvas.offsetLeft;
-			// const y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.output.scrollTop;
 			this.handleDrawing(this.x, this.y, {force: 10, smoothFactor: 0});
 		}
 		this.handleEndDrawing();
@@ -940,22 +933,17 @@ const CanvasFreeDrawing = (function () {
 	};
 
 
-	CanvasFreeDrawing.prototype.expandCanvas = function(scale = 1, padding = 0, output = document.getElementById('output')) {
+	CanvasFreeDrawing.prototype.expandCanvas = function(scale = 1, padding = 0) {
 
-	    // const wasDrawing = this.isDrawingModeEnabled;
-		// canvasControlsDisableEvent(slide);
-
-		const slide = document.getElementById(this.elementId);
-
-		let bodyRect = document.body.getBoundingClientRect();
-		let slideRect = slide.getBoundingClientRect();
+	    let bodyRect = document.body.getBoundingClientRect();
+		let slideRect = this.canvasNode.getBoundingClientRect();
 
 		this.storeSnapshotImage();
 
-		this.canvas.width = output.scrollWidth;
-		this.canvas.height = output.scrollHeight*scale + padding;
+		this.canvas.width = this.container.scrollWidth;
+		this.canvas.height = this.container.scrollHeight*scale + padding;
 
-		let voffset = slideRect.top + output.scrollTop;
+		let voffset = slideRect.top + this.container.scrollTop;
 		this.canvas.style.top = -voffset;
 
 		this.restoreCanvasSnapshot(this.snapshotImage);

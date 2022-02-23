@@ -316,6 +316,7 @@ function addCanvas(slide, output = document.getElementById('output')) {
 	if (slide.querySelector('canvas') !== null || document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
+
 	let width = output.scrollWidth;
 	let height = output.scrollHeight - 5;
 
@@ -324,7 +325,7 @@ function addCanvas(slide, output = document.getElementById('output')) {
 		width: width,
 		height: height,
 		showWarnings: true,
-		output: output,
+		container: output,
 	});
 	slide.cfd.setLineWidth(2);
 	let bodyRect = document.body.getBoundingClientRect();
