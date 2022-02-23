@@ -107,18 +107,7 @@
 		</entry>
 	</xsl:template>
 
-	<xsl:template match="
-		//idx:course
-		|//idx:chapter
-		|//idx:section
-		|//idx:subsection
-		|//idx:subsubsection
-		|//lv:course
-		|//lv:chapter
-		|//lv:section
-		|//lv:subsection
-		|//lv:subsubsection
-		">
+	<xsl:template match="//idx:course|//idx:chapter|//idx:section|//idx:subsection|//idx:subsubsection|//lv:course|//lv:chapter|//lv:section|//lv:subsection|//lv:subsubsection">
 		<xsl:element name="{local-name()}" namespace="http://www.math.cuhk.edu.hk/~pschan/elephas_index">
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="idx:label|lv:label"/>
