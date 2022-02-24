@@ -212,6 +212,10 @@ mjx-math {
 	margin-top:-5px;
 }
 
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border-color:#aaa !important;
+}
+
 .nav-tabs .nav-link.active {
 	font-weight:bold !important;
 	color:inherit !important;
@@ -219,7 +223,7 @@ mjx-math {
 	border:none !important;
 }
 
-.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+.nav-tabs .nav-link:focus,  {
 	border-color:#aaa !important;
 }
 
@@ -233,18 +237,13 @@ mjx-math {
 	border-color:#ccc !important;
 }
 
-#right_half .dropdown-menu > a:hover {
-	background:SteelBlue;
-	color:white !important;
-}
-
 #right_half > .navbar {
 	position:absolute !important;
 	top:0;
 	left:0;
 	padding-left:5px;
 	padding-right:5px;
-	display:none;
+	display:block;
 }
 
 .light {
@@ -263,7 +262,6 @@ iframe.webwork {
 
 #info_half .material-icons {
 	vertical-align:bottom !important;
-	/* margin-left:-5px !important; */
 }
 
 .output .material-icons-outlined.expand_less {
@@ -348,7 +346,6 @@ iframe.webwork {
 	margin:auto;
 	font-size:1.2em;
 	overflow:auto;
-	/* display: table-cell; */
 	display:block;
 }
 
@@ -362,8 +359,6 @@ iframe.webwork {
 	height: 100%;
 }
 
-/* .info #info_half, .overview #info_half {
-} */
 .compose #info_half {
 	display:none;
 }
@@ -397,7 +392,7 @@ flex-direction: column;
 	display:none;
 }
 
-.present #right_half #output.long {
+.present #right_half #output.long, #right_half.annotate #output {
 	display:block;
 }
 
@@ -442,9 +437,6 @@ flex-direction: column;
 }
 
 .btn.dim {
-	/* font-family:sans-serif; */
-	/* font-size:1.2rem; */
-	/* color: #ddd; */
 	opacity:0.5;
 	padding-right:10px;
 }
@@ -493,10 +485,6 @@ flex-direction: column;
 	flex-direction: column;
 }
 
-/*
-.carousel-item {
-transition: transform 2s ease, opacity .5s ease-out !important;
-} */
 .slide_number {
 	position:fixed;
 	bottom:2%;
@@ -525,9 +513,6 @@ transition: transform 2s ease, opacity .5s ease-out !important;
 	display:none;
 }
 
-/* .present .controls_container, .present .controls {
-display:block;
-} */
 .present .controls_container:not(.hidden) {
 	width:auto;
 	font-size:2em;
@@ -636,7 +621,6 @@ ol > li > ol > li > ol {
 }
 
 b.highlighted, h5.highlighted, h4.highlighted, h3.highlighted, h2.highlighted, h1.highlighted, button.highlighted{
-	/* background-color: #ff0; */
 	background-color: #fcf5cf;
 	padding: 5px;
 }
@@ -790,7 +774,7 @@ tbody:before {
 	color:SteelBlue;
 }
 
-.slide_button.hide {
+.slide_button.half {
 	color:black;
 }
 
@@ -802,22 +786,6 @@ tbody:before {
 	height:100%;
 	display:none;
 	z-index:500;
-}
-
-#open_icon {
-	background-image:url("icons/File_Open.svg");
-	width:100%;
-	text-align:center;
-	/* position:absolute;
-	top:50px;
-	right:10px; */
-	background-size: 24px 24px;
-	width:24px;
-	height:24px;
-	font-size:1.5em;
-	color:#888;
-	border:none;
-	margin: 10px auto;
 }
 
 #compose_icon {
@@ -834,8 +802,6 @@ tbody:before {
 
 #edit_icon {
 	width:auto;
-	/* max-height:1.5rem; */
-	/* color:#888; */
 	opacity:0.5;
 	border:none;
 	margin-right: 0.5rem;
@@ -883,10 +849,6 @@ tbody:before {
 	display:block;
 }
 
-#info_menu_container {
-	position:absolute;
-}
-
 #output_icon_container {
 	overflow:hidden;
 }
@@ -899,8 +861,9 @@ tbody:before {
 }
 
 #info_menu_container {
-	top:5px;
-	right:5px;
+	position:absolute;
+	top:10px;
+	right:10px;
 	width:auto;
 }
 
@@ -1101,7 +1064,7 @@ blockquote {
 	border:none;
 }
 
-a:link, a:visited, a:hover, a:active {
+a:link, a:visited,  a:active {
 	color:SteelBlue;
 	text-decoration: none;
 }
@@ -1119,7 +1082,7 @@ a:link, a:visited, a:hover, a:active {
 	overflow:hidden;
 }
 
-.plain_button:focus, .plain_button:hover, .plain_button:active {
+.plain_button:focus, .plain_button:active {
 	background-color:transparent !important;
 	outline:none !important;
 	box-shadow:none !important;
@@ -1132,7 +1095,7 @@ a:link, a:visited, a:hover, a:active {
 	border:none !important;
 }
 
-#main_menu_button:hover, #main_menu_button:active, #main_menu_button:focus, #main_menu_button.active, #left_button:hover, #right_button:hover {
+#main_menu_button:active, #main_menu_button:focus, #main_menu_button.active {
 	background-color:transparent !important;
 	color:SteelBlue !important;
 	border:none !important;
@@ -1155,12 +1118,6 @@ a:link, a:visited, a:hover, a:active {
 
 .dropdown-menu.keywords > a {
 	padding:5px;
-}
-
-.dropdown-menu.keywords > a:hover {
-	color:#fff;
-	background-color: SteelBlue;
-	background-image: none;
 }
 
 .dropdown-toggle::after {
@@ -1342,10 +1299,6 @@ h5.current_slide {
 	border:1px solid;
 	border-radius:5px
 }
-
-/* .lecture_skip * {
-	color:#ccc !important;
-} */
 
 .lecture_skip [data-lecture-skip="true"] * {
 	color:#ccc !important;
