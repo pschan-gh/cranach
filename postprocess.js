@@ -57,7 +57,7 @@ function postprocess(cranach) {
 
 	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 	document.querySelectorAll('#right_half .navbar').forEach(el => el.classList.remove('hidden'));
-	document.querySelectorAll('#right_half .navbar').forEach(el => el.style.display = 'block');
+
 	if (cranach.attr['present']) {
 		console.log('PRESENT MODE');
 		showSlide(null, cranach);
@@ -82,22 +82,4 @@ function postprocess(cranach) {
 		updateToc(cranach);
 	});
 
-	const resizeObserver = new ResizeObserver(entries => {
-		for (let entry of entries) {
-			const slide = entry.target;
-			if ( !( slide.classList.contains('carousel-item') && slide.classList.contains('active') ) ) {
-				 return 1;
-			}
-			const output = document.getElementById('output');
-
-			if ( slide.scrollHeight <= 0.9*output.clientHeight ) {
-				output.classList.remove('long');
-			} else {
-				output.classList.add('long');
-			}
-		}
-	});
-	document.querySelectorAll('.output > div.slide').forEach(slide => {
-		resizeObserver.observe(slide);
-	});
 }
