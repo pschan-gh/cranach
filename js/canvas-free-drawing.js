@@ -61,10 +61,12 @@ const CanvasFreeDrawing = (function () {
 		else {
 			throw new Error("No element found with following id: " + this.elementId);
 		}
-		
+
 		const resizeObserver = new ResizeObserver(entries => {
 			for (let entry of entries) {
-				this.expandCanvas();
+				if ( entry.target.classList.contains('carousel-item') && entry.target.classList.contains('active') ) {
+					entry.target.cfd.expandCanvas();
+				}
 			}
 		});
 		resizeObserver.observe(this.canvasNode);
@@ -178,11 +180,11 @@ const CanvasFreeDrawing = (function () {
 
 			this.isDrawing = true;
 			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			// let x = pageX - this.canvas.offsetLeft;
-			// let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
-			const viewportOffset = this.canvas.getBoundingClientRect();
-			const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
-			const y = pageY - viewportOffset.y; // + this.container.scrollTop;
+			let x = pageX - this.canvas.offsetLeft;
+			let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
+			// const viewportOffset = this.canvas.getBoundingClientRect();
+			// const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
+			// const y = pageY - viewportOffset.y; // + this.container.scrollTop;
 			this.context.beginPath();
 			this.context.moveTo(x, y);
 			this.x = x;
@@ -231,11 +233,11 @@ const CanvasFreeDrawing = (function () {
 			this.pointerType = 'stylus';
 			clearTimeout(this.timer);
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			// var x = pageX - this.canvas.offsetLeft;
-			// var y = pageY - this.canvas.offsetTop;
+			var x = pageX - this.canvas.offsetLeft;
+			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
 			const viewportOffset = this.canvas.getBoundingClientRect();
-			const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
-			const y = pageY - viewportOffset.y; // + this.container.scrollTop;
+			// const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
+			// const y = pageY - viewportOffset.y; // + this.container.scrollTop;
 
 			if (this.isDrawing) {
 				this.handleDrawing(x, y, {force: event.touches[0].force});
@@ -948,8 +950,8 @@ const CanvasFreeDrawing = (function () {
 
 		this.storeSnapshotImage();
 
-		this.canvas.width = this.container.scrollWidth;
-		this.canvas.height = this.container.scrollHeight*scale + padding;
+		this.canvas.width = Math.max( this.container.scrollWidth, this.canvas.width );
+		this.canvas.height = Math.max( this.container.scrollHeight*scale + padding, this.canvas.height );
 
 		let voffset = slideRect.top + this.container.scrollTop;
 		this.canvas.style.top = -voffset;
