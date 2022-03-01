@@ -2,8 +2,6 @@ function postprocess(cranach) {
   console.log('POSTPROCESS');
 	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 
-	// document.addEventListener('DOMContentLoaded', () => {
-
 	let output = document.getElementById('output');
 	output.dataset.contentUrl = cranach.attr['contentURL'];
 	output.dataset.query = cranach.attr['query'];
@@ -59,7 +57,7 @@ function postprocess(cranach) {
 
 	document.querySelectorAll('#loading_icon').forEach(el => el.classList.add('hidden'));
 	document.querySelectorAll('#right_half .navbar').forEach(el => el.classList.remove('hidden'));
-	document.querySelectorAll('#right_half .navbar').forEach(el => el.style.display = 'block');
+
 	if (cranach.attr['present']) {
 		console.log('PRESENT MODE');
 		showSlide(null, cranach);
@@ -83,22 +81,5 @@ function postprocess(cranach) {
 		}
 		updateToc(cranach);
 	});
-	// });
-}
 
-// document.addEventListener('DOMContentLoaded', () => {
-// 	let contentUrlObserver = new MutationObserver(function(mutations) {
-// 		mutations.forEach(function(mutation) {
-// 			if (mutation.type == "attributes") {
-// 				if (mutation.attributeName == `data-content-url`) {
-// 					baseRenderer.then(cranach => {
-// 						updateToc(cranach);
-// 					});
-// 				}
-// 			}
-// 		});
-// 	});
-// 	contentUrlObserver.observe(document.getElementById(`output`), {
-// 		attributes: true,
-// 	});
-// });
+}

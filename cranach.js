@@ -404,8 +404,6 @@ function Cranach(url) {
 			.then(response => response.text())
 			.then(xsltext => {
 				let xsltProcessor = new XSLTProcessor();
-				// let domparser = new DOMParser();
-				// console.log(this.indexDoc);
 				xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
 				xsltProcessor.setParameter('', 'cranachmd5', fileMD5);
 				xsltProcessor.setParameter('', 'cranachfilename', filename);
@@ -413,10 +411,9 @@ function Cranach(url) {
 				let preIndexDoc = xsltProcessor.transformToDocument(this.indexDoc);
 				fetch('xsl/akhawunti.xsl')
 				.then(response => response.text())
-				.then(xsltext => {
-	                let xsltProcessor = new XSLTProcessor();
-					// let domparser = new DOMParser();
-					xsltProcessor.importStylesheet(domparser.parseFromString(xsltext, "text/xml"));
+				.then(indexxsltext => {
+                                        let indexXsltProcessor = new XSLTProcessor();
+					indexXsltProcessor.importStylesheet(domparser.parseFromString(indexxsltext, "text/xml"));
 					let indexDoc = xsltProcessor.transformToDocument(preIndexDoc);
 					this.indexDoc = indexDoc;
 					console.log(this.indexDoc);

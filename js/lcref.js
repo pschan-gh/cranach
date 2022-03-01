@@ -56,11 +56,11 @@ function lcref_click_handler(el) {
 
         findNeighbor(el).after(lcrefContainer);
         lcrefContainer.addEventListener('hidden.bs.collapse', function () {
-			adjustHeight();
+			// adjustHeight();
             el.scrollIntoView( {block: "center", behavior: "smooth"} );
         });
         lcrefContainer.addEventListener('shown.bs.collapse', function () {
-			adjustHeight();
+			// adjustHeight();
 			lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
         });
 
@@ -112,7 +112,7 @@ function renderElement(lcrefContainer) {
     MathJax.startup.promise.then(() => {
         lcrefContainer.querySelector('.icon.loading').classList.add('hidden');
         lcrefContainer.querySelector('.lcref-content').classList.remove('hidden');
-		adjustHeight();
+		// adjustHeight();
 		lcrefContainer.scrollIntoView( {block: "center", behavior: "smooth"} );
     });
 }

@@ -4,14 +4,30 @@ indicatorButton.dataset['bsTarget'] = "#right_half";
 indicatorButton.dataset['bsToggle'] = "tooltip";
 indicatorButton.dataset['bsPlacement'] = "bottom";
 
+const resizeObserver = new ResizeObserver(entries => {
+	for (let entry of entries) {
+		const slide = entry.target;
+		if ( !( slide.classList.contains('carousel-item') && slide.classList.contains('active') ) ) {
+			return 1;
+		}
+		const output = document.getElementById('output');
+
+		if ( slide.scrollHeight <= 0.9*output.clientHeight ) {
+			output.classList.remove('long');
+		} else {
+			output.classList.add('long');
+		}
+	}
+});
+
 function updateCarousel(slideNum) {
 	// console.log('updateCarousel');
 
-    let slides = document.querySelectorAll('#output > div.slide');
+	let slides = document.querySelectorAll('#output > div.slide');
 
-    if (slides === null) {
-        return 0;
-    }
+	if (slides === null) {
+		return 0;
+	}
 	bootstrap.Carousel.getOrCreateInstance(document.querySelector('#right_half'), {
 		dispose: true
 	});
@@ -22,53 +38,51 @@ function updateCarousel(slideNum) {
 	document.querySelector('.carousel-indicators').outerHTML = document.querySelector('.carousel-indicators').outerHTML;
 	document.querySelector('.controls_container').outerHTML = document.querySelector('.controls_container').outerHTML;
 
-    if (slides.length > 50) {
+	if (slides.length > 50) {
 		carouselThreeSlides(slideNum, slides);
-    } else {
+	} else {
 		document.querySelectorAll('#output > div.slide').forEach(e => {
-            e.classList.add('carousel-item');
-            e.classList.remove('hidden');
-        });
+			e.classList.add('carousel-item');
+			e.classList.remove('hidden');
+		});
 		let activeIndex = 0;
-        slides.forEach((e, index) => {
-            let button = indicatorButton.cloneNode(true);
-            button.setAttribute('aria-label', `Slide ${e.getAttribute('slide')}`);
-            button.setAttribute('title', `Slide ${e.getAttribute('slide')}`);
-            button.dataset['bsSlideTo'] = `${index}`;
+		slides.forEach((e, index) => {
+			let button = indicatorButton.cloneNode(true);
+			button.setAttribute('aria-label', `Slide ${e.getAttribute('slide')}`);
+			button.setAttribute('title', `Slide ${e.getAttribute('slide')}`);
+			button.dataset['bsSlideTo'] = `${index}`;
 
 			// $(".carousel-indicators").append(`<button type="button" data-bs-target="#right_half" data-bs-slide-to="${index}" aria-label="Slide ${this.getAttribute('slide')}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Slide ${this.getAttribute('slide')}"/>`);
 			if (e.getAttribute('slide') == slideNum) {
 				activeIndex = index;
-                button.classList.add('active');
-                button.setAttribute('aria-current', 'true');
+				button.classList.add('active');
+				button.setAttribute('aria-current', 'true');
 			}
-            document.querySelector(".carousel-indicators").appendChild(button);
+			document.querySelector(".carousel-indicators").appendChild(button);
 		});
 		document.querySelectorAll(".carousel-indicators button").forEach(e => {
-	        bootstrap.Tooltip.getOrCreateInstance(e, {
-	            delay: { "show": 0, "hide": 0 }
-	        });
-	    });
-    }
+			bootstrap.Tooltip.getOrCreateInstance(e, {
+				delay: { "show": 0, "hide": 0 }
+			});
+		});
+	}
 
-    // tooltip({'delay': { show: 0, hide: 0 }});
+	// tooltip({'delay': { show: 0, hide: 0 }});
 
 	document.querySelector('#output > div.slide.carousel-item[slide="' + slideNum + '"]').classList.add('active');
-    document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + slideNum;
-    document.querySelector('#right_half .slide_number button').setAttribute('slide', slideNum);
+	document.querySelector('#right_half .slide_number button').textContent = 'Slide ' + slideNum;
+	document.querySelector('#right_half .slide_number button').setAttribute('slide', slideNum);
 
 	new bootstrap.Carousel(document.querySelector('#right_half'));
 	document.getElementById('right_half').classList.add('carousel', 'slide');
 	document.querySelector('.carousel').removeEventListener('slid.bs.carousel', carouselSlideHandler);
-    document.querySelector('.carousel').addEventListener('slid.bs.carousel', carouselSlideHandler);
+	document.querySelector('.carousel').addEventListener('slid.bs.carousel', carouselSlideHandler);
 }
 
 function carouselThreeSlides(slideNum, slides) {
 
 	let prevNum = ((slideNum - 2 + slides.length) % slides.length) + 1;
-	// let prevNum = slideNum - 1;
-    let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
-	// let nextNum = slideNum + 1;
+	let nextNum = slideNum == slides.length - 1 ? slides.length : (slideNum + 1) % slides.length;
 
 	document.querySelector(".carousel-indicators").innerHTML = '';
 
@@ -82,7 +96,6 @@ function carouselThreeSlides(slideNum, slides) {
 	});
 
 	if (prevNum < slideNum) {
-	// if (prevNum > 0) {
 		let button = indicatorButton.cloneNode(true);
 		button.setAttribute('aria-label', `Slide ${prevNum}`);
 		button.setAttribute('title', `Slide ${prevNum}`);
@@ -93,17 +106,14 @@ function carouselThreeSlides(slideNum, slides) {
 	let button = indicatorButton.cloneNode(true);
 	button.setAttribute('aria-label', `Slide ${slideNum}`);
 	button.setAttribute('title', `Slide ${slideNum}`);
-	// button.dataset['bsSlideTo'] = prevNum < slideNum ? `1` : `0`;
 	button.classList.add('active');
 	button.setAttribute('aria-current', "true");
 	document.querySelector(".carousel-indicators").appendChild(button);
 	if (nextNum > slideNum) {
-	// if (nextNum <= slides.length) {
 		let button = indicatorButton.cloneNode(true);
 		button.setAttribute('aria-label', `Slide ${nextNum}`);
 		button.setAttribute('title', `Slide ${nextNum}`);
 		button.dataset['bsSlideTo'] = prevNum < slideNum ? `2` : `1`;
-		// button.dataset['bsSlideTo'] = prevNum > 0 ? `2` : `1`;
 		document.querySelector(".carousel-indicators").appendChild(button);
 	}
 	document.querySelectorAll(".carousel-indicators button").forEach(e => {
@@ -140,6 +150,7 @@ function carouselSlideHandler() {
 	if (typeof canvasUndos != 'undefined') {
 		canvasUndos = [];
 	}
+	adjustHeight();
 }
 
 function updateCarouselSlide(slide, content = null) {
@@ -149,8 +160,6 @@ function updateCarouselSlide(slide, content = null) {
 	}
 
 	let outerContent = slide.querySelector(':scope > .slide_container > .slide_content');
-
-	// outerContent.style['padding-bottom'] = '';
 
 	let bufferedWidth = 0;
 	MathJax.startup.promise.then(() => {
@@ -178,39 +187,34 @@ function updateCarouselSlide(slide, content = null) {
 		}
 		adjustHeight();
 	});
-
 }
 
 function showSlide(slide, cranach) {
 	console.log('showSlide');
 	if (slide == null) {
-        if (document.querySelector('div.slide.selected, div.slide.active') !== null) {
-            slide = document.querySelector('div.slide.selected, div.slide.active');
-        } else {
-            slide = document.querySelector('#output > div.slide');
+		if (document.querySelector('div.slide.selected, div.slide.active') !== null) {
+			slide = document.querySelector('div.slide.selected, div.slide.active');
+		} else {
+			slide = document.querySelector('#output > div.slide');
 			slide.classList.add('selected');
-        }
-    }
-    document.querySelector('#container').classList.remove('info', 'overview', 'compose');
+		}
+	}
+	document.querySelector('#container').classList.remove('info', 'overview', 'compose');
 	document.querySelector('#container').classList.add('present');
 
-    let slideNum = parseInt(slide.getAttribute('slide'));
+	let slideNum = parseInt(slide.getAttribute('slide'));
 
 	updateCarousel(slideNum);
 	updateCarouselSlide(slide);
-
-    // cranach.then(renderer => {
-    //     updateModal(renderer);
-    // });
 }
 
 function hideCarousel() {
-    if (document.getElementById('right_half').classList.contains('annotate')) {
-        hideAnnotate();
-    }
+	if (document.getElementById('right_half').classList.contains('annotate')) {
+		hideAnnotate();
+	}
 
-    document.getElementById('container').classList.remove('wide');
-    document.getElementById('container').classList.remove('present', 'overview');
+	document.getElementById('container').classList.remove('wide');
+	document.getElementById('container').classList.remove('present', 'overview');
 	document.getElementById('container').classList.add(document.getElementById('left_half').getAttribute('mode'));
 
 	document.querySelectorAll('#output > div.slide').forEach(e => {
@@ -218,7 +222,7 @@ function hideCarousel() {
 		e.classList.add('tex2jax_ignore');
 	});
 
-    if (document.querySelector('#output > div.slide.selected') !== null) {
+	if (document.querySelector('#output > div.slide.selected') !== null) {
 		document.querySelector('#output > div.slide.selected').scrollIntoView( {block: "center", behavior: "smooth"} );
 	}
 
@@ -226,20 +230,24 @@ function hideCarousel() {
 
 function adjustHeight() {
 	// console.log('adjustHeight');
-	let output = document.getElementById('output');
-	if (document.querySelector('.carousel-item') === null) {
-		 return 1;
+	const output = document.querySelector('#output');
+	const slide = document.querySelector(`.output > div.slide.carousel-item.active`);
+
+	if (slide === null) {
+		return 1;
 	}
-	let selectedSlideNum = output.dataset.selectedSlide;
-	let slide = document.querySelector(`#output > div.slide[slide="${selectedSlideNum}"]`);
-	if (slide.scrollHeight >  0.9*output.clientHeight || document.querySelector('#right_half').classList.contains('annotate')) {
-		output.classList.add('long');
-		if (typeof slide.cfd != 'undefined') {
-			slide.cfd.expandCanvas();
-		}
-	} else {
+	if ( slide.scrollHeight <=  0.9*output.clientHeight ) {
 		output.classList.remove('long');
+	} else {
+		output.classList.add('long');
 	}
+
+	document.querySelectorAll('.output > div.slide').forEach(slide => {
+		resizeObserver.unobserve(slide);
+	});
+
+	resizeObserver.unobserve(slide);
+
 }
 
 function hideAnnotate() {
@@ -293,15 +301,15 @@ function canvasControlsEnableEvent(slide) {
 }
 
 function canvasControlsDisableEvent(slide) {
-    // console.log('canvasControlDisableEvent');
+	// console.log('canvasControlDisableEvent');
 	if (typeof slide.cfd != 'undefined') {
 		slide.cfd.disableDrawingMode();
 		slide.cfd.canvas.classList.add('disabled');
 	}
 	document.querySelectorAll('.canvas-controls .nav-link:not(.enable)').forEach(e => e.classList.add('disabled'));
 	document.querySelector('.canvas-controls .enable').classList.remove('disabled');
-    document.querySelector('.annotate.enable .brush').classList.add('hidden');
-    document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
+	document.querySelector('.annotate.enable .brush').classList.add('hidden');
+	document.querySelector('.annotate.enable .cursor').classList.remove('hidden');
 	document.querySelector('#colorDropdown').style.color = '';
 }
 
@@ -316,6 +324,7 @@ function addCanvas(slide, output = document.getElementById('output')) {
 	if (slide.querySelector('canvas') !== null || document.querySelector('.carousel-item') === null) {
 		return 0;
 	}
+
 	let width = output.scrollWidth;
 	let height = output.scrollHeight - 5;
 
@@ -324,7 +333,7 @@ function addCanvas(slide, output = document.getElementById('output')) {
 		width: width,
 		height: height,
 		showWarnings: true,
-		output: output,
+		container: output,
 	});
 	slide.cfd.setLineWidth(2);
 	let bodyRect = document.body.getBoundingClientRect();
@@ -361,21 +370,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		slide.cfd.setErase();
 		document.querySelectorAll('.canvas-controls .nav-link').forEach(el => el.classList.remove('disabled'));
 		evt.currentTarget.classList.add('disabled');
-        document.querySelector('.annotate.enable .brush').classList.remove('hidden');
-        document.querySelector('.annotate.enable .cursor').classList.add('hidden');
+		document.querySelector('.annotate.enable .brush').classList.remove('hidden');
+		document.querySelector('.annotate.enable .cursor').classList.add('hidden');
 	}));
 	// $('.canvas-controls .enable').off();
 	document.querySelectorAll('.canvas-controls .enable').forEach(el => el.addEventListener('click', function(evt) {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
 
-        slide.cfd.toggleDrawingMode();
-        if (slide.cfd.isDrawingModeEnabled) {
-            canvasControlsEnableEvent(slide);
-        } else {
-            let slide = document.querySelector('#output > div.slide.active');
-    		if (slide === null) { return 0; }
-    		canvasControlsDisableEvent(slide);
+		slide.cfd.toggleDrawingMode();
+		if (slide.cfd.isDrawingModeEnabled) {
+			canvasControlsEnableEvent(slide);
+		} else {
+			let slide = document.querySelector('#output > div.slide.active');
+			if (slide === null) { return 0; }
+			canvasControlsDisableEvent(slide);
 		}
 	}));
 	document.querySelectorAll('.canvas-controls .undo').forEach(el => el.addEventListener('click', () => {
@@ -419,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.canvas-controls .black').forEach(el => el.addEventListener('click', () => {
 		let slide = document.querySelector('#output > div.slide.active');
 		if (slide === null) { return 0; }
-		let color = [100, 100, 100];
+		let color = [115, 115, 115];
 		slide.cfd.setDrawingColor(color);
 		document.querySelector('#colorDropdown').style.color = `rgb(${color.join(',')})`;
 	}));
