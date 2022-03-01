@@ -180,11 +180,12 @@ const CanvasFreeDrawing = (function () {
 
 			this.isDrawing = true;
 			let _a = event.targetTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			let x = pageX - this.canvas.offsetLeft;
-			let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
-			// const viewportOffset = this.canvas.getBoundingClientRect();
-			// const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
-			// const y = pageY - viewportOffset.y; // + this.container.scrollTop;
+			// let x = pageX - this.canvas.offsetLeft;
+			// let y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
+			const viewportOffset = this.canvas.getBoundingClientRect();
+			const viewport = window.visualViewport;
+			const x =  ( pageX  - viewportOffset.left - viewport.offsetLeft );
+			const y =  ( pageY  - viewportOffset.top - viewport.offsetTop );
 			this.context.beginPath();
 			this.context.moveTo(x, y);
 			this.x = x;
@@ -233,11 +234,12 @@ const CanvasFreeDrawing = (function () {
 			this.pointerType = 'stylus';
 			clearTimeout(this.timer);
 			var _a = event.changedTouches[0], pageX = _a.pageX, pageY = _a.pageY;
-			var x = pageX - this.canvas.offsetLeft;
-			var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
+			// var x = pageX - this.canvas.offsetLeft;
+			// var y = pageY - this.canvas.offsetTop - this.canvasNode.offsetTop + this.container.scrollTop;
 			const viewportOffset = this.canvas.getBoundingClientRect();
-			// const x = pageX - viewportOffset.x; // + this.container.scrollLeft;
-			// const y = pageY - viewportOffset.y; // + this.container.scrollTop;
+			const viewport = window.visualViewport;
+			const x =  ( pageX  - viewportOffset.left - viewport.offsetLeft );
+			const y =  ( pageY  - viewportOffset.top - viewport.offsetTop );
 
 			if (this.isDrawing) {
 				this.handleDrawing(x, y, {force: event.touches[0].force});
