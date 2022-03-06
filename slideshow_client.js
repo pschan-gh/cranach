@@ -175,15 +175,22 @@ function updateSlideContent(slide, carousel = false) {
 	document.querySelectorAll(`#output > div.slide`).forEach(e => e.classList.remove('selected', 'active'));
     slide.classList.add('selected', 'active');
 	batchRender(slide);
-	slide.querySelectorAll('iframe.hidden').forEach(e => {
-		if (e.closest('div.comment') !== null) {
+	slide.querySelectorAll('iframe.hidden').forEach(iframe => {
+		if (iframe.closest('div.comment') !== null) {
 			return 0;
 		}
 		// e.onload = adjustHeight;
-		e.src = e.getAttribute('data-src');
-		e.classList.remove('hidden');
-		e.style.display = '';
-		iFrameResize({ log: false, checkOrigin:false }, e);
+                
+                iframe.onload = function() {
+                        iFrameResize({
+                                log: false,
+                                checkOrigin:false,
+                                resizedCallback: adjustHeight,
+                        }, iframe);                        
+                };
+                iframe.src = iframe.getAttribute('data-src');
+                iframe.classList.remove('hidden');
+                iframe.style.display = '';
 	});
 
 	document.querySelectorAll('#uncollapse_button').forEach(el => el. textContent =
