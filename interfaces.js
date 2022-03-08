@@ -75,7 +75,6 @@ function showLatex(el, mode = 'report') {
 		.replace(/\\cssId{.*?}/g, '')
 		.replace(/&ocirc/g, '\\^o')
 		.replace(/\\href{([^}]+)}{([^}]+)}/g, (match) => {
-			console.log(match);
 			return match.replace(/_/g, '\\_');
 		});
 
