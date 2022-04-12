@@ -2,8 +2,7 @@ ace.define("ace/theme/cranach",[], function(require, exports, module) {
 
 exports.isDark = false;
 exports.cssClass = "ace-cranach";
-exports.cssText = ".ace-cranach .ace_gutter,\
-.ace-cranach .ace_gutter {\
+exports.cssText = ".ace-cranach .ace_gutter {\
 background: #55626c;\
 color: #bbb\
 }\
@@ -14,12 +13,11 @@ background: #e8e8e8\
 .ace-cranach {\
     background: #55626c;\
     color: #ddd;\
-    font-family: Courier;\
-    line-height: 1.5;\
+    font-family: inherit;\
 }\
 .ace-cranach .ace_cursor {\
     color:#fff;\
-border-left: 5px solid #fff\
+\/*border-left: 5px solid #fff\ *\/\
 }\
 .ace-cranach .ace_overwrite-cursors .ace_cursor {\
     color:#fff;\
@@ -78,7 +76,6 @@ background-color: #fbb;\
 color: #0ef;\
 }\
 .ace-cranach .ace_col::before {\
-    \/*content: '▽ '*\/\
 }\
 .ace-cranach .ace_keyword {\
 color: #baf;\
@@ -113,14 +110,13 @@ rbackground-color: rgba(139, 93, 223, 0.051)\
 color: #DFDFD5;\
 rbackground-color: #CC1B27\
 }\
-.ace-cranach .ace_string {\
-    font-family: Courier;\
+.ace-cranach .ace_latex {\
+    font-family: inherit;\
 color: #ebb;\
-\/*border:1px solid red;*\/\
 rbackground-color: rgba(170, 175, 219, 0.035)\
 }\
 .ace-cranach .ace_comment {\
-font-family: Courier;\
+font-family: inherit;\
 color: #ebb;\
 text-decoration: line-through;\
 rbackground-color: rgba(95, 15, 255, 0.0078)\

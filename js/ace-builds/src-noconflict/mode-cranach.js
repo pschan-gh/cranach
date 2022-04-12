@@ -41,11 +41,6 @@ var CranachHighlightRules = function() {
             regex : "(\\\\begin)({)(lstlisting)(})",
             next : "lstlisting"
         },
-        // {
-        //     token : ["storage.type", "lparen", "variable.parameter", "rparen"],
-        //     regex : "(\\\\(?:begin|end))({)([\\w*]*)(})",
-        //     next : "equation"
-        // },
         {
             token : ["storage.type", "lparen", "variable.parameter", "rparen"],
             regex : "(\\\\(?:begin))({)([\\w*]*)(})",
@@ -55,38 +50,16 @@ var CranachHighlightRules = function() {
            regex : "(\\\\(?:end))({)([\\w*]*)(})",
            next : "start"
        },
-        // {
-        //     token : "storage.type",
-        //     regex : /\\verb\b\*?/,
-        //     next : [{
-        //         token : ["keyword.operator", "string", "keyword.operator"],
-        //         regex : "(.)(.*?)(\\1|$)|",
-        //         next : "start"
-        //     }]
-        // },
-        // {
-        //     token : "storage.type",
-        //     regex : "\\\\[a-zA-Z]+"
-        // }, {
-        //     token : "lparen",
-        //     regex : "[[({]"
-        // }, {
-        //     token : "rparen",
-        //     regex : "[\\])}]"
-        // }, {
-        //     token : "constant.character.escape",
-        //     regex : "\\\\[^a-zA-Z]?"
-        // },
         {
-            token : "string",
+            token : ["latex"],
             regex : "((?:\\${1,2})|(?:\\\\\\[))",
             next  : "equation"
         }],
         "equation" : [{
-            token : "comment",
+            token : ["comment"],
             regex : "%.*$"
         }, {
-            token : "string",
+            token : ["latex"],
             regex : "((?:\\${1,2})|(?:\\\\\\]))",
             next  : "start"
         },
@@ -103,16 +76,12 @@ var CranachHighlightRules = function() {
           regex : "(\\\\(?:end))({)(matrix|split)(})",
           next : "equation"
       },
-        // {
-        //     token : "constant.character.escape",
-        //     regex : "\\\\(?:[^a-zA-Z]|[a-zA-Z]+)"
-        // },
         {
-            token : "error",
+            token : ["error"],
             regex : "^\\s*$",
             next : "start"
         }, {
-            defaultToken : "string"
+            defaultToken : "latex"
         }],
         "verbatim": [{
             token : ["storage.type", "lparen", "variable.parameter", "rparen"],
