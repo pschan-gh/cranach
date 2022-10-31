@@ -947,6 +947,10 @@ canvas.disabled {
 	display:none;
 	z-index:1500;
 	font-size:1rem;
+	width:2.5em;
+}
+.canvas-controls.canvas-controls-left {
+	left:10px;
 }
 
 .annotate .canvas-controls, .annotate .canvas-controls .navbar {
