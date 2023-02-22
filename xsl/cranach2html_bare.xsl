@@ -793,9 +793,9 @@
             </xsl:attribute>
             <xsl:copy-of select="@*"/>
             <strong class="webwork_label print">WeBWorK</strong>
-            <small class="light"> (powered by </small>
+            <!-- <small class="light"> (powered by </small>
             <small><a target="_blank" href="https://libretexts.org/">LibreTexts</a></small>
-            <small class="light">)</small>
+            <small class="light">)</small> -->
             <div class="ww" style="overflow:auto">
                 <xsl:attribute name="id">
                     <xsl:value-of select="concat('ww_inner_', @ww_id)" />
@@ -807,8 +807,9 @@
                 <iframe style="overflow-x:auto;overflow-y:hidden;display:none">
                     <xsl:attribute name="rendered">0</xsl:attribute>
                     <xsl:attribute name="data-src">
+						<xsl:value-of select="concat('https://www.math.cuhk.edu.hk/~pschan/wwfwd/index.php?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;outputformat=simple')"/>
                         <!-- <xsl:value-of select="concat('https://webwork.math.cuhk.edu.hk/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=daemon_course&amp;userID=daemon&amp;course_password=daemon&amp;outputformat=simple')"/> -->
-                        <xsl:value-of select="concat('https://webwork.libretexts.org/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=anonymous&amp;userID=anonymous&amp;course_password=anonymous&amp;showSummary=1&amp;language=en&amp;outputformat=libretexts')"/>
+                        <!-- <xsl:value-of select="concat('https://webwork.libretexts.org/webwork2/html2xml?sourceFilePath=',@pg_file, '&amp;answersSubmitted=0&amp;problemSeed=123567890&amp;displayMode=MathJax&amp;courseID=anonymous&amp;userID=anonymous&amp;course_password=anonymous&amp;showSummary=1&amp;language=en&amp;outputformat=libretexts')"/> -->
                     </xsl:attribute>
                 </iframe>
             </div>
