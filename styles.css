@@ -560,6 +560,9 @@ iframe {
 	border:0;
 	width: 1px;
 	min-width: 100%;
+}
+
+iframe:not(.webwork) {
 	background:transparent url("icons/Loading_icon.gif") center no-repeat;
 }
 
