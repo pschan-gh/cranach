@@ -1,18 +1,26 @@
-#left_half, #menu_container {
+/* @media print { */
+
+#left_half, #menu_container, iframe {
     display:none;
 }
 
-html, body, #container, #right_half, #output {
+body, #container, #right_half {
     height:100% !important;
     width:100% !important;
 }
 
+#output {
+    height:auto !important;
+    width:90% !important;
+    margin:auto !important;
+}
+
 #right_half {
-	position:relative !important;
+	position:unset !important;
     left:unset !important;
-	width:100% !important;
+	width:auto !important;
 	height:auto !important;
-	overflow:visible !important;
+	overflow:unset !important;
 	background-color:#fff !important;
 	font-family:sans-serif !important;
 }
@@ -24,3 +32,9 @@ html, body, #container, #right_half, #output {
 button {
 display:none;
 }
+
+.slide_container {
+    text-align:justify !important;
+    text-justify: inter-word !important;
+}
+/* } */

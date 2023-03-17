@@ -77,16 +77,19 @@ function updateEditor(cranach) {
 			return cranach;
 		});
 	});
-	document.getElementById('edit_box').addEventListener('change', function(event) {
-		if (event.target.checked) {
-			document.getElementById('edit_button').classList.add('editing');
-			document.getElementById('edit_icon').src = 'icons/Editting_Icon.svg';
-		} else {
-			document.getElementById('edit_button').classList.remove('editing');
-			document.getElementById('edit_icon').src =
-			'icons/Edit_Notepad_Icon.svg';
-		}
-	});
+	const editBox = document.getElementById('edit_box');
+	if (editBox !== null) {
+		editBox.addEventListener('change', function(event) {
+			if (event.target.checked) {
+				document.getElementById('edit_button').classList.add('editing');
+				document.getElementById('edit_icon').src = 'icons/Editting_Icon.svg';
+			} else {
+				document.getElementById('edit_button').classList.remove('editing');
+				document.getElementById('edit_icon').src =
+				'icons/Edit_Notepad_Icon.svg';
+			}
+		});
+	}
 }
 
 function scrollToLine(editor, slide) {
