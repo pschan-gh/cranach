@@ -1185,7 +1185,6 @@
 				<xsl:value-of select="concat('ww_inner_', @ww_id)" />
 			</xsl:attribute>
 			<div class="loading_icon" wbtag="ignore">
-				<!-- <img class="exempt" style="height:3.5cm" src="icons/Loading_icon.gif"/> -->
 				<div class="spinner-border text-secondary" style="margin:2em" role="status">
 					<span class="visually-hidden">Loading...</span>
 				</div>
