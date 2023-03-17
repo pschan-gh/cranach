@@ -1,0 +1,643 @@
+<html xml:lang="en" lang="en" xmlns="http:/www.w3.org/1999/xhtml">
+<title>
+    Cranach (Carousel-Simple)
+</title>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" href="#"/>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.contentWindow.min.js" integrity="sha256-36C1/Kln8nS9OWK0+tTRIYQyhdp+eY117441VyJaj+o=" crossorigin="anonymous"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.0.4/iframeResizer.min.js" integrity="sha256-uHN1/UDJzJX8BIapjeOIyykot3SXC8YDG38tH+rM718=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.2.0/distrib/jsxgraph.css" />
+
+	<script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/jsxgraph@1.2.0/distrib/jsxgraphcore.js"></script>
+
+	<!-- <script type="text/javascript" charset="UTF-8"src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" /> -->
+
+    <script src="js/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/Base64.js" type="text/javascript"></script>
+
+    <!-- <script type="text/javascript" src="https://aimath.org/knowl.js"></script> -->
+    <!-- <link href="js/knowlstyle.css" rel="stylesheet" type="text/css" /> -->
+    <link href="js/lcrefstyle.css" rel="stylesheet" type="text/css" />
+    <!-- <script src="js/knowl.js" type="text/javascript" ></script> -->
+    <script src="js/lcref.js" type="text/javascript" ></script>
+
+    <script>
+    function report() {}
+	let focusOnItem = null;
+	let focusOnText = '';
+    </script>
+    <script src="weaver_core.js"></script>
+    <script src="weaver.js"></script>
+    <script src="cranach.js"></script>
+    <script src="slideshow_client.js"></script>
+    <script src="interfaces.js"></script>
+	<script src="info.js"></script>
+    <script src="postprocess.js" ></script>
+    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+    <script src="js/canvas-free-drawing.js"></script>
+    <script>
+    var Range = ace.require('ace/range').Range; // get reference to ace/range
+    var warnClose = false;
+    var baseRenderer = new Cranach(window.location.href).setup();
+    </script>
+
+    <link rel="stylesheet" href="styles.css" media="all">
+	<link rel="stylesheet" href="print.css" type="text/css" media="print"/>
+	<link rel="stylesheet" href="portable.css" media="all">
+    <link rel="stylesheet" href="LaTeXML.css" media="all">
+</head>
+
+<body>
+    <div id="container" class="pane overview">
+        <div id="left_half" class="left pane" mode="overview">
+            <div id="info_half" class="info">
+                <div id="info_menu_container">
+                    <button class="plain_button icon" id="compose_icon" onclick="compose()">
+						<span class="material-icons">
+							edit_note
+						</span>
+                        <!-- <i class="material-icons">edit</i> -->
+                    </button>
+                    <button class="plain_button icon hide" onclick="document.getElementById('container').classList.add('wide');" data-bs-toggle="tooltip" data-bs-placement="right" title="Hide Side Panel">
+                        <i class="material-icons">close</i>
+                    </button>
+				</div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="toc-tab" data-bs-toggle="tab" data-bs-target="#toc" type="button" role="tab" aria-controls="home" aria-selected="true">Table of Contents</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="index-tab" data-bs-toggle="tab" data-bs-target="#index" type="button" role="tab" aria-controls="home" aria-selected="true">Index</button>
+                    </li>
+                </ul>
+                <hr/>
+                <div class="tab-content">
+                    <div class="tab-pane show active" id="info">
+                        <div id="info_title" class="title_box">
+                            <h2>
+                                <div class="current_course"></div>
+                            </h2>
+                            <strong>Keywords</strong>
+                            <a class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_course" href="#info_keywords_course">
+                                <span class="material-icons expand_more">expand_more</span>
+                                <span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div id="info_keywords_course" class="collapse"></div>
+                            <br/><br/>
+                            <h3>
+                                <div class="current_chapter"></div>
+                                <div class="current_chapter_title"></div>
+                                <div class="current_topics"></div>
+                            </h3>
+                            <strong>Chapter Keywords</strong>
+                            <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="info_keywords_chapter" href="#info_keywords_chapter">
+                                <span class="material-icons expand_more">expand_more</span>
+                                <span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div id="info_keywords_chapter" class="collapse"></div>
+                        </div>
+                        <div id="info_statements"></div>
+                        <br/>
+                        <hr>
+                        <div id="slide_info" class="slide_info">
+                            <h4 class="current_section"></h4>
+                            <h5 class="current_slide"></h5>
+                            <br/>
+                            <div id="slide_keywords"></div>
+                            <br/>
+                            <strong>Share</strong>
+                            <a  class="collapsea collapsed share" contenteditable="false" data-bs-toggle="collapse" aria-expanded="false" aria-controls="slide_info_share" href="#slide_info_share">
+                                <span class="material-icons expand_more">expand_more</span>
+                                <span class="material-icons expand_less">expand_less</span>
+                                <!-- ⊞ -->
+                            </a>
+                            <div class="slide_info share collapse" id="slide_info_share" style="">
+                                <span>URL</span>
+                                <br><input type="text" class="url share_text slide_info"  onclick="this.select()" readonly="readonly" />
+                                <br/><br/>
+                                <span>HTML Hyperlink</span><br/>
+                                <input type="text" class="hyperlink share_text slide_info"  onclick="this.select()" readonly="readonly" />
+                                <br/><br/>
+                                <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_lightblue.svg" class="exempt"/>Hyperref</span><br>
+                                <input type="text" class="hyperref share_text slide_info"  onclick="this.select()" readonly="readonly" />
+                                <span id='modal_keywords'>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane toc" class="toc" id="toc"></div>
+                    <div class="tab-pane" id="index"></div>
+                </div>
+            </div>
+
+            <div id="input_container">
+                <nav id="edit_menu_container" class="navbar navbar-expand-md navbar-dark bg-dark" style="height:auto;width:100%">
+                    <div class="navbar-collapse collapse">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link">
+                                    <label for="fileInput">
+                                        <i class="material-icons">open_in_browser</i>
+                                    </label>
+                                </a>
+                                <input id="fileInput" type="file" accept=".wb" onclick="this.value=null;" onchange="openWb(this);" style="display:none">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="save_icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Save"><i class="material-icons">save_alt</i></a>
+                            </li>
+                            <li class="nav-item" style="width:5em">
+                                <select name="render" class="nav-link plain_button form-control" id="render_sel" style="margin-top:10px" disabled>
+                                    <option value="">Render</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" id="maximize_icon"  onclick="document.querySelector('#container').classList.add('wide');editor.resize();" data-bs-toggle="tooltip" data-bs-placement="right" title="Maximize composer"><i class="material-icons">zoom_out_map</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="normalize_icon" class="nav-link" onclick="document.querySelector('#container').classList.remove('wide');editor.resize();" data-bs-toggle="tooltip" data-bs-placement="right" title="Normal size"><i class="material-icons">vertical_split</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="close_icon" class="plain_button icon hide" onclick="document.querySelector('#container').classList.remove('compose', 'wide');document.querySelector('#container').classList.add('overview');" data-bs-toggle="tooltip" data-bs-placement="right" title="Close composer">
+                                    <i class="material-icons">close</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div id="input" class="editor">
+                </div>
+				<script src="editor.js"></script>
+				<script src="wb.js"></script>
+            </div>
+        </div>
+        <div id="right_half" class='right pane carousel-dark slide' data-bs-interval="false" data-bs-touch="false" data-bs-keyboard="false">
+            <div id="loading_icon">
+                <div>
+                    <h1 style="color:SteelBlue">Loading</h1>
+                    <div class="spinner-border" role="status" style="margin:2.5em; opacity:0.25; width: 5rem; height: 5rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="progress" style="width:50%; margin:auto; height:5px;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav id="menu_container" class="navbar navbar-expand-md menu_container hidden">
+                <div class="container-fluid">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a id="main_menu_button" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">menu</i>
+                            </a>
+                            <!-- &#9776; -->
+                            <ul class="dropdown-menu" aria-labelledby="main_menu_button">
+                                <li>
+                                    <a id="present_button" class="dropdown-item menu_button present" onclick="showSlide(null, baseRenderer);">Full Screen</a>
+                                </li>
+                                <li>
+                                    <a id="presentation_button" class="dropdown-item menu_button fullscreen" onclick="if(document.fullscreenElement){document.exitFullscreen();} else {document.querySelector('body').requestFullscreen();}">Presentation Mode</a>
+                                </li>
+                                <li>
+                                    <a id="info_button" style="width:100%" class="dropdown-item menu_button dual" onclick="splitScreen()">Split Screen</a>
+                                </li>
+                                <li>
+                                    <a id='hide' class="menu_button dropdown-item" onclick="hide()">Half</a>
+                                </li>
+                                <li>
+                                    <a id='canvas' class="menu_button dropdown-item canvas" onclick="annotate();">Annotate</a>
+                                </li>
+                                <li>
+                                    <a id="uncollapse_button" class="menu_button dropdown-item" >Uncollapse</a>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item persist" onclick="resizeFont(1);">
+                                        Font &#xff0b;
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item persist"  onclick="resizeFont(-1);">
+                                        Font &#xff0d;
+                                    </a>
+                                </li>
+                                <!-- <li> -->
+                                <!-- <a id="print_button" class="menu_button dropdown-item" onclick="print(baseRenderer);">Print</a> -->
+                                <!-- </li> -->
+                                <li>
+                                    <hr class="dropdown-divider"/>
+                                </li>
+                                <li>
+                                    <a class="menu_button dropdown-item" onclick="document.querySelector('#xmlInput').click()">Open XML</a>
+                                    <input id="xmlInput" type="file" onclick="this.value = null" style="display:none">
+                                </li>
+                                <li>
+                                    <a id="edit_button" style="width:100%" class="menu_button persist dropdown-item edit"  onclick="const editBox = document.getElementById('edit_box'); editBox.click();inlineEdit(editBox.checked, editor);warnClose = true">Edit</a>
+                                    <input id="edit_box" type="checkbox" style="display:none" />
+                                </li>
+                                <li class="advanced">
+                                    <a id="advanced" class="menu_button dropdown-item dropdown-toggle persist" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#aaa">Advanced</a>
+                                    <ul class="dropdown-menu dropdown-submenu" aria-labelledby="advanced" style="background-color:#eee">
+                                        <li>
+                                            <a id='lecture_mode' class="menu_button dropdown-item lecture_mode">
+                                                <input type="checkbox" class="lecture_mode"/>
+                                                Lecture Mode
+                                            </a>
+                                        </li>
+										<li>
+		                                    <a id='canvas' class="menu_button dropdown-item canvas" onclick="clearAllCanvas();">Clear All Canvas</a>
+		                                </li>
+                                        <li>
+                                            <a id="wb_button" disabled class="menu_button dropdown-item" onclick="commitWb(editor);compose();">Export to Wb</a>
+                                        </li>
+                                        <li>
+                                            <a id="compose_button" class="menu_button dropdown-item"  function="compose" onclick="compose();">Compose</a>
+										</li>
+                                        <li>
+                                            <a id="latex_icon" class="menu_button dropdown-item" data-bs-toggle="tooltip" data-bs-placement="right" title="LaTex source">LaTeX</a>
+                                        </li>
+										<li>
+                                            <a id="beamer_icon" class="menu_button dropdown-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Beamer source">Beamer</a>
+                                        </li>
+                                        <li>
+                                            <a id="xml_icon" class="menu_button dropdown-item" data-bs-toggle="tooltip" data-bs-placement="right" title="XML source">XML</a>
+                                        </li>
+                                        <!-- <li>
+                                            <a id="index_icon" class="menu_button dropdown-item" onclick="$('#text_modal').modal('toggle');showIndex(baseRenderer);" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">Index</a>
+                                        </li> -->
+                                        <li>
+                                            <a id="gh_commit" class="menu_button dropdown-item" onclick="initGhDialog(editor); bootstrap.Modal.getOrCreateInstance(document.querySelector('#gh_modal')).toggle()" data-bs-toggle="tooltip" data-bs-placement="right" title="Index source">GitHub</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="">
+							<div class="form-inline slide_sel">
+                                <div class="form-group">
+                                    <select name="slide_sel" class="nav-link plain_button text-muted" id="slide_sel" style="margin-top:10px">
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul id="output_icon_container" class="navbar-nav ms-auto me-2">
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button icon dim" data-bs-toggle="button" aria-pressed="false" onclick='dim()'>
+                                <i class="material-icons">brightness_2</i>
+                            </button>
+                            <!-- ☾ -->
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button menu_button icon info edit" id="edit_icon" data-bs-toggle="button" aria-pressed="false" onclick="document.querySelector('#edit_button').click();">
+                                <i class="material-icons">edit</i>
+                            </button>
+                        </li>
+                        <li class="nav-item" style="width:auto">
+                            <button class="btn plain_button menu_button icon info present" id="full_screen_icon" data-bs-toggle="button" aria-pressed="false" onclick="document.querySelector('#present_button').click();">
+                                <i class="material-icons">
+                                    fullscreen
+                                </i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="btn plain_button menu_button icon info" id="dual_icon" data-bs-toggle="button" aria-pressed="false" onclick="document.querySelector('#info_button').click()">
+                                <i class="material-icons">
+                                    fullscreen_exit
+                                </i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <script src="menu.js"></script>
+            <div id="output" class="output overview dual pane carousel-inner" data-selected-slide="1"></div>
+            <div class="controls carousel-indicators">
+            </div>
+			<script src="carousel.js" ></script>
+            <div class="controls_container controls">
+                <button class="carousel-control-prev" type="button" data-bs-target="#right_half" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#right_half" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+			<div class="canvas-controls">
+				<nav class="navbar navbar-collapse-lg navbar-light">
+					<div class="container-fluid">
+						<div>
+							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<!-- <li class="nav-item">
+									<a class="nav-link annotate disable" href="#">
+										<span class="material-icons">
+											near_me
+										</span> -->
+										<!-- <span class="material-icons">edit_off</span> -->
+									<!-- </a>
+								</li> -->
+								<li class="nav-item">
+									<a class="nav-link annotate enable" href="#">
+										<span class="material-icons brush">
+											brush
+										</span>
+                                        <span class="material-icons cursor hidden">
+											near_me
+										</span>
+										<!-- <i class="bi bi-brush-fill"></i> -->
+										<!-- <span class="material-icons">mode_edit</span> -->
+									</a>
+								</li>
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
+									<ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown">
+										<li><a class="dropdown-item annotate red color" href="#">Red</a></li>
+										<li><a class="dropdown-item annotate green color" href="#">Green</a></li>
+										<li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
+										<li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
+										<li><a class="dropdown-item annotate black color" href="#">Black</a></li>
+									</ul>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate erase" href="#">
+										<i class="bi bi-eraser-fill"></i>
+										<!-- <span class="material-icons-outlined">mode_edit_outline</span> -->
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate expand" href="#">
+										<span class="material-icons-outlined">
+											aspect_ratio
+										</span>
+										<!-- <span class="material-icons">expand</span> -->
+									</a>
+								</li>
+								<li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+			<div class="canvas-controls canvas-controls-left">
+				<nav class="navbar navbar-collapse-lg navbar-light">
+					<div class="container-fluid">
+						<div>
+							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<!-- <li class="nav-item">
+									<a class="nav-link annotate disable" href="#">
+										<span class="material-icons">
+											near_me
+										</span> -->
+										<!-- <span class="material-icons">edit_off</span> -->
+									<!-- </a>
+								</li> -->
+								<li class="nav-item">
+									<a class="nav-link annotate enable" href="#">
+										<span class="material-icons brush">
+											brush
+										</span>
+                                        <span class="material-icons cursor hidden">
+											near_me
+										</span>
+										<!-- <i class="bi bi-brush-fill"></i> -->
+										<!-- <span class="material-icons">mode_edit</span> -->
+									</a>
+								</li>
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="colorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="material-icons">color_lens</span></a>
+									<ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="colorDropdown">
+										<li><a class="dropdown-item annotate red color" href="#">Red</a></li>
+										<li><a class="dropdown-item annotate green color" href="#">Green</a></li>
+										<li><a class="dropdown-item annotate blue color" href="#">Blue</a></li>
+										<li><a class="dropdown-item annotate orange color" href="#">Orange</a></li>
+										<li><a class="dropdown-item annotate black color" href="#">Black</a></li>
+									</ul>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate erase" href="#">
+										<i class="bi bi-eraser-fill"></i>
+										<!-- <span class="material-icons-outlined">mode_edit_outline</span> -->
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link annotate expand" href="#">
+										<span class="material-icons-outlined">
+											aspect_ratio
+										</span>
+										<!-- <span class="material-icons">expand</span> -->
+									</a>
+								</li>
+								<li class="nav-item"><a class="nav-link annotate undo" href="#"><span class="material-icons">undo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate redo" href="#"><span class="material-icons">redo</span></a></li>
+								<li class="nav-item"><a class="nav-link annotate clear" href="#"><span class="material-icons">restart_alt</span></a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+            <div class="slide_number">
+                <button class="plain_button slide_button">
+                </button>
+            </div>
+        </div>
+        <div id="cover_half" onclick="unhide();"></div>
+    </div>
+    <!-- Wb item modal -->
+    <div id="item_modal" class="modal"  tabindex="-1" role="dialog" aria-labelledby="share_item" aria-hidden="true">
+        <div class="modal-dialog" role="document" >
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <a id="item_modal_link" href="" target="_blank">
+                        <h5 class="modal-title notkw"  id="share_item">
+                            <span class="current_course"></span> <span class="current_chapter"></span>
+                            <span class="current_slide"></span> <span class="current_item_type"></span> <span class="current_item"></span>
+                        </h5>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal_proofs">
+                    </div>
+                    <div class="modal_proof_of">
+                        <br/><strong>Of:</strong>
+                        <a target="_blank" href></a>
+                    </div>
+                    <div class="modal_refby">
+                    </div>
+                    <span id='modal_keywords'>
+                    </span>
+                    <hr/>
+                    <span>URL</span>
+                    <input type="text" id="share_url" class="url share_text"  onclick="this.select()" readonly="readonly"/>
+                    <p><br></p>
+                    <span>HTML Hyperlink</span>
+                    <input type="text" id="share_hyperlink" class="hyperlink share_text"  onclick="this.select()" readonly="readonly"/>
+                    <p><br/></p>
+                    <span>Knowl</span><br/>
+                    <input type="text" id="share_lcref" class="lcref share_text"  onclick="this.select()" readonly="readonly" />
+                    <p><br/></p>
+                    <span class="latex_href"><img style="max-height:1em;width:auto" src="icons/LaTeX_logo_steelblue.svg" class="exempt"/> Hyperref</span>
+                    <br/>
+                    <input type="text" id="share_hyperref" class="hyperref share_text"  onclick="this.select()" readonly="readonly" />
+                    <br/><br/>
+                    <span>MD5</span><br/>
+                    <input type="text" class="md5 share_text" style="height:2em"  onclick="this.select()" readonly="readonly" />
+                </div>
+                <div class="modal-footer">
+                    <div id="logo-box" class="pull-left">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="item_modal.js"></script>
+    <!-- Wb code window -->
+    <div id="text_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="wb_source" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="dialog" style="height:80%">
+            <div class="modal-content" style="height:100%">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Cranach XML</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height:100%" >
+                    <textarea id="source_text"  name="content" style="height:100%"></textarea>
+                </div>
+                <div class="modal-footer" style="justify-content:flex-start;display:block">
+                    <div style="float:left">
+                    </div>
+                    <div style="float:right">
+                        <input class="btn btn-outline-info load-index" type="file" onchange="cranach.openIndex(this);" id="index-file-input"/>
+                        <button class="btn btn-outline-info btn-sm render xml" ext="" onclick="baseRenderer.then(el => {el.attr['cranachDoc'] = new DOMParser().parseFromString(document.querySelector('#source_text').value, 'application/xml');el.xmlDocQueryAndRender().then(el => {postprocess(el)})})">Render</button>
+                        <button class="btn btn-outline-info btn-sm update-index" ext="" onclick="baseRenderer.then(el => {el.attr['indexDoc'] = new DOMParser().parseFromString(document.querySelector('#source_text').value, 'application/xml');el.updateIndexAndRender();})">Update</button>
+                        <button class="btn btn-outline-info btn-sm save" ext="" >Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Github modal -->
+    <div id="gh_modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="gh_commit" aria-hidden="true">
+        <div class="modal-dialog" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title notkw" id="wb_source">Commit to Github - <span id="localFilenameRoot" name="localFilenameRoot"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="github">
+                        <div class="row">
+                            <div class="col">
+                                <label for="ghRepoUsername">
+                                    Username
+                                </label>
+                                <input class="form-control" id="ghRepoUsername" name="ghRepoUsername" type="text" required="required" value=""/>
+                                <!-- <input class="form-control" id="localFilename" name="localFilename" type="hidden" value=""/> -->
+                            </div>
+                            <div class="col">
+                                <label for="ghRepo">
+                                    Github Repository
+                                </label>
+                                <input class="form-control" id="ghRepo" name="ghRepo" type="text" value=""/>
+                            </div>
+                            <div class="col">
+                                <label for="ghBranch">
+                                    Branch
+                                </label>
+                                <input class="form-control" id="ghRepoBranch" name="ghRepoBranch" type="text" value="devel"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="ghHead">
+                                    Head
+                                </label>
+                                <input class="form-control" id="ghHead" name="ghHead" type="text" value="patch"/>
+                            </div>
+                            <div class="col">
+                                <label for="ghAccessToken">
+                                    Access Token
+                                </label>
+                                <input class="form-control" id="ghAccessToken" name="ghAccessToken" type="password" value=""/>
+                            </div>
+                        </div>
+                        <div style="display:none">
+                            <textarea class="index_text" id="index_text"></textarea>
+                        </div>
+                        <div style="display:none">
+                            <textarea class="cranach_text" id="cranach_text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div style="width:100%">
+                        <div class="feedback" style="float:left;font-size:small">
+                            <div class="spinner-border text-secondary loading hidden" role="status" style="float:left">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <!-- <img class="exempt loading" style="max-width:5em;height:auto;margin:auto;display:none;float:left" src="icons/Loading_icon.gif"/> -->
+                            <div class="message" style="display:inline-block;float:left;margin-left:10px;"></div>
+                        </div>
+                        <div style="float:right">
+                            <button style="float:right" class="btn btn-outline-info btn-sm commit hidden">Commit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="gittools.js"></script>
+
+    <script src="mathjax_setup.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script>
+	function compose() {
+		document.querySelector('#container').classList.remove('overview', 'present', 'info', 'wide');document.querySelector('#container').classList.add('compose');editor.resize()
+	}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // https://stackoverflow.com/questions/7317273/warn-user-before-leaving-web-page-with-unsaved-changes
+        window.addEventListener("beforeunload", function (e) {
+            if (warnClose) {
+                let confirmationMessage = 'It looks like you have been editing something. '
+                + 'If you leave before saving, your changes will be lost.';
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            } else {
+                return undefined;
+            }
+        });
+    });
+</script>
+</body>
+</html>

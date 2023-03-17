@@ -180,13 +180,13 @@ function updateSlideContent(slide, carousel = false) {
 			return 0;
 		}
 		// e.onload = adjustHeight;
-                
+
                 iframe.onload = function() {
                         iFrameResize({
                                 log: false,
                                 checkOrigin:false,
                                 resizedCallback: adjustHeight,
-                        }, iframe);                        
+                        }, iframe);
                 };
                 iframe.src = iframe.getAttribute('data-src');
                 iframe.classList.remove('hidden');
@@ -333,96 +333,173 @@ function highlight(item) {
 	document.querySelector(`div[item="${item}"] button`).classList.add('highlighted');
 
 }
+
+//ChatGPT
 function imagePostprocess(image) {
+  const isExempt = image.classList.contains('exempt');
+  const isSvg = /svg/.test(image.src);
+  const imageContainer = image.closest('.image');
+  const loadingIcon = image.closest('.image') !== null ? image.closest('.image').querySelector('.loading_icon') : null;
 
-	image.classList.add('hidden');
-	image.src = image.dataset.src;
-	image.onload = function() {
-		if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
-            image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
+  image.classList.add('hidden');
+  image.src = image.dataset.src;
+  image.onload = function() {
+    if (imageContainer && loadingIcon) {
+      loadingIcon.classList.add('hidden');
+    }
+    image.classList.remove('loading');
+    if (isExempt || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
+      image.classList.remove('hidden');
+      return 1;
+    }
+
+    let width;
+    let height;
+    if (isSvg) {
+      if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
+        width = 300;
+        height = 300;
+        image.style.width = width;
+      } else if (!imageContainer.style.width) {
+        width = 450;
+        height = 450;
+        imageContainer.style.width = 450;
+        image.setAttribute('width', width);
+      } else {
+        image.style.width = '100%';
+      }
+    } else {
+      image.removeAttribute('style');
+      image.removeAttribute('width');
+      image.removeAttribute('height');
+
+      width = image.naturalWidth;
+      height = image.naturalHeight;
+
+      if (width > height) {
+        if (width >= 600) {
+          image.style.width = '100%';
+          image.style['max-height'] = '100%';
+        } else {
+          image.style['max-width'] = '100%';
+          image.style.height = 'auto';
         }
-		image.classList.remove('loading');
-		// if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
-		if (image.classList.contains('exempt')) {
-			image.classList.remove('hidden');
-			return 1;
-		}
-
-        let override = false;
-        if (image.closest('.image') !== null) {
-
-			override =
-			image.closest('.image').style.width !== null &&
-			typeof image.closest('.image').style.width !== 'undefined';
-			// && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600)
+      } else {
+        if (height > 560) {
+          if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
+            image.style.width = '100%';
+            image.style['max-height'] = '100%';
+          } else {
+            if (!imageContainer.style.width) {
+              image.style['height'] = '560px';
+              image.style['width'] = 'auto';
+            } else {
+              image.style['height'] = 'auto';
+              image.style['max-width'] = '100%';
+            }
+          }
+        } else {
+          image.style['max-width'] = '100%';
+          image.style['height'] = 'auto';
         }
+      }
+    }
 
-		let width;
-		let height;
-		if (/svg/.test(image.src)) {
-			if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
-				width = 300;
-				height = 300;
-				image.style.width = width;
-			} else if (!override) {
-				width = 450;
-				height = 450;
-                if (image.closest('.image') !== null) {
-                    image.closest('.image').style.width = 450;
-                }
-				image.setAttribute('width', width);
-			} else {
-				image.style.width = '100%';
-			}
-		} else if (!override) {
-			// image.removeAttribute('style');
-			image.removeAttribute('width');
-			image.removeAttribute('height');
-
-			let width = image.naturalWidth;
-			let height = image.naturalHeight;
-
-			if (width > height) {
-				if (width >= 600) {
-					image.style.width = '100%';
-					image.style['max-height'] = '100%';
-				} else {
-					image.style['max-width'] =  '100%';
-					image.style.height = 'auto';
-				}
-			} else {
-				if (height > 560) {
-					if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
-						image.style.width = '100%';
-						image.style['max-height'] = '100%';
-					} else {
-						// if ((typeof image.closest('.image').style.width === 'undefined')|| (image.closest('.image').style.width === false) || (image.closest('.image').style.width === '0px') || (image.width == '600px')){
-							if ((typeof image.closest('.image').style.width === 'undefined')){
-							image.style['height'] = '560px';
-							image.style['width'] = 'auto';
-						} else {
-							image.style['height'] = 'auto';
-							image.style['max-width'] = '100%';
-						}
-					}
-				} else {
-					image.style['max-width'] = '100%';
-					image.style['height'] = 'auto';
-				}
-			}
-		} else {
-			image.removeAttribute('width');
-			image.removeAttribute('height');
-
-			if (image.style['width'] == '' || typeof image.style['width'] === 'undefined' || image.style['width'] === false) {
-				image.style['width'] = '100%';
-			}
-		}
-
-		image.style['background'] = 'none';
-		image.classList.remove('hidden');
-	}
+    image.style['background'] = 'none';
+    image.classList.remove('hidden');
+  };
 }
+
+// function imagePostprocess(image) {
+//
+// 	image.classList.add('hidden');
+// 	image.src = image.dataset.src;
+// 	image.onload = function() {
+// 		if (image.closest('.image') !== null && image.closest('.image').querySelector('.loading_icon') !== null) {
+//             image.closest('.image').querySelector('.loading_icon').classList.add('hidden');
+//         }
+// 		image.classList.remove('loading');
+// 		// if (image.classList.contains('exempt') || Math.max(image.naturalWidth, image.naturalHeight) < 450) {
+// 		if (image.classList.contains('exempt')) {
+// 			image.classList.remove('hidden');
+// 			return 1;
+// 		}
+//
+//         let override = false;
+//         if (image.closest('.image') !== null) {
+//
+// 			override =
+// 			image.closest('.image').style.width !== null &&
+// 			typeof image.closest('.image').style.width !== 'undefined';
+// 			// && Number.parseInt(image.closest('.image').style.width.replace(/px$/, '') < 600)
+//         }
+//
+// 		let width;
+// 		let height;
+// 		if (/svg/.test(image.src)) {
+// 			if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
+// 				width = 300;
+// 				height = 300;
+// 				image.style.width = width;
+// 			} else if (!override) {
+// 				width = 450;
+// 				height = 450;
+//                 if (image.closest('.image') !== null) {
+//                     image.closest('.image').style.width = 450;
+//                 }
+// 				image.setAttribute('width', width);
+// 			} else {
+// 				image.style.width = '100%';
+// 			}
+// 		} else if (!override) {
+// 			// image.removeAttribute('style');
+// 			image.removeAttribute('width');
+// 			image.removeAttribute('height');
+//
+// 			let width = image.naturalWidth;
+// 			let height = image.naturalHeight;
+//
+// 			if (width > height) {
+// 				if (width >= 600) {
+// 					image.style.width = '100%';
+// 					image.style['max-height'] = '100%';
+// 				} else {
+// 					image.style['max-width'] =  '100%';
+// 					image.style.height = 'auto';
+// 				}
+// 			} else {
+// 				if (height > 560) {
+// 					if ((image.closest('.dual-left') !== null) || (image.closest('.dual-right') !== null)) {
+// 						image.style.width = '100%';
+// 						image.style['max-height'] = '100%';
+// 					} else {
+// 						// if ((typeof image.closest('.image').style.width === 'undefined')|| (image.closest('.image').style.width === false) || (image.closest('.image').style.width === '0px') || (image.width == '600px')){
+// 							if ((typeof image.closest('.image').style.width === 'undefined')){
+// 							image.style['height'] = '560px';
+// 							image.style['width'] = 'auto';
+// 						} else {
+// 							image.style['height'] = 'auto';
+// 							image.style['max-width'] = '100%';
+// 						}
+// 					}
+// 				} else {
+// 					image.style['max-width'] = '100%';
+// 					image.style['height'] = 'auto';
+// 				}
+// 			}
+// 		} else {
+// 			image.removeAttribute('width');
+// 			image.removeAttribute('height');
+//
+// 			if (image.style['width'] == '' || typeof image.style['width'] === 'undefined' || image.style['width'] === false) {
+// 				image.style['width'] = '100%';
+// 			}
+// 		}
+//
+// 		image.style['background'] = 'none';
+// 		image.classList.remove('hidden');
+// 	}
+// }
 
 
 // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
@@ -598,3 +675,28 @@ document.addEventListener('DOMContentLoaded', () => {
         collapseToggle(document.querySelector('#output').getAttribute('data-selected-slide'))
     ));
 });
+
+function print() {
+	// ChatGPT
+	// Get all elements with the "collapse" class
+
+
+	const slides = Array.from(document.querySelectorAll('.slide'));
+	slides.forEach((slide) => {
+		console.log('rendering');
+		renderSlide(slide);
+		const collapseElements = Array.from(slide.querySelectorAll('.collapse'));
+		// Loop through each element
+		collapseElements.forEach((collapseElement) => {
+			// Remove the "collapsed" class from the element
+			collapseElement.classList.remove('collapse');
+			// Set the "aria-expanded" attribute to "true"
+			collapseElement.setAttribute('aria-expanded', 'true');
+		});
+		const anchors = Array.from(document.querySelectorAll('.collapsea'));
+		anchors.forEach((anchor) => {
+			anchor.style.display = 'none';
+		});
+	});
+	return 1;
+}
