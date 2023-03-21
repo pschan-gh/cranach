@@ -29,7 +29,7 @@ body, #container, #right_half {
     display:none !important;
 }
 
-button {
+button, .collapsea {
 display:none;
 }
 

@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ));
 });
 
-function print() {
+function printfriendly() {
 	// ChatGPT
 	// Get all elements with the "collapse" class
 
